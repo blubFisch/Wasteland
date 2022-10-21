@@ -10,6 +10,7 @@ Have fun and be comfy ^.^]]
 local info_adv =
     [[
 # Changelog (10th-16th October 2022):
+ - Added /suicide chat command to use if you get stuck
  - PvP shields now prevent building inside
  - Combat balance overhaul (see "Bonuses" button top right to check modifiers)
  - Town player limit fixes
@@ -37,6 +38,7 @@ Survive as long as you can. Raid other towns. Defend your town.
 - PvP shields prevent players from entering and building inside, but they can still shoot inside!
 - Your town has a AFK PvP shield that you can use to safely take a quick break
     without other players killing your town. Deploy it from the market.
+- If you get stuck or trapped, use the /suicide chat command to respawn
 
 # Town members and alliances
 - Once a town is formed, members may invite other players and teams using a coin. To invite another player, drop a coin
