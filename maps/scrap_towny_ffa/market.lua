@@ -94,7 +94,7 @@ local upgrade_functions = {
         local market = town_center.market
         local force = market.force
         local surface = market.surface
-        local shield_lifetime_ticks = 10 * 60 * 60
+        local shield_lifetime_ticks = 10 * 60 * 60  -- Referenced in the offer text!!
 
         if not this.pvp_shields[player.force.name] then
             -- Double-check with the player to prevent accidental clicks
@@ -162,7 +162,7 @@ local function set_offers(town_center)
     special_offers[6] = {{{'coin', (town_center.upgrades.laser_turret.slots * 200)}}, laser_turret}
     local spawn_point = 'Set Spawn Point'
     special_offers[7] = {{}, spawn_point}
-    special_offers[8] = {{}, 'Temporary PvP Shield for pause/AFK'}
+    special_offers[8] = {{}, 'AFK PvP Shield (10 minutes)'}
     for _, v in pairs(special_offers) do
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})
     end
