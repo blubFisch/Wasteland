@@ -39,6 +39,7 @@ function Public.reset_table()
     this.pvp_shields = {}
     this.pvp_shield_warned = {}
     this.tutorials = {}
+    this.suicides = {}
 end
 
 function Public.get_table()
