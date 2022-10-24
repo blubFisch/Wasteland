@@ -3,13 +3,12 @@ local Public = {}
 local info =
     [[This is the wasteland. Who will survive?
 
-In this mode, players build towns and fight against other towns and the biters.
-
-Have fun and be comfy ^.^]]
+In this scenario, players build towns and fight against other towns and the biters.]]
 
 local info_adv =
     [[
 # Changelog (10th-24th October 2022):
+ - Offline PvP shield added (Size is same as AFK shield in market)
  - Buildings protected by PvP shields can not be damaged anymore
  - Added /suicide chat command to use if you get stuck
  - PvP shields now prevent building inside
@@ -36,10 +35,13 @@ Survive as long as you can. Raid other towns. Defend your town.
     Tip: use filter inserters with to get coins/iron/.. out of the market
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
 - Use /rename-town NEWNAME (chat command) to rename your town
-- PvP shields prevent players from entering and building inside, but they can still shoot inside!
+- If you get stuck or trapped, use the /suicide chat command to respawn
+
+# PvP Shields
+- PvP shields prevent players from entering, building and damaging
 - Your town has a AFK PvP shield that you can use to safely take a quick break
     without other players killing your town. Deploy it from the market.
-- If you get stuck or trapped, use the /suicide chat command to respawn
+- Offline PvP shields deply once all players of a town go offline. The size is same as the AFK shield in market
 
 # Town members and alliances
 - Once a town is formed, members may invite other players and teams using a coin. To invite another player, drop a coin
@@ -72,7 +74,7 @@ function Public.show(player, info_type)
 
     local t = frame.add {type = 'table', column_count = 2}
 
-    local label = t.add {type = 'label', caption = 'COMFY Towny: Wasteland survival'}
+    local label = t.add {type = 'label', caption = 'The Wasteland'}
     label.style.font = 'heading-1'
     label.style.font_color = {r = 0.85, g = 0.85, b = 0.85}
     label.style.right_padding = 8
