@@ -396,7 +396,11 @@ local function update_pvp_shields_display()
         local shield = this.pvp_shields[town_center.market.force.name]
         local info
         if shield then
-            info = 'PvP Shield: ' .. string.format("%.0f", (PvPShield.remaining_lifetime(shield)) / 60 / 60) .. ' minutes'
+            if shield.max_lifetime_ticks then
+                info = 'PvP Shield: ' .. string.format("%.0f", (PvPShield.remaining_lifetime(shield)) / 60 / 60) .. ' minutes'
+            else
+                info = 'PvP Shield: While players offline'
+            end
         else
             info = ''
         end
@@ -412,14 +416,19 @@ local function update_offline_pvp_shields()
         local shield = this.pvp_shields[force.name]
 
         if not shield and table_size(force.connected_players) == 0 then
-            -- start delayed. what if existing shield?
-
-            local shield_lifetime_ticks = 240 * 60 * 60 * 60
-            game.print("The offline PvP Shield of " .. market.town_name .. " is activating now")
-            PvPShield.add_shield(market.surface, market.force, market.position, 80, shield_lifetime_ticks, 2 * 60 * 60, false, true)
-
+            local activation = this.pvp_shield_offline_activations[force.index]
+            if activation and game.tick > activation then
+                game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now")
+                PvPShield.add_shield(market.surface, market.force, market.position, 80,
+                        nil, 2 * 60 * 60, false, true)
+            elseif not activation then
+                local delay_mins = 5
+                game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes")
+                this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
+            end
         elseif shield and shield.is_offline_mode and table_size(force.connected_players) > 0 then
             force.print("Welcome back. Your offline protection is expiring now.")
+            this.pvp_shield_offline_activations[force.index] = nil
             PvPShield.remove_shield(shield)
         end
     end

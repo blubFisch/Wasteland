@@ -56,7 +56,7 @@ function Public.add_shield(surface, force, center, max_size, lifetime_ticks, tim
         shield.force.character_running_speed_modifier = -1
         -- Kick players out of vehicles if needed
         for _, player in pairs(force.connected_players) do
-            if player.character.driving then
+            if player.character and player.character.driving then
                 player.character.driving = false
             end
         end
@@ -81,13 +81,17 @@ function Public.remove_shield(shield)
 end
 
 function Public.remaining_lifetime(shield)
-    return shield.max_lifetime_ticks - (game.tick - shield.lifetime_start)
+    if shield.max_lifetime_ticks then
+        return shield.max_lifetime_ticks - (game.tick - shield.lifetime_start)
+    else
+        return false
+    end
 end
 
 local function update_shield_lifetime()
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if Public.remaining_lifetime(shield) > 0 then
+        if shield.max_lifetime_ticks == nil or Public.remaining_lifetime(shield) > 0 then
             if shield.size < shield.max_size then
                 remove_drawn_borders(shield)
                 scale_size_by_lifetime(shield)
@@ -181,7 +185,6 @@ end
 
 function Public.entity_is_protected(entity, cause_force)
     if not (cause_force and cause_force.valid) then
-        game.print("protected by default")  -- TODO
         return true
     end
 
@@ -205,7 +208,6 @@ local function on_entity_damaged(event)
     end
 
     if Public.entity_is_protected(entity, event.force) then
-        game.print(event.final_damage_amount)  -- TODO
         entity.health = entity.health + event.final_damage_amount
     end
 end
