@@ -62,11 +62,7 @@ local all_force_enabled_recipes = {
     'shotgun-shell',
 }
 
-local function update_member_limit(force)
-    if not force or not force.valid then
-        log('force nil or not valid!')
-        return
-    end
+local function update_member_limit()
     local this = ScenarioTable.get_table()
     local town_centers = this.town_centers
 
@@ -89,6 +85,7 @@ local function update_member_limit(force)
     end
 
     this.member_limit = math_min(limit, 3)
+    game.print('>> The member limit for all towns is now: ' .. this.member_limit, {255, 255, 0})
 end
 
 local function can_force_accept_member(force)
@@ -97,7 +94,6 @@ local function can_force_accept_member(force)
         return
     end
     local this = ScenarioTable.get_table()
-    update_member_limit(force)
 
     if #force.players >= this.member_limit then
         game.print('>> Town ' .. force.name .. ' has too many settlers! Current limit: ' .. this.member_limit .. '.'
@@ -231,8 +227,7 @@ function Public.add_player_to_town(player, town_center)
     Map.enable_world_map(player)
     Public.set_player_color(player)
 
-    update_member_limit(force)
-    game.print('>> The member limit for all towns is now: ' .. this.member_limit, {255, 255, 0})
+    update_member_limit()
 end
 
 -- given to player upon respawn
@@ -860,6 +855,8 @@ local function kill_force(force_name, cause)
 
     Server.to_discord_embed(message)
     game.print('>> ' .. message, {255, 255, 0})
+
+    update_member_limit()
 end
 
 local function on_forces_merged()
