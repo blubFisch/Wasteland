@@ -26,7 +26,8 @@ local function draw_borders(shield)
 end
 
 local function remove_drawn_borders(shield)
-    for _, e in pairs(shield.surface.find_entities_filtered({area = shield.box, name = beam_type})) do
+    local removal_box = CommonFunctions.enlarge_bounding_box(shield.box, 1)
+    for _, e in pairs(shield.surface.find_entities_filtered({area = removal_box, name = beam_type})) do
         if e.valid then
             e.destroy()
         end
