@@ -236,7 +236,7 @@ local function process_built_entities(event)
         force_name = force.name
     end
 
-    if PvPShield.in_other_zones(surface, position, force) or Public.near_another_town(force_name, position, surface, 32) == true then
+    if Public.near_another_town(force_name, position, surface, 32) == true or PvPShield.protected_by_other_zones(surface, position, force, 32) then
         if neutral_whitelist[name] then
             entity.force = game.forces['neutral']
         else

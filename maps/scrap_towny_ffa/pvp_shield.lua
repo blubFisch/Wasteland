@@ -25,9 +25,13 @@ local function draw_borders(shield)
                            source = {left, top - 0.5}, target = {right, top}})
 end
 
+local function enlarge_bounding_box(bb, size)
+    return {left_top = {x = bb.left_top.x - size, y = bb.left_top.y - size},
+            right_bottom = {x = bb.right_bottom.x + size, y = bb.right_bottom.y + size}}
+end
+
 local function remove_drawn_borders(shield)
-    local removal_box = CommonFunctions.enlarge_bounding_box(shield.box, 1)
-    for _, e in pairs(shield.surface.find_entities_filtered({area = removal_box, name = beam_type})) do
+    for _, e in pairs(shield.surface.find_entities_filtered({area = enlarge_bounding_box(shield.box, 1), name = beam_type})) do
         if e.valid then
             e.destroy()
         end
@@ -113,11 +117,11 @@ local function vector_norm(vector)
     return math_sqrt(vector.x ^ 2 + vector.y ^ 2)
 end
 
-function Public.in_other_zones(surface, position, force)
+function Public.protected_by_other_zones(surface, position, force, distance)
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
         if not (shield.force == force or surface ~= shield.surface) then
-            if CommonFunctions.point_in_bounding_box(position, shield.box) then
+            if CommonFunctions.point_in_bounding_box(position, enlarge_bounding_box(shield.box, distance)) then
                 return true
             end
         end
