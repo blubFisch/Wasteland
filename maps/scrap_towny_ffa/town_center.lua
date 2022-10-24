@@ -404,10 +404,30 @@ local function update_pvp_shields_display()
     end
 end
 
+local function update_offline_pvp_shields()
+    local this = ScenarioTable.get_table()
+    for _, town_center in pairs(this.town_centers) do
+        local market = town_center.market
+        local force = market.force
+        local shield = this.pvp_shields[force.name]
+
+        if not shield and table_size(force.connected_players) == 0 then
+            -- start delayed. waht if existing shield?
+
+            local shield_lifetime_ticks = 240 * 60 * 60 * 60
+            PvPShield.add_shield(market.surface, market.force, market.position, 120, shield_lifetime_ticks, 2 * 60 * 60, false, true)
+
+        elseif shield and shield.is_offline_mode and table_size(force.connected_players) > 0 then
+            force.print("Welcome back. Your offline protection is expiring now.")
+            PvPShield.remove_shield(shield)
+        end
+    end
+end
+
 local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
 
-    if evo > 0.1 then
+    if evo > 0.2 then
         local min_size = 70
         local max_size = 150
         local min_duration = 0.5 * 60 * 60 * 60
@@ -674,6 +694,7 @@ commands.add_command(
 Event.add(defines.events.on_built_entity, on_built_entity)
 Event.add(defines.events.on_player_repaired_entity, on_player_repaired_entity)
 Event.on_nth_tick(60, update_pvp_shields_display)
+Event.on_nth_tick(60, update_offline_pvp_shields)
 --Event.add(defines.events.on_robot_repaired_entity, on_robot_repaired_entity)
 Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 

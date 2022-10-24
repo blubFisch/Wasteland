@@ -44,11 +44,12 @@ local function scale_size_by_lifetime(shield)
     shield.size = scaled_size
 end
 
-function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, is_pause_mode)
+function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, is_pause_mode, is_offline_mode)
     local this = ScenarioTable.get_table()
 
     local shield = {surface = surface, force = force, center = center, max_size = max_size, max_lifetime_ticks = lifetime_ticks,
-                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, is_pause_mode = is_pause_mode}
+                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, is_pause_mode = is_pause_mode,
+                    is_offline_mode = is_offline_mode}
 
     if is_pause_mode then
         -- Freeze players to avoid AFK abuse
