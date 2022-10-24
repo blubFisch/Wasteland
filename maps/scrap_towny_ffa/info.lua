@@ -7,17 +7,9 @@ In this scenario, players build towns and fight against other towns and the bite
 
 local info_adv =
     [[
-# Changelog (10th-24th October 2022):
- - Offline PvP shield added (Size is same as AFK shield in market)
- - Buildings protected by PvP shields can not be damaged anymore
- - Added /suicide chat command to use if you get stuck
- - PvP shields now prevent building inside
- - Combat balance overhaul (see "Bonuses" button top right to check modifiers)
- - Town player limit fixes
- - Towns have an initial PvP protection shield - size and duration is scaled with the biggest town size
- - Temporary PvP shield available in market for breaks / AFK
- - Improved base defenses and offline survivability
- - Loads of bugfixes including freezes and desyncs
+# Changelog (24th October 2022):
+ - Offline protection added - more info below
+ - Victory condition changed to tech score
 
 # Goal of the game
 Survive as long as you can. Raid other towns. Defend your town.
@@ -39,9 +31,10 @@ Survive as long as you can. Raid other towns. Defend your town.
 
 # PvP Shields
 - PvP shields prevent players from entering, building and damaging
+- Offline PvP shields depoly automatically once all players of a town go offline
+    The size is same as the AFK shield that is available in your market
 - Your town has a AFK PvP shield that you can use to safely take a quick break
-    without other players killing your town. Deploy it from the market.
-- Offline PvP shields deply once all players of a town go offline. The size is same as the AFK shield in market
+    Deploy it from the market
 
 # Town members and alliances
 - Once a town is formed, members may invite other players and teams using a coin. To invite another player, drop a coin

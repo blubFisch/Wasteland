@@ -1,4 +1,3 @@
-local Public = {}
 local mod_gui = require('mod-gui')
 
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
