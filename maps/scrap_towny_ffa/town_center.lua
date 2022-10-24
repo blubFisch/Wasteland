@@ -412,10 +412,11 @@ local function update_offline_pvp_shields()
         local shield = this.pvp_shields[force.name]
 
         if not shield and table_size(force.connected_players) == 0 then
-            -- start delayed. waht if existing shield?
+            -- start delayed. what if existing shield?
 
             local shield_lifetime_ticks = 240 * 60 * 60 * 60
-            PvPShield.add_shield(market.surface, market.force, market.position, 120, shield_lifetime_ticks, 2 * 60 * 60, false, true)
+            game.print("The offline PvP Shield of " .. market.town_name .. " is activating now")
+            PvPShield.add_shield(market.surface, market.force, market.position, 80, shield_lifetime_ticks, 2 * 60 * 60, false, true)
 
         elseif shield and shield.is_offline_mode and table_size(force.connected_players) > 0 then
             force.print("Welcome back. Your offline protection is expiring now.")
@@ -425,11 +426,9 @@ local function update_offline_pvp_shields()
 end
 
 local function add_pvp_shield_scaled(position, force, surface)
-    local evo = Evolution.get_highest_evolution()
-
-    if evo > 0.2 then
-        local min_size = 70
-        local max_size = 150
+    if Evolution.get_highest_evolution() > 0.2 then
+        local min_size = 60
+        local max_size = 120
         local min_duration = 0.5 * 60 * 60 * 60
         local max_duration =   8 * 60 * 60 * 60
         local lifetime_ticks = math_min(min_duration + 2 * evo * (max_duration - min_duration), max_duration)
@@ -644,7 +643,7 @@ local function on_entity_damaged(event)
     if not entity.valid then
         return
     end
-    if entity.name == 'market' then
+    if entity.name == 'market' and not PvPShield.entity_is_protected(entity, event.force) then
         Public.set_market_health(entity, event.final_damage_amount)
     end
 end

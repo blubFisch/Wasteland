@@ -9,7 +9,8 @@ Have fun and be comfy ^.^]]
 
 local info_adv =
     [[
-# Changelog (10th-16th October 2022):
+# Changelog (10th-24th October 2022):
+ - Buildings protected by PvP shields can not be damaged anymore
  - Added /suicide chat command to use if you get stuck
  - PvP shields now prevent building inside
  - Combat balance overhaul (see "Bonuses" button top right to check modifiers)

@@ -179,6 +179,38 @@ local function on_player_driving_changed_state(event)
     end
 end
 
+function Public.entity_is_protected(entity, cause_force)
+    if not (cause_force and cause_force.valid) then
+        game.print("protected by default")  -- TODO
+        return true
+    end
+
+    local this = ScenarioTable.get_table()
+    for _, shield in pairs(this.pvp_shields) do
+        if entity.surface == shield.surface and entity.force == shield.force and cause_force.name ~= "enemy" then
+            if shield.force ~= cause_force and not shield.force.get_friend(cause_force) then
+                if CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+local function on_entity_damaged(event)
+    local entity = event.entity
+    if not entity.valid then
+        return
+    end
+
+    if Public.entity_is_protected(entity, event.force) then
+        game.print(event.final_damage_amount)  -- TODO
+        entity.health = entity.health + event.final_damage_amount
+    end
+end
+
+Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
 Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(60, update_shield_lifetime)
