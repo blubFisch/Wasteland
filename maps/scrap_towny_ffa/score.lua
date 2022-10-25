@@ -35,7 +35,7 @@ local function init_score_board(player)
     end
 
     local flow = mod_gui.get_frame_flow(player)
-    local frame = flow.add {type = 'frame', style = mod_gui.frame_style, caption = 'Town survival', direction = 'vertical'}
+    local frame = flow.add {type = 'frame', style = mod_gui.frame_style, caption = 'Town leaderboard', direction = 'vertical'}
     frame.style.vertically_stretchable = false
     this.score_gui_frame[player.index] = frame
 end

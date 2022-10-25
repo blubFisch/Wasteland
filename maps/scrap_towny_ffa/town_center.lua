@@ -435,7 +435,8 @@ local function update_offline_pvp_shields()
 end
 
 local function add_pvp_shield_scaled(position, force, surface)
-    if Evolution.get_highest_evolution() > 0.2 then
+    local evo = Evolution.get_highest_evolution()
+    if evo > 0.2 then
         local min_size = 60
         local max_size = 120
         local min_duration = 0.5 * 60 * 60 * 60
