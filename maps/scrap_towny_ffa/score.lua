@@ -58,7 +58,7 @@ local function update_score()
             subheader.style.horizontally_stretchable = true
             subheader.style.vertical_align = 'center'
 
-            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' tech points to win!'}}
+            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' research points to win!'}}
 
             if not next(subheader.children) then
                 subheader.destroy()
@@ -68,7 +68,7 @@ local function update_score()
             information_table.style.margin = 4
             information_table.style.column_alignments[3] = 'right'
 
-            for _, caption in pairs({'Rank', 'Town (players online/total)', 'Tech points'}) do
+            for _, caption in pairs({'Rank', 'Town (players online/total)', 'Research points'}) do
                 local label = information_table.add {type = 'label', caption = caption}
                 label.style.font = 'default-bold'
             end

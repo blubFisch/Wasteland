@@ -425,7 +425,7 @@ local function update_offline_pvp_shields()
             if activation and activation ~= -1 and game.tick > activation then
                 game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now."..
                         " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
-                PvPShield.add_shield(market.surface, market.force, market.position, 60,
+                PvPShield.add_shield(market.surface, market.force, market.position, 80,
                         offline_shield_duration_ticks, 2 * 60 * 60, false, true)
                 this.pvp_shield_offline_activations[force.index] = -1
             elseif not activation and activation ~= -1 then
@@ -449,7 +449,7 @@ local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
     local min_evo_for_shield = 0.2
     if evo > min_evo_for_shield then
-        local min_size = 60
+        local min_size = 80
         local max_size = 100
         local min_duration =   1 * 60 * 60 * 60
         local max_duration =   8 * 60 * 60 * 60

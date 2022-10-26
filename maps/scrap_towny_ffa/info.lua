@@ -7,9 +7,9 @@ In this scenario, players build towns and fight against other towns and the bite
 
 local info_adv =
     [[
-# Changelog (24th October 2022):
+# Changelog (26th Oct 2022):
  - Offline protection added - more info below
- - Victory condition changed to tech score
+ - Victory condition changed to research score
 
 # Goal of the game
 Survive as long as you can. Raid other towns. Defend your town.

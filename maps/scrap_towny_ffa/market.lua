@@ -99,15 +99,16 @@ local upgrade_functions = {
         if not this.pvp_shields[player.force.name] then
             -- Double-check with the player to prevent accidental clicks
             if this.pvp_shield_warned[player.force.name] ~= nil and game.tick - this.pvp_shield_warned[player.force.name] < 60 * 60 then
-                if not Town_center.enemy_players_nearby(town_center, 60) then
-                    PvPShield.add_shield(surface, force, market.position, 60, shield_lifetime_ticks, 2 * 60 * 60, true)
+                if not Town_center.enemy_players_nearby(town_center, 80) then
+                    PvPShield.add_shield(surface, force, market.position, 80, shield_lifetime_ticks, 2 * 60 * 60, true)
                     surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
                     this.pvp_shield_warned[player.force.name] = nil
                 else
                     player.print("Enemy players are too close, can't deploy PvP shield")
                 end
             else
-                player.force.print('You have requested a temporary PvP shield. This will freeze all players in your town for ' .. string.format("%.0f", shield_lifetime_ticks / 60 / 60) .. ' minutes to take a break. Click again to confirm.')
+                player.force.print('You have requested a temporary PvP shield. This will freeze all players in your town'
+                        .. ' for ' .. PvPShield.format_lifetime_str(shield_lifetime_ticks) .. ' to take a break. Click again to confirm.')
                 this.pvp_shield_warned[player.force.name] = game.tick
             end
         else
