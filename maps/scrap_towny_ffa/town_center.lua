@@ -421,6 +421,7 @@ local function update_offline_pvp_shields()
                 game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now")
                 PvPShield.add_shield(market.surface, market.force, market.position, 80,
                         nil, 2 * 60 * 60, false, true)
+                this.pvp_shield_offline_activations[force.index] = nil
             elseif not activation then
                 local delay_mins = 5
                 game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes")
