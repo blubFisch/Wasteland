@@ -66,7 +66,7 @@ function Public.add_shield(surface, force, center, max_size, lifetime_ticks, tim
             end
         end
         shield.force.print("Your AFK PvP shield is now rolling out. You will be frozen until it expires in " ..
-                string.format("%.0f", (Public.remaining_lifetime(shield)) / 60 / 60) .. ' minutes')
+                Public.format_lifetime_str(Public.remaining_lifetime(shield)))
     end
 
     scale_size_by_lifetime(shield)
@@ -90,6 +90,14 @@ function Public.remaining_lifetime(shield)
         return shield.max_lifetime_ticks - (game.tick - shield.lifetime_start)
     else
         return false
+    end
+end
+
+function Public.format_lifetime_str(lifetime_ticks)
+    if lifetime_ticks > 60 * 60 * 60 then
+        return string.format('%.1f h', lifetime_ticks / 60 / 60 / 60)
+    else
+        return string.format('%.1f m', lifetime_ticks / 60 / 60)
     end
 end
 
