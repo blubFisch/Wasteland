@@ -97,7 +97,7 @@ function Public.format_lifetime_str(lifetime_ticks)
     if lifetime_ticks > 60 * 60 * 60 then
         return string.format('%.1f h', lifetime_ticks / 60 / 60 / 60)
     else
-        return string.format('%.1f m', lifetime_ticks / 60 / 60)
+        return string.format('%.0f mins', math.ceil(lifetime_ticks / 60 / 60))
     end
 end
 

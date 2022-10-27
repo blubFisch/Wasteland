@@ -396,10 +396,10 @@ local function update_pvp_shields_display()
         local shield = this.pvp_shields[town_center.market.force.name]
         local info
         if shield then
-            if shield.max_lifetime_ticks then
-                info = 'PvP Shield: ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
+            if shield.is_offline_mode then
+                info = 'PvP Shield: While offline, max ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
             else
-                info = 'PvP Shield: While players offline, max ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
+                info = 'PvP Shield: ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
             end
         else
             info = ''
