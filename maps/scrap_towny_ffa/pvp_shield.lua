@@ -94,8 +94,10 @@ function Public.remaining_lifetime(shield)
 end
 
 function Public.format_lifetime_str(lifetime_ticks)
-    if lifetime_ticks > 60 * 60 * 60 then
-        return string.format('%.1f h', lifetime_ticks / 60 / 60 / 60)
+    if lifetime_ticks > 10 * 60 * 60 * 60 then
+        return string.format('%.0fh', lifetime_ticks / 60 / 60 / 60)
+    elseif lifetime_ticks > 60 * 60 * 60 then
+        return string.format('%.1fh', lifetime_ticks / 60 / 60 / 60)
     else
         return string.format('%.0f mins', math.ceil(lifetime_ticks / 60 / 60))
     end
