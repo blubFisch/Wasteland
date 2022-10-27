@@ -418,7 +418,7 @@ local function update_offline_pvp_shields()
         local shield = this.pvp_shields[force.name]
 
         local town_age = game.tick - town_center.creation_tick
-        local min_age_for_shield = 30 * 60
+        local min_age_for_shield = 30 * 60 * 60
 
         if town_age > min_age_for_shield then
             if not shield and table_size(force.connected_players) == 0  then
