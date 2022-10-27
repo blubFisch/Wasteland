@@ -411,27 +411,38 @@ end
 local function update_offline_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
+    local size = 80
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
 
-        if not shield and table_size(force.connected_players) == 0 then
-            local activation = this.pvp_shield_offline_activations[force.index]
-            -- Activations
-            -- nil means not scheduled yet, waiting for players to go offline
-            -- positive means scheduled for tick x
-            -- -1 it is not meant to renew until players join again
-            if activation and activation ~= -1 and game.tick > activation then
-                game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now."..
-                        " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
-                PvPShield.add_shield(market.surface, market.force, market.position, 80,
-                        offline_shield_duration_ticks, 2 * 60 * 60, false, true)
-                this.pvp_shield_offline_activations[force.index] = -1
-            elseif not activation and activation ~= -1 then
-                local delay_mins = 5
-                game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes")
-                this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
+        local town_age = game.tick - town_center.creation_tick
+        local min_age_for_shield = 30 * 60
+
+        if town_age > min_age_for_shield then
+            if not shield and table_size(force.connected_players) == 0  then
+                local activation = this.pvp_shield_offline_activations[force.index]
+                -- Activations
+                -- nil means not scheduled yet, waiting for players to go offline
+                -- positive means scheduled for tick x
+                -- -1 it is not meant to renew until players join again
+                if activation and activation ~= -1 and game.tick > activation then
+                    game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now."..
+                            " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
+                    PvPShield.add_shield(market.surface, market.force, market.position, size,
+                            offline_shield_duration_ticks, 2 * 60 * 60, false, true)
+                    this.pvp_shield_offline_activations[force.index] = -1
+                elseif not activation and activation ~= -1 then
+                    local delay_mins = 5
+                    game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes")
+                    this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
+                end
+            elseif not this.pvp_shields_displayed_offline_hint[force.name] then
+                force.print("Your town is now old enough to deploy an offline shield."
+                        .. " Once all of your members leave, a " .. size .. "x" .. size .. " tiles square around your town center"
+                        .. " will be protected from players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
+                this.pvp_shields_displayed_offline_hint[force.name] = true
             end
         elseif table_size(force.connected_players) > 0 then
             if shield and shield.is_offline_mode then
