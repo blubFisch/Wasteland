@@ -19,9 +19,9 @@ local Color = require 'utils.color_presets'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local Evolution = require 'maps.scrap_towny_ffa.evolution'
 
-local town_radius = 27
-local radius_between_towns = 102     -- must be > shield size + 2 (2 towns have full shield without overlap)
-local ore_amount = 500 * (200 / 168.5)
+local town_radius = 30
+local radius_between_towns = 103     -- must be > shield size + 2 (2 towns have full shield without overlap)
+local ore_amount = 800 * (200 / 168.5)
 
 local colors = {}
 local c1 = 250
@@ -73,8 +73,8 @@ end
 
 local resource_vectors = {}
 resource_vectors[1] = {}
-for x = 10, 22, 1 do
-    for y = 10, 22, 1 do
+for x = 14, 22, 1 do
+    for y = 13, 24, 1 do
         table_insert(resource_vectors[1], {x, y})
     end
 end
@@ -411,7 +411,7 @@ end
 local function update_offline_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
-    local size = 80
+    local size = 61
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
         local force = market.force
@@ -420,7 +420,7 @@ local function update_offline_pvp_shields()
         local town_age = game.tick - town_center.creation_tick
         local min_age_for_shield = 30 * 60 * 60
 
-        if town_age > min_age_for_shield then
+        if table_size(force.connected_players) == 0 and town_age > min_age_for_shield then
             if not shield and table_size(force.connected_players) == 0  then
                 local activation = this.pvp_shield_offline_activations[force.index]
                 -- Activations
@@ -438,11 +438,6 @@ local function update_offline_pvp_shields()
                     game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes")
                     this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
                 end
-            elseif not this.pvp_shields_displayed_offline_hint[force.name] then
-                force.print("Your town is now old enough to deploy an offline shield."
-                        .. " Once all of your members leave, a " .. size .. "x" .. size .. " tiles square around your town center"
-                        .. " will be protected from players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
-                this.pvp_shields_displayed_offline_hint[force.name] = true
             end
         elseif table_size(force.connected_players) > 0 then
             if shield and shield.is_offline_mode then
@@ -451,6 +446,13 @@ local function update_offline_pvp_shields()
                         .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. " shield")
                 PvPShield.remove_shield(shield)
             end
+            if town_age > min_age_for_shield and not this.pvp_shields_displayed_offline_hint[force.name] then
+                force.print("Your town is now old enough to deploy an offline shield."
+                        .. " Once all of your members leave, a " .. size .. "x" .. size .. " tiles square around your town center (same size as the initial town wall)"
+                        .. " will be protected from enemy players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
+                        .. " However, biters will always be able to attack your town")
+                this.pvp_shields_displayed_offline_hint[force.name] = true
+            end
             this.pvp_shield_offline_activations[force.index] = nil
         end
     end
@@ -458,10 +460,10 @@ end
 
 local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
-    local min_evo_for_shield = 0.2
-    if evo > min_evo_for_shield then
-        local min_size = 80
-        local max_size = 100
+    local min_evo_for_shield = 0.13 -- Compare with offensive research like tank, power armor, ...
+    if evo >= min_evo_for_shield then
+        local min_size = 61
+        local max_size = 101
         local min_duration =   1 * 60 * 60 * 60
         local max_duration =   8 * 60 * 60 * 60
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
@@ -648,7 +650,7 @@ local function found_town(event)
     Team.add_player_to_town(player, town_center)
     Team.remove_key(player.index)
     Team.add_chart_tag(town_center)
-    add_pvp_shield_scaled({ x = position.x + 0.5, y = position.y + 0.5}, force, surface)    -- Market center is slightly shifted
+    add_pvp_shield_scaled(town_center.market.position, force, surface)    -- Market center is slightly shifted
 
     game.print('>> ' .. player.name .. ' has founded a new town!', {255, 255, 0})
     Server.to_discord_embed(player.name .. ' has founded a new town!')

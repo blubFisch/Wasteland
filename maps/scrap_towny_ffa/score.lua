@@ -42,7 +42,7 @@ end
 
 local function update_score()
     local this = ScenarioTable.get_table()
-    local score_to_win = 70
+    local score_to_win = 100
 
     for _, player in pairs(game.connected_players) do
         local frame = this.score_gui_frame[player.index]
