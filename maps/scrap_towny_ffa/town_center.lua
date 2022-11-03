@@ -19,9 +19,9 @@ local Color = require 'utils.color_presets'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local Evolution = require 'maps.scrap_towny_ffa.evolution'
 
-local town_radius = 30
-local radius_between_towns = 103     -- must be > shield size + 2 (2 towns have full shield without overlap)
-local ore_amount = 800 * (200 / 168.5)
+local town_radius = 24
+local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
+local ore_amount = 1200
 
 local colors = {}
 local c1 = 250
@@ -73,8 +73,8 @@ end
 
 local resource_vectors = {}
 resource_vectors[1] = {}
-for x = 14, 22, 1 do
-    for y = 13, 24, 1 do
+for x = 10, 16, 1 do
+    for y = 9, 20, 1 do
         table_insert(resource_vectors[1], {x, y})
     end
 end
@@ -93,8 +93,8 @@ end
 
 local additional_resource_vectors = {}
 additional_resource_vectors[1] = {}
-for x = 10, 22, 1 do
-    for y = -4, 4, 1 do
+for x = 8, 16, 1 do
+    for y = -3, 3, 1 do
         table_insert(additional_resource_vectors[1], {x, y})
     end
 end
@@ -103,8 +103,8 @@ for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[2], {vector[1] * -1, vector[2]})
 end
 additional_resource_vectors[3] = {}
-for y = 10, 22, 1 do
-    for x = -4, 4, 1 do
+for y = 8, 16, 1 do
+    for x = -3, 3, 1 do
         table_insert(additional_resource_vectors[3], {x, y})
     end
 end
@@ -411,7 +411,8 @@ end
 local function update_offline_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
-    local size = 61
+    local size = PvPShield.default_size
+
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
         local force = market.force
@@ -462,7 +463,7 @@ local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
     local min_evo_for_shield = 0.13 -- Compare with offensive research like tank, power armor, ...
     if evo >= min_evo_for_shield then
-        local min_size = 61
+        local min_size = PvPShield.default_size
         local max_size = 101
         local min_duration =   1 * 60 * 60 * 60
         local max_duration =   8 * 60 * 60 * 60

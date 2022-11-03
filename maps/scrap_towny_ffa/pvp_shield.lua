@@ -8,6 +8,8 @@ local CommonFunctions = require 'utils.common'
 
 local beam_type = 'electric-beam-no-sound'
 
+Public.default_size = 49
+
 local function draw_borders(shield)
     local surface = shield.surface
     local right = shield.box.right_bottom.x
