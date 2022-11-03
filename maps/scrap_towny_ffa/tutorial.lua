@@ -32,7 +32,8 @@ local function tutorials_tick()
 
             if this.tutorials[player.index].step == 2 and player.get_item_count("iron-plate") >= 500 then
                 player.set_goal_description("Great!\nThis is the end of the tutorial.\n\n"
-                    .. "The goal of the game is to build a town that lasts as long as possible,\nagainst biters and players")
+                    .. "The goal of the game is to build a town that lasts as long as possible,\nagainst biters and players\n"
+                    .. "Prove your town is worthy by reaching 100 research points\n(through regular research)")
 
                 this.tutorials[player.index].finish_at_tick = game.tick + 60 * 30
                 this.tutorials[player.index].step = 3
