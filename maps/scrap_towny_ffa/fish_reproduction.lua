@@ -36,7 +36,7 @@ function Public.reproduce()
             end
         end
         if guppy == true then
-            for i = 1, math_random(2, 5) do
+            for i = 1, math_random(1, 3) do
                 surface.create_entity({name = 'water-splash', position = fish.position})
                 surface.create_entity({name = 'fish', position = fish.position})
             end
