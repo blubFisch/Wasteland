@@ -247,9 +247,8 @@ local function draw_town_spawn(player_name)
         local x = position.x + vector[1] + 0.5
         local y = position.y + vector[2] + 0.5
         local p = {x = x, y = y}
-        if math_random(1, 3) == 1 then
+        if math_random(1, 2) == 1 then
             if surface.can_place_entity({name = 'fish', position = p}) then
-                surface.create_entity({name = 'water-splash', position = p})
                 surface.create_entity({name = 'fish', position = p})
             end
         end
