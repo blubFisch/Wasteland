@@ -22,7 +22,9 @@ local suicide_handler = Scheduler.set(function(data)
         local this = ScenarioTable.get_table()
         local player_index = data[i].player_index
         local player = game.get_player(player_index)
+
         if not player or not player.valid or not player.character then
+            this.suicides[player_index] = nil
             return
         end
 
@@ -34,8 +36,8 @@ local suicide_handler = Scheduler.set(function(data)
         local minutes_remaining = this.suicides[player.index].minutes_remaining
 
         if minutes_remaining <= 0 then
-            player.character.die(player.force, player.character)
             this.suicides[player.index] = nil
+            player.character.die(player.force, player.character)
         else
             if minutes_remaining == 1 then
                 player.print(minutes_remaining .. " minute remaining until death.", yellow)
@@ -43,7 +45,6 @@ local suicide_handler = Scheduler.set(function(data)
                 player.print(minutes_remaining .. " minutes remaining until death.", yellow)
             end
             this.suicides[player.index].minutes_remaining = this.suicides[player.index].minutes_remaining - 1
-            Scheduler.timer(game.tick + one_minute, data[i].handler, { player_index = player.index, handler = data[i].handler})
         end
     end
 
@@ -66,7 +67,9 @@ commands.add_command(
             end
 
             this.suicides[player.index] = {minutes_remaining = minutes_to_die - 1}
-            Scheduler.timer(game.tick + one_minute, suicide_handler, { player_index = player.index, handler = suicide_handler })
+            for i = 1, 10 do
+                Scheduler.timer(game.tick + i * one_minute, suicide_handler, {player_index = player.index})
+            end
             player.print("You ate a poison pill. You will die in " .. minutes_to_die .. " minutes.", yellow)
         end
 )
