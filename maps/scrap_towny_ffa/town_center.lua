@@ -416,11 +416,9 @@ local function update_offline_pvp_shields()
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
+        local shield_eligible = town_center.evolution.worms > 0.02
 
-        local town_age = game.tick - town_center.creation_tick
-        local min_age_for_shield = 30 * 60 * 60
-
-        if table_size(force.connected_players) == 0 and town_age > min_age_for_shield then
+        if table_size(force.connected_players) == 0 and shield_eligible then
             if not shield and table_size(force.connected_players) == 0  then
                 local activation = this.pvp_shield_offline_activations[force.index]
                 -- Activations
@@ -442,12 +440,12 @@ local function update_offline_pvp_shields()
         elseif table_size(force.connected_players) > 0 then
             if shield and shield.is_offline_mode then
                 force.print("Welcome back. Your offline protection is expiring now."
-                        .. " After everyone from your town leaves, you will get a new "
-                        .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. " shield")
+                        .. " After everyone from your town leaves, you will get a new shield for "
+                        .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
                 PvPShield.remove_shield(shield)
             end
-            if town_age > min_age_for_shield and not this.pvp_shields_displayed_offline_hint[force.name] then
-                force.print("Your town is now old enough to deploy an offline shield."
+            if shield_eligible and not this.pvp_shields_displayed_offline_hint[force.name] then
+                force.print("Your town is now advanced enough to deploy an offline shield."
                         .. " Once all of your members leave, a " .. size .. "x" .. size .. " tiles square around your town center (same size as the initial town wall)"
                         .. " will be protected from enemy players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
                         .. " However, biters will always be able to attack your town")
