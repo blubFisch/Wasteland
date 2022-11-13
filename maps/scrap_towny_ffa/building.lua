@@ -9,9 +9,8 @@ local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local town_zoning_entity_types = { "wall", "gate", "electric-pole", "ammo-turret", "electric-turret", "fluid-turret"}
 
 -- these should be allowed to place inside any base by anyone as neutral
-local neutral_whitelist = {
+local logistics_entities = {
     ['burner-inserter'] = true,
-    ['car'] = true,
     ['coin'] = true,
     ['express-loader'] = true,
     ['fast-inserter'] = true,
@@ -25,7 +24,6 @@ local neutral_whitelist = {
     ['stack-filter-inserter'] = true,
     ['stack-inserter'] = true,
     ['steel-chest'] = true,
-    ['tank'] = true,
     ['wooden-chest'] = true,
     ['transport-belt'] = true,
     ['fast-transport-belt'] = true,
@@ -36,6 +34,11 @@ local neutral_whitelist = {
     ['splitter'] = true,
     ['fast-splitter'] = true,
     ['express-splitter'] = true
+}
+
+local vehicle_entities = {
+    ['car'] = true,
+    ['tank'] = true,
 }
 
 local function refund_item(event, item_name)
@@ -236,24 +239,27 @@ local function process_built_entities(event)
         force_name = force.name
     end
 
-    if Public.near_another_town(force_name, position, surface, 32) == true or PvPShield.protected_by_other_zones(surface, position, force, 32) then
-        if neutral_whitelist[name] then
-            entity.force = game.forces['neutral']
-        else
-            -- Prevent entities from being built near towns
+    -- Logistics are okay to place everywhere you can walk(=outside of shield)
+    if logistics_entities[name] and not PvPShield.protected_by_other_zones(surface, position, force, 0) then
+        entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
+    elseif not vehicle_entities[name] then  -- Vehicles are always ok to place
+        -- All other items are restricted
+        if PvPShield.protected_by_other_zones(surface, position, force, 32)
+                or Public.near_another_town(force_name, position, surface, 32) == true then
+            -- Prevent building
             entity.destroy()
             if player_index ~= nil then
                 local player = game.players[player_index]
                 player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
             end
-            error_floaty(surface, position, "Can't build near town!")
+            error_floaty(surface, position, "Can't build near town or PvP shield!")
             if name ~= 'entity-ghost' then
                 refund_item(event, event.stack.name)
             end
-            return
         end
     end
 
+    -- Build all outlander/rogue entities as neutral to make them compatible with all forces
     if force_name == 'player' or force_name == 'rogue' then
         entity.force = game.forces['neutral']
     end
