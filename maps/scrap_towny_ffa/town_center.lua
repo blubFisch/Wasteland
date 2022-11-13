@@ -19,7 +19,7 @@ local Color = require 'utils.color_presets'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local Evolution = require 'maps.scrap_towny_ffa.evolution'
 
-local town_radius = 24
+local town_radius = 20
 local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
 local ore_amount = 1200
 
@@ -73,8 +73,8 @@ end
 
 local resource_vectors = {}
 resource_vectors[1] = {}
-for x = 10, 16, 1 do
-    for y = 9, 20, 1 do
+for x = 8, 14, 1 do
+    for y = 6, 17, 1 do
         table_insert(resource_vectors[1], {x, y})
     end
 end
@@ -93,7 +93,7 @@ end
 
 local additional_resource_vectors = {}
 additional_resource_vectors[1] = {}
-for x = 8, 16, 1 do
+for x = 7, 14, 1 do
     for y = -3, 3, 1 do
         table_insert(additional_resource_vectors[1], {x, y})
     end
@@ -103,7 +103,7 @@ for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[2], {vector[1] * -1, vector[2]})
 end
 additional_resource_vectors[3] = {}
-for y = 8, 16, 1 do
+for y = 7, 14, 1 do
     for x = -3, 3, 1 do
         table_insert(additional_resource_vectors[3], {x, y})
     end
