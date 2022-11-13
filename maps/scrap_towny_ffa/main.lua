@@ -37,6 +37,7 @@ local Gui = require 'utils.gui'
 local Color = require 'utils.color_presets'
 local Where = require 'utils.commands.where'
 local Inventory = require 'modules.show_inventory'
+local AntiGrief = require 'utils.antigrief'
 
 local function on_init()
     Autostash.insert_into_furnace(true)
@@ -47,7 +48,10 @@ local function on_init()
     Where.module_disabled(true)
     Inventory.module_disabled(true)
 
-    --log("on_init")
+    -- Disable AntiGrief as it has too many side effects and is not so useful for this mode
+    local AG = AntiGrief.get()
+    AG.enabled = false
+
     game.enemy_has_vision_on_land_mines = false
     game.draw_resource_selection = true
     game.disable_tutorial_triggers()
