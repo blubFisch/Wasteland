@@ -439,11 +439,14 @@ local function update_offline_pvp_shields()
             end
         elseif table_size(force.connected_players) > 0 then
             if shield and shield.is_offline_mode then
-                force.print("Welcome back. Your offline protection is expiring now."
+                force.print("Welcome back. Your offline protection will expire in one minute."
                         .. " After everyone from your town leaves, you will get a new shield for "
                         .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
-                PvPShield.remove_shield(shield)
+                -- Leave offline shield online for a short time for the town's players to see it
+                shield.is_offline_mode = false
+                shield.max_lifetime_ticks = game.tick - shield.lifetime_start + 60 * 60
             end
+
             if shield_eligible and not this.pvp_shields_displayed_offline_hint[force.name] then
                 force.print("Your town is now advanced enough to deploy an offline shield."
                         .. " Once all of your members leave, a " .. size .. "x" .. size .. " tiles square around your town center (same size as the initial town wall)"
