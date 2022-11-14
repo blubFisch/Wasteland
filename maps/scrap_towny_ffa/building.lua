@@ -239,22 +239,24 @@ local function process_built_entities(event)
         force_name = force.name
     end
 
-    -- Logistics are okay to place everywhere you can walk(=outside of shield)
-    if logistics_entities[name] and not PvPShield.protected_by_other_zones(surface, position, force, 0) then
-        entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
-    elseif not vehicle_entities[name] then  -- Vehicles are always ok to place
-        -- All other items are restricted
+    if not vehicle_entities[name] then  -- Vehicles are always ok to place
+        -- Handle entities placed within protected areas
         if PvPShield.protected_by_other_zones(surface, position, force, 32)
                 or Public.near_another_town(force_name, position, surface, 32) == true then
-            -- Prevent building
-            entity.destroy()
-            if player_index ~= nil then
-                local player = game.players[player_index]
-                player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
-            end
-            error_floaty(surface, position, "Can't build near town or PvP shield!")
-            if name ~= 'entity-ghost' then
-                refund_item(event, event.stack.name)
+            -- Logistics are okay to place wherever you can access (=outside of shield)
+            if logistics_entities[name] and not PvPShield.protected_by_other_zones(surface, position, force, 0) then
+                entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
+            else
+                -- Prevent building
+                entity.destroy()
+                if player_index ~= nil then
+                    local player = game.players[player_index]
+                    player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
+                end
+                error_floaty(surface, position, "Can't build near town or PvP shield!")
+                if name ~= 'entity-ghost' then
+                    refund_item(event, event.stack.name)
+                end
             end
         end
     end
