@@ -7,9 +7,9 @@ In this scenario, players build towns and fight against other towns and the bite
 
 local info_adv =
     [[
-# Changelog (26th Oct 2022):
- - Offline protection added - more info below
- - Victory condition changed to research score
+# Changelog (15th Nov 2022):
+ - Bugfixes
+ - Smaller towns and smaller offline shield
 
 # Goal of the game
 Survive as long as you can. Raid other towns. Defend your town.
@@ -28,6 +28,7 @@ Survive as long as you can. Raid other towns. Defend your town.
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
 - Use /rename-town NEWNAME (chat command) to rename your town
 - If you get stuck or trapped, use the /suicide chat command to respawn
+- It is possible to build logistics (inserters, belts, boxes) in enemy territory to steal their items
 
 # PvP Shields
 - PvP shields prevent players from entering, building and damaging
