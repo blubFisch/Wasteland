@@ -26,7 +26,7 @@ local worms = {
 }
 
 -- evolution max distance in tiles
-local max_evolution_distance = 1024
+local max_evolution_distance = 700
 local max_pollution_behemoth = 256
 local max_pollution_big = 64
 local max_pollution_medium = 16
