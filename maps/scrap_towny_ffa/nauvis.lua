@@ -118,7 +118,7 @@ function Public.initialize()
     -- water = 1 means elevation is not reduced when calculating water tiles (elevation < 0)
     -- water = 2 means elevation is reduced by 10 when calculating water tiles (elevation < 0)
     --			or rather, the water table is 10 above the normal elevation
-    mgs.water = 1.5
+    mgs.water = 1
     mgs.peaceful_mode = false
     mgs.starting_area = 'none'
     mgs.terrain_segmentation = 8
