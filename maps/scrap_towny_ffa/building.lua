@@ -9,7 +9,7 @@ local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local town_zoning_entity_types = { "wall", "gate", "electric-pole", "ammo-turret", "electric-turret", "fluid-turret"}
 
 -- these should be allowed to place inside any base by anyone as neutral
-local logistics_entities = {
+local allowed_entities_neutral = {
     ['burner-inserter'] = true,
     ['coin'] = true,
     ['express-loader'] = true,
@@ -33,12 +33,20 @@ local logistics_entities = {
     ['express-underground-belt'] = true,
     ['splitter'] = true,
     ['fast-splitter'] = true,
-    ['express-splitter'] = true
+    ['express-splitter'] = true,
+    ['straight-rail'] = true,
+    ['curved-rail'] = true,
+    ['rail-signal'] = true,
+    ['rail-chain-signal'] = true
 }
 
-local vehicle_entities = {
+local allowed_entities_keep_force = {
     ['car'] = true,
     ['tank'] = true,
+    ['locomotive'] = true,
+    ['cargo-wagon'] = true,
+    ['fluid-wagon'] = true,
+    ['train-stop'] = true,  -- This needs to be here so automatic routes work
 }
 
 local function refund_item(event, item_name)
@@ -239,13 +247,15 @@ local function process_built_entities(event)
         force_name = force.name
     end
 
-    if not vehicle_entities[name] then  -- Vehicles are always ok to place
+    if not allowed_entities_keep_force[name] then  -- Some entities like vehicles are always ok to place
         -- Handle entities placed within protected areas
         if PvPShield.protected_by_other_zones(surface, position, force, 32)
                 or Public.near_another_town(force_name, position, surface, 32) == true then
             -- Logistics are okay to place wherever you can access (=outside of shield)
-            if logistics_entities[name] and not PvPShield.protected_by_other_zones(surface, position, force, 0) then
+            if allowed_entities_neutral[name] and not PvPShield.protected_by_other_zones(surface, position, force, 0) then
                 entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
+                surface.create_entity({name = 'flying-text', position = position,
+                                       text = "Built as neutral", color = {r = 0, g = 1, b = 0}})
             else
                 -- Prevent building
                 entity.destroy()
@@ -253,7 +263,7 @@ local function process_built_entities(event)
                     local player = game.players[player_index]
                     player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
                 end
-                error_floaty(surface, position, "Can't build near town or PvP shield!")
+                error_floaty(surface, position, "Can't build this near town")
                 if name ~= 'entity-ghost' then
                     refund_item(event, event.stack.name)
                 end
