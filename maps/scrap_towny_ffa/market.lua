@@ -3,6 +3,7 @@ local table_insert = table.insert
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local Town_center = require 'maps.scrap_towny_ffa.town_center'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
+local Utils = require 'maps.scrap_towny_ffa.utils'
 
 local upgrade_functions = {
     -- Upgrade Town Center Health
@@ -104,15 +105,15 @@ local upgrade_functions = {
                     surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
                     this.pvp_shield_warned[player.force.name] = nil
                 else
-                    player.print("Enemy players are too close, can't deploy PvP shield")
+                    player.print("Enemy players are too close, can't deploy PvP shield", Utils.scenario_color)
                 end
             else
                 player.force.print('You have requested a temporary PvP shield. This will freeze all players in your town'
-                        .. ' for ' .. PvPShield.format_lifetime_str(shield_lifetime_ticks) .. ' to take a break. Click again to confirm.')
+                        .. ' for ' .. PvPShield.format_lifetime_str(shield_lifetime_ticks) .. ' to take a break. Click again to confirm.', Utils.scenario_color)
                 this.pvp_shield_warned[player.force.name] = game.tick
             end
         else
-            player.print("Your town already has a PvP shield")
+            player.print("Your town already has a PvP shield", Utils.scenario_color)
         end
         return false
     end

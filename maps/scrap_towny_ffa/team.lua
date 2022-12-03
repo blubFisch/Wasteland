@@ -11,6 +11,7 @@ local Map = require 'maps.scrap_towny_ffa.map'
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local CombatBalance = require 'maps.scrap_towny_ffa.combat_balance'
+local Utils = require 'maps.scrap_towny_ffa.utils'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
@@ -85,7 +86,7 @@ local function update_member_limit()
     end
 
     this.member_limit = math_min(limit, 3)
-    game.print('>> The member limit for all towns is now: ' .. this.member_limit, {255, 255, 0})
+    game.print('>> The member limit for all towns is now: ' .. this.member_limit, Utils.scenario_color)
 end
 
 local function can_force_accept_member(force)
@@ -97,7 +98,7 @@ local function can_force_accept_member(force)
 
     if #force.players >= this.member_limit then
         game.print('>> Town ' .. force.name .. ' has too many settlers! Current limit: ' .. this.member_limit .. '.'
-                .. ' The limit will increase once other towns have more settlers.', {255, 255, 0})
+                .. ' The limit will increase once other towns have more settlers.', Utils.scenario_color)
         return false
     end
     return true
@@ -298,7 +299,7 @@ local function ally_outlander(player, target)
 
     -- don't handle if towns not yet enabled
     if not this.towns_enabled then
-        player.print('You must wait for more players to join!', {255, 255, 0})
+        player.print('You must wait for more players to join!', Utils.scenario_color)
         return false
     end
     -- don't handle request if target is not a town
@@ -328,14 +329,14 @@ local function ally_outlander(player, target)
                     if not can_force_accept_member(target_force) then
                         return true
                     end
-                    game.print('>> ' .. player.name .. ' has settled in ' .. target_town_center.town_name, {255, 255, 0})
+                    game.print('>> ' .. player.name .. ' has settled in ' .. target_town_center.town_name, Utils.scenario_color)
                     Public.add_player_to_town(player, target_town_center)
                     return true
                 end
             end
         end
 
-        game.print('>> ' .. player.name .. ' wants to settle in ' .. target_town_center.town_name, {255, 255, 0})
+        game.print('>> ' .. player.name .. ' wants to settle in ' .. target_town_center.town_name, Utils.scenario_color)
         return true
     end
 
@@ -356,7 +357,7 @@ local function ally_outlander(player, target)
                     if not can_force_accept_member(player.force) then
                         return true
                     end
-                    game.print('>> ' .. player.name .. ' has accepted ' .. target_player.name .. ' into' .. target_town_center.town_name, {255, 255, 0})
+                    game.print('>> ' .. player.name .. ' has accepted ' .. target_player.name .. ' into' .. target_town_center.town_name, Utils.scenario_color)
                     Public.add_player_to_town(target_player, this.town_centers[player.force.name])
                     return true
                 end
@@ -364,7 +365,7 @@ local function ally_outlander(player, target)
         end
 
         local target_town_center_player = this.town_centers[player.force.name]
-        game.print('>> ' .. player.name .. ' is inviting ' .. target_player.name .. ' into ' .. target_town_center_player.town_name, {255, 255, 0})
+        game.print('>> ' .. player.name .. ' is inviting ' .. target_player.name .. ' into ' .. target_town_center_player.town_name, Utils.scenario_color)
         return true
     end
 end
@@ -386,10 +387,10 @@ local function ally_neighbour_towns(player, target)
     end
 
     requesting_force.set_friend(target_force, true)
-    game.print('>> Town ' .. requesting_force.name .. ' has set ' .. target_force.name .. ' as their friend!', {255, 255, 0})
+    game.print('>> Town ' .. requesting_force.name .. ' has set ' .. target_force.name .. ' as their friend!', Utils.scenario_color)
 
     if target_force.get_friend(requesting_force) then
-        game.print('>> The towns ' .. requesting_force.name .. ' and ' .. target_force.name .. ' have formed an alliance!', {255, 255, 0})
+        game.print('>> The towns ' .. requesting_force.name .. ' and ' .. target_force.name .. ' have formed an alliance!', Utils.scenario_color)
     end
 end
 
@@ -449,7 +450,7 @@ local function declare_war(player, item)
         if player.name ~= target.force.name then
             Public.set_player_to_outlander(player)
             local town_center = this.town_centers[target_force.name]
-            game.print('>> ' .. player.name .. ' has abandoned ' .. town_center.town_name, {255, 255, 0})
+            game.print('>> ' .. player.name .. ' has abandoned ' .. town_center.town_name, Utils.scenario_color)
             this.requests[player.index] = nil
         end
         if player.name == target.force.name then
@@ -465,7 +466,7 @@ local function declare_war(player, item)
             end
             Public.set_player_to_outlander(target_player)
             local town_center = this.town_centers[player.force.name]
-            game.print('>> ' .. player.name .. ' has banished ' .. target_player.name .. ' from ' .. town_center.town_name, {255, 255, 0})
+            game.print('>> ' .. player.name .. ' has banished ' .. target_player.name .. ' from ' .. town_center.town_name, Utils.scenario_color)
             this.requests[player.index] = nil
         end
         return
@@ -478,7 +479,7 @@ local function declare_war(player, item)
     requesting_force.set_friend(target_force, false)
     target_force.set_friend(requesting_force, false)
 
-    game.print('>> ' .. player.name .. ' has dropped the coal! Town ' .. target_force.name .. ' and ' .. requesting_force.name .. ' are now at war!', {255, 255, 0})
+    game.print('>> ' .. player.name .. ' has dropped the coal! Town ' .. target_force.name .. ' and ' .. requesting_force.name .. ' are now at war!', Utils.scenario_color)
 end
 
 local function delete_chart_tag_for_all_forces(market)
@@ -854,7 +855,7 @@ local function kill_force(force_name, cause)
     end
 
     Server.to_discord_embed(message)
-    game.print('>> ' .. message, {255, 255, 0})
+    game.print('>> ' .. message, Utils.scenario_color)
 
     update_member_limit()
 end

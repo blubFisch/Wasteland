@@ -5,6 +5,7 @@ local math_sqrt = math.sqrt
 local Event = require 'utils.event'
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local CommonFunctions = require 'utils.common'
+local Utils = require 'maps.scrap_towny_ffa.utils'
 
 local beam_type = 'electric-beam-no-sound'
 
@@ -68,7 +69,7 @@ function Public.add_shield(surface, force, center, max_size, lifetime_ticks, tim
             end
         end
         shield.force.print("Your AFK PvP shield is now rolling out. You will be frozen until it expires in " ..
-                Public.format_lifetime_str(Public.remaining_lifetime(shield)))
+                Public.format_lifetime_str(Public.remaining_lifetime(shield)), Utils.scenario_color)
     end
 
     scale_size_by_lifetime(shield)
@@ -193,7 +194,7 @@ local function on_player_driving_changed_state(event)
                 -- Kick players out of vehicles if needed
                 if player.character.driving then
                     player.character.driving = false
-                    player.print("Can't drive around while AFK PvP Shield is active")
+                    player.print("Can't drive around while AFK PvP Shield is active", Utils.scenario_color)
                 end
             end
         end
