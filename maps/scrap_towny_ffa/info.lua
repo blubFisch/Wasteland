@@ -7,8 +7,8 @@ In this scenario, players build towns and fight against other towns and the bite
 
 local info_adv =
     [[
-# Changelog (15th Nov 2022):
- - Bugfixes
+# Changelog (3 Dec 2022):
+ - Rails are now possible to build near other towns
  - Smaller towns and smaller offline shield
 
 # Goal of the game
