@@ -204,7 +204,7 @@ local function on_init()
     this.rocks_yield_ore_veins = {}
     this.rocks_yield_ore_veins.raffle = {}
     this.rocks_yield_ore_veins.mixed_ores = {}
-    this.rocks_yield_ore_veins.chance = 10
+    this.rocks_yield_ore_veins.chance = 5
     set_raffle()
 end
 
