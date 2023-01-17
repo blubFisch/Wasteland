@@ -18,6 +18,7 @@ local Enemy = require 'maps.scrap_towny_ffa.enemy'
 local Color = require 'utils.color_presets'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local Evolution = require 'maps.scrap_towny_ffa.evolution'
+local Utils = require 'maps.scrap_towny_ffa.utils'
 
 local town_radius = 20
 local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
@@ -427,13 +428,13 @@ local function update_offline_pvp_shields()
                 -- -1 it is not meant to renew until players join again
                 if activation and activation ~= -1 and game.tick > activation then
                     game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now."..
-                            " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
+                            " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
                     PvPShield.add_shield(market.surface, market.force, market.position, size,
                             offline_shield_duration_ticks, 2 * 60 * 60, false, true)
                     this.pvp_shield_offline_activations[force.index] = -1
                 elseif not activation and activation ~= -1 then
                     local delay_mins = 5
-                    game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes")
+                    game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes", Utils.scenario_color)
                     this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
                 end
             end
@@ -441,7 +442,7 @@ local function update_offline_pvp_shields()
             if shield and shield.is_offline_mode then
                 force.print("Welcome back. Your offline protection will expire in one minute."
                         .. " After everyone from your town leaves, you will get a new shield for "
-                        .. PvPShield.format_lifetime_str(offline_shield_duration_ticks))
+                        .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
                 -- Leave offline shield online for a short time for the town's players to see it
                 shield.is_offline_mode = false
                 shield.max_lifetime_ticks = game.tick - shield.lifetime_start + 60 * 60
@@ -451,7 +452,7 @@ local function update_offline_pvp_shields()
                 force.print("Your town is now advanced enough to deploy an offline shield."
                         .. " Once all of your members leave, a " .. size .. "x" .. size .. " tiles square around your town center (same size as the initial town wall)"
                         .. " will be protected from enemy players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
-                        .. " However, biters will always be able to attack your town")
+                        .. " However, biters will always be able to attack your town", Utils.scenario_color)
                 this.pvp_shields_displayed_offline_hint[force.name] = true
             end
             this.pvp_shield_offline_activations[force.index] = nil
