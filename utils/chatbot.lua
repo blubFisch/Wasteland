@@ -62,7 +62,7 @@ local links = {
     ['untrusted'] = brain[5]
 }
 
-local function on_player_created(event)
+local function on_player_joined_game(event)
     local player = game.get_player(event.player_index)
     if this.settings.enable_classic_print then
         player.print('[font=default-game]' .. 'Join the comfy discord >> tinyurl.com/4ua874n4 <<' .. '[/font]', {r = 150, g = 100, b = 255, a = 255})
@@ -109,7 +109,7 @@ function Public.enable_classic_print(boolean)
     this.settings.enable_classic_print = boolean or false
 end
 
-Event.add(defines.events.on_player_created, on_player_created)
+Event.add(defines.events.on_player_joined_game, on_player_joined_game)
 Event.add(defines.events.on_console_chat, on_console_chat)
 
 return Public
