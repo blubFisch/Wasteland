@@ -7,10 +7,9 @@ In this scenario, players build towns and fight against other towns and the bite
 
 local info_adv =
     [[
-# Changelog (Dec 2022):
- - Higher chance to find ores under mineable rocks
- - Rails are now possible to build near other towns
- - Smaller towns and smaller offline shield
+# Changelog (Feb 2023):
+ - Research cost doubled
+ - Richer ore patches under rocks
 
 # Goal of the game
 Survive as long as you can. Raid other towns. Defend your town.

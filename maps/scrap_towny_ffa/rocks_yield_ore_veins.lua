@@ -42,7 +42,7 @@ local function set_raffle()
 end
 
 local function get_amount()
-    return math_random(20, 200)
+    return math_random(40, 400)
 end
 
 local function draw_chain(surface, count, ore, ore_entities, ore_positions)

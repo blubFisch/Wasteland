@@ -4,7 +4,7 @@ function Public.initialize()
     -- difficulty settings
     game.difficulty_settings.recipe_difficulty = defines.difficulty_settings.recipe_difficulty.normal
     game.difficulty_settings.technology_difficulty = defines.difficulty_settings.technology_difficulty.normal
-    game.difficulty_settings.technology_price_multiplier = 0.50
+    game.difficulty_settings.technology_price_multiplier = 1
     game.difficulty_settings.research_queue_from_the_start = 'always'
 
     -- pollution settings
