@@ -3,6 +3,8 @@ local math_floor = math.floor
 local math_log10 = math.log10
 
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local Utils = require 'maps.scrap_towny_ffa.utils'
+local Score = require 'maps.scrap_towny_ffa.score'
 
 local biters = {
     [1] = 'small-biter',
@@ -671,6 +673,12 @@ local function update_evolution(force_name, technology)
     local b = weight / max_weight
     local s = weight / max_weight
     local w = weight / max_weight
+
+    game.forces[force_name].print("Research has increased your evolution by "
+            .. string.format('%.1f%%', 100 * w)
+            .. " and increased your town score by "
+            .. string.format('%.1f', Score.score_increment(w)), Utils.scenario_color)
+
     b = b + evo.biters
     s = s + evo.spitters
     w = w + evo.worms

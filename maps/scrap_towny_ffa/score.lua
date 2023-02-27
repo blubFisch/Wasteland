@@ -5,6 +5,11 @@ local Event = require 'utils.event'
 
 local Public = {}
 local button_id = 'towny-score-button'
+local evo_score_factor = 50
+
+function Public.score_increment(evo_increase)
+    return evo_increase * evo_score_factor
+end
 
 local function spairs(t, order)
     local keys = {}
@@ -112,7 +117,7 @@ local function update_score()
                 if town_center ~= nil then
                     town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
                     town_age_scores[town_center] = town_ages_h[town_center] * 1.5
-                    town_res_scores[town_center] = town_center.evolution.worms * 50
+                    town_res_scores[town_center] = town_center.evolution.worms * evo_score_factor
                     town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
                 end
             end

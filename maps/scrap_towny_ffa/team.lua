@@ -276,7 +276,7 @@ local function set_player_to_rogue(player)
         log('Given object is not of LuaPlayer!')
         return
     end
-    player.print("You have broken the peace with the biters. They will seek revenge!")
+    player.print("You have broken the peace with the biters. They will seek revenge!", {r = 1, g = 0, b = 0})
     group.add_player(player)
     player.tag = '[Rogue]'
     Map.disable_world_map(player)
