@@ -443,9 +443,9 @@ local function update_offline_pvp_shields()
                 force.print("Welcome back. Your offline protection will expire in one minute."
                         .. " After everyone from your town leaves, you will get a new shield for "
                         .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
-                -- Leave offline shield online for a short time for the town's players to see it
+                -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
                 shield.is_offline_mode = false
-                shield.max_lifetime_ticks = game.tick - shield.lifetime_start + 60 * 60
+                shield.max_lifetime_ticks = game.tick - shield.lifetime_start + 5 * 60 * 60
             end
 
             if shield_eligible and not this.pvp_shields_displayed_offline_hint[force.name] then
