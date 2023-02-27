@@ -90,32 +90,37 @@ local function update_score()
             subheader.style.horizontally_stretchable = true
             subheader.style.vertical_align = 'center'
 
-            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' research points to win!'}}
+            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' points to win!'}}
 
             if not next(subheader.children) then
                 subheader.destroy()
             end
 
-            local information_table = inner_frame.add {type = 'table', column_count = 3, style = 'bordered_table'}
+            local information_table = inner_frame.add {type = 'table', column_count = 5, style = 'bordered_table'}
             information_table.style.margin = 4
-            information_table.style.column_alignments[3] = 'right'
 
-            for _, caption in pairs({'Rank', 'Town (players online/total)', 'Research points'}) do
+            for _, caption in pairs({'Rank', 'Town', 'Research', 'Time', 'Total'}) do
                 local label = information_table.add {type = 'label', caption = caption}
                 label.style.font = 'default-bold'
             end
 
-            local town_tech_scores = {}
+            local town_total_scores = {}
+            local town_age_scores = {}
+            local town_ages_h = {}
+            local town_res_scores = {}
             for _, town_center in pairs(this.town_centers) do
                 if town_center ~= nil then
-                    town_tech_scores[town_center] = town_center.evolution.worms * 100
+                    town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
+                    town_age_scores[town_center] = town_ages_h[town_center] * 1.5
+                    town_res_scores[town_center] = town_center.evolution.worms * 50
+                    town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
                 end
             end
 
             local rank = 1
 
-            for town_center, tech_score in spairs(
-                    town_tech_scores,
+            for town_center, total_score in spairs(
+                    town_total_scores,
                     function(t, a, b)
                         return t[b] < t[a]
                     end
@@ -132,7 +137,12 @@ local function update_score()
                 }
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
-                information_table.add {type = 'label', caption = string.format('%.1f', tech_score)}
+                information_table.add {type = 'label', caption = string.format('%.1f', town_res_scores[town_center])}
+                information_table.style.column_alignments[3] = 'right'
+                information_table.add {type = 'label', caption = string.format('%.1f  (%.1fh)', town_age_scores[town_center], town_ages_h[town_center])}
+                information_table.style.column_alignments[4] = 'right'
+                information_table.add {type = 'label', caption = string.format('%.1f', town_total_scores[town_center])}
+                information_table.style.column_alignments[5] = 'right'
 
                 rank = rank + 1
             end
@@ -148,6 +158,8 @@ local function update_score()
                 caption = 'Outlanders' .. ' (' .. outlander_on .. '/' .. outlander_total .. ')'
             }
             label.style.font_color = {170, 170, 170}
+            information_table.add {type = 'label', caption = '-'}
+            information_table.add {type = 'label', caption = '-'}
             information_table.add {type = 'label', caption = '-'}
         end
     end
