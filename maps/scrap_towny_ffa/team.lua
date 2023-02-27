@@ -766,7 +766,7 @@ local function kill_force(force_name, cause)
         this.buffs[player.index] = {}
         if player.character then
             player.character.die()
-        else
+        elseif not player.connected then
             this.requests[player.index] = 'kill-character'
         end
         player.force = game.forces.player
