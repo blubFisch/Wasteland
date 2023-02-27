@@ -3,6 +3,9 @@ local mod_gui = require('mod-gui')
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local Event = require 'utils.event'
 
+local Public = {}
+local button_id = 'towny-score-button'
+
 local function spairs(t, order)
     local keys = {}
     for k in pairs(t) do
@@ -25,6 +28,35 @@ local function spairs(t, order)
             return keys[i], t[keys[i]]
         end
     end
+end
+
+function Public.add_score_button(player)
+    if player.gui.top[button_id] then
+        player.gui.top[button_id].destroy()
+    end
+    local button = player.gui.top.add {
+        type = 'sprite-button',
+        caption = 'Leaderboard',
+        name = button_id
+    }
+    button.style.font = 'default-bold'
+    button.style.font_color = {r = 1, g = 0.7, b = 0.1}
+    button.style.minimal_height = 38
+    button.style.minimal_width = 100
+    button.style.top_padding = 2
+    button.style.left_padding = 4
+    button.style.right_padding = 4
+    button.style.bottom_padding = 2
+end
+
+local function on_gui_click(event)
+    if not event.element.valid or event.element.name ~= button_id then
+        return
+    end
+    local player = game.players[event.player_index]
+    local this = ScenarioTable.get_table()
+    local saved_frame = this.score_gui_frame[player.index]
+    saved_frame.visible = not saved_frame.visible
 end
 
 local function init_score_board(player)
@@ -121,4 +153,7 @@ local function update_score()
     end
 end
 
+Event.add(defines.events.on_gui_click, on_gui_click)
 Event.on_nth_tick(60, update_score)
+
+return Public
