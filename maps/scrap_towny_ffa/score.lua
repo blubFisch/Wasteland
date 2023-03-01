@@ -104,7 +104,7 @@ local function update_score()
             local information_table = inner_frame.add {type = 'table', column_count = 5, style = 'bordered_table'}
             information_table.style.margin = 4
 
-            for _, caption in pairs({'Rank', 'Town', 'Research', 'Time', 'Total'}) do
+            for _, caption in pairs({'Rank', 'Town', 'Research', 'Survival Time', 'Total'}) do
                 local label = information_table.add {type = 'label', caption = caption}
                 label.style.font = 'default-bold'
             end
@@ -116,8 +116,8 @@ local function update_score()
             for _, town_center in pairs(this.town_centers) do
                 if town_center ~= nil then
                     town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
-                    town_age_scores[town_center] = town_ages_h[town_center] * 1.5
-                    town_res_scores[town_center] = town_center.evolution.worms * evo_score_factor
+                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * 1.3, 70)
+                    town_res_scores[town_center] = math.min(town_center.evolution.worms * evo_score_factor, 70)
                     town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
                 end
             end

@@ -19,9 +19,9 @@ Global.register(
 local Public = {}
 
 local brain = {
-    [1] = {'Our Discord server is at: tinyurl.com/4ua874n4'},
+    [1] = {'Our Discord server is at: discord.gg/7WZbghmjCR'},
     [2] = {
-        'Need an admin? Join our discord at: https://getcomfy.eu/discord,',
+        'Need an admin? Join our discord at: discord.gg/7WZbghmjCR,',
         'and report it in #i-need-halp',
         'If you have played for more than 5h in our maps then,',
         'you are eligible to run the command /jail and /free'
@@ -65,11 +65,11 @@ local links = {
 local function on_player_joined_game(event)
     local player = game.get_player(event.player_index)
     if this.settings.enable_classic_print then
-        player.print('[font=default-game]' .. 'Join the comfy discord >> tinyurl.com/4ua874n4 <<' .. '[/font]', {r = 150, g = 100, b = 255, a = 255})
+        player.print('[font=default-game]' .. 'Join the comfy discord >> discord.gg/7WZbghmjCR <<' .. '[/font]', {r = 150, g = 100, b = 255, a = 255})
     else
         player.print(
             '[font=heading-1]' ..
-                '[color=#E99696]J[/color][color=#E9A296]o[/color][color=#E9AF96]i[/color][color=#E9BB96]n[/color] [color=#E9C896]t[/color][color=#E9D496]h[/color][color=#E9E096]e[/color] [color=#A6E996]d[/color][color=#9AE996]i[/color][color=#96E99E]s[/color][color=#96E9AB]c[/color][color=#96E9B7]o[/color][color=#96E9C3]r[/color][color=#96E9D0]d[/color] [color=#96E9DC]>[/color][color=#96E9E9]>[/color] [color=#96DCE9]tinyurl.com/4ua874n4[/color]' ..
+                '[color=#E99696]J[/color][color=#E9A296]o[/color][color=#E9AF96]i[/color][color=#E9BB96]n[/color] [color=#E9C896]t[/color][color=#E9D496]h[/color][color=#E9E096]e[/color] [color=#A6E996]d[/color][color=#9AE996]i[/color][color=#96E99E]s[/color][color=#96E9AB]c[/color][color=#96E9B7]o[/color][color=#96E9C3]r[/color][color=#96E9D0]d[/color] [color=#96E9DC]>[/color][color=#96E9E9]>[/color] [color=#96DCE9]discord.gg/7WZbghmjCR[/color]' ..
                     '[/font]'
         )
     end

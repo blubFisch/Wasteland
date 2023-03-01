@@ -674,10 +674,10 @@ local function update_evolution(force_name, technology)
     local s = weight / max_weight
     local w = weight / max_weight
 
-    game.forces[force_name].print("Research has increased your evolution by "
+    game.forces[force_name].print("Research has increased the evolution around your town by "
             .. string.format('%.1f%%', 100 * w)
             .. " and increased your town score by "
-            .. string.format('%.1f', Score.score_increment(w)), Utils.scenario_color)
+            .. string.format('%.2f', Score.score_increment(w)), Utils.scenario_color)
 
     b = b + evo.biters
     s = s + evo.spitters
