@@ -310,18 +310,39 @@ local function on_chunk_generated(event)
 
     for x = 0, 31, 1 do
         for y = 0, 31, 1 do
-            if math_random(1, 3) > 1 then
-                position = {x = left_top_x + x, y = left_top_y + y}
-                if not surface.get_tile(position).collides_with('resource-layer') then
-                    noise = get_noise('scrap_towny_ffa', position, seed)
-                    if is_scrap_area(noise) then
-                        surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
-                        place_scrap(surface, position)
+            position = {x = left_top_x + x, y = left_top_y + y}
+            if math.sqrt(position.x^2 + position.y^2) > 35 then
+                if math_random(1, 3) > 1 then
+                    if not surface.get_tile(position).collides_with('resource-layer') then
+                        noise = get_noise('scrap_towny_ffa', position, seed)
+                        if is_scrap_area(noise) then
+                            surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
+                            place_scrap(surface, position)
+                        end
                     end
                 end
             end
         end
     end
+
+    -- central ore patch
+    if chunk_position.x >= -2 and chunk_position.x <= 2 and chunk_position.y >= -2 and chunk_position.y <=2 then
+        local ores = {'iron-ore', 'copper-ore', 'stone', 'coal'}
+        local amount = 20000
+        local ore_radius = 15
+
+        for x = 0, 31, 1 do
+            for y = 0, 31, 1 do
+                position = {x = left_top_x + x, y = left_top_y + y}
+                if math.sqrt(position.x^2 + position.y^2) < ore_radius then
+                    noise = get_noise('scrap_towny_ffa', position, seed)
+                    surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
+                    surface.create_entity({name = ores[math.random(1, 4)], position = position, amount = amount})
+                end
+            end
+        end
+    end
+
     move_away_biteys(surface, event.area)
     --this.chunk_generated[key] = true
 end
@@ -332,6 +353,11 @@ local function on_chunk_charted(event)
     if force.valid then
         if force == game.forces['player'] or force == game.forces['rogue'] then
             force.clear_chart(surface)
+        else
+            local position = event.position
+            if position.x == 0 and position.y == 0 then
+                force.add_chart_tag(surface, {icon = {type = 'item', name = 'coin'}, position = position, text = "Treasure"})
+            end
         end
     end
 end

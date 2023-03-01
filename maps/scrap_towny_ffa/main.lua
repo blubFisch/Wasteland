@@ -38,6 +38,8 @@ local Color = require 'utils.color_presets'
 local Where = require 'utils.commands.where'
 local Inventory = require 'modules.show_inventory'
 local AntiGrief = require 'utils.antigrief'
+local Utils = require 'maps.scrap_towny_ffa.utils'
+
 
 local function on_init()
     Autostash.insert_into_furnace(true)

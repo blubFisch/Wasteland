@@ -1,15 +1,23 @@
 local Public = {}
 
+local changelog =
+    [[# Mar 2023 updates:
+ - Treasure in the map center!
+ - Victory by survival time + research
+ - Research cost doubled
+ - Richer ore patches under rocks]]
+
 local info =
     [[This is the wasteland. Who will survive?
 
-In this scenario, players build towns and fight against other towns and the biters.]]
+In this scenario, players build towns and fight against other towns and the biters.
+
+]] .. changelog
 
 local info_adv =
+    changelog ..
     [[
-# Changelog (Feb 2023):
- - Research cost doubled
- - Richer ore patches under rocks
+
 
 # Goal of the game
 Survive as long as you can. Raid other towns. Defend your town.

@@ -19,6 +19,7 @@ local Color = require 'utils.color_presets'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local Evolution = require 'maps.scrap_towny_ffa.evolution'
 local Utils = require 'maps.scrap_towny_ffa.utils'
+local MapLayout = require 'maps.scrap_towny_ffa.map_layout'
 
 local town_radius = 20
 local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
@@ -331,6 +332,19 @@ local function is_valid_location(force_name, surface, position)
         return false
     end
 
+    local distance_center = math.sqrt(position.x ^ 2 + position.y ^ 2)
+    if distance_center < MapLayout.central_ores_town_nobuild then
+        surface.create_entity(
+                {
+                    name = 'flying-text',
+                    position = position,
+                    text = 'Town location is ' .. string.format("%.0f", MapLayout.central_ores_town_nobuild - distance_center) .. ' tiles too close to the center!',
+                    color = {r = 0.77, g = 0.0, b = 0.0}
+                }
+        )
+        return false
+    end
+
     return true
 end
 
@@ -533,7 +547,6 @@ local function found_town(event)
     end
 
     -- is player mayor of town that still exists?
-
     if game.forces[force_name] then
         player.insert({name = 'stone-furnace', count = 1})
         return
@@ -661,6 +674,8 @@ local function found_town(event)
     Team.add_player_to_town(player, town_center)
     Team.remove_key(player.index)
     Team.add_chart_tag(town_center)
+
+    force.chart(surface, {{-1, -1}, {1, 1}})
     add_pvp_shield_scaled(town_center.market.position, force, surface)    -- Market center is slightly shifted
 
     game.print('>> ' .. player.name .. ' has founded a new town!', {255, 255, 0})
