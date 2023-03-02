@@ -441,7 +441,7 @@ local function update_offline_pvp_shields()
                 -- -1 it is not meant to renew until players join again
                 -- -2 a regular shield has been active and needs to be immediately switched to offline mode after expiry
                 local activation = this.pvp_shield_offline_activations[force.index]
-                if (activation > 0 and game.tick > activation) or activation == -2 then
+                if (activation and activation > 0 and game.tick > activation) or activation == -2 then
                     local time_to_full = 2 * 60 * 60
                     if activation == -2 then    -- We're swapping one shield for another
                         time_to_full = 1
