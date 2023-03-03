@@ -454,7 +454,6 @@ local function update_offline_pvp_shields()
                     this.pvp_shield_offline_activations[force.index] = -1
                 elseif not activation and activation ~= -1 then
                     local delay_mins = 5
-                    game.print("The offline PvP Shield of " .. town_center.town_name .. " will activate in " .. delay_mins .. " minutes", Utils.scenario_color)
                     this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
                 end
             elseif shield and not shield.is_offline_mode then
