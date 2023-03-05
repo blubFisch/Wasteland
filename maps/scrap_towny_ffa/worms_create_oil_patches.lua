@@ -11,12 +11,13 @@ Global.register(
 
 local death_animation_ticks = 120
 local decay_ticks = 2
+local yield_scale_factor = 2
 
 local worms = {
-    ['small-worm-turret'] = {corpse = 'small-worm-corpse', patch_size = {min = 10000, max = 15000}},
-    ['medium-worm-turret'] = {corpse = 'medium-worm-corpse', patch_size = {min = 15000, max = 30000}},
-    ['big-worm-turret'] = {corpse = 'big-worm-corpse', patch_size = {min = 30000, max = 50000}},
-    ['behemoth-worm-turret'] = {corpse = 'behemoth-worm-corpse', patch_size = {min = 50000, max = 80000}}
+    ['small-worm-turret'] = {corpse = 'small-worm-corpse', patch_size = { min = 10000 * yield_scale_factor, max = 15000 * yield_scale_factor }},
+    ['medium-worm-turret'] = {corpse = 'medium-worm-corpse', patch_size = { min = 15000 * yield_scale_factor, max = 30000 * yield_scale_factor }},
+    ['big-worm-turret'] = {corpse = 'big-worm-corpse', patch_size = { min = 30000 * yield_scale_factor, max = 50000 * yield_scale_factor }},
+    ['behemoth-worm-turret'] = {corpse = 'behemoth-worm-corpse', patch_size = { min = 50000 * yield_scale_factor, max = 80000 * yield_scale_factor }}
 }
 
 local function destroy_worm(name, position, surface)
@@ -80,7 +81,7 @@ local function process_worm(entity)
         callback = 'remove_corpse',
         params = {name, position, surface}
     }
-    if math_random(1, 10) == 1 then
+    if math_random(1, 20) == 1 then
         local tick3 = game.tick + death_animation_ticks + decay_ticks + 1
         if not tick_schedule[tick3] then
             tick_schedule[tick3] = {}

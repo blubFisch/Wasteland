@@ -3,9 +3,17 @@ local math_random = math.random
 local math_floor = math.floor
 local math_abs = math.abs
 
+local Public = {}
+
 local get_noise = require 'utils.get_noise'
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local Scrap = require 'maps.scrap_towny_ffa.scrap'
+
+
+Public.central_ores_radius = 15
+Public.central_ores_town_nobuild = 250
+Public.central_oil_radius_inner = 20
+Public.central_oil_radius_outer = 25
 
 local scrap_entities = {
     -- simple entity with owner
@@ -311,7 +319,7 @@ local function on_chunk_generated(event)
     for x = 0, 31, 1 do
         for y = 0, 31, 1 do
             position = {x = left_top_x + x, y = left_top_y + y}
-            if math.sqrt(position.x^2 + position.y^2) > 35 then
+            if math.sqrt(position.x^2 + position.y^2) > Public.central_oil_radius_outer + 10 then
                 if math_random(1, 3) > 1 then
                     if not surface.get_tile(position).collides_with('resource-layer') then
                         noise = get_noise('scrap_towny_ffa', position, seed)
@@ -328,16 +336,24 @@ local function on_chunk_generated(event)
     -- central ore patch
     if chunk_position.x >= -2 and chunk_position.x <= 2 and chunk_position.y >= -2 and chunk_position.y <=2 then
         local ores = {'iron-ore', 'copper-ore', 'stone', 'coal'}
-        local amount = 20000
-        local ore_radius = 15
+        local amount = 50000
+        local oil_amount = 500000
 
         for x = 0, 31, 1 do
             for y = 0, 31, 1 do
                 position = {x = left_top_x + x, y = left_top_y + y}
-                if math.sqrt(position.x^2 + position.y^2) < ore_radius then
+                local distance_to_center = math.sqrt(position.x^2 + position.y^2)
+                if distance_to_center < Public.central_ores_radius then
                     noise = get_noise('scrap_towny_ffa', position, seed)
                     surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
                     surface.create_entity({name = ores[math.random(1, 4)], position = position, amount = amount})
+                elseif distance_to_center > Public.central_oil_radius_inner and distance_to_center < Public.central_oil_radius_outer then
+                    if math_random(1, 50) == 1 then
+                        local position_nc = surface.find_non_colliding_position("crude-oil", position, 3, 1)
+                        if position_nc then
+                            surface.create_entity({name = 'crude-oil', position = position_nc, amount = oil_amount})
+                        end
+                    end
                 end
             end
         end
@@ -373,3 +389,5 @@ Event.add(defines.events.on_chunk_generated, on_chunk_generated)
 Event.add(defines.events.on_chunk_charted, on_chunk_charted)
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)
 Event.add(defines.events.on_entity_died, on_entity_died)
+
+return Public

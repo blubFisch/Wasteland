@@ -19,7 +19,7 @@ local Color = require 'utils.color_presets'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local Evolution = require 'maps.scrap_towny_ffa.evolution'
 local Utils = require 'maps.scrap_towny_ffa.utils'
-local MapLayout = require 'maps.scrap_towny_ffa.map_layout'
+local MapLayout = require 'maps.scrap_towny_ffa.scrap_towny_ffa_layout'
 
 local town_radius = 20
 local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
