@@ -7,7 +7,6 @@ local string_lower = string.lower
 local math_min = math.min
 
 local Server = require 'utils.server'
-local Map = require 'maps.scrap_towny_ffa.map'
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local CombatBalance = require 'maps.scrap_towny_ffa.combat_balance'
@@ -206,6 +205,12 @@ local function reset_player(player)
     end
 end
 
+function Public.map_preset(player, is_town_member)
+    player.show_on_map = is_town_member
+    player.game_view_settings.show_minimap = is_town_member
+    player.game_view_settings.show_map_view_options = is_town_member
+end
+
 function Public.add_player_to_town(player, town_center)
     if not player or not player.valid then
         log('player nil or not valid!')
@@ -225,7 +230,7 @@ function Public.add_player_to_town(player, town_center)
     this.spawn_point[player.index] = force.get_spawn_position(surface)
     game.permissions.get_group(force.name).add_player(player)
     player.tag = ''
-    Map.enable_world_map(player)
+    Public.map_preset(player, true)
     Public.set_player_color(player)
 
     update_member_limit()
@@ -255,7 +260,7 @@ function Public.set_player_to_outlander(player)
     end
     game.permissions.get_group('outlander').add_player(player)
     player.tag = '[Outlander]'
-    Map.disable_world_map(player)
+    Public.map_preset(player, false)
     Public.set_player_color(player)
     Public.give_key(player.index)
 end
@@ -279,7 +284,7 @@ local function set_player_to_rogue(player)
     player.print("You have broken the peace with the biters. They will seek revenge!", {r = 1, g = 0, b = 0})
     group.add_player(player)
     player.tag = '[Rogue]'
-    Map.disable_world_map(player)
+    Public.map_preset(player, false)
     Public.set_player_color(player)
 end
 
@@ -770,7 +775,7 @@ local function kill_force(force_name, cause)
             this.requests[player.index] = 'kill-character'
         end
         player.force = game.forces.player
-        Map.disable_world_map(player)
+        Public.map_preset(player, false)
         Public.set_player_color(player)
         Public.give_key(player.index)
     end

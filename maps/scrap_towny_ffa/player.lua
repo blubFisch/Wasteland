@@ -14,24 +14,6 @@ local max_ticks_between_spawns = 60 * 10
 -- how many players must login before teams are teams_enabled
 local min_players_for_enabling_towns = 0
 
-function Public.settings(player)
-    player.game_view_settings.show_minimap = false
-    player.game_view_settings.show_map_view_options = false
-    player.game_view_settings.show_entity_info = true
-    player.map_view_settings = {
-        ['show-logistic-network'] = false,
-        ['show-electric-network'] = false,
-        ['show-turret-range'] = false,
-        ['show-pollution'] = false,
-        ['show-train-station-names'] = false,
-        ['show-player-names'] = false,
-        ['show-networkless-logistic-members'] = false,
-        ['show-non-standard-map-info'] = false
-    }
-    player.show_on_map = false
-    --player.game_view_settings.show_side_menu = false
-end
-
 function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
     Team.set_player_to_outlander(player)
@@ -124,7 +106,6 @@ local function on_player_joined_game(event)
     Info.toggle_button(player)
     Team.set_player_color(player)
     if player.online_time == 0 then
-        Public.settings(player)
         Public.increment()
         Public.initialize(player)
         Public.spawn(player)
