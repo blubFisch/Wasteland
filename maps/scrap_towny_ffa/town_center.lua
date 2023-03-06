@@ -336,7 +336,7 @@ local function is_valid_location(force_name, surface, position)
     end
 
     local distance_center = math.sqrt(position.x ^ 2 + position.y ^ 2)
-    if distance_center < MapLayout.central_ores_town_nobuild then
+    if not this.testing_mode and distance_center < MapLayout.central_ores_town_nobuild then
         surface.create_entity(
                 {
                     name = 'flying-text',
