@@ -341,7 +341,7 @@ local function is_valid_location(force_name, surface, position)
                 {
                     name = 'flying-text',
                     position = position,
-                    text = 'Town location is ' .. string.format("%.0f", MapLayout.central_ores_town_nobuild - distance_center) .. ' tiles too close to the center!',
+                    text = string.format("%.0f", MapLayout.central_ores_town_nobuild - distance_center) .. ' tiles too close to the treasure!',
                     color = {r = 0.77, g = 0.0, b = 0.0}
                 }
         )
