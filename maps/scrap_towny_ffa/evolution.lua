@@ -651,7 +651,7 @@ end
 -- update evolution based on research completed (weighted)
 -- sets the evolution to a value from 0.0 to 1.0 based on research progress
 local function update_evolution(force_name, technology)
-    if technology == nil then
+    if technology == nil or technology.name == nil then
         return
     end
     local this = ScenarioTable.get_table()
@@ -663,9 +663,9 @@ local function update_evolution(force_name, technology)
     -- initialize if not already
     local evo = town_center.evolution
     -- get the weights for this technology
-    local weight = technology_weights[technology]
+    local weight = technology_weights[technology.name]
     if weight == nil then
-        log('no technology_weights for ' .. technology)
+        log('no technology_weights for ' .. technology.name)
         return
     end
     -- update the evolution values (0.0 to 1.0)
@@ -674,24 +674,21 @@ local function update_evolution(force_name, technology)
     local s = weight / max_weight
     local w = weight / max_weight
 
-    game.forces[force_name].print("Research has increased the evolution around your town by "
-            .. string.format('%.1f%%', 100 * w)
-            .. " and increased your town score by "
-            .. string.format('%.2f', Score.score_increment(w)), Utils.scenario_color)
+    evo.biters = b + evo.biters
+    evo.spitters = s + evo.spitters
+    evo.worms = w + evo.worms
 
-    b = b + evo.biters
-    s = s + evo.spitters
-    w = w + evo.worms
-    evo.biters = b
-    evo.spitters = s
-    evo.worms = w
+    game.forces[force_name].print("Researching " .. tostring(technology.localised_name)
+            .. " has increased the evolution around your town to "
+            .. string.format('%.1f%%', 100 * evo.worms) .. string.format(' (+%.1f%%)', 100 * w)
+            .. " and increased your town score by "
+            .. string.format('+%.2f', Score.score_increment(w)), Utils.scenario_color)
+
 end
 
 local function on_research_finished(event)
-    local research = event.research
-    local force = research.force
-    local technology = research.name
-    update_evolution(force.name, technology)
+    local technology = event.research
+    update_evolution(technology.force.name, technology)
 end
 
 local function on_entity_spawned(event)
