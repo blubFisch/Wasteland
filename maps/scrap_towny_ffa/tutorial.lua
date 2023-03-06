@@ -26,7 +26,7 @@ local function tutorials_tick()
 
             if this.tutorials[player.index].step == 1 and Team.is_towny(player.force) then
                 player.set_goal_description("Great!\nNow collect some scrap from around your town to get resources."
-                .. "\n\nCollect 500 iron.")
+                .. "\n\nCollect 500 iron plates.")
 
                 this.tutorials[player.index].step = 2
             end
