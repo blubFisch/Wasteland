@@ -113,6 +113,20 @@ local function init_position_frame(player)
     b.style.bottom_padding = 10
 end
 
+local function init_map_hint_frame(player)
+    if player.gui.screen['towny_map_hint'] then
+        player.gui.screen['towny_map_hint'].destroy()
+    end
+    local b = player.gui.screen.add({type = 'label', caption = "To activate map, build a town (stone furnace)",
+                                     name = 'towny_map_hint'})
+    b.location = {x = 2200, y = 100}
+    b.style.font_color = {r = 255, g = 255, b = 255}
+    b.style.top_padding = 10
+    b.style.left_padding = 10
+    b.style.right_padding = 10
+    b.style.bottom_padding = 10
+end
+
 local function update_player_positions()
     for _, player in pairs(game.connected_players) do
         player.gui.top['towny_map_position'].caption = "Position: "
@@ -132,6 +146,7 @@ local function on_player_joined_game(event)
         Info.show(player)
         Tutorial.register_for_tutorial(player)
         init_position_frame(player)
+        init_map_hint_frame(player)
     end
     Public.load_buffs(player)
     Public.requests(player)

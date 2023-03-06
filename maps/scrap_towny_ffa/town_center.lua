@@ -683,6 +683,10 @@ local function found_town(event)
     game.print('>> ' .. player.name .. ' has founded a new town!', {255, 255, 0})
     Server.to_discord_embed(player.name .. ' has founded a new town!')
     player.print('Your town color is ' .. crayola.name, crayola.color)
+
+    if player.gui.screen['towny_map_hint'] then
+        player.gui.screen['towny_map_hint'].destroy()
+    end
 end
 
 local function on_built_entity(event)
