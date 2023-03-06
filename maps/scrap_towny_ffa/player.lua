@@ -100,6 +100,26 @@ function Public.increment()
     end
 end
 
+local function init_position_frame(player)
+    if player.gui.top['towny_map_position'] then
+        player.gui.top['towny_map_position'].destroy()
+    end
+    local b = player.gui.top.add({type = 'label', caption = "Position",
+                                  name = 'towny_map_position'})
+    b.style.font_color = {r = 255, g = 255, b = 255}
+    b.style.top_padding = 10
+    b.style.left_padding = 10
+    b.style.right_padding = 10
+    b.style.bottom_padding = 10
+end
+
+local function update_player_positions()
+    for _, player in pairs(game.connected_players) do
+        player.gui.top['towny_map_position'].caption = "Position: "
+                .. string.format('%.0f, %.0f', player.position.x,  player.position.y)
+    end
+end
+
 local function on_player_joined_game(event)
     local player = game.players[event.player_index]
     Score.add_score_button(player)
@@ -111,6 +131,7 @@ local function on_player_joined_game(event)
         Public.spawn(player)
         Info.show(player)
         Tutorial.register_for_tutorial(player)
+        init_position_frame(player)
     end
     Public.load_buffs(player)
     Public.requests(player)
@@ -152,6 +173,7 @@ local function on_player_died(event)
     end
 end
 
+Event.on_nth_tick(60, update_player_positions)
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
 Event.add(defines.events.on_player_respawned, on_player_respawned)
 Event.add(defines.events.on_player_died, on_player_died)
