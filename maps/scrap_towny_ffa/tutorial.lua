@@ -25,21 +25,27 @@ local function tutorials_tick()
             end
 
             if this.tutorials[player.index].step == 1 and Team.is_towny(player.force) then
-                this.tutorials[player.index].step = 2
-                player.set_goal_description("Great!\nNow mine some scrap from around your town to get resources."
+                player.set_goal_description("Great!\nNow collect some scrap from around your town to get resources."
                 .. "\n\nCollect 500 iron.")
+
+                this.tutorials[player.index].step = 2
             end
 
             if this.tutorials[player.index].step == 2 and player.get_item_count("iron-plate") >= 500 then
-                player.set_goal_description("Great!\nThis is the end of the tutorial.\n\n"
-                    .. "The goal of the game is to build a town that lasts as long as possible,\nagainst biters and players\n"
-                    .. "Prove your town is worthy by reaching 100 research points\n(through regular research)")
+                player.set_goal_description("Great!\nNow use the scrap or the ores around your town.\nComplete your first research.")
 
-                this.tutorials[player.index].finish_at_tick = game.tick + 60 * 30
                 this.tutorials[player.index].step = 3
             end
 
-            if this.tutorials[player.index].step == 3 and game.tick > this.tutorials[player.index].finish_at_tick then
+            if this.tutorials[player.index].step == 3 and player.force.previous_research  then
+                player.set_goal_description("Great!\nThis is the end of the tutorial.\n\n"
+                    .. "The goal of the game is to build a town that advances, against biters and other players\n")
+
+                this.tutorials[player.index].step = 4
+                this.tutorials[player.index].finish_at_tick = game.tick + 60 * 30
+            end
+
+            if this.tutorials[player.index].step == 4 and game.tick > this.tutorials[player.index].finish_at_tick then
                 player.set_goal_description("")
                 this.tutorials[player.index] = nil
             end
