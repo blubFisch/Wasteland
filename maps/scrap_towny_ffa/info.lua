@@ -4,8 +4,9 @@ local changelog =
     [[# Mar 2023 updates:
  - Treasure in the map center!
  - Victory by survival time + research
- - Research cost doubled
- - Richer ore patches under rocks]]
+ - Research cost increased
+ - Richer ore patches under rocks
+ - Oil barrels available at market]]
 
 local info =
     [[This is the wasteland. Who will survive?
