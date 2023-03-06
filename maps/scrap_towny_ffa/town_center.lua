@@ -170,6 +170,7 @@ local function draw_town_spawn(player_name)
         --p = surface.find_non_colliding_position("gate", p, 64, 1)
         if p then
             surface.create_entity({name = 'gate', position = p, force = player_name, direction = 2})
+            surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
         end
     end
     for _, vector in pairs(gate_vectors_vertical) do
@@ -177,6 +178,7 @@ local function draw_town_spawn(player_name)
         --p = surface.find_non_colliding_position("gate", p, 64, 1)
         if p then
             surface.create_entity({name = 'gate', position = p, force = player_name, direction = 0})
+            surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
         end
     end
 
@@ -185,6 +187,7 @@ local function draw_town_spawn(player_name)
         --p = surface.find_non_colliding_position("stone-wall", p, 64, 1)
         if p then
             surface.create_entity({name = 'stone-wall', position = p, force = player_name})
+            surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
         end
     end
 
@@ -472,9 +475,9 @@ local function update_offline_pvp_shields()
 
             if shield_eligible and not this.pvp_shields_displayed_offline_hint[force.name] then
                 force.print("Your town is now advanced enough to deploy an offline shield."
-                        .. " Once all of your members leave, a " .. size .. "x" .. size .. " tiles square around your town center (same size as the initial town wall)"
+                        .. " Once all of your members leave, the area marked by the blue floor tiles"
                         .. " will be protected from enemy players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
-                        .. " However, biters will always be able to attack your town", Utils.scenario_color)
+                        .. " However, biters will always be able to attack your town!", Utils.scenario_color)
                 this.pvp_shields_displayed_offline_hint[force.name] = true
             end
             this.pvp_shield_offline_activations[force.index] = nil
