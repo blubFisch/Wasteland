@@ -678,7 +678,7 @@ local function update_evolution(force_name, technology)
     evo.spitters = s + evo.spitters
     evo.worms = w + evo.worms
 
-    game.forces[force_name].print("Researching " .. tostring(technology.localised_name)
+    game.forces[force_name].print("Researching " .. technology.name
             .. " has increased the evolution around your town to "
             .. string.format('%.1f%%', 100 * evo.worms) .. string.format(' (+%.1f%%)', 100 * w)
             .. " and increased your town score by "
