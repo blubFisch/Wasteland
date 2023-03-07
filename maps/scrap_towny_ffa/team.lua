@@ -805,6 +805,9 @@ local function kill_force(force_name, cause)
             e.destroy()
         end
     end
+    for _, e in pairs(surface.find_tiles_filtered({area = {{position.x - r, position.y - r}, {position.x + r, position.y + r}}, name = 'blue-refined-concrete'})) do
+        surface.set_tiles({{name = 'landfill', position = e.position}}, true)
+    end
     if this.pvp_shields[force_name] then
         PvPShield.remove_shield(this.pvp_shields[force_name])
     end
