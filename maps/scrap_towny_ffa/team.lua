@@ -818,7 +818,7 @@ local function kill_force(force_name, cause)
     if is_suicide then
         message = town_name .. ' has given up'
     elseif cause == nil or not cause.valid or cause.force == nil then
-        message = town_name .. ' has fallen to an unknown entity (DEBUG ID 0)!' -- TODO: remove after some testing
+        message = town_name .. ' has fallen!'
     elseif cause.force.name == 'player' or cause.force.name == 'rogue' then
         local items = {name = 'coin', count = balance}
         town_center.coin_balance = 0
@@ -837,7 +837,7 @@ local function kill_force(force_name, cause)
         elseif cause.force.name == 'rogue' then
             message = town_name .. ' has fallen to rogues!'
         else
-            message = town_name .. ' has fallen to an unknown entity (DEBUG ID 1)!' -- TODO: remove after some testing
+            message = town_name .. ' has fallen!'
         end
     elseif cause.force.name ~= 'enemy' then
         if this.town_centers[cause.force.name] ~= nil then
@@ -852,7 +852,7 @@ local function kill_force(force_name, cause)
                 message = town_name .. ' has fallen to ' .. killer_town_center.town_name .. '!'
             end
         else
-            message = town_name .. ' has fallen to an unknown entity (DEBUG ID 2)!' -- TODO: remove after some testing
+            message = town_name .. ' has fallen!'
             log("cause.force.name=" .. cause.force.name)
         end
     else
