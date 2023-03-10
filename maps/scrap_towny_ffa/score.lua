@@ -116,7 +116,7 @@ local function update_score()
             for _, town_center in pairs(this.town_centers) do
                 if town_center ~= nil then
                     town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
-                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * 1.1, 70)
+                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * 0.6, 50)
                     town_res_scores[town_center] = math.min(town_center.evolution.worms * evo_score_factor, 70)
                     town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
                 end
