@@ -41,8 +41,8 @@ Survive as long as you can. Raid other towns. Defend your town.
 
 # PvP Shields
 - PvP shields prevent players from entering, building and damaging
-- Offline PvP shields depoly automatically once all players of a town go offline
-    The size is same as the AFK shield that is available in your market
+- Offline PvP shields deploy automatically once all players of a town go offline
+    The size is same as your initial town wall, marked by the blue tiles
 - Your town has a AFK PvP shield that you can use to safely take a quick break
     Deploy it from the market
 
