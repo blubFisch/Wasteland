@@ -63,44 +63,12 @@ local all_force_enabled_recipes = {
     'shotgun-shell',
 }
 
-local function update_member_limit()
-    local this = ScenarioTable.get_table()
-    local town_centers = this.town_centers
-
-    -- Limit is increased by counting towns that are at the limit
-    -- This ensures no single town gets a lot more players than another
-    local limit = 1
-    while true do
-        local towns_near_limit = 0
-        for _, town_center in pairs(town_centers) do
-            local players = table_size(town_center.market.force.players)
-            if players >= limit then
-                towns_near_limit = towns_near_limit + 1
-            end
-        end
-        if towns_near_limit >= limit + 1 then
-            limit = limit + 1
-        else
-            break
-        end
-    end
-
-    this.member_limit = math_min(limit, 3)
-    game.print('>> The member limit for all towns is now: ' .. this.member_limit, Utils.scenario_color)
-end
-
 local function can_force_accept_member(force)
     if not force or not force.valid then
         log('force nil or not valid!')
         return
     end
-    local this = ScenarioTable.get_table()
 
-    if #force.players >= this.member_limit then
-        game.print('>> Town ' .. force.name .. ' has too many settlers! Current limit: ' .. this.member_limit .. '.'
-                .. ' The limit will increase once other towns have more settlers.', Utils.scenario_color)
-        return false
-    end
     return true
 end
 
@@ -233,8 +201,6 @@ function Public.add_player_to_town(player, town_center)
     player.tag = ''
     Public.map_preset(player, true)
     Public.set_player_color(player)
-
-    update_member_limit()
 
     force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
 end
@@ -867,8 +833,6 @@ local function kill_force(force_name, cause)
 
     Server.to_discord_embed(message)
     game.print('>> ' .. message, Utils.scenario_color)
-
-    update_member_limit()
 end
 
 local function on_forces_merged()
