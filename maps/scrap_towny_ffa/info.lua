@@ -5,10 +5,14 @@ local changelog =
  - Towns with more players are nerfed in weapon damage and research
  - Treasure in the map center!
  - Victory by survival time + research
+ - Enemy walls don't stop you from building anymore. Power lines or turrets still do.
  - Lots of small bugfixes]]
 
 local info =
-    [[This is the wasteland. Build a town that can survive against biters and other players!
+    [[Welcome to the wasteland
+
+Build a town that can survive against biters and other players!
+
 
 ]] .. changelog
 
@@ -34,7 +38,8 @@ Survive as long as you can. Raid other towns. Defend your town.
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
 - Use /rename-town NEWNAME (chat command) to rename your town
 - If you get stuck or trapped, use the /suicide chat command to respawn
-- It is possible to build logistics (inserters, belts, boxes, rails) in enemy territory to steal their items
+- It is not possible to build near enemy turrets or power poles
+    except logistics entities (inserters, belts, boxes, rails) that can be used to steal items
 - Research modifier: Towns with more members have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more members cause reduced damage against other towns and players
 

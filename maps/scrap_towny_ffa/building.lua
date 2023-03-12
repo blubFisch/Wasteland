@@ -6,7 +6,7 @@ local table_size = table.size
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 
-local town_zoning_entity_types = { "wall", "gate", "electric-pole", "ammo-turret", "electric-turret", "fluid-turret"}
+local town_zoning_entity_types = { "electric-pole", "ammo-turret", "electric-turret", "fluid-turret"}
 
 -- these should be allowed to place inside any base by anyone as neutral
 local allowed_entities_neutral = {
@@ -263,7 +263,7 @@ local function process_built_entities(event)
                     local player = game.players[player_index]
                     player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
                 end
-                error_floaty(surface, position, "Can't build this near town")
+                error_floaty(surface, position, "Can't build near town")
                 if name ~= 'entity-ghost' then
                     refund_item(event, event.stack.name)
                 end

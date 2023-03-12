@@ -8,7 +8,7 @@ local Team = require 'maps.scrap_towny_ffa.team'
 
 function Public.register_for_tutorial(player)
     local this = ScenarioTable.get_table()
-    this.tutorials[player.index] = {show_after_tick = game.tick + 60 * 5}
+    this.tutorials[player.index] = {show_after_tick = game.tick + 60 * 10}
 end
 
 local function tutorials_tick()
