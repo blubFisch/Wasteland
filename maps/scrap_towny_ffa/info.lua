@@ -2,16 +2,13 @@ local Public = {}
 
 local changelog =
     [[# Mar 2023 updates:
+ - Towns with more players are nerfed in weapon damage and research
  - Treasure in the map center!
  - Victory by survival time + research
- - Research cost increased
- - Richer ore patches under rocks
- - Oil barrels available at market]]
+ - Lots of small bugfixes]]
 
 local info =
-    [[This is the wasteland. Who will survive?
-
-In this scenario, players build towns and fight against other towns and the biters.
+    [[This is the wasteland. Build a town that can survive against biters and other players!
 
 ]] .. changelog
 
