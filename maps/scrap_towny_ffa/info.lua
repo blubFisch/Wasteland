@@ -37,7 +37,9 @@ Survive as long as you can. Raid other towns. Defend your town.
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
 - Use /rename-town NEWNAME (chat command) to rename your town
 - If you get stuck or trapped, use the /suicide chat command to respawn
-- It is possible to build logistics (inserters, belts, boxes) in enemy territory to steal their items
+- It is possible to build logistics (inserters, belts, boxes, rails) in enemy territory to steal their items
+- Research modifier: Towns with more members have more expensive research. Less advanced towns have cheaper research
+- Damage modifier: Members of towns with more members cause reduced damage against other towns and players
 
 # PvP Shields
 - PvP shields prevent players from entering, building and damaging

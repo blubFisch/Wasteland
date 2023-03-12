@@ -8,6 +8,7 @@ local Info = require 'maps.scrap_towny_ffa.info'
 local Tutorial = require 'maps.scrap_towny_ffa.tutorial'
 local Score = require 'maps.scrap_towny_ffa.score'
 local ResearchBalance = require 'maps.scrap_towny_ffa.research_balance'
+local CombatBalance = require 'maps.scrap_towny_ffa.combat_balance'
 
 -- how long in ticks between spawn and death will be considered spawn kill (10 seconds)
 local max_ticks_between_spawns = 60 * 10
@@ -139,6 +140,7 @@ local function on_player_joined_game(event)
     local player = game.players[event.player_index]
     Score.add_score_button(player)
     ResearchBalance.add_balance_ui(player)
+    CombatBalance.add_balance_ui(player)
     Info.toggle_button(player)
     Team.set_player_color(player)
     if player.online_time == 0 then

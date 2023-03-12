@@ -45,16 +45,13 @@ function Public.modifier_for_town(town_center)
     for _, town_center in pairs(this.town_centers) do
         max_res = math.max(town_center.evolution.worms, max_res)
     end
-    --game.print("max_res:" .. max_res)
     local research_modifier = math.min(math.max(max_res, 0.01) / math.max(town_center.evolution.worms, 0.01), 10)
-
     local player_modifier = 1 / #town_center.market.force.players
-    --game.print(town_center.market.force.name .. " " .. player_modifier .. " " .. research_modifier .. " " .. player_modifier * research_modifier)
-
     return player_modifier * research_modifier
 end
 
-local function tick()
+-- Override research progress as it progresses based on modifier
+local function update_research_progress()
     local this = ScenarioTable.get_table()
 
      for _, town_center in pairs(this.town_centers) do
@@ -63,22 +60,19 @@ local function tick()
              if not town_center.research_balance then
                  town_center.research_balance = {}
              end
-             --game.print("cur:" .. force.research_progress)
 
              if town_center.research_balance.last_progress
                      and town_center.research_balance.last_progress < force.research_progress   -- don't skip to next research
              then
                  local diff = force.research_progress - town_center.research_balance.last_progress
-                 --game.print("diff:" .. diff)
                  force.research_progress = math.min(force.research_progress + diff * (Public.modifier_for_town(town_center) - 1), 1)
              end
              town_center.research_balance.last_progress = force.research_progress
-             --game.print("last: " .. town_center.research_balance.last_progress)
          end
     end
 end
 
-Event.on_nth_tick(1, tick)
+Event.on_nth_tick(1, update_research_progress)
 Event.on_nth_tick(60, update_uis)
 
 return Public

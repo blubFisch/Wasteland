@@ -1,3 +1,5 @@
+local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+
 local Public = {}
 
 local player_ammo_damage_starting_modifiers = {
@@ -55,40 +57,6 @@ local player_gun_speed_modifiers = {
 --    ['flamethrower-turret'] = 0
 --}
 
---local enemy_ammo_starting_modifiers = {
---    ['artillery-shell'] = 3,
---    ['biological'] = 3,
---    ['bullet'] = 2,
---    ['cannon-shell'] = 0,
---    ['capsule'] = 0,
---    ['beam'] = 0,
---    ['laser'] = 0,
---    ['electric'] = 0,
---    ['flamethrower'] = 0,
---    ['grenade'] = 0,
---    ['landmine'] = 0,
---    ['melee'] = 1,
---    ['rocket'] = 0,
---    ['shotgun-shell'] = 0
---}
-
---local enemy_ammo_evolution_modifiers = {
---    ['artillery-shell'] = 1,
---    ['biological'] = 2,
---    ['bullet'] = 1,
---    --['cannon-shell'] = 1,
---    ['capsule'] = 1,
---    ['beam'] = 1,
---    ['laser'] = 1,
---    ['electric'] = 1,
---    ['flamethrower'] = 2,
---    --['grenade'] = 1,
---    --['landmine'] = 1,
---    ['melee'] = 2
---    --['rocket'] = 1,
---    --['shotgun-shell'] = 1
---}
-
 function Public.init_player_weapon_damage(force)
     for k, v in pairs(player_ammo_damage_starting_modifiers) do
         force.set_ammo_damage_modifier(k, v)
@@ -100,27 +68,6 @@ function Public.init_player_weapon_damage(force)
 
     force.set_turret_attack_modifier('laser-turret', 3)
 end
-
---local function init_enemy_weapon_damage()
---    local e_force = game.forces['enemy']
---
---    for k, v in pairs(enemy_ammo_starting_modifiers) do
---        e_force.set_ammo_damage_modifier(k, v)
---    end
---end
---
---local function enemy_weapon_damage()
---    local f = game.forces.enemy
---
---    local ef = f.evolution_factor
---
---    for k, v in pairs(enemy_ammo_evolution_modifiers) do
---        local base = enemy_ammo_starting_modifiers[k]
---
---        local new = base + v * ef
---        f.set_ammo_damage_modifier(k, new)
---    end
---end
 
 -- After a research is finished and the game applied the modifier, we reduce modifiers to achieve the reduction
 local function research_finished(event)
@@ -159,8 +106,79 @@ local function research_finished(event)
     end
 end
 
+local button_id = "towny_damage_balance"
+
+local force_damage_modifier_excluded = {
+    ['laser-turret'] = true,
+    ['flamethrower-turret'] = true,
+    ['gun-turret'] = true
+}
+
+function Public.add_balance_ui(player)
+    if player.gui.top[button_id] then
+        player.gui.top[button_id].destroy()
+    end
+    local button = player.gui.top.add {
+        type = 'sprite-button',
+        caption = 'Damage modifier',
+        name = button_id
+    }
+    button.style.font = 'default'
+    button.style.font_color = {r = 255, g = 255, b = 255}
+    button.style.minimal_height = 38
+    button.style.minimal_width = 180
+    button.style.top_padding = 2
+    button.style.left_padding = 4
+    button.style.right_padding = 4
+    button.style.bottom_padding = 2
+end
+
+local function update_uis()
+    local this = ScenarioTable.get_table()
+    for _, town_center in pairs(this.town_centers) do
+        local force = town_center.market.force
+        for _, player in pairs(force.connected_players) do
+            player.gui.top[button_id].caption = "Damage modifier: " .. Public.format_dmg_modifier(force)
+        end
+    end
+end
+
+function Public.format_dmg_modifier(force)
+    return string.format('%.0f%%', 100 * Public.dmg_modifier_for_force(force))
+end
+
+
+function Public.dmg_modifier_for_force(force)
+    return 1 / #force.connected_players
+end
+
+-- Extra modifiers based on player numbers
+local function on_entity_damaged(event)
+    local entity = event.entity
+    if not entity.valid then
+        return
+    end
+
+    local cause_force = event.force
+    if cause_force == game.forces.enemy or entity.force == game.forces.enemy or entity.force == game.forces.neutral then
+        return
+    end
+    if cause_force == game.forces.player or cause_force == game.forces.rogue then
+        return
+    end
+
+    if not event.cause or force_damage_modifier_excluded[event.cause.name] then
+        return
+    end
+    --game.print("damage_type " .. event.damage_type.name .. " cause " .. event.cause.name)
+
+    local modifier = Public.dmg_modifier_for_force(cause_force)
+    entity.health = entity.health - event.final_damage_amount * (modifier - 1)
+end
+
 local Event = require 'utils.event'
---Event.on_init(init_enemy_weapon_damage)
---Event.on_nth_tick(18000, enemy_weapon_damage)
 Event.add(defines.events.on_research_finished, research_finished)
+Event.add(defines.events.on_entity_damaged, on_entity_damaged)
+Event.on_nth_tick(60, update_uis)
+
 return Public

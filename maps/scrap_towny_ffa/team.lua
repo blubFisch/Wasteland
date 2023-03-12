@@ -236,7 +236,7 @@ function Public.add_player_to_town(player, town_center)
 
     update_member_limit()
 
-    force.print("Your research modifier is now ".. ResearchBalance.format_modifier(town_center), Utils.scenario_color)
+    force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
 end
 
 -- given to player upon respawn
