@@ -2,6 +2,7 @@ local mod_gui = require('mod-gui')
 
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local Event = require 'utils.event'
+local ResearchBalance = require 'maps.scrap_towny_ffa.research_balance'
 
 local Public = {}
 local button_id = 'towny-score-button'
@@ -142,7 +143,7 @@ local function update_score()
                 }
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
-                information_table.add {type = 'label', caption = string.format('%.1f', town_res_scores[town_center])}
+                information_table.add {type = 'label', caption = string.format('%.1f', town_res_scores[town_center]) .. " (" .. ResearchBalance.format_modifier(town_center) .. ")"}
                 information_table.style.column_alignments[3] = 'right'
                 information_table.add {type = 'label', caption = string.format('%.1f  (%.1fh)', town_age_scores[town_center], town_ages_h[town_center])}
                 information_table.style.column_alignments[4] = 'right'

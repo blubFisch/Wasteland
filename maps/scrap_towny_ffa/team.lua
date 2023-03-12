@@ -11,6 +11,7 @@ local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
 local CombatBalance = require 'maps.scrap_towny_ffa.combat_balance'
 local Utils = require 'maps.scrap_towny_ffa.utils'
+local ResearchBalance = require 'maps.scrap_towny_ffa.research_balance'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
@@ -234,6 +235,8 @@ function Public.add_player_to_town(player, town_center)
     Public.set_player_color(player)
 
     update_member_limit()
+
+    force.print("Your research modifier is now ".. ResearchBalance.format_modifier(town_center), Utils.scenario_color)
 end
 
 -- given to player upon respawn

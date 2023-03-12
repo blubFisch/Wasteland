@@ -20,6 +20,7 @@ require 'maps.scrap_towny_ffa.turrets_drop_ammo'
 require 'maps.scrap_towny_ffa.vehicles'
 require 'maps.scrap_towny_ffa.suicide'
 require 'maps.scrap_towny_ffa.score'
+require 'maps.scrap_towny_ffa.research_balance'
 
 local Event = require 'utils.event'
 local Autostash = require 'modules.autostash'
