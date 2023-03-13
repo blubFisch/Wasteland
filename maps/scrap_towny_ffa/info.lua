@@ -3,6 +3,7 @@ local Public = {}
 local changelog =
     [[# Mar 2023 updates:
  - Towns with more players are nerfed in weapon damage and research
+ - New towns can catch up faster with the new research modifier boost based on highest tech on map
  - Treasure in the map center!
  - Victory by survival time + research
  - Enemy walls don't stop you from building anymore. Power lines or turrets still do.
