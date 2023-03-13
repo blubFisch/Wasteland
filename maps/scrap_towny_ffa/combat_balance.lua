@@ -173,7 +173,12 @@ local function on_entity_damaged(event)
     --game.print("damage_type " .. event.damage_type.name .. " cause " .. event.cause.name)
 
     local modifier = Public.dmg_modifier_for_force(cause_force)
-    entity.health = entity.health - event.final_damage_amount * (modifier - 1)
+
+    if event.final_damage_amount * modifier >= entity.health then
+        entity.health = 0  -- Note: This is not fully correct, it skips the last damage reduction
+    else
+        entity.health = math.max(0, entity.health - event.final_damage_amount * (modifier - 1))
+    end
 end
 
 local Event = require 'utils.event'
