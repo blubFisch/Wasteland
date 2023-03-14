@@ -29,24 +29,35 @@ local function update_uis()
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force
         for _, player in pairs(force.connected_players) do
-            player.gui.top[button_id].caption = "Research modifier: " .. Public.format_modifier(town_center)
+            local current_modifier = Public.modifier_for_town(town_center)
+            player.gui.top[button_id].caption = "Research modifier: " .. Public.format_town_modifier(current_modifier)
         end
     end
 end
 
-function Public.format_modifier(town_center)
-    return string.format('%.0f%%', 100 * Public.modifier_for_town(town_center))
+function Public.format_town_modifier(modifier)
+    return string.format('%.0f%%', 100 * modifier)
 end
 
 -- Relative speed modifier, 1=no change
 function Public.modifier_for_town(town_center)
+    local active_player_age_threshold = 8 * 60 * 60 * 60
+
     local this = ScenarioTable.get_table()
     local max_res = 0
     for _, town_center in pairs(this.town_centers) do
         max_res = math.max(town_center.evolution.worms, max_res)
     end
     local research_modifier = math.min(math.max(max_res, 0.01) / math.max(town_center.evolution.worms, 0.01), 10)
-    local player_modifier = 1 / #town_center.market.force.players
+
+    local active_player_count = 0
+    for _, player in pairs(town_center.market.force.players) do
+        if game.tick - player.last_online < active_player_age_threshold then
+            active_player_count = active_player_count + 1
+        end
+    end
+    local player_modifier = 1 / math.max(active_player_count, 1)
+
     return player_modifier * research_modifier
 end
 

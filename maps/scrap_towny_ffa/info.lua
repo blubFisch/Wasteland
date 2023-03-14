@@ -41,8 +41,8 @@ Survive as long as you can. Raid other towns. Defend your town.
 - If you get stuck or trapped, use the /suicide chat command to respawn
 - It is not possible to build near enemy turrets or power poles
     except logistics entities (inserters, belts, boxes, rails) that can be used to steal items
-- Research modifier: Towns with more members have more expensive research. Less advanced towns have cheaper research
-- Damage modifier: Members of towns with more members cause reduced damage against other towns and players
+- Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
+- Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
 
 # PvP Shields
 - PvP shields prevent players from entering, building and damaging
