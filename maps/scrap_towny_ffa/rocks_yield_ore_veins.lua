@@ -120,18 +120,16 @@ local function ore_vein(event)
                 {r = 0.80, g = 0.80, b = 0.80}
             )
         else
-            if p.force == player.force then
-                game.print(
-                    {
-                        'rocks_yield_ore_veins.game_print',
-                        '[color=' .. player.chat_color.r .. ',' .. player.chat_color.g .. ',' .. player.chat_color.b .. ']' .. player.name .. '[/color]',
-                        {'rocks_yield_ore_veins.' .. size[1]},
-                        {'rocks_yield_ore_veins.' .. ore},
-                        icon
-                    },
-                    {r = 0.80, g = 0.80, b = 0.80}
-                )
-            end
+            game.print(
+                {
+                    'rocks_yield_ore_veins.game_print',
+                    '[color=' .. player.chat_color.r .. ',' .. player.chat_color.g .. ',' .. player.chat_color.b .. ']' .. player.name .. '[/color]',
+                    {'rocks_yield_ore_veins.' .. size[1]},
+                    {'rocks_yield_ore_veins.' .. ore},
+                    icon
+                },
+                {r = 0.80, g = 0.80, b = 0.80}
+            )
         end
     end
 
