@@ -456,7 +456,7 @@ local function update_offline_pvp_shields()
                             offline_shield_duration_ticks, time_to_full, false, true)
                     this.pvp_shield_offline_activations[force.index] = -1
                 elseif not activation and activation ~= -1 then
-                    local delay_mins = 5
+                    local delay_mins = 10
                     this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
                 end
             elseif shield and not shield.is_offline_mode then
@@ -464,7 +464,7 @@ local function update_offline_pvp_shields()
             end
         elseif table_size(force.connected_players) > 0 then
             if shield and shield.is_offline_mode then
-                local delay_mins = 3
+                local delay_mins = 5
                 force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minutes."
                         .. " After everyone from your town leaves, you will get a new shield for "
                         .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
