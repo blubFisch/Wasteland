@@ -11,6 +11,7 @@ local math_floor = math.floor
 local ScenarioTable = require 'maps.scrap_towny_ffa.table'
 local Enemy = require 'maps.scrap_towny_ffa.enemy'
 local Building = require 'maps.scrap_towny_ffa.building'
+local MapLayout = require 'maps.scrap_towny_ffa.scrap_towny_ffa_layout'
 
 -- don't spawn if town is within this range
 local spawn_point_town_buffer = 256
@@ -98,7 +99,8 @@ local function find_valid_spawn_point(force_name, surface)
     local this = ScenarioTable.get_table()
 
     -- check center of map first if valid
-    local position = {x = 0, y = 0}
+    local fallback_position = {x = MapLayout.central_ores_town_nobuild + 50, y = 0}
+    local position = fallback_position
     --log("testing {" .. position.x .. "," .. position.y .. "}")
     force_load(position, surface, 1)
 
@@ -112,6 +114,7 @@ local function find_valid_spawn_point(force_name, surface)
             end
         end
     end
+
     -- otherwise find a nearby town
     local keyset = {}
     for town_name, _ in pairs(this.town_centers) do
@@ -126,6 +129,7 @@ local function find_valid_spawn_point(force_name, surface)
         end
     --log("town center is {" .. position.x .. "," .. position.y .. "}")
     end
+
     -- and start checking around it for a suitable spawn position
     local tries = 0
     local radius = spawn_point_town_buffer
@@ -143,11 +147,14 @@ local function find_valid_spawn_point(force_name, surface)
             force_load(position, surface, 1)
             if in_use(target) == false then
                 if has_pollution(target, surface) == false then
-                    if Building.near_another_town(force_name, target, surface, spawn_point_town_buffer) == false then
-                        if is_empty(target, surface) == true then
-                            --log("found valid spawn point at {" .. target.x .. "," .. target.y .. "}")
-                            position = target
-                            return position
+                    local distance_center = math.sqrt(position.x ^ 2 + position.y ^ 2)
+                    if distance_center > MapLayout.central_ores_town_nobuild + 50 then
+                        if Building.near_another_town(force_name, target, surface, spawn_point_town_buffer) == false then
+                            if is_empty(target, surface) == true then
+                                --log("found valid spawn point at {" .. target.x .. "," .. target.y .. "}")
+                                position = target
+                                return position
+                            end
                         end
                     end
                 end
@@ -157,7 +164,7 @@ local function find_valid_spawn_point(force_name, surface)
         radius = radius + math_random(1, spawn_point_incremental_distance)
         tries = tries + 1
     end
-    return {x = 0, y = 0}
+    return fallback_position
 end
 
 function Public.get_new_spawn_point(player, surface)
