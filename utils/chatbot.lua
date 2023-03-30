@@ -69,7 +69,7 @@ local function on_player_joined_game(event)
     else
         player.print(
             '[font=heading-1]' ..
-                '[color=#E99696]J[/color][color=#E9A296]o[/color][color=#E9AF96]i[/color][color=#E9BB96]n[/color] [color=#E9C896]t[/color][color=#E9D496]h[/color][color=#E9E096]e[/color] [color=#A6E996]d[/color][color=#9AE996]i[/color][color=#96E99E]s[/color][color=#96E9AB]c[/color][color=#96E9B7]o[/color][color=#96E9C3]r[/color][color=#96E9D0]d[/color] [color=#96E9DC]>[/color][color=#96E9E9]>[/color] [color=#96DCE9]discord.gg/7WZbghmjCR[/color]' ..
+                'Join the discord >> [color=red]discord.gg/7WZbghmjCR[/color]' ..
                     '[/font]'
         )
     end
