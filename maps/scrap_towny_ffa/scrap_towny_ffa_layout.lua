@@ -11,7 +11,7 @@ local Scrap = require 'maps.scrap_towny_ffa.scrap'
 
 
 Public.central_ores_radius = 15
-Public.central_ores_town_nobuild = 250
+Public.central_ores_town_nobuild = 300
 Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
