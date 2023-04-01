@@ -24,6 +24,7 @@ function Public.reset_table()
     this.score_gui_frame = {}
     this.testing_mode = false
     this.spawn_point = {}
+    this.winner = nil
     this.buffs = {}
     this.players = 0
     this.towns_enabled = true
