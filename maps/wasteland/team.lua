@@ -1045,6 +1045,10 @@ local function on_console_command(event)
 end
 
 local function on_console_chat(event)
+    if not event.player_index then
+        return
+    end
+
     local player = game.players[event.player_index]
     if string_match(string_lower(event.message), '%[armor%=') then
         player.clear_console()
