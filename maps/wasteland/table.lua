@@ -42,6 +42,7 @@ function Public.reset_table()
     this.pvp_shields_displayed_offline_hint = {}
     this.tutorials = {}
     this.suicides = {}
+    this.town_evo_warned = {}
 end
 
 function Public.get_table()

@@ -156,9 +156,9 @@ local function update_player_evo_displays()
     for _, player in pairs(game.connected_players) do
         local e = Evolution.get_evolution(player.position, true) * 10   -- TODO
         local color
-        if e < 0.1 then
+        if e < 0.2 then
             color = {r = 0, g = 255, b = 0}
-        elseif e < 0.7 then
+        elseif e < 0.6 then
             color = {r = 255, g = 255, b = 0}
         else
             color = {r = 255, g = 0, b = 0}

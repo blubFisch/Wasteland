@@ -576,6 +576,25 @@ local function found_town(event)
         return
     end
 
+    if Evolution.get_evolution(position, true) >= 0.0 then  -- TODO
+        if this.town_evo_warned[player.index] == nil or this.town_evo_warned[player.index] < game.tick - 60 * 10 then
+            surface.create_entity(
+                    {
+                        name = 'flying-text',
+                        position = position,
+                        text = 'Evolution is high on this position. Are you sure?',
+                        color = {r = 0.77, g = 0.0, b = 0.0}
+                    }
+            )
+            player.print("Hint: Big towns nearby cause evolution. Check the evolution number at the top of the screen.", Utils.scenario_color)
+
+            this.town_evo_warned[player.index] = game.tick
+
+            player.insert({name = 'stone-furnace', count = 1})
+            return
+        end
+    end
+
     local force = Team.add_new_force(force_name)
 
     this.town_centers[force_name] = {}
