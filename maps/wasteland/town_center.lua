@@ -576,7 +576,7 @@ local function found_town(event)
         return
     end
 
-    if Evolution.get_evolution(position, true) >= 0.0 then  -- TODO
+    if Evolution.get_evolution(position, true) >= 0.2 then
         if this.town_evo_warned[player.index] == nil or this.town_evo_warned[player.index] < game.tick - 60 * 10 then
             surface.create_entity(
                     {
