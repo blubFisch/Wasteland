@@ -14,6 +14,7 @@ function Public.add_balance_ui(player)
         caption = 'Research modifier',
         name = button_id
     }
+    button.visible = false
     button.style.font = 'default'
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
@@ -22,6 +23,10 @@ function Public.add_balance_ui(player)
     button.style.left_padding = 4
     button.style.right_padding = 4
     button.style.bottom_padding = 2
+end
+
+function Public.player_changes_town_status(player, in_town)
+    player.gui.top[button_id].visible = in_town
 end
 
 local function update_uis()

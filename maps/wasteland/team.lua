@@ -84,33 +84,6 @@ function Public.is_towny(force)
     return force.name ~= 'rogue' and force.name ~= 'player'
 end
 
-function Public.has_key(index)
-    local this = ScenarioTable.get_table()
-    if this.key == nil then
-        this.key = {}
-    end
-    if this.key[index] ~= nil then
-        return this.key[index]
-    end
-    return false
-end
-
-function Public.give_key(index)
-    local this = ScenarioTable.get_table()
-    if this.key == nil then
-        this.key = {}
-    end
-    this.key[index] = true
-end
-
-function Public.remove_key(index)
-    local this = ScenarioTable.get_table()
-    if this.key == nil then
-        this.key = {}
-    end
-    this.key[index] = false
-end
-
 function Public.set_player_color(player)
     if not player or not player.valid then
         log('player nil or not valid!')
@@ -195,12 +168,18 @@ function Public.add_player_to_town(player, town_center)
     local surface = market.surface
     reset_player(player)
     player.force = market.force
-    Public.remove_key(player.index)
     this.spawn_point[player.index] = force.get_spawn_position(surface)
     game.permissions.get_group(force.name).add_player(player)
     player.tag = ''
     Public.map_preset(player, true)
     Public.set_player_color(player)
+
+    if player.gui.screen['towny_map_hint'] then
+        player.gui.screen['towny_map_hint'].destroy()
+    end
+
+    ResearchBalance.player_changes_town_status(player, true)
+    CombatBalance.player_changes_town_status(player, true)
 
     force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
 end
@@ -231,7 +210,8 @@ function Public.set_player_to_outlander(player)
     player.tag = '[Outlander]'
     Public.map_preset(player, false)
     Public.set_player_color(player)
-    Public.give_key(player.index)
+    ResearchBalance.player_changes_town_status(player, false)
+    CombatBalance.player_changes_town_status(player, false)
 end
 
 local function set_player_to_rogue(player)
@@ -743,10 +723,7 @@ local function kill_force(force_name, cause)
         elseif not player.connected then
             this.requests[player.index] = 'kill-character'
         end
-        player.force = game.forces.player
-        Public.map_preset(player, false)
-        Public.set_player_color(player)
-        Public.give_key(player.index)
+        Public.set_player_to_outlander(player)
     end
     for _, e in pairs(surface.find_entities_filtered({force = force_name})) do
         if e.valid then
@@ -1060,19 +1037,6 @@ local function on_entity_died(event)
     local cause = event.cause
     if entity and entity.valid and entity.name == 'market' then
         kill_force(entity.force.name, cause)
-    end
-end
-
-local function on_post_entity_died(event)
-    local prototype = event.prototype.type
-    if prototype ~= 'character' then
-        return
-    end
-    local entities = game.surfaces[event.surface_index].find_entities_filtered({position = event.position, radius = 1})
-    for _, e in pairs(entities) do
-        if e.type == 'character-corpse' then
-            Public.remove_key(e.character_corpse_player_index)
-        end
     end
 end
 

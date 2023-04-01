@@ -20,6 +20,8 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Evolution = require 'maps.wasteland.evolution'
 local Utils = require 'maps.wasteland.utils'
 local MapLayout = require 'maps.wasteland.map_layout'
+local ResearchBalance = require 'maps.wasteland.research_balance'
+local CombatBalance = require 'maps.wasteland.combat_balance'
 
 local town_radius = 20
 local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
@@ -549,13 +551,7 @@ local function found_town(event)
     end
 
     -- is player mayor of town that still exists?
-    if game.forces[force_name] then
-        player.insert({name = 'stone-furnace', count = 1})
-        return
-    end
-
-    -- has player placed a town already?
-    if Team.has_key(player.index) == false then
+    if Team.is_towny(player.force) then
         player.insert({name = 'stone-furnace', count = 1})
         return
     end
@@ -674,7 +670,6 @@ local function found_town(event)
     force.set_spawn_position(pos, surface)
 
     Team.add_player_to_town(player, town_center)
-    Team.remove_key(player.index)
     Team.add_chart_tag(town_center)
 
     force.chart(surface, {{-1, -1}, {1, 1}})
@@ -683,10 +678,6 @@ local function found_town(event)
     game.print('>> ' .. player.name .. ' has founded a new town!', {255, 255, 0})
     Server.to_discord_embed(player.name .. ' has founded a new town!')
     player.print('Your town color is ' .. crayola.name, crayola.color)
-
-    if player.gui.screen['towny_map_hint'] then
-        player.gui.screen['towny_map_hint'].destroy()
-    end
 end
 
 local function on_built_entity(event)

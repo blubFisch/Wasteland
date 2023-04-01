@@ -20,7 +20,6 @@ function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
     Team.set_player_to_outlander(player)
     Team.give_player_items(player)
-    Team.give_key(player.index)
     local this = ScenarioTable.get()
     if (this.testing_mode == true) then
         player.cheat_mode = true
@@ -163,9 +162,6 @@ local function on_player_respawned(event)
     Team.give_player_items(player)
     if player.force == game.forces['rogue'] then
         Team.set_player_to_outlander(player)
-    end
-    if player.force == game.forces['player'] then
-        Team.give_key(player.index)
     end
 
     -- get_spawn_point will always return a valid spawn

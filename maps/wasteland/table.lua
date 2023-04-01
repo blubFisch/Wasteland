@@ -14,7 +14,6 @@ Global.register(
 )
 
 function Public.reset_table()
-    this.key = {}
     this.rocket_launches = {}
     this.requests = {}
     this.town_centers = {}

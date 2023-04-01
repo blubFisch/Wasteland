@@ -21,6 +21,7 @@ require 'maps.wasteland.vehicles'
 require 'maps.wasteland.suicide'
 require 'maps.wasteland.score'
 require 'maps.wasteland.research_balance'
+require 'maps.wasteland.map_layout'
 
 local Event = require 'utils.event'
 local Autostash = require 'modules.autostash'
@@ -139,5 +140,3 @@ Event.add(
         end
     end
 )
-
-require 'maps.wasteland.map_layout'
