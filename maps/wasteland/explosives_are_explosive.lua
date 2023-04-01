@@ -3,8 +3,8 @@
 local math_min = math.min
 local math_random = math.random
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Pollution = require 'maps.scrap_towny_ffa.pollution'
+local ScenarioTable = require 'maps.wasteland.table'
+local Pollution = require 'maps.wasteland.pollution'
 local Event = require 'utils.event'
 
 --local damage_per_explosive = 100

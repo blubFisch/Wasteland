@@ -37,7 +37,6 @@ require 'utils.gui.group'
 require 'utils.gui.score'
 require 'utils.gui.config'
 require 'utils.gui.poll'
---require 'utils.gui.server_select'
 require 'utils.freeplay'
 
 ---------------- !ENABLE MODULES HERE ----------------
@@ -231,7 +230,8 @@ require 'utils.freeplay'
 --require 'maps.cube'
 --require 'maps.mountain_race.main'
 --require 'maps.native_war.main'
---require 'maps.scrap_towny_ffa.main'
+
+return require 'maps.wasteland.main'
 ---------------------------------------------------------------
 
 ---------------- MORE MODULES HERE ----------------

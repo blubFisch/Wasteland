@@ -20,8 +20,8 @@ Global.register(
     end
 )
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Evolution = require 'maps.scrap_towny_ffa.evolution'
+local ScenarioTable = require 'maps.wasteland.table'
+local Evolution = require 'maps.wasteland.evolution'
 
 local function get_commmands(target, group)
     local commands = {}

@@ -10,16 +10,16 @@ local table_size = table.size
 
 local Event = require 'utils.event'
 local Server = require 'utils.server'
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Team = require 'maps.scrap_towny_ffa.team'
-local Building = require 'maps.scrap_towny_ffa.building'
-local Colors = require 'maps.scrap_towny_ffa.colors'
-local Enemy = require 'maps.scrap_towny_ffa.enemy'
+local ScenarioTable = require 'maps.wasteland.table'
+local Team = require 'maps.wasteland.team'
+local Building = require 'maps.wasteland.building'
+local Colors = require 'maps.wasteland.colors'
+local Enemy = require 'maps.wasteland.enemy'
 local Color = require 'utils.color_presets'
-local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
-local Evolution = require 'maps.scrap_towny_ffa.evolution'
-local Utils = require 'maps.scrap_towny_ffa.utils'
-local MapLayout = require 'maps.scrap_towny_ffa.scrap_towny_ffa_layout'
+local PvPShield = require 'maps.wasteland.pvp_shield'
+local Evolution = require 'maps.wasteland.evolution'
+local Utils = require 'maps.wasteland.utils'
+local MapLayout = require 'maps.wasteland.wasteland_layout'
 
 local town_radius = 20
 local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)

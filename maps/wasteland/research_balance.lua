@@ -1,6 +1,6 @@
 local Public = {}
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
 
 local button_id = "towny_research_balance"

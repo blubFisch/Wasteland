@@ -1,9 +1,9 @@
 local table_insert = table.insert
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Town_center = require 'maps.scrap_towny_ffa.town_center'
-local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
-local Utils = require 'maps.scrap_towny_ffa.utils'
+local ScenarioTable = require 'maps.wasteland.table'
+local Town_center = require 'maps.wasteland.town_center'
+local PvPShield = require 'maps.wasteland.pvp_shield'
+local Utils = require 'maps.wasteland.utils'
 
 local upgrade_functions = {
     -- Upgrade Town Center Health

@@ -3,8 +3,8 @@
 local math_random = math.random
 local math_floor = math.floor
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Pollution = require 'maps.scrap_towny_ffa.pollution'
+local ScenarioTable = require 'maps.wasteland.table'
+local Pollution = require 'maps.wasteland.pollution'
 local Event = require 'utils.event'
 
 local empty_tile_damage_decay = 50

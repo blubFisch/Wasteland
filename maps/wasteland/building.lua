@@ -3,8 +3,8 @@ local Public = {}
 local math_floor = math.floor
 local table_insert = table.insert
 local table_size = table.size
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
+local ScenarioTable = require 'maps.wasteland.table'
+local PvPShield = require 'maps.wasteland.pvp_shield'
 
 local town_zoning_entity_types = { "electric-pole", "ammo-turret", "electric-turret", "fluid-turret"}
 

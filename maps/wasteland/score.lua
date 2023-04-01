@@ -1,8 +1,8 @@
 local mod_gui = require('mod-gui')
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
-local ResearchBalance = require 'maps.scrap_towny_ffa.research_balance'
+local ResearchBalance = require 'maps.wasteland.research_balance'
 
 local Public = {}
 local button_id = 'towny-score-button'

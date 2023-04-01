@@ -1,5 +1,5 @@
 local Event = require 'utils.event'
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 
 local crash_site = {
     -- simple entity with owner

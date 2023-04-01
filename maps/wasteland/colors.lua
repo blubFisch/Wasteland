@@ -2,7 +2,7 @@ local Public = {}
 
 local table_shuffle = table.shuffle_table
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 local Color = require 'utils.color_presets'
 
 local colors = {}

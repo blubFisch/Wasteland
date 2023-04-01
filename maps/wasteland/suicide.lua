@@ -1,7 +1,7 @@
 local Scheduler = require 'utils.scheduler'
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
-local Utils = require 'maps.scrap_towny_ffa.utils'
+local Utils = require 'maps.wasteland.utils'
 
 -- Must be at least 1 minute
 local minutes_to_die = 10

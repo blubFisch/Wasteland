@@ -2,9 +2,9 @@ local Public = {}
 local math_floor = math.floor
 local math_log10 = math.log10
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Utils = require 'maps.scrap_towny_ffa.utils'
-local Score = require 'maps.scrap_towny_ffa.score'
+local ScenarioTable = require 'maps.wasteland.table'
+local Utils = require 'maps.wasteland.utils'
+local Score = require 'maps.wasteland.score'
 
 local biters = {
     [1] = 'small-biter',

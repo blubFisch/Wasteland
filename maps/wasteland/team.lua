@@ -7,11 +7,11 @@ local string_lower = string.lower
 local math_min = math.min
 
 local Server = require 'utils.server'
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local PvPShield = require 'maps.scrap_towny_ffa.pvp_shield'
-local CombatBalance = require 'maps.scrap_towny_ffa.combat_balance'
-local Utils = require 'maps.scrap_towny_ffa.utils'
-local ResearchBalance = require 'maps.scrap_towny_ffa.research_balance'
+local ScenarioTable = require 'maps.wasteland.table'
+local PvPShield = require 'maps.wasteland.pvp_shield'
+local CombatBalance = require 'maps.wasteland.combat_balance'
+local Utils = require 'maps.wasteland.utils'
+local ResearchBalance = require 'maps.wasteland.research_balance'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}

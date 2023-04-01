@@ -2,7 +2,7 @@ local Public = {}
 local math_random = math.random
 local math_floor = math.floor
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 
 function Public.reproduce()
     local this = ScenarioTable.get_table()

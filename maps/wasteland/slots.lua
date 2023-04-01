@@ -1,4 +1,4 @@
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 
 -- called whenever a player places an item
 local function on_built_entity(event)

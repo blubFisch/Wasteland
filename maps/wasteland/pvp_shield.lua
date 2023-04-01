@@ -3,9 +3,9 @@ local Public = {}
 local math_sqrt = math.sqrt
 
 local Event = require 'utils.event'
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 local CommonFunctions = require 'utils.common'
-local Utils = require 'maps.scrap_towny_ffa.utils'
+local Utils = require 'maps.wasteland.utils'
 
 local beam_type = 'electric-beam-no-sound'
 

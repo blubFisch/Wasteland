@@ -1,6 +1,6 @@
 local Public = {}
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 
 function Public.reset()
     local this = ScenarioTable.get_table()

@@ -8,10 +8,10 @@ local math_sin = math.sin
 local math_cos = math.cos
 local math_floor = math.floor
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Enemy = require 'maps.scrap_towny_ffa.enemy'
-local Building = require 'maps.scrap_towny_ffa.building'
-local MapLayout = require 'maps.scrap_towny_ffa.scrap_towny_ffa_layout'
+local ScenarioTable = require 'maps.wasteland.table'
+local Enemy = require 'maps.wasteland.enemy'
+local Building = require 'maps.wasteland.building'
+local MapLayout = require 'maps.wasteland.wasteland_layout'
 
 -- don't spawn if town is within this range
 local spawn_point_town_buffer = 256

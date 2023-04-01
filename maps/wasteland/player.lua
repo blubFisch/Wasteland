@@ -1,14 +1,14 @@
 local Public = {}
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Team = require 'maps.scrap_towny_ffa.team'
+local ScenarioTable = require 'maps.wasteland.table'
+local Team = require 'maps.wasteland.team'
 local Event = require 'utils.event'
-local Spawn = require 'maps.scrap_towny_ffa.spawn'
-local Info = require 'maps.scrap_towny_ffa.info'
-local Tutorial = require 'maps.scrap_towny_ffa.tutorial'
-local Score = require 'maps.scrap_towny_ffa.score'
-local ResearchBalance = require 'maps.scrap_towny_ffa.research_balance'
-local CombatBalance = require 'maps.scrap_towny_ffa.combat_balance'
+local Spawn = require 'maps.wasteland.spawn'
+local Info = require 'maps.wasteland.info'
+local Tutorial = require 'maps.wasteland.tutorial'
+local Score = require 'maps.wasteland.score'
+local ResearchBalance = require 'maps.wasteland.research_balance'
+local CombatBalance = require 'maps.wasteland.combat_balance'
 
 -- how long in ticks between spawn and death will be considered spawn kill (10 seconds)
 local max_ticks_between_spawns = 60 * 10

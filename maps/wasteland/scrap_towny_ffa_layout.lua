@@ -6,8 +6,8 @@ local math_abs = math.abs
 local Public = {}
 
 local get_noise = require 'utils.get_noise'
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Scrap = require 'maps.scrap_towny_ffa.scrap'
+local ScenarioTable = require 'maps.wasteland.table'
+local Scrap = require 'maps.wasteland.scrap'
 
 
 Public.central_ores_radius = 15
@@ -271,7 +271,7 @@ end
 --end
 
 local function on_chunk_generated(event)
-    --log("scrap_towny_ffa::on_chunk_generated")
+    --log("wasteland::on_chunk_generated")
     local surface = event.surface
     if (surface.name ~= 'nauvis') then
         return
@@ -322,7 +322,7 @@ local function on_chunk_generated(event)
             if math.sqrt(position.x^2 + position.y^2) > Public.central_oil_radius_outer + 10 then
                 if math_random(1, 3) > 1 then
                     if not surface.get_tile(position).collides_with('resource-layer') then
-                        noise = get_noise('scrap_towny_ffa', position, seed)
+                        noise = get_noise('wasteland', position, seed)
                         if is_scrap_area(noise) then
                             surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
                             place_scrap(surface, position)
@@ -344,7 +344,7 @@ local function on_chunk_generated(event)
                 position = {x = left_top_x + x, y = left_top_y + y}
                 local distance_to_center = math.sqrt(position.x^2 + position.y^2)
                 if distance_to_center < Public.central_ores_radius then
-                    noise = get_noise('scrap_towny_ffa', position, seed)
+                    noise = get_noise('wasteland', position, seed)
                     surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
                     surface.create_entity({name = ores[math.random(1, 4)], position = position, amount = amount})
                 elseif distance_to_center > Public.central_oil_radius_inner and distance_to_center < Public.central_oil_radius_outer then

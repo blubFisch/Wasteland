@@ -1,8 +1,8 @@
 local Public = {}
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
+local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
-local Team = require 'maps.scrap_towny_ffa.team'
+local Team = require 'maps.wasteland.team'
 
 
 

@@ -1,10 +1,10 @@
 local Event = require 'utils.event'
 local Server = require 'utils.server'
 local Alert = require 'utils.alert'
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Nauvis = require 'maps.scrap_towny_ffa.nauvis'
-local Team = require 'maps.scrap_towny_ffa.team'
-local Player = require 'maps.scrap_towny_ffa.player'
+local ScenarioTable = require 'maps.wasteland.table'
+local Nauvis = require 'maps.wasteland.nauvis'
+local Team = require 'maps.wasteland.team'
+local Player = require 'maps.wasteland.player'
 local Color = require 'utils.color_presets'
 local table_insert = table.insert
 

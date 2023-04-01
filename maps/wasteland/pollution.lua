@@ -1,8 +1,8 @@
 local Public = {}
 local math_random = math.random
 
-local ScenarioTable = require 'maps.scrap_towny_ffa.table'
-local Scrap = require 'maps.scrap_towny_ffa.scrap'
+local ScenarioTable = require 'maps.wasteland.table'
+local Scrap = require 'maps.wasteland.scrap'
 
 local pollution_index = {
     ['small-biter'] = {min = 0.1, max = 0.1},

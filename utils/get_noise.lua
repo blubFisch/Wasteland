@@ -116,7 +116,7 @@ local noises = {
         {modifier = 0.004, weight = 1},
         {modifier = 0.02, weight = 0.05}
     },
-    ['scrap_towny_ffa'] = {
+    ['wasteland'] = {
         {modifier = 0.005, weight = 1},
         {modifier = 0.025, weight = 0.25},
         {modifier = 0.1, weight = 0.125},
