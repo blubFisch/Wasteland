@@ -172,7 +172,7 @@ local function hint_treasure()
     local this = ScenarioTable.get()
     for _, player in pairs(game.connected_players) do
         if this.treasure_hint[player.index] == nil then
-            if player.online_time % (10  * 60) < 60 then
+            if player.online_time % (30 * 60 * 60) < 60 then
                 player.surface.create_entity(
                     {
                         name = 'flying-text',
