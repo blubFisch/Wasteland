@@ -43,6 +43,7 @@ function Public.reset_table()
     this.tutorials = {}
     this.suicides = {}
     this.town_evo_warned = {}
+    this.treasure_hint = {}
 end
 
 function Public.get_table()
