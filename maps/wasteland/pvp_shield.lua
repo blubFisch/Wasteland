@@ -219,6 +219,23 @@ function Public.entity_is_protected(entity, cause_force)
     return false
 end
 
+local function scan_protect_shield_area()
+    -- Handle edge case damage situations
+
+    local this = ScenarioTable.get_table()
+    for _, shield in pairs(this.pvp_shields) do
+
+        -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
+        local extra_box = enlarge_bounding_box(shield.box, 1)
+        local entities = shield.surface.find_entities_filtered({name = {'tank', 'car'}, area = extra_box})
+        for _, e in pairs(entities) do
+            if shield.force ~= e.force and not shield.force.get_friend(e.force) then
+                e.speed = 0
+            end
+        end
+    end
+end
+
 local function on_entity_damaged(event)
     local entity = event.entity
     if not entity.valid then
@@ -234,5 +251,6 @@ Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
 Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(60, update_shield_lifetime)
+Event.add(defines.events.on_tick, scan_protect_shield_area)
 
 return Public
