@@ -37,6 +37,7 @@ Survive as long as you can. Raid other towns. Defend your town.
 - It's possible to automate trading with the town center! How cool is that?!! Try it out.
     Tip: use filter inserters with to get coins/iron/.. out of the market
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
+    Accidentally overfished? No problem, you can drop them back in
 - Use /rename-town NEWNAME (chat command) to rename your town
 - If you get stuck or trapped, use the /suicide chat command to respawn
 - It is not possible to build near enemy turrets or power poles
