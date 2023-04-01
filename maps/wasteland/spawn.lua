@@ -11,7 +11,7 @@ local math_floor = math.floor
 local ScenarioTable = require 'maps.wasteland.table'
 local Enemy = require 'maps.wasteland.enemy'
 local Building = require 'maps.wasteland.building'
-local MapLayout = require 'maps.wasteland.wasteland_layout'
+local MapLayout = require 'maps.wasteland.map_layout'
 
 -- don't spawn if town is within this range
 local spawn_point_town_buffer = 256

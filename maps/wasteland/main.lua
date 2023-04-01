@@ -140,4 +140,4 @@ Event.add(
     end
 )
 
-require 'maps.wasteland.wasteland_layout'
+require 'maps.wasteland.map_layout'

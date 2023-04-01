@@ -231,7 +231,7 @@ require 'utils.freeplay'
 --require 'maps.mountain_race.main'
 --require 'maps.native_war.main'
 
-return require 'maps.wasteland.main'
+require 'maps.wasteland.main'
 ---------------------------------------------------------------
 
 ---------------- MORE MODULES HERE ----------------
