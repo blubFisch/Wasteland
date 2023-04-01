@@ -20,8 +20,6 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Evolution = require 'maps.wasteland.evolution'
 local Utils = require 'maps.wasteland.utils'
 local MapLayout = require 'maps.wasteland.map_layout'
-local ResearchBalance = require 'maps.wasteland.research_balance'
-local CombatBalance = require 'maps.wasteland.combat_balance'
 
 local town_radius = 20
 local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)

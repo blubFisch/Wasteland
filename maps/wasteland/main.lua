@@ -78,7 +78,7 @@ local tick_actions = {
     [60 * 55] = Pollution.market_scent -- each minute, at 55 seconds
 }
 
-local function on_nth_tick(event)
+local function run_tick_actions(event)
     -- run each second
     local tick = event.tick
     local seconds = tick % 3600 -- tick will recycle minute
@@ -90,31 +90,8 @@ local function on_nth_tick(event)
     tick_actions[seconds]()
 end
 
-local function ui_smell_evolution()
-    for _, player in pairs(game.connected_players) do
-        -- Only for non-townies
-        if player.force.index == game.forces.player.index or player.force.index == game.forces['rogue'].index then
-            local e = Evolution.get_evolution(player.position)
-            local extra
-            if e < 0.1 then
-                extra = 'Could be a good place to found a town.'
-            else
-                extra = 'Not a safe place to start a new town. Maybe somewhere else?'
-            end
-            player.create_local_flying_text(
-                {
-                    position = {x = player.position.x, y = player.position.y},
-                    text = 'You smell the evolution around here: ' .. string.format('%.0f', e * 100) .. '%. ' .. extra,
-                    color = {r = 1, g = 1, b = 1}
-                }
-            )
-        end
-    end
-end
-
 Event.on_init(on_init)
-Event.on_nth_tick(60, on_nth_tick) -- once every second
-Event.on_nth_tick(60 * 30, ui_smell_evolution)
+Event.on_nth_tick(60, run_tick_actions)
 
 --Disable the comfy main gui since we good too many goodies there.
 Event.add(

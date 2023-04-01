@@ -9,6 +9,10 @@ local Tutorial = require 'maps.wasteland.tutorial'
 local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local CombatBalance = require 'maps.wasteland.combat_balance'
+local Evolution = require 'maps.wasteland.evolution'
+
+local map_pos_frame_id = 'towny_map_position'
+local evo_frame_id = 'towny_evo_display'
 
 -- how long in ticks between spawn and death will be considered spawn kill (10 seconds)
 local max_ticks_between_spawns = 60 * 10
@@ -102,11 +106,24 @@ function Public.increment()
 end
 
 local function init_position_frame(player)
-    if player.gui.top['towny_map_position'] then
-        player.gui.top['towny_map_position'].destroy()
+    if player.gui.top[map_pos_frame_id] then
+        player.gui.top[map_pos_frame_id].destroy()
     end
     local b = player.gui.top.add({type = 'label', caption = "Position",
-                                  name = 'towny_map_position'})
+                                  name = map_pos_frame_id})
+    b.style.font_color = {r = 255, g = 255, b = 255}
+    b.style.top_padding = 10
+    b.style.left_padding = 10
+    b.style.right_padding = 10
+    b.style.bottom_padding = 10
+end
+
+local function init_evo_frame(player)
+    if player.gui.top[evo_frame_id] then
+        player.gui.top[evo_frame_id].destroy()
+    end
+    local b = player.gui.top.add({type = 'label', caption = "Evolution",
+                                  name = evo_frame_id})
     b.style.font_color = {r = 255, g = 255, b = 255}
     b.style.top_padding = 10
     b.style.left_padding = 10
@@ -128,10 +145,26 @@ local function init_map_hint_frame(player)
     b.style.bottom_padding = 10
 end
 
-local function update_player_positions()
+local function update_player_position_displays()
     for _, player in pairs(game.connected_players) do
-        player.gui.top['towny_map_position'].caption = "Position: "
+        player.gui.top[map_pos_frame_id].caption = "Position: "
                 .. string.format('%.0f, %.0f', player.position.x,  player.position.y)
+    end
+end
+
+local function update_player_evo_displays()
+    for _, player in pairs(game.connected_players) do
+        local e = Evolution.get_evolution(player.position, true) * 10   -- TODO
+        local color
+        if e < 0.1 then
+            color = {r = 0, g = 255, b = 0}
+        elseif e < 0.7 then
+            color = {r = 255, g = 255, b = 0}
+        else
+            color = {r = 255, g = 0, b = 0}
+        end
+        player.gui.top[evo_frame_id].caption = "Evolution: " .. string.format('%.0f%%', e * 100)
+        player.gui.top[evo_frame_id].style.font_color = color
     end
 end
 
@@ -150,6 +183,7 @@ local function on_player_joined_game(event)
         Tutorial.register_for_tutorial(player)
         init_position_frame(player)
         init_map_hint_frame(player)
+        init_evo_frame(player)
     end
     Public.load_buffs(player)
     Public.requests(player)
@@ -188,7 +222,8 @@ local function on_player_died(event)
     end
 end
 
-Event.on_nth_tick(60, update_player_positions)
+Event.on_nth_tick(60, update_player_position_displays)
+Event.on_nth_tick(60, update_player_evo_displays)
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
 Event.add(defines.events.on_player_respawned, on_player_respawned)
 Event.add(defines.events.on_player_died, on_player_died)
