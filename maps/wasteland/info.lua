@@ -1,13 +1,12 @@
 local Public = {}
 
 local changelog =
-    [[# Mar 2023 updates:
- - Towns with more players are nerfed in weapon damage and research
- - New towns can catch up faster with the new research modifier boost based on highest tech on map
- - Treasure in the map center!
- - Victory by survival time + research
- - Enemy walls don't stop you from building anymore. Power lines or turrets still do.
- - Lots of small bugfixes]]
+    [[Apr 2023 updates:
+ - Evolution updates to make starting towns easier
+
+ Mar 2023 updates:
+ - Rebalancing for towns with many members and for catching up research with big towns
+ - Big treasure in map center]]
 
 local info =
     [[Welcome to the wasteland
