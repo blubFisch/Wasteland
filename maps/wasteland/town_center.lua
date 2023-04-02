@@ -132,7 +132,7 @@ local starter_supplies = {
     {name = 'grenade', count = 5},
     {name = 'stone', count = 100},
     {name = 'land-mine', count = 4},
-    {name = 'iron-gear-wheel', count = 16},
+    {name = 'wood', count = 100},
     {name = 'iron-plate', count = 200},
     {name = 'shotgun', count = 1},
     {name = 'shotgun-shell', count = 8},
@@ -212,7 +212,7 @@ local function draw_town_spawn(player_name)
         local m1 = -8 + math_random(0, 16)
         local m2 = -8 + math_random(0, 16)
         local p = {position.x + m1, position.y + m2}
-        p = surface.find_non_colliding_position('wooden-chest', p, 64, 1)
+        p = surface.find_non_colliding_position('iron-chest', p, 64, 1)
         if p then
             local e = surface.create_entity({name = 'iron-chest', position = p, force = player_name})
             local inventory = e.get_inventory(defines.inventory.chest)

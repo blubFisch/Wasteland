@@ -161,7 +161,7 @@ local function set_offers(town_center)
         special_offers[5] = {{}, 'Maximum Crafting Speed upgrades reached!'}
     end
     local laser_turret = 'Laser Turret Slot [#' .. tostring(town_center.upgrades.laser_turret.slots + 1) .. ']'
-    special_offers[6] = {{{'coin', (town_center.upgrades.laser_turret.slots * 200)}}, laser_turret}
+    special_offers[6] = {{{'coin', (town_center.upgrades.laser_turret.slots * 400)}}, laser_turret}
     local spawn_point = 'Set Spawn Point'
     special_offers[7] = {{}, spawn_point}
     special_offers[8] = {{}, 'AFK PvP Shield (10 minutes)'}
@@ -194,7 +194,7 @@ local function set_offers(town_center)
     table_insert(market_items, {price = {{'coin', 2}}, offer = {type = 'give-item', item = 'crude-oil-barrel', count = 1}})
     table_insert(market_items, {price = {{'crude-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1000}}, offer = {type = 'give-item', item = 'laser-turret', count = 1}})
+    table_insert(market_items, {price = {{'coin', 200}}, offer = {type = 'give-item', item = 'laser-turret', count = 1}})
     table_insert(market_items, {price = {{'coin', 300}}, offer = {type = 'give-item', item = 'loader', count = 1}})
     table_insert(market_items, {price = {{'coin', 600}}, offer = {type = 'give-item', item = 'fast-loader', count = 1}})
     table_insert(market_items, {price = {{'coin', 900}}, offer = {type = 'give-item', item = 'express-loader', count = 1}})
