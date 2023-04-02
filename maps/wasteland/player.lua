@@ -191,20 +191,22 @@ end
 
 local function on_player_joined_game(event)
     local player = game.players[event.player_index]
-    Score.add_score_button(player)
-    ResearchBalance.add_balance_ui(player)
-    CombatBalance.add_balance_ui(player)
-    Info.toggle_button(player)
     Team.set_player_color(player)
     if player.online_time == 0 then
         Public.increment()
-        Public.initialize(player)
-        Public.spawn(player)
+
+        Info.toggle_button(player)
         Info.show(player)
+        Score.add_score_button(player)
         Tutorial.register_for_tutorial(player)
+        ResearchBalance.add_balance_ui(player)
+        CombatBalance.add_balance_ui(player)
         init_position_frame(player)
         init_map_hint_frame(player)
         init_evo_frame(player)
+
+        Public.initialize(player)
+        Public.spawn(player)
     end
     Public.load_buffs(player)
     Public.requests(player)
