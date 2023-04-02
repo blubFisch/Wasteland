@@ -157,9 +157,8 @@ local function hint_treasure()
     for _, player in pairs(game.connected_players) do
         if this.treasure_hint[player.index] == nil then
             if player.online_time % (30 * 60 * 60) < 60 then
-                player.surface.create_entity(
+                player.create_local_flying_text(
                     {
-                        name = 'flying-text',
                         position = player.position,
                         text = 'You hear rumors about a huge treasure at the center of the map',
                         color = {r = 0.4, g = 0.6, b = 0.8}
