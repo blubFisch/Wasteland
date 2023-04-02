@@ -251,11 +251,6 @@ local function ally_outlander(player, target)
     local target_force = target.force
     local target_town_center = this.town_centers[target_force.name]
 
-    -- don't handle if towns not yet enabled
-    if not this.towns_enabled then
-        player.print('You must wait for more players to join!', Utils.scenario_color)
-        return false
-    end
     -- don't handle request if target is not a town
     if not Public.is_towny(requesting_force) and not Public.is_towny(target_force) then
         return false

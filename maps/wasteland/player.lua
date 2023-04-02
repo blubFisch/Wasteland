@@ -17,9 +17,6 @@ local evo_frame_id = 'towny_evo_display'
 -- how long in ticks between spawn and death will be considered spawn kill (10 seconds)
 local max_ticks_between_spawns = 60 * 10
 
--- how many players must login before teams are teams_enabled
-local min_players_for_enabling_towns = 0
-
 function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
     Team.set_player_to_outlander(player)
@@ -89,19 +86,6 @@ function Public.requests(player)
             player.character.die()
         end
         this.requests[player.index] = nil
-    end
-end
-
-function Public.increment()
-    local this = ScenarioTable.get()
-    local count = this.players + 1
-    this.players = count
-    if this.testing_mode then
-        this.towns_enabled = true
-    else
-        if this.players >= min_players_for_enabling_towns then
-            this.towns_enabled = true
-        end
     end
 end
 
@@ -193,8 +177,6 @@ local function on_player_joined_game(event)
     local player = game.players[event.player_index]
     Team.set_player_color(player)
     if player.online_time == 0 then
-        Public.increment()
-
         Info.toggle_button(player)
         Info.show(player)
         Score.add_score_button(player)

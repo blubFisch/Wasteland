@@ -26,8 +26,6 @@ function Public.reset_table()
     this.spawn_point = {}
     this.winner = nil
     this.buffs = {}
-    this.players = 0
-    this.towns_enabled = true
     this.nuke_tick_schedule = {}
     this.swarms = {}
     this.explosion_schedule = {}

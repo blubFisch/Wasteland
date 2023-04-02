@@ -84,7 +84,6 @@ local function reset_map()
         log('rogue force is missing!')
     end
     for _, player in pairs(game.players) do
-        Player.increment()
         Player.initialize(player)
         Team.set_player_color(player)
         Player.spawn(player)

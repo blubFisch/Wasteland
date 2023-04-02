@@ -542,11 +542,6 @@ local function found_town(event)
 
     -- are towns enabled?
     local this = ScenarioTable.get_table()
-    if not this.towns_enabled then
-        player.print('You must wait for more players to join!', {255, 255, 0})
-        player.insert({name = 'stone-furnace', count = 1})
-        return
-    end
 
     -- is player mayor of town that still exists?
     if Team.is_towny(player.force) then
