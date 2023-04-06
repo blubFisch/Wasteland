@@ -70,21 +70,26 @@ end
 local function update_research_progress()
     local this = ScenarioTable.get_table()
 
-     for _, town_center in pairs(this.town_centers) do
-         local force = town_center.market.force
-         if force.current_research then
-             if not town_center.research_balance then
-                 town_center.research_balance = {}
-             end
+    for _, town_center in pairs(this.town_centers) do
+        local force = town_center.market.force
+        if force.current_research then
+            if not town_center.research_balance then
+                town_center.research_balance = {}
+            end
 
-             if town_center.research_balance.last_progress
-                     and town_center.research_balance.last_progress < force.research_progress   -- don't skip to next research
-             then
-                 local diff = force.research_progress - town_center.research_balance.last_progress
-                 force.research_progress = math.min(force.research_progress + diff * (Public.modifier_for_town(town_center) - 1), 1)
-             end
-             town_center.research_balance.last_progress = force.research_progress
-         end
+            if town_center.research_balance.last_current_research
+                and town_center.research_balance.last_current_research == force.current_research   -- research should be the same
+            then
+                if town_center.research_balance.last_progress
+                    and town_center.research_balance.last_progress < force.research_progress   -- don't skip to next research
+                then
+                    local diff = force.research_progress - town_center.research_balance.last_progress
+                    force.research_progress = math.min(force.research_progress + diff * (Public.modifier_for_town(town_center) - 1), 1)
+                end
+            end
+            town_center.research_balance.last_progress = force.research_progress
+            town_center.research_balance.last_current_research = force.current_research
+        end
     end
 end
 
