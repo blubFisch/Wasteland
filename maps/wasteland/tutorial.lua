@@ -41,7 +41,7 @@ local function tutorials_tick()
             if this.tutorials[player.index].step == 3 and player.force.previous_research then
                 player.set_goal_description("Well done!\nNext, take care of defense against players."
                         .. "\nLaser turrets are your best chance against advanced players and tanks."
-                        .. "\nYou can buy laser turrets at your market. Get coins by killing biters or selling items"
+                        .. "\nYou can buy laser turrets at your market.\nGet coins by killing biters or selling items"
                         .. "\n\nBuild your first laser turret")
 
                 this.tutorials[player.index].step = 4
