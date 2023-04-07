@@ -208,9 +208,9 @@ function Public.entity_is_protected(entity, cause_force)
 
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if entity.surface == shield.surface and entity.force == shield.force and cause_force.name ~= "enemy" then
-            if shield.force ~= cause_force and not shield.force.get_friend(cause_force) then
-                if CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
+        if entity.surface == shield.surface and CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
+            if (entity.force == shield.force or entity.force.name == "neutral") and cause_force.name ~= "enemy" then
+                if shield.force ~= cause_force and not shield.force.get_friend(cause_force) then
                     return true
                 end
             end
