@@ -154,7 +154,11 @@ end
 
 
 function Public.dmg_modifier_for_force(force)
-    return 1 / #force.connected_players
+    if force == game.forces.player or force == game.forces.rogue then
+        return 1
+    else
+        return 1 / #force.connected_players
+    end
 end
 
 -- Extra modifiers based on player numbers
@@ -164,25 +168,58 @@ function Public.on_entity_damaged(event)
         return
     end
 
+    -- Extra debug info
+    --local cause_name = "n/a"
+    --if event.cause then
+    --    cause_name = event.cause.name
+    --end
+    --game.print("DMG_XDB entity " .. entity.name .. " damage_type " .. event.damage_type.name .. " cause " .. cause_name
+    --        .. " original_damage_amount " .. event.original_damage_amount .. " final_damage_amount " .. event.final_damage_amount)
+
+    local is_tank_damage = false
+    local tank_modifier = 1
+
+    -- Reduce damage resistances of tanks
+    if entity.name == "tank" and (event.damage_type.name == "physical" or event.damage_type.name == "fire") then
+        is_tank_damage = true
+        tank_modifier = 0.3
+        if event.cause and event.cause.name == "tank" then
+            -- Boost player vs player tank battles
+            tank_modifier = tank_modifier * 5
+        end
+        if event.damage_type.name == "fire" then
+            tank_modifier = tank_modifier * 1
+        end
+    end
+
+    local force_modifier = 1
+    -- Force modifier compensates for unbalanced teams
+    -- This evens it out so that 2 shots from a 2 player team do same damage as 1 shot from a 1 player team
+    -- Need to consider damage after damage resistances
     local cause_force = event.force
-    if cause_force == game.forces.enemy or entity.force == game.forces.enemy or entity.force == game.forces.neutral then
-        return
-    end
-    if cause_force == game.forces.player or cause_force == game.forces.rogue then
-        return
-    end
-
-    if not event.cause or force_damage_modifier_excluded[event.cause.name] then
-        return
-    end
-    --game.print("damage_type " .. event.damage_type.name .. " cause " .. event.cause.name)
-
-    local modifier = Public.dmg_modifier_for_force(cause_force)
-
-    if event.final_damage_amount * modifier >= entity.health then
-        entity.health = 0  -- Note: This is not fully correct, it skips the last damage reduction
+    if cause_force == game.forces.enemy or entity.force == game.forces.enemy or entity.force == game.forces.neutral
+            or not event.cause or force_damage_modifier_excluded[event.cause.name] then
+        force_modifier = 1
     else
-        entity.health = math.max(0, entity.health - event.final_damage_amount * (modifier - 1))
+        force_modifier = Public.dmg_modifier_for_force(cause_force)
+    end
+
+
+    -- Undo original damage and apply modified damage
+    if is_tank_damage then
+        --game.print("DMG_XDB applying tank_damage force_modifier " .. force_modifier .. " tank_modifier " .. tank_modifier)
+        entity.health = entity.health + event.final_damage_amount - event.original_damage_amount * tank_modifier * force_modifier
+    else
+        if force_modifier == 1 then
+            return
+        else
+            --game.print("DMG_XDB applying force_modifier " .. force_modifier)
+            if event.final_damage_amount * force_modifier >= entity.health then
+                entity.health = 0  -- Note: This is not fully correct, it can skip the last damage modification
+            else
+                entity.health = math.max(0, entity.health - event.final_damage_amount * (force_modifier - 1))
+            end
+        end
     end
 end
 

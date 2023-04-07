@@ -2,11 +2,8 @@ local Public = {}
 
 local changelog =
     [[Apr 2023 updates:
- - Evolution updates to make starting towns easier
-
- Mar 2023 updates:
- - Rebalancing for towns with many members and for catching up research with big towns
- - Big treasure in map center]]
+ - Tank combat rebalance - tanks are much weaker against physical damage
+ - Make starting towns easier]]
 
 local info =
     [[Welcome to the wasteland
