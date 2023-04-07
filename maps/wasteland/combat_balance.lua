@@ -25,7 +25,7 @@ local player_ammo_damage_modifiers = {
     ['cannon-shell'] = -0.5,
     ['capsule'] = 0,
     ['beam'] = -0.5,
-    ['laser'] = -0.5,
+    ['laser'] = -0.75,
     ['electric'] = -0.5,
     ['flamethrower'] = 0,
     ['grenade'] = -0.5,
@@ -151,7 +151,6 @@ end
 function Public.format_dmg_modifier(force)
     return string.format('%.0f%%', 100 * Public.dmg_modifier_for_force(force))
 end
-
 
 function Public.dmg_modifier_for_force(force)
     if force == game.forces.player or force == game.forces.rogue then
