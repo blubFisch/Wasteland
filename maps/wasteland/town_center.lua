@@ -582,7 +582,6 @@ local function found_town(event)
     town_center.health = town_center.max_health
     local crayola = Colors.get_random_color()
     town_center.color = crayola.color
-    town_center.research_counter = 1
     town_center.upgrades = {}
     town_center.upgrades.mining_prod = 0
     town_center.upgrades.mining_speed = 0
@@ -595,6 +594,7 @@ local function found_town(event)
     town_center.evolution.spitters = 0
     town_center.evolution.worms = 0
     town_center.creation_tick = game.tick
+    town_center.research_balance = {current_modifier = 1}
 
     town_center.town_caption =
         rendering.draw_text {

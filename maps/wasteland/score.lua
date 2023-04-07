@@ -151,7 +151,7 @@ local function update_score()
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
                 information_table.add {type = 'label', caption = string.format('%.1f', town_res_scores[town_center]) ..
-                        " (" .. ResearchBalance.format_town_modifier(ResearchBalance.modifier_for_town(town_center)) .. ")"}
+                        " (" .. ResearchBalance.format_town_modifier(town_center.research_balance.current_modifier) .. ")"}
                 information_table.style.column_alignments[3] = 'right'
                 information_table.add {type = 'label', caption = string.format('%.1f  (%.1fh)', town_age_scores[town_center], town_ages_h[town_center])}
                 information_table.style.column_alignments[4] = 'right'
