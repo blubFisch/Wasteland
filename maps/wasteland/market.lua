@@ -135,7 +135,7 @@ local function set_offers(town_center)
 
     -- special offers
     local special_offers = {}
-    if town_center.max_health < 50000 then
+    if town_center.max_health < 20000 then
         special_offers[1] = {{{'coin', town_center.max_health * 0.1}}, 'Upgrade Town Center Health'}
     else
         special_offers[1] = {{}, 'Maximum Health upgrades reached!'}
