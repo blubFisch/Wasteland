@@ -2,9 +2,9 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Apr 2023 updates[/font]
- - Big/behemoth biters can't penetrate pvp shields anymore
  - Tank combat rebalance - tanks are much weaker against physical damage
- - Make starting towns easier]]
+ - PvP shields are stronger
+ - Starting towns late game is easier]]
 
 local info =
     [[[font=heading-1]Welcome to the wasteland[/font]
