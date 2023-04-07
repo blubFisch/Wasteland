@@ -7,8 +7,7 @@ local changelog =
  - Make starting towns easier]]
 
 local info =
-    [[Welcome to the wasteland
-
+    [[[font=heading-1]Welcome to the wasteland[/font]
 Build a town that can survive against biters and other players!
 
 
@@ -23,6 +22,7 @@ local info_adv =
 Survive as long as you can. Raid other towns. Defend your town.
 
 [font=heading-1]Advanced tips and tricks[/font]
+- To join our discord, open wasteland-discord.fun in your web browser
 - It's best to found new towns far from existing towns, as enemies will become aggressive with town's research.
     Biters and spitters become more aggressive towards towns that are advanced in research.
     Their evolution will scale around technology progress in any nearby towns and pollution levels.
@@ -90,14 +90,6 @@ function Public.show(player, info_type)
     local frame = player.gui.center.add {type = 'frame', name = 'towny_map_intro_frame'}
     frame = frame.add {type = 'frame', direction = 'vertical'}
 
-    local t = frame.add {type = 'table', column_count = 2}
-
-    local label = t.add {type = 'label', caption = 'The Wasteland'}
-    label.style.font = 'heading-1'
-    label.style.font_color = {r = 0.85, g = 0.85, b = 0.85}
-    label.style.right_padding = 8
-
-    frame.add {type = 'line'}
     local cap = info
     if info_type == 'adv' then
         cap = info_adv
