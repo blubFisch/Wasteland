@@ -13,7 +13,6 @@ require 'maps.wasteland.wreckage_yields_scrap'
 require 'maps.wasteland.rocks_yield_ore_veins'
 require 'maps.wasteland.worms_create_oil_patches'
 require 'maps.wasteland.spawners_contain_biters'
-require 'maps.wasteland.fluids_are_explosive'
 require 'maps.wasteland.trap'
 require 'maps.wasteland.turrets_drop_ammo'
 require 'maps.wasteland.vehicles'
@@ -34,12 +33,15 @@ local Team = require 'maps.wasteland.team'
 local Radar = require 'maps.wasteland.limited_radar'
 local Limbo = require 'maps.wasteland.limbo'
 local Evolution = require 'maps.wasteland.evolution'
+local PvPShield = require 'maps.wasteland.pvp_shield'
 local Gui = require 'utils.gui'
 local Color = require 'utils.color_presets'
 local Where = require 'utils.commands.where'
 local Inventory = require 'modules.show_inventory'
 local AntiGrief = require 'utils.antigrief'
 local Utils = require 'maps.wasteland.utils'
+local CombatBalance = require 'maps.wasteland.combat_balance'
+local FluidsAreExplosive = require 'maps.wasteland.fluids_are_explosive'
 
 
 local function on_init()
@@ -89,6 +91,21 @@ local function run_tick_actions(event)
     tick_actions[seconds]()
 end
 
+-- Central damage routing to avoid overlaps and races
+local function on_entity_damaged(event)
+    local entity = event.entity
+    if not entity.valid then
+        return
+    end
+
+    if not PvPShield.protect_if_needed(event) then
+        CombatBalance.on_entity_damaged(event)
+        Pollution.on_entity_damaged(event)
+        FluidsAreExplosive.on_entity_damaged(event)
+    end
+end
+
+Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.on_init(on_init)
 Event.on_nth_tick(60, run_tick_actions)
 

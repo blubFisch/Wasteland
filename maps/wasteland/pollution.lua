@@ -83,7 +83,7 @@ local function on_player_mined_entity(event)
     end
 end
 
-local function on_entity_damaged(event)
+function Public.on_entity_damaged(event)
     local entity = event.entity
     if not entity.valid then
         return
@@ -111,7 +111,6 @@ end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)
-Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.add(defines.events.on_entity_died, on_entity_died)
 
 return Public

@@ -219,6 +219,21 @@ function Public.entity_is_protected(entity, cause_force)
     return false
 end
 
+function Public.protect_if_needed(event)
+    local entity = event.entity
+    if not entity.valid then
+        return false
+    end
+
+    if Public.entity_is_protected(entity, event.force) then
+        -- Undo all damage
+        entity.health = entity.health + event.final_damage_amount
+        return true
+    else
+        return false
+    end
+end
+
 local function scan_protect_shield_area()
     -- Handle edge case damage situations
 
@@ -236,18 +251,6 @@ local function scan_protect_shield_area()
     end
 end
 
-local function on_entity_damaged(event)
-    local entity = event.entity
-    if not entity.valid then
-        return
-    end
-
-    if Public.entity_is_protected(entity, event.force) then
-        entity.health = entity.health + event.final_damage_amount
-    end
-end
-
-Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
 Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(60, update_shield_lifetime)

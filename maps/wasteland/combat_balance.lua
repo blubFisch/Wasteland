@@ -158,7 +158,7 @@ function Public.dmg_modifier_for_force(force)
 end
 
 -- Extra modifiers based on player numbers
-local function on_entity_damaged(event)
+function Public.on_entity_damaged(event)
     local entity = event.entity
     if not entity.valid then
         return
@@ -188,7 +188,6 @@ end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_research_finished, research_finished)
-Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.on_nth_tick(60, update_uis)
 
 return Public
