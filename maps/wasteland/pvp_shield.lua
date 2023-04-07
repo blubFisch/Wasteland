@@ -234,6 +234,8 @@ function Public.protect_if_needed(event)
     end
 end
 
+local shield_disallowed_biters = { 'big-biter', 'behemoth-biter', 'big-spitter', 'behemoth-spitter'}
+local shield_disallowed_vehicles = {'tank', 'car'}
 local function scan_protect_shield_area()
     -- Handle edge case damage situations
 
@@ -241,12 +243,17 @@ local function scan_protect_shield_area()
     for _, shield in pairs(this.pvp_shields) do
 
         -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
-        local extra_box = enlarge_bounding_box(shield.box, 1)
-        local entities = shield.surface.find_entities_filtered({name = {'tank', 'car'}, area = extra_box})
-        for _, e in pairs(entities) do
+        local tank_box = enlarge_bounding_box(shield.box, 1)
+        for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
             if shield.force ~= e.force and not shield.force.get_friend(e.force) then
                 e.speed = 0
             end
+        end
+
+        -- Protect against big biters that are lured in/glitched in
+        local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
+        for _, e in pairs(shield.surface.find_entities_filtered({ name = shield_disallowed_biters, area = biters_box })) do
+            e.die()
         end
     end
 end

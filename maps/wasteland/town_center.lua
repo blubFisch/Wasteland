@@ -480,8 +480,7 @@ local function add_pvp_shield_scaled(position, force, surface)
         force.print("Based on the highest tech on map, your town deploys a PvP shield of "
                 .. string.format("%.0f", size) .. " tiles"
                 .. " for " .. PvPShield.format_lifetime_str(lifetime_ticks)  .. "."
-                .. " Enemy players will not be able to enter, build or damage the shielded area."
-                .. " But biters can still pass it!")
+                .. " Press help button for full info")
     end
 end
 
