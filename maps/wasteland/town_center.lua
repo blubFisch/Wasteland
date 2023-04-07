@@ -491,8 +491,8 @@ local function add_pvp_shield_scaled(position, force, surface)
     if evo >= min_evo_for_shield then
         local min_size = PvPShield.default_size
         local max_size = 101
-        local min_duration =   1 * 60 * 60 * 60
-        local max_duration =   8 * 60 * 60 * 60
+        local min_duration =   2 * 60 * 60 * 60
+        local max_duration =  12 * 60 * 60 * 60
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
         local lifetime_ticks = math_min(min_duration + scale_factor * (max_duration - min_duration), max_duration)
         local size = math_min(min_size + scale_factor * (max_size - min_size), max_size)
