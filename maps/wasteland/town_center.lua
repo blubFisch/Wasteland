@@ -76,7 +76,7 @@ end
 local resource_vectors = {}
 resource_vectors[1] = {}
 for x = 8, 14, 1 do
-    for y = 6, 17, 1 do
+    for y = 6, 12, 1 do
         table_insert(resource_vectors[1], {x, y})
     end
 end
@@ -93,6 +93,26 @@ for _, vector in pairs(resource_vectors[1]) do
     table_insert(resource_vectors[4], {vector[1], vector[2] * -1})
 end
 
+local resource_vectors_out = {}
+resource_vectors_out[1] = {}
+for x = 24, 30, 1 do
+    for y = 6, 17, 1 do
+        table_insert(resource_vectors_out[1], {x, y})
+    end
+end
+resource_vectors_out[2] = {}
+for _, vector in pairs(resource_vectors_out[1]) do
+    table_insert(resource_vectors_out[2], {vector[1] * -1, vector[2]})
+end
+resource_vectors_out[3] = {}
+for _, vector in pairs(resource_vectors_out[1]) do
+    table_insert(resource_vectors_out[3], {vector[1] * -1, vector[2] * -1})
+end
+resource_vectors_out[4] = {}
+for _, vector in pairs(resource_vectors_out[1]) do
+    table_insert(resource_vectors_out[4], {vector[1], vector[2] * -1})
+end
+
 local additional_resource_vectors = {}
 additional_resource_vectors[1] = {}
 for x = 7, 14, 1 do
@@ -105,10 +125,8 @@ for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[2], {vector[1] * -1, vector[2]})
 end
 additional_resource_vectors[3] = {}
-for y = 7, 14, 1 do
-    for x = -3, 3, 1 do
-        table_insert(additional_resource_vectors[3], {x, y})
-    end
+for _, vector in pairs(additional_resource_vectors[3]) do
+    table_insert(additional_resource_vectors[4], {vector[1] * -1, vector[2] * -1})
 end
 additional_resource_vectors[4] = {}
 for _, vector in pairs(additional_resource_vectors[3]) do
@@ -149,25 +167,30 @@ local function count_nearby_ore(surface, position, ore_name)
     return count
 end
 
+local function draw_ore_patches(surface, position, ore_types, resource_vectors)
+    for i = 1, #ore_types do
+        local ore_type = ore_types[i]
+        if count_nearby_ore(surface, position, ore_type) < 150000 then
+            for _, vector in pairs(resource_vectors[i]) do
+                local p = {position.x + vector[1], position.y + vector[2]}
+                p = surface.find_non_colliding_position(ore_type, p, 64, 1)
+                if p then
+                    surface.create_entity({name = ore_type, position = p, amount = ore_amount})
+                end
+            end
+        end
+    end
+end
+
 local function draw_town_spawn(player_name)
     local this = ScenarioTable.get_table()
     local market = this.town_centers[player_name].market
     local position = market.position
     local surface = market.surface
 
-    --local area = {{position.x - (town_radius + 1), position.y - (town_radius + 1)}, {position.x + (town_radius + 1), position.y + (town_radius + 1)}}
-
-    -- remove other than cliffs, rocks and ores and trees
-    --for _, e in pairs(surface.find_entities_filtered({area = area, force = 'neutral'})) do
-    --    if not clear_whitelist_types[e.type] then
-    --        e.destroy()
-    --    end
-    --end
-
     -- create walls
     for _, vector in pairs(gate_vectors_horizontal) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        --p = surface.find_non_colliding_position("gate", p, 64, 1)
         if p then
             surface.create_entity({name = 'gate', position = p, force = player_name, direction = 2})
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -175,7 +198,6 @@ local function draw_town_spawn(player_name)
     end
     for _, vector in pairs(gate_vectors_vertical) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        --p = surface.find_non_colliding_position("gate", p, 64, 1)
         if p then
             surface.create_entity({name = 'gate', position = p, force = player_name, direction = 0})
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -184,7 +206,6 @@ local function draw_town_spawn(player_name)
 
     for _, vector in pairs(town_wall_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        --p = surface.find_non_colliding_position("stone-wall", p, 64, 1)
         if p then
             surface.create_entity({name = 'stone-wall', position = p, force = player_name})
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -192,20 +213,13 @@ local function draw_town_spawn(player_name)
     end
 
     -- ore patches
-    local ores = {'iron-ore', 'copper-ore', 'stone', 'coal'}
-    table_shuffle(ores)
+    local ores_in = {'coal'}
+    table_shuffle(ores_in)
+    draw_ore_patches(surface, position, ores_in, resource_vectors)
 
-    for i = 1, 4, 1 do
-        if count_nearby_ore(surface, position, ores[i]) < 100000 then
-            for _, vector in pairs(resource_vectors[i]) do
-                local p = {position.x + vector[1], position.y + vector[2]}
-                p = surface.find_non_colliding_position(ores[i], p, 64, 1)
-                if p then
-                    surface.create_entity({name = ores[i], position = p, amount = ore_amount})
-                end
-            end
-        end
-    end
+    local ores_out = {'iron-ore', 'copper-ore', 'stone', 'coal'}
+    table_shuffle(ores_out)
+    draw_ore_patches(surface, position, ores_out, resource_vectors_out)
 
     -- starter chests
     for _, item_stack in pairs(starter_supplies) do
@@ -222,20 +236,6 @@ local function draw_town_spawn(player_name)
 
     local vector_indexes = {1, 2, 3, 4}
     table_shuffle(vector_indexes)
-
-    -- trees
-    --local tree = "tree-0" .. math_random(1, 9)
-    --for _, vector in pairs(additional_resource_vectors[vector_indexes[1]]) do
-    --	if math_random(1, 6) == 1 then
-    --		local p = {position.x + vector[1], position.y + vector[2]}
-    --		p = surface.find_non_colliding_position(tree, p, 64, 1)
-    --		if p then
-    --			surface.create_entity({name = tree, position = p})
-    --		end
-    --	end
-    --end
-
-    --local area = {{position.x - town_radius * 1.5, position.y - town_radius * 1.5}, {position.x + town_radius * 1.5, position.y + town_radius * 1.5}}
 
     -- pond
     for _, vector in pairs(additional_resource_vectors[vector_indexes[2]]) do
@@ -258,28 +258,6 @@ local function draw_town_spawn(player_name)
             end
         end
     end
-
-    -- uranium ore
-    --if count_nearby_ore(surface, position, "uranium-ore") < 100000 then
-    --	for _, vector in pairs(additional_resource_vectors[vector_indexes[3]]) do
-    --		local p = {position.x + vector[1], position.y + vector[2]}
-    --		p = surface.find_non_colliding_position("uranium-ore", p, 64, 1)
-    --		if p then
-    --			surface.create_entity({name = "uranium-ore", position = p, amount = ore_amount * 2})
-    --		end
-    --	end
-    --end
-
-    -- oil patches
-    --local vectors = additional_resource_vectors[vector_indexes[4]]
-    --for _ = 1, 3, 1 do
-    --	local vector = vectors[math_random(1, #vectors)]
-    --	local p = {position.x + vector[1], position.y + vector[2]}
-    --	p = surface.find_non_colliding_position("crude-oil", p, 64, 1)
-    --	if p then
-    --		surface.create_entity({name = "crude-oil", position = p, amount = 500000})
-    --	end
-    --end
 end
 
 local function is_valid_location(force_name, surface, position)
