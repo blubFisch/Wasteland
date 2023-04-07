@@ -33,7 +33,7 @@ local function tutorials_tick()
             end
 
             if this.tutorials[player.index].step == 2 and player.get_item_count("iron-plate") >= 500 then
-                player.set_goal_description("Great!\nNow use the scrap or the ores around your town.\nComplete your first research.")
+                player.set_goal_description("Great!\nNow use the scrap or the ores around your town.\n\nComplete your first research.")
 
                 this.tutorials[player.index].step = 3
             end
@@ -41,7 +41,7 @@ local function tutorials_tick()
             if this.tutorials[player.index].step == 3 and player.force.previous_research then
                 player.set_goal_description("Well done!\nNext, take care of defense against players."
                         .. "\nLaser turrets are your best chance against advanced players and tanks."
-                        .. "\nYou can buy laser turrets at your market."
+                        .. "\nYou can buy laser turrets at your market. Get coins by killing biters or selling items"
                         .. "\n\nBuild your first laser turret")
 
                 this.tutorials[player.index].step = 4

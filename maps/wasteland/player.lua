@@ -161,7 +161,8 @@ local function hint_treasure()
                     {
                         position = player.position,
                         text = 'You hear rumors about a huge treasure at the center of the map',
-                        color = {r = 0.4, g = 0.6, b = 0.8}
+                        color = {r = 0.4, g = 0.6, b = 0.8},
+                        time_to_live = 160
                     }
                 )
             end
