@@ -272,7 +272,7 @@ local function process_built_entities(event)
     end
 
     -- Build all outlander/rogue entities as neutral to make them compatible with all forces
-    if force_name == 'player' or force_name == 'rogue' then
+    if entity and entity.valid and (force_name == 'player' or force_name == 'rogue') then
         entity.force = game.forces['neutral']
     end
 end
