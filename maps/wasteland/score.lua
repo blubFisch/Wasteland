@@ -98,7 +98,8 @@ local function update_score()
             subheader.style.horizontally_stretchable = true
             subheader.style.vertical_align = 'center'
 
-            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' points to win!'}}
+            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' points to win!'
+            .. '                   Players online: ' .. #game.connected_players}}
 
             if not next(subheader.children) then
                 subheader.destroy()
