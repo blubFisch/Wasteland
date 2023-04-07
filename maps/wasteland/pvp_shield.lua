@@ -155,7 +155,7 @@ function Public.push_enemies_out(player)
                     player.teleport({ player.position.x + center_diff.x, player.position.y + center_diff.y}, player.surface)
 
                     -- Kick players out of vehicles if needed
-                    if player.character.driving then
+                    if player.character and player.character.driving then
                         player.character.driving = false
                     end
 
