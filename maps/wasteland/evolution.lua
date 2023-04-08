@@ -387,10 +387,13 @@ local function calculate_relative_evolution(evolution_factor, distance_factor)
     return evo
 end
 
-local function get_relative_biter_evolution(position)
+local function get_relative_biter_evolution(position, estimate_extra_range)
     local this = ScenarioTable.get_table()
     local relative_evolution = 0.0
     local max_d2 = max_evolution_distance * max_evolution_distance
+    if estimate_extra_range then    -- This is to calculate the danger from bigger biters roaming to nearby positions
+        max_d2 = max_d2 * 1.5
+    end
     -- for all of the teams
     local teams = this.town_centers
     for _, town_center in pairs(teams) do
@@ -491,8 +494,8 @@ function Public.get_highest_evolution()
     return max_evo
 end
 
-function Public.get_evolution(position)
-    return get_relative_biter_evolution(position)
+function Public.get_evolution(position, estimate_extra_range)
+    return get_relative_biter_evolution(position, estimate_extra_range)
 end
 
 function Public.get_biter_evolution(entity)

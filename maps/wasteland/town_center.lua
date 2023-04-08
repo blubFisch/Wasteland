@@ -76,7 +76,7 @@ end
 local resource_vectors = {}
 resource_vectors[1] = {}
 for x = 8, 14, 1 do
-    for y = 6, 17, 1 do
+    for y = 6, 12, 1 do
         table_insert(resource_vectors[1], {x, y})
     end
 end
@@ -93,6 +93,26 @@ for _, vector in pairs(resource_vectors[1]) do
     table_insert(resource_vectors[4], {vector[1], vector[2] * -1})
 end
 
+local resource_vectors_out = {}
+resource_vectors_out[1] = {}
+for x = 24, 30, 1 do
+    for y = 6, 17, 1 do
+        table_insert(resource_vectors_out[1], {x, y})
+    end
+end
+resource_vectors_out[2] = {}
+for _, vector in pairs(resource_vectors_out[1]) do
+    table_insert(resource_vectors_out[2], {vector[1] * -1, vector[2]})
+end
+resource_vectors_out[3] = {}
+for _, vector in pairs(resource_vectors_out[1]) do
+    table_insert(resource_vectors_out[3], {vector[1] * -1, vector[2] * -1})
+end
+resource_vectors_out[4] = {}
+for _, vector in pairs(resource_vectors_out[1]) do
+    table_insert(resource_vectors_out[4], {vector[1], vector[2] * -1})
+end
+
 local additional_resource_vectors = {}
 additional_resource_vectors[1] = {}
 for x = 7, 14, 1 do
@@ -105,10 +125,8 @@ for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[2], {vector[1] * -1, vector[2]})
 end
 additional_resource_vectors[3] = {}
-for y = 7, 14, 1 do
-    for x = -3, 3, 1 do
-        table_insert(additional_resource_vectors[3], {x, y})
-    end
+for _, vector in pairs(additional_resource_vectors[3]) do
+    table_insert(additional_resource_vectors[4], {vector[1] * -1, vector[2] * -1})
 end
 additional_resource_vectors[4] = {}
 for _, vector in pairs(additional_resource_vectors[3]) do
@@ -132,7 +150,7 @@ local starter_supplies = {
     {name = 'grenade', count = 5},
     {name = 'stone', count = 100},
     {name = 'land-mine', count = 4},
-    {name = 'iron-gear-wheel', count = 16},
+    {name = 'wood', count = 100},
     {name = 'iron-plate', count = 200},
     {name = 'shotgun', count = 1},
     {name = 'shotgun-shell', count = 8},
@@ -149,25 +167,30 @@ local function count_nearby_ore(surface, position, ore_name)
     return count
 end
 
+local function draw_ore_patches(surface, position, ore_types, resource_vectors)
+    for i = 1, #ore_types do
+        local ore_type = ore_types[i]
+        if count_nearby_ore(surface, position, ore_type) < 150000 then
+            for _, vector in pairs(resource_vectors[i]) do
+                local p = {position.x + vector[1], position.y + vector[2]}
+                p = surface.find_non_colliding_position(ore_type, p, 64, 1)
+                if p then
+                    surface.create_entity({name = ore_type, position = p, amount = ore_amount})
+                end
+            end
+        end
+    end
+end
+
 local function draw_town_spawn(player_name)
     local this = ScenarioTable.get_table()
     local market = this.town_centers[player_name].market
     local position = market.position
     local surface = market.surface
 
-    --local area = {{position.x - (town_radius + 1), position.y - (town_radius + 1)}, {position.x + (town_radius + 1), position.y + (town_radius + 1)}}
-
-    -- remove other than cliffs, rocks and ores and trees
-    --for _, e in pairs(surface.find_entities_filtered({area = area, force = 'neutral'})) do
-    --    if not clear_whitelist_types[e.type] then
-    --        e.destroy()
-    --    end
-    --end
-
     -- create walls
     for _, vector in pairs(gate_vectors_horizontal) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        --p = surface.find_non_colliding_position("gate", p, 64, 1)
         if p then
             surface.create_entity({name = 'gate', position = p, force = player_name, direction = 2})
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -175,7 +198,6 @@ local function draw_town_spawn(player_name)
     end
     for _, vector in pairs(gate_vectors_vertical) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        --p = surface.find_non_colliding_position("gate", p, 64, 1)
         if p then
             surface.create_entity({name = 'gate', position = p, force = player_name, direction = 0})
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -184,7 +206,6 @@ local function draw_town_spawn(player_name)
 
     for _, vector in pairs(town_wall_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        --p = surface.find_non_colliding_position("stone-wall", p, 64, 1)
         if p then
             surface.create_entity({name = 'stone-wall', position = p, force = player_name})
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -192,27 +213,20 @@ local function draw_town_spawn(player_name)
     end
 
     -- ore patches
-    local ores = {'iron-ore', 'copper-ore', 'stone', 'coal'}
-    table_shuffle(ores)
+    local ores_in = {'coal'}
+    table_shuffle(ores_in)
+    draw_ore_patches(surface, position, ores_in, resource_vectors)
 
-    for i = 1, 4, 1 do
-        if count_nearby_ore(surface, position, ores[i]) < 100000 then
-            for _, vector in pairs(resource_vectors[i]) do
-                local p = {position.x + vector[1], position.y + vector[2]}
-                p = surface.find_non_colliding_position(ores[i], p, 64, 1)
-                if p then
-                    surface.create_entity({name = ores[i], position = p, amount = ore_amount})
-                end
-            end
-        end
-    end
+    local ores_out = {'iron-ore', 'copper-ore', 'stone', 'coal'}
+    table_shuffle(ores_out)
+    draw_ore_patches(surface, position, ores_out, resource_vectors_out)
 
     -- starter chests
     for _, item_stack in pairs(starter_supplies) do
         local m1 = -8 + math_random(0, 16)
         local m2 = -8 + math_random(0, 16)
         local p = {position.x + m1, position.y + m2}
-        p = surface.find_non_colliding_position('wooden-chest', p, 64, 1)
+        p = surface.find_non_colliding_position('iron-chest', p, 64, 1)
         if p then
             local e = surface.create_entity({name = 'iron-chest', position = p, force = player_name})
             local inventory = e.get_inventory(defines.inventory.chest)
@@ -222,20 +236,6 @@ local function draw_town_spawn(player_name)
 
     local vector_indexes = {1, 2, 3, 4}
     table_shuffle(vector_indexes)
-
-    -- trees
-    --local tree = "tree-0" .. math_random(1, 9)
-    --for _, vector in pairs(additional_resource_vectors[vector_indexes[1]]) do
-    --	if math_random(1, 6) == 1 then
-    --		local p = {position.x + vector[1], position.y + vector[2]}
-    --		p = surface.find_non_colliding_position(tree, p, 64, 1)
-    --		if p then
-    --			surface.create_entity({name = tree, position = p})
-    --		end
-    --	end
-    --end
-
-    --local area = {{position.x - town_radius * 1.5, position.y - town_radius * 1.5}, {position.x + town_radius * 1.5, position.y + town_radius * 1.5}}
 
     -- pond
     for _, vector in pairs(additional_resource_vectors[vector_indexes[2]]) do
@@ -258,28 +258,6 @@ local function draw_town_spawn(player_name)
             end
         end
     end
-
-    -- uranium ore
-    --if count_nearby_ore(surface, position, "uranium-ore") < 100000 then
-    --	for _, vector in pairs(additional_resource_vectors[vector_indexes[3]]) do
-    --		local p = {position.x + vector[1], position.y + vector[2]}
-    --		p = surface.find_non_colliding_position("uranium-ore", p, 64, 1)
-    --		if p then
-    --			surface.create_entity({name = "uranium-ore", position = p, amount = ore_amount * 2})
-    --		end
-    --	end
-    --end
-
-    -- oil patches
-    --local vectors = additional_resource_vectors[vector_indexes[4]]
-    --for _ = 1, 3, 1 do
-    --	local vector = vectors[math_random(1, #vectors)]
-    --	local p = {position.x + vector[1], position.y + vector[2]}
-    --	p = surface.find_non_colliding_position("crude-oil", p, 64, 1)
-    --	if p then
-    --		surface.create_entity({name = "crude-oil", position = p, amount = 500000})
-    --	end
-    --end
 end
 
 local function is_valid_location(force_name, surface, position)
@@ -491,8 +469,8 @@ local function add_pvp_shield_scaled(position, force, surface)
     if evo >= min_evo_for_shield then
         local min_size = PvPShield.default_size
         local max_size = 101
-        local min_duration =   1 * 60 * 60 * 60
-        local max_duration =   8 * 60 * 60 * 60
+        local min_duration =   2 * 60 * 60 * 60
+        local max_duration =  12 * 60 * 60 * 60
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
         local lifetime_ticks = math_min(min_duration + scale_factor * (max_duration - min_duration), max_duration)
         local size = math_min(min_size + scale_factor * (max_size - min_size), max_size)
@@ -502,8 +480,7 @@ local function add_pvp_shield_scaled(position, force, surface)
         force.print("Based on the highest tech on map, your town deploys a PvP shield of "
                 .. string.format("%.0f", size) .. " tiles"
                 .. " for " .. PvPShield.format_lifetime_str(lifetime_ticks)  .. "."
-                .. " Enemy players will not be able to enter, build or damage the shielded area."
-                .. " But biters can still pass it!")
+                .. " Press help button for full info")
     end
 end
 
@@ -542,20 +519,9 @@ local function found_town(event)
 
     -- are towns enabled?
     local this = ScenarioTable.get_table()
-    if not this.towns_enabled then
-        player.print('You must wait for more players to join!', {255, 255, 0})
-        player.insert({name = 'stone-furnace', count = 1})
-        return
-    end
 
     -- is player mayor of town that still exists?
-    if game.forces[force_name] then
-        player.insert({name = 'stone-furnace', count = 1})
-        return
-    end
-
-    -- has player placed a town already?
-    if Team.has_key(player.index) == false then
+    if Team.is_towny(player.force) then
         player.insert({name = 'stone-furnace', count = 1})
         return
     end
@@ -582,6 +548,25 @@ local function found_town(event)
         return
     end
 
+    if Evolution.get_evolution(position, true) >= 0.2 then
+        if this.town_evo_warned[player.index] == nil or this.town_evo_warned[player.index] < game.tick - 60 * 10 then
+            surface.create_entity(
+                    {
+                        name = 'flying-text',
+                        position = position,
+                        text = 'Evolution is high on this position. Are you sure?',
+                        color = {r = 0.77, g = 0.0, b = 0.0}
+                    }
+            )
+            player.print("Hint: Big towns nearby cause evolution. Check the evolution number at the top of the screen.", Utils.scenario_color)
+
+            this.town_evo_warned[player.index] = game.tick
+
+            player.insert({name = 'stone-furnace', count = 1})
+            return
+        end
+    end
+
     local force = Team.add_new_force(force_name)
 
     this.town_centers[force_name] = {}
@@ -596,7 +581,6 @@ local function found_town(event)
     town_center.health = town_center.max_health
     local crayola = Colors.get_random_color()
     town_center.color = crayola.color
-    town_center.research_counter = 1
     town_center.upgrades = {}
     town_center.upgrades.mining_prod = 0
     town_center.upgrades.mining_speed = 0
@@ -609,6 +593,7 @@ local function found_town(event)
     town_center.evolution.spitters = 0
     town_center.evolution.worms = 0
     town_center.creation_tick = game.tick
+    town_center.research_balance = {current_modifier = 1}
 
     town_center.town_caption =
         rendering.draw_text {
@@ -674,7 +659,6 @@ local function found_town(event)
     force.set_spawn_position(pos, surface)
 
     Team.add_player_to_town(player, town_center)
-    Team.remove_key(player.index)
     Team.add_chart_tag(town_center)
 
     force.chart(surface, {{-1, -1}, {1, 1}})
@@ -683,10 +667,6 @@ local function found_town(event)
     game.print('>> ' .. player.name .. ' has founded a new town!', {255, 255, 0})
     Server.to_discord_embed(player.name .. ' has founded a new town!')
     player.print('Your town color is ' .. crayola.name, crayola.color)
-
-    if player.gui.screen['towny_map_hint'] then
-        player.gui.screen['towny_map_hint'].destroy()
-    end
 end
 
 local function on_built_entity(event)

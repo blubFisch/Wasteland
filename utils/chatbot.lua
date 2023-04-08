@@ -18,10 +18,12 @@ Global.register(
 
 local Public = {}
 
+local discord_url = "wasteland-discord.fun"
+
 local brain = {
-    [1] = {'Our Discord server is at: discord.gg/7WZbghmjCR'},
+    [1] = {'Our Discord server is at: ' .. discord_url},
     [2] = {
-        'Need an admin? Join our discord at: discord.gg/7WZbghmjCR,',
+        'Need an admin? Join our discord at: ' .. discord_url .. ',',
         'and report it in #i-need-halp',
         'If you have played for more than 5h in our maps then,',
         'you are eligible to run the command /jail and /free'
@@ -65,12 +67,13 @@ local links = {
 local function on_player_joined_game(event)
     local player = game.get_player(event.player_index)
     if this.settings.enable_classic_print then
-        player.print('[font=default-game]' .. 'Join the comfy discord >> discord.gg/7WZbghmjCR <<' .. '[/font]', {r = 150, g = 100, b = 255, a = 255})
+        player.print('[font=default-game]' .. 'Join the discord >> ' .. discord_url .. ' <<' .. '[/font]', {r = 150, g = 100, b = 255, a = 255})
     else
         player.print(
             '[font=heading-1]' ..
-                'Join the discord >> [color=red]discord.gg/7WZbghmjCR[/color]' ..
-                    '[/font]'
+            'Join the discord >> [color=red]' .. discord_url .. '[/color]' ..
+            '[/font]' ..
+            ' >> Server reset info, map updates, bugs/ideas, ..'
         )
     end
 end

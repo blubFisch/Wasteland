@@ -10,6 +10,8 @@ local Event = require 'utils.event'
 local empty_tile_damage_decay = 50
 local out_of_map_tile_health = 1500
 
+local Public = {}
+
 local container_types = {
     ['storage-tank'] = true,
     ['pipe'] = true,
@@ -905,7 +907,7 @@ local function create_explosion_schedule(entity)
     entity.die('player')
 end
 
-local function on_entity_damaged(event)
+function Public.on_entity_damaged(event)
     local entity = event.entity
     if not entity.valid then
         return
@@ -963,5 +965,6 @@ local function on_tick(event)
     end
 end
 
-Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.add(defines.events.on_tick, on_tick)
+
+return Public

@@ -13,14 +13,13 @@ require 'maps.wasteland.wreckage_yields_scrap'
 require 'maps.wasteland.rocks_yield_ore_veins'
 require 'maps.wasteland.worms_create_oil_patches'
 require 'maps.wasteland.spawners_contain_biters'
-require 'maps.wasteland.explosives_are_explosive'
-require 'maps.wasteland.fluids_are_explosive'
 require 'maps.wasteland.trap'
 require 'maps.wasteland.turrets_drop_ammo'
 require 'maps.wasteland.vehicles'
 require 'maps.wasteland.suicide'
 require 'maps.wasteland.score'
 require 'maps.wasteland.research_balance'
+require 'maps.wasteland.map_layout'
 
 local Event = require 'utils.event'
 local Autostash = require 'modules.autostash'
@@ -34,12 +33,15 @@ local Team = require 'maps.wasteland.team'
 local Radar = require 'maps.wasteland.limited_radar'
 local Limbo = require 'maps.wasteland.limbo'
 local Evolution = require 'maps.wasteland.evolution'
+local PvPShield = require 'maps.wasteland.pvp_shield'
 local Gui = require 'utils.gui'
 local Color = require 'utils.color_presets'
 local Where = require 'utils.commands.where'
 local Inventory = require 'modules.show_inventory'
 local AntiGrief = require 'utils.antigrief'
 local Utils = require 'maps.wasteland.utils'
+local CombatBalance = require 'maps.wasteland.combat_balance'
+local FluidsAreExplosive = require 'maps.wasteland.fluids_are_explosive'
 
 
 local function on_init()
@@ -77,7 +79,7 @@ local tick_actions = {
     [60 * 55] = Pollution.market_scent -- each minute, at 55 seconds
 }
 
-local function on_nth_tick(event)
+local function run_tick_actions(event)
     -- run each second
     local tick = event.tick
     local seconds = tick % 3600 -- tick will recycle minute
@@ -89,31 +91,23 @@ local function on_nth_tick(event)
     tick_actions[seconds]()
 end
 
-local function ui_smell_evolution()
-    for _, player in pairs(game.connected_players) do
-        -- Only for non-townies
-        if player.force.index == game.forces.player.index or player.force.index == game.forces['rogue'].index then
-            local e = Evolution.get_evolution(player.position)
-            local extra
-            if e < 0.1 then
-                extra = 'Could be a good place to found a town.'
-            else
-                extra = 'Not a safe place to start a new town. Maybe somewhere else?'
-            end
-            player.create_local_flying_text(
-                {
-                    position = {x = player.position.x, y = player.position.y},
-                    text = 'You smell the evolution around here: ' .. string.format('%.0f', e * 100) .. '%. ' .. extra,
-                    color = {r = 1, g = 1, b = 1}
-                }
-            )
-        end
+-- Central damage routing to avoid overlaps and races
+local function on_entity_damaged(event)
+    local entity = event.entity
+    if not entity.valid then
+        return
+    end
+
+    if not PvPShield.protect_if_needed(event) then
+        CombatBalance.on_entity_damaged(event)
+        Pollution.on_entity_damaged(event)
+        FluidsAreExplosive.on_entity_damaged(event)
     end
 end
 
+Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.on_init(on_init)
-Event.on_nth_tick(60, on_nth_tick) -- once every second
-Event.on_nth_tick(60 * 30, ui_smell_evolution)
+Event.on_nth_tick(60, run_tick_actions)
 
 --Disable the comfy main gui since we good too many goodies there.
 Event.add(
@@ -139,5 +133,3 @@ Event.add(
         end
     end
 )
-
-require 'maps.wasteland.map_layout'

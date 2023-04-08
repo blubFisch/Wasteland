@@ -1,17 +1,13 @@
 local Public = {}
 
 local changelog =
-    [[# Mar 2023 updates:
- - Towns with more players are nerfed in weapon damage and research
- - New towns can catch up faster with the new research modifier boost based on highest tech on map
- - Treasure in the map center!
- - Victory by survival time + research
- - Enemy walls don't stop you from building anymore. Power lines or turrets still do.
- - Lots of small bugfixes]]
+    [[[font=heading-1]Apr 2023 updates[/font]
+ - Tank combat rebalance - tanks are much weaker against physical damage
+ - PvP shields are stronger
+ - Starting towns late game is easier]]
 
 local info =
-    [[Welcome to the wasteland
-
+    [[[font=heading-1]Welcome to the wasteland[/font]
 Build a town that can survive against biters and other players!
 
 
@@ -22,10 +18,11 @@ local info_adv =
     [[
 
 
-# Goal of the game
+[font=heading-1]Goal of the game[/font]
 Survive as long as you can. Raid other towns. Defend your town.
 
-# Advanced tips and tricks
+[font=heading-1]Advanced tips and tricks[/font]
+- To join our discord, open wasteland-discord.fun in your web browser
 - It's best to found new towns far from existing towns, as enemies will become aggressive with town's research.
     Biters and spitters become more aggressive towards towns that are advanced in research.
     Their evolution will scale around technology progress in any nearby towns and pollution levels.
@@ -45,14 +42,15 @@ Survive as long as you can. Raid other towns. Defend your town.
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
 
-# PvP Shields
+[font=heading-1]PvP Shields[/font]
 - PvP shields prevent players from entering, building and damaging
 - Offline PvP shields deploy automatically once all players of a town go offline
     The size is same as your initial town wall, marked by the blue tiles
 - Your town has a AFK PvP shield that you can use to safely take a quick break
     Deploy it from the market
+- Big and behemoth biters can't penetrate your shield, but small and medium ones can
 
-# Town members and alliances
+[font=heading-1]Town members and alliances[/font]
 - Once a town is formed, members may invite other players and teams using a coin. To invite another player, drop a coin
 on that player (with the Z key). To accept an invite, offer a coin in return to the member. To leave a town, simply drop coal
 on the market.
@@ -92,14 +90,6 @@ function Public.show(player, info_type)
     local frame = player.gui.center.add {type = 'frame', name = 'towny_map_intro_frame'}
     frame = frame.add {type = 'frame', direction = 'vertical'}
 
-    local t = frame.add {type = 'table', column_count = 2}
-
-    local label = t.add {type = 'label', caption = 'The Wasteland'}
-    label.style.font = 'heading-1'
-    label.style.font_color = {r = 0.85, g = 0.85, b = 0.85}
-    label.style.right_padding = 8
-
-    frame.add {type = 'line'}
     local cap = info
     if info_type == 'adv' then
         cap = info_adv

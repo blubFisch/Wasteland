@@ -9,18 +9,18 @@ local Tutorial = require 'maps.wasteland.tutorial'
 local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local CombatBalance = require 'maps.wasteland.combat_balance'
+local Evolution = require 'maps.wasteland.evolution'
+
+local map_pos_frame_id = 'towny_map_position'
+local evo_frame_id = 'towny_evo_display'
 
 -- how long in ticks between spawn and death will be considered spawn kill (10 seconds)
 local max_ticks_between_spawns = 60 * 10
-
--- how many players must login before teams are teams_enabled
-local min_players_for_enabling_towns = 0
 
 function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
     Team.set_player_to_outlander(player)
     Team.give_player_items(player)
-    Team.give_key(player.index)
     local this = ScenarioTable.get()
     if (this.testing_mode == true) then
         player.cheat_mode = true
@@ -89,25 +89,25 @@ function Public.requests(player)
     end
 end
 
-function Public.increment()
-    local this = ScenarioTable.get()
-    local count = this.players + 1
-    this.players = count
-    if this.testing_mode then
-        this.towns_enabled = true
-    else
-        if this.players >= min_players_for_enabling_towns then
-            this.towns_enabled = true
-        end
-    end
-end
-
 local function init_position_frame(player)
-    if player.gui.top['towny_map_position'] then
-        player.gui.top['towny_map_position'].destroy()
+    if player.gui.top[map_pos_frame_id] then
+        player.gui.top[map_pos_frame_id].destroy()
     end
     local b = player.gui.top.add({type = 'label', caption = "Position",
-                                  name = 'towny_map_position'})
+                                  name = map_pos_frame_id})
+    b.style.font_color = {r = 255, g = 255, b = 255}
+    b.style.top_padding = 10
+    b.style.left_padding = 10
+    b.style.right_padding = 10
+    b.style.bottom_padding = 10
+end
+
+local function init_evo_frame(player)
+    if player.gui.top[evo_frame_id] then
+        player.gui.top[evo_frame_id].destroy()
+    end
+    local b = player.gui.top.add({type = 'label', caption = "Evolution",
+                                  name = evo_frame_id})
     b.style.font_color = {r = 255, g = 255, b = 255}
     b.style.top_padding = 10
     b.style.left_padding = 10
@@ -129,28 +129,66 @@ local function init_map_hint_frame(player)
     b.style.bottom_padding = 10
 end
 
-local function update_player_positions()
+local function update_player_position_displays()
     for _, player in pairs(game.connected_players) do
-        player.gui.top['towny_map_position'].caption = "Position: "
+        player.gui.top[map_pos_frame_id].caption = "Position: "
                 .. string.format('%.0f, %.0f', player.position.x,  player.position.y)
+    end
+end
+
+local function update_player_evo_displays()
+    for _, player in pairs(game.connected_players) do
+        local e = Evolution.get_evolution(player.position, true)
+        local color
+        if e < 0.2 then
+            color = {r = 0, g = 255, b = 0}
+        elseif e < 0.6 then
+            color = {r = 255, g = 255, b = 0}
+        else
+            color = {r = 255, g = 0, b = 0}
+        end
+        player.gui.top[evo_frame_id].caption = "Evolution: " .. string.format('%.0f%%', e * 100)
+        player.gui.top[evo_frame_id].style.font_color = color
+    end
+end
+
+local function hint_treasure()
+    local this = ScenarioTable.get()
+    for _, player in pairs(game.connected_players) do
+        if this.treasure_hint[player.index] == nil then
+            if player.online_time % (30 * 60 * 60) < 60 then
+                player.create_local_flying_text(
+                    {
+                        position = player.position,
+                        text = 'You hear rumors about a huge treasure at the center of the map',
+                        color = {r = 0.4, g = 0.6, b = 0.8},
+                        time_to_live = 160
+                    }
+                )
+            end
+            if math.sqrt(player.position.x ^ 2 + player.position.y ^ 2) < 150 then
+                this.treasure_hint[player.index] = false
+            end
+        end
     end
 end
 
 local function on_player_joined_game(event)
     local player = game.players[event.player_index]
-    Score.add_score_button(player)
-    ResearchBalance.add_balance_ui(player)
-    CombatBalance.add_balance_ui(player)
-    Info.toggle_button(player)
     Team.set_player_color(player)
     if player.online_time == 0 then
-        Public.increment()
-        Public.initialize(player)
-        Public.spawn(player)
+        Info.toggle_button(player)
         Info.show(player)
+        Score.add_score_button(player)
         Tutorial.register_for_tutorial(player)
+        ResearchBalance.add_balance_ui(player)
+        CombatBalance.add_balance_ui(player)
         init_position_frame(player)
         init_map_hint_frame(player)
+        init_evo_frame(player)
+
+        Public.initialize(player)
+        Public.spawn(player)
     end
     Public.load_buffs(player)
     Public.requests(player)
@@ -163,9 +201,6 @@ local function on_player_respawned(event)
     Team.give_player_items(player)
     if player.force == game.forces['rogue'] then
         Team.set_player_to_outlander(player)
-    end
-    if player.force == game.forces['player'] then
-        Team.give_key(player.index)
     end
 
     -- get_spawn_point will always return a valid spawn
@@ -192,7 +227,10 @@ local function on_player_died(event)
     end
 end
 
-Event.on_nth_tick(60, update_player_positions)
+Event.on_nth_tick(60, update_player_position_displays)
+Event.on_nth_tick(60, update_player_evo_displays)
+Event.on_nth_tick(60, hint_treasure)
+
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
 Event.add(defines.events.on_player_respawned, on_player_respawned)
 Event.add(defines.events.on_player_died, on_player_died)

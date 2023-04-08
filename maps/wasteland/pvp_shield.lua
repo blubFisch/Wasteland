@@ -155,7 +155,7 @@ function Public.push_enemies_out(player)
                     player.teleport({ player.position.x + center_diff.x, player.position.y + center_diff.y}, player.surface)
 
                     -- Kick players out of vehicles if needed
-                    if player.character.driving then
+                    if player.character and player.character.driving then
                         player.character.driving = false
                     end
 
@@ -208,9 +208,9 @@ function Public.entity_is_protected(entity, cause_force)
 
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if entity.surface == shield.surface and entity.force == shield.force and cause_force.name ~= "enemy" then
-            if shield.force ~= cause_force and not shield.force.get_friend(cause_force) then
-                if CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
+        if entity.surface == shield.surface and CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
+            if (entity.force == shield.force or entity.force.name == "neutral") and cause_force.name ~= "enemy" then
+                if shield.force ~= cause_force and not shield.force.get_friend(cause_force) then
                     return true
                 end
             end
@@ -219,20 +219,48 @@ function Public.entity_is_protected(entity, cause_force)
     return false
 end
 
-local function on_entity_damaged(event)
+function Public.protect_if_needed(event)
     local entity = event.entity
     if not entity.valid then
-        return
+        return false
     end
 
     if Public.entity_is_protected(entity, event.force) then
+        -- Undo all damage
         entity.health = entity.health + event.final_damage_amount
+        return true
+    else
+        return false
     end
 end
 
-Event.add(defines.events.on_entity_damaged, on_entity_damaged)
+local shield_disallowed_biters = { 'big-biter', 'behemoth-biter', 'big-spitter', 'behemoth-spitter'}
+local shield_disallowed_vehicles = {'tank', 'car'}
+local function scan_protect_shield_area()
+    -- Handle edge case damage situations
+
+    local this = ScenarioTable.get_table()
+    for _, shield in pairs(this.pvp_shields) do
+
+        -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
+        local tank_box = enlarge_bounding_box(shield.box, 1)
+        for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
+            if shield.force ~= e.force and not shield.force.get_friend(e.force) then
+                e.speed = 0
+            end
+        end
+
+        -- Protect against big biters that are lured in/glitched in
+        local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
+        for _, e in pairs(shield.surface.find_entities_filtered({ name = shield_disallowed_biters, area = biters_box })) do
+            e.die()
+        end
+    end
+end
+
 Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
 Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(60, update_shield_lifetime)
+Event.add(defines.events.on_tick, scan_protect_shield_area)
 
 return Public

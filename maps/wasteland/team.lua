@@ -84,33 +84,6 @@ function Public.is_towny(force)
     return force.name ~= 'rogue' and force.name ~= 'player'
 end
 
-function Public.has_key(index)
-    local this = ScenarioTable.get_table()
-    if this.key == nil then
-        this.key = {}
-    end
-    if this.key[index] ~= nil then
-        return this.key[index]
-    end
-    return false
-end
-
-function Public.give_key(index)
-    local this = ScenarioTable.get_table()
-    if this.key == nil then
-        this.key = {}
-    end
-    this.key[index] = true
-end
-
-function Public.remove_key(index)
-    local this = ScenarioTable.get_table()
-    if this.key == nil then
-        this.key = {}
-    end
-    this.key[index] = false
-end
-
 function Public.set_player_color(player)
     if not player or not player.valid then
         log('player nil or not valid!')
@@ -195,12 +168,18 @@ function Public.add_player_to_town(player, town_center)
     local surface = market.surface
     reset_player(player)
     player.force = market.force
-    Public.remove_key(player.index)
     this.spawn_point[player.index] = force.get_spawn_position(surface)
     game.permissions.get_group(force.name).add_player(player)
     player.tag = ''
     Public.map_preset(player, true)
     Public.set_player_color(player)
+
+    if player.gui.screen['towny_map_hint'] then
+        player.gui.screen['towny_map_hint'].destroy()
+    end
+
+    ResearchBalance.player_changes_town_status(player, true)
+    CombatBalance.player_changes_town_status(player, true)
 
     force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
 end
@@ -231,7 +210,8 @@ function Public.set_player_to_outlander(player)
     player.tag = '[Outlander]'
     Public.map_preset(player, false)
     Public.set_player_color(player)
-    Public.give_key(player.index)
+    ResearchBalance.player_changes_town_status(player, false)
+    CombatBalance.player_changes_town_status(player, false)
 end
 
 local function set_player_to_rogue(player)
@@ -271,11 +251,6 @@ local function ally_outlander(player, target)
     local target_force = target.force
     local target_town_center = this.town_centers[target_force.name]
 
-    -- don't handle if towns not yet enabled
-    if not this.towns_enabled then
-        player.print('You must wait for more players to join!', Utils.scenario_color)
-        return false
-    end
     -- don't handle request if target is not a town
     if not Public.is_towny(requesting_force) and not Public.is_towny(target_force) then
         return false
@@ -606,16 +581,16 @@ local function disable_deconstruct(permission_group)
     end
 end
 
---local function enable_artillery(force, permission_group)
---    permission_group.set_allows_action(defines.input_action.use_artillery_remote, true)
---    force.technologies['artillery'].enabled = true
---    force.technologies['artillery-shell-range-1'].enabled = true
---    force.technologies['artillery-shell-speed-1'].enabled = true
---    force.recipes['artillery-turret'].enabled = false
---    force.recipes['artillery-wagon'].enabled = false
---    force.recipes['artillery-targeting-remote'].enabled = false
---    force.recipes['artillery-shell'].enabled = false
---end
+function Public.enable_artillery(force, permission_group)
+    permission_group.set_allows_action(defines.input_action.use_artillery_remote, true)
+    force.technologies['artillery'].enabled = true
+    force.technologies['artillery-shell-range-1'].enabled = true
+    force.technologies['artillery-shell-speed-1'].enabled = true
+    force.recipes['artillery-turret'].enabled = false
+    force.recipes['artillery-wagon'].enabled = false
+    force.recipes['artillery-targeting-remote'].enabled = false
+    force.recipes['artillery-shell'].enabled = false
+end
 
 local function disable_artillery(force, permission_group)
     permission_group.set_allows_action(defines.input_action.use_artillery_remote, false)
@@ -743,10 +718,7 @@ local function kill_force(force_name, cause)
         elseif not player.connected then
             this.requests[player.index] = 'kill-character'
         end
-        player.force = game.forces.player
-        Public.map_preset(player, false)
-        Public.set_player_color(player)
-        Public.give_key(player.index)
+        Public.set_player_to_outlander(player)
     end
     for _, e in pairs(surface.find_entities_filtered({force = force_name})) do
         if e.valid then
@@ -768,7 +740,7 @@ local function kill_force(force_name, cause)
             end
         end
     end
-    local r = 27
+    local r = 30
     for _, e in pairs(surface.find_entities_filtered({area = {{position.x - r, position.y - r}, {position.x + r, position.y + r}}, force = 'neutral', type = 'resource'})) do
         if e.name ~= 'crude-oil' then
             e.destroy()
@@ -1063,24 +1035,15 @@ local function on_entity_died(event)
     end
 end
 
-local function on_post_entity_died(event)
-    local prototype = event.prototype.type
-    if prototype ~= 'character' then
-        return
-    end
-    local entities = game.surfaces[event.surface_index].find_entities_filtered({position = event.position, radius = 1})
-    for _, e in pairs(entities) do
-        if e.type == 'character-corpse' then
-            Public.remove_key(e.character_corpse_player_index)
-        end
-    end
-end
-
 local function on_console_command(event)
     set_town_color(event)
 end
 
 local function on_console_chat(event)
+    if not event.player_index then
+        return
+    end
+
     local player = game.players[event.player_index]
     if string_match(string_lower(event.message), '%[armor%=') then
         player.clear_console()

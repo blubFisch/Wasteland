@@ -3,6 +3,8 @@ local mod_gui = require('mod-gui')
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
 local ResearchBalance = require 'maps.wasteland.research_balance'
+local Utils = require 'maps.wasteland.utils'
+local Team = require 'maps.wasteland.team'
 
 local Public = {}
 local button_id = 'towny-score-button'
@@ -96,7 +98,8 @@ local function update_score()
             subheader.style.horizontally_stretchable = true
             subheader.style.vertical_align = 'center'
 
-            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' points to win!'}}
+            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' points to win!'
+            .. '                   Players online: ' .. #game.connected_players}}
 
             if not next(subheader.children) then
                 subheader.destroy()
@@ -117,9 +120,18 @@ local function update_score()
             for _, town_center in pairs(this.town_centers) do
                 if town_center ~= nil then
                     town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
-                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * 0.5, 60)
+                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * 0.5, 70)
                     town_res_scores[town_center] = math.min(town_center.evolution.worms * evo_score_factor, 70)
                     town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
+
+                    if town_total_scores[town_center] >= 100 and this.winner == nil then
+                        local winner_force = town_center.market.force
+                        this.winner = town_center.town_name
+                        game.print(town_center.town_name .. " has won the game! Server will be reset by an admin soon.", Utils.scenario_color)
+                        Team.enable_artillery(winner_force, game.permissions.get_group((winner_force.name)))
+                        winner_force.technologies["artillery"].researched = true
+                        log("WINNER_STORE=\"" .. town_center.town_name .. "\"")
+                    end
                 end
             end
 
@@ -144,7 +156,7 @@ local function update_score()
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
                 information_table.add {type = 'label', caption = string.format('%.1f', town_res_scores[town_center]) ..
-                        " (" .. ResearchBalance.format_town_modifier(ResearchBalance.modifier_for_town(town_center)) .. ")"}
+                        " (" .. ResearchBalance.format_town_modifier(town_center.research_balance.current_modifier) .. ")"}
                 information_table.style.column_alignments[3] = 'right'
                 information_table.add {type = 'label', caption = string.format('%.1f  (%.1fh)', town_age_scores[town_center], town_ages_h[town_center])}
                 information_table.style.column_alignments[4] = 'right'

@@ -14,7 +14,6 @@ Global.register(
 )
 
 function Public.reset_table()
-    this.key = {}
     this.rocket_launches = {}
     this.requests = {}
     this.town_centers = {}
@@ -25,9 +24,8 @@ function Public.reset_table()
     this.score_gui_frame = {}
     this.testing_mode = false
     this.spawn_point = {}
+    this.winner = nil
     this.buffs = {}
-    this.players = 0
-    this.towns_enabled = true
     this.nuke_tick_schedule = {}
     this.swarms = {}
     this.explosion_schedule = {}
@@ -42,6 +40,8 @@ function Public.reset_table()
     this.pvp_shields_displayed_offline_hint = {}
     this.tutorials = {}
     this.suicides = {}
+    this.town_evo_warned = {}
+    this.treasure_hint = {}
 end
 
 function Public.get_table()

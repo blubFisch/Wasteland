@@ -14,6 +14,7 @@ function Public.add_balance_ui(player)
         caption = 'Research modifier',
         name = button_id
     }
+    button.visible = false
     button.style.font = 'default'
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
@@ -24,15 +25,8 @@ function Public.add_balance_ui(player)
     button.style.bottom_padding = 2
 end
 
-local function update_uis()
-    local this = ScenarioTable.get_table()
-    for _, town_center in pairs(this.town_centers) do
-        local force = town_center.market.force
-        for _, player in pairs(force.connected_players) do
-            local current_modifier = Public.modifier_for_town(town_center)
-            player.gui.top[button_id].caption = "Research modifier: " .. Public.format_town_modifier(current_modifier)
-        end
-    end
+function Public.player_changes_town_status(player, in_town)
+    player.gui.top[button_id].visible = in_town
 end
 
 function Public.format_town_modifier(modifier)
@@ -40,7 +34,7 @@ function Public.format_town_modifier(modifier)
 end
 
 -- Relative speed modifier, 1=no change
-function Public.modifier_for_town(town_center)
+local function calculate_modifier_for_town(town_center)
     local active_player_age_threshold = 8 * 60 * 60 * 60
 
     local this = ScenarioTable.get_table()
@@ -61,29 +55,41 @@ function Public.modifier_for_town(town_center)
     return player_modifier * research_modifier
 end
 
+local function update_modifiers()
+    local this = ScenarioTable.get_table()
+    for _, town_center in pairs(this.town_centers) do
+        if not town_center.research_balance then
+            town_center.research_balance = {}
+        end
+        town_center.research_balance.current_modifier = calculate_modifier_for_town(town_center)
+
+        -- Update UIs of all town players
+        for _, player in pairs(town_center.market.force.connected_players) do
+            player.gui.top[button_id].caption = "Research modifier: " .. Public.format_town_modifier(town_center.research_balance.current_modifier)
+        end
+    end
+end
+
 -- Override research progress as it progresses based on modifier
 local function update_research_progress()
     local this = ScenarioTable.get_table()
 
-     for _, town_center in pairs(this.town_centers) do
-         local force = town_center.market.force
-         if force.current_research then
-             if not town_center.research_balance then
-                 town_center.research_balance = {}
-             end
-
-             if town_center.research_balance.last_progress
-                     and town_center.research_balance.last_progress < force.research_progress   -- don't skip to next research
-             then
-                 local diff = force.research_progress - town_center.research_balance.last_progress
-                 force.research_progress = math.min(force.research_progress + diff * (Public.modifier_for_town(town_center) - 1), 1)
-             end
-             town_center.research_balance.last_progress = force.research_progress
-         end
+    for _, town_center in pairs(this.town_centers) do
+        local force = town_center.market.force
+        if force.current_research then
+            if town_center.research_balance.last_research
+                    and town_center.research_balance.last_research == force.current_research
+            then
+                local diff = force.research_progress - town_center.research_balance.last_progress
+                force.research_progress = math.min(force.research_progress + diff * (town_center.research_balance.current_modifier - 1), 1)
+            end
+            town_center.research_balance.last_progress = force.research_progress
+            town_center.research_balance.last_research = force.current_research
+        end
     end
 end
 
 Event.on_nth_tick(1, update_research_progress)
-Event.on_nth_tick(60, update_uis)
+Event.on_nth_tick(60, update_modifiers)
 
 return Public

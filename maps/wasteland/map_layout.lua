@@ -215,10 +215,10 @@ local function place_scrap(surface, position)
 end
 
 local function is_scrap_area(n)
-    if n > 0.5 then
+    if n > 0.6 then
         return true
     end
-    if n < -0.5 then
+    if n < -0.6 then
         return true
     end
 end
