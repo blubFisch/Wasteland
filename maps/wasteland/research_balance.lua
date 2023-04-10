@@ -89,7 +89,7 @@ local function update_research_progress()
     end
 end
 
-Event.on_nth_tick(1, update_research_progress)
+Event.add(defines.events.on_tick, update_research_progress)
 Event.on_nth_tick(60, update_modifiers)
 
 return Public

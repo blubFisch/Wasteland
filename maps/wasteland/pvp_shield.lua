@@ -240,21 +240,26 @@ local function scan_protect_shield_area()
     -- Handle edge case damage situations
 
     local this = ScenarioTable.get_table()
+    local idx = 0
+    local update_limit = 10
     for _, shield in pairs(this.pvp_shields) do
+        if game.tick % update_limit == idx % update_limit then  -- Keep runtime low
 
-        -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
-        local tank_box = enlarge_bounding_box(shield.box, 1)
-        for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
-            if shield.force ~= e.force and not shield.force.get_friend(e.force) then
-                e.speed = 0
+            -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
+            local tank_box = enlarge_bounding_box(shield.box, 3)
+            for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
+                if shield.force ~= e.force and not shield.force.get_friend(e.force) then
+                    e.speed = 0
+                end
+            end
+
+            -- Protect against big biters that are lured in/glitched in
+            local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
+            for _, e in pairs(shield.surface.find_entities_filtered({ name = shield_disallowed_biters, area = biters_box, force = "enemy"})) do
+                e.die()
             end
         end
-
-        -- Protect against big biters that are lured in/glitched in
-        local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
-        for _, e in pairs(shield.surface.find_entities_filtered({ name = shield_disallowed_biters, area = biters_box })) do
-            e.die()
-        end
+        idx = idx + 1
     end
 end
 
