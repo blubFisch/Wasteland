@@ -125,11 +125,11 @@ for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[2], {vector[1] * -1, vector[2]})
 end
 additional_resource_vectors[3] = {}
-for _, vector in pairs(additional_resource_vectors[3]) do
-    table_insert(additional_resource_vectors[4], {vector[1] * -1, vector[2] * -1})
+for _, vector in pairs(additional_resource_vectors[1]) do
+    table_insert(additional_resource_vectors[3], {vector[1] * -1, vector[2] * -1})
 end
 additional_resource_vectors[4] = {}
-for _, vector in pairs(additional_resource_vectors[3]) do
+for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[4], {vector[1], vector[2] * -1})
 end
 
