@@ -721,7 +721,9 @@ local function kill_force(force_name, cause)
                 this.killer_name[player.index] = 'suicide'
             else
                 if cause.force.name ~= 'enemy' then
-                    this.killer_name[player.index] = cause.player.name
+                    if cause.player.name ~= nil then
+                        this.killer_name[player.index] = cause.player.name
+                    end
                 else
                     this.killer_name[player.index] = 'biters'
                 end
