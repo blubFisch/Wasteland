@@ -394,11 +394,13 @@ local function update_pvp_shields_display()
         local shield = this.pvp_shields[town_center.market.force.name]
         local info
         if shield then
+            info = 'PvP Shield: '
             if shield.is_offline_mode then
-                info = 'PvP Shield: While offline, max ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
-            else
-                info = 'PvP Shield: ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
+                info = info .. 'While offline, max '
+            elseif shield.is_afk_mode then
+                info = info .. 'AFK '
             end
+            info = info ..  PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
         else
             info = ''
         end
@@ -425,7 +427,7 @@ local function update_pvp_shields_display()
     end
 end
 
-local function update_offline_pvp_shields()
+local function manage_offline_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
     local size = PvPShield.default_size
@@ -777,7 +779,7 @@ commands.add_command(
 Event.add(defines.events.on_built_entity, on_built_entity)
 Event.add(defines.events.on_player_repaired_entity, on_player_repaired_entity)
 Event.on_nth_tick(60, update_pvp_shields_display)
-Event.on_nth_tick(60, update_offline_pvp_shields)
+Event.on_nth_tick(60, manage_offline_pvp_shields)
 --Event.add(defines.events.on_robot_repaired_entity, on_robot_repaired_entity)
 Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 

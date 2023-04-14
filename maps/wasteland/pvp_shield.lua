@@ -52,17 +52,17 @@ local function scale_size_by_lifetime(shield)
     shield.size = scaled_size
 end
 
-function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, is_pause_mode, is_offline_mode)
+function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, is_afk_mode, is_offline_mode)
     local this = ScenarioTable.get_table()
 
     local shield = {surface = surface, force = force, center = center, max_size = max_size, max_lifetime_ticks = lifetime_ticks,
-                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, is_pause_mode = is_pause_mode,
+                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, is_afk_mode = is_afk_mode,
                     is_offline_mode = is_offline_mode}
 
-    if is_pause_mode then
-        -- Freeze players to avoid AFK abuse
+    if is_afk_mode then
+        -- Freeze players to avoid abuse
         shield.force.character_running_speed_modifier = -1
-        -- Kick players out of vehicles if needed
+        -- Also kick players out of vehicles if needed
         for _, player in pairs(force.connected_players) do
             if player.character and player.character.driving then
                 player.character.driving = false
@@ -80,7 +80,7 @@ function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
 
-    if shield.is_pause_mode then
+    if shield.is_afk_mode then
         shield.force.character_running_speed_modifier = 0
     end
 
@@ -188,7 +188,7 @@ local function on_player_driving_changed_state(event)
     end
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if shield.force == player.force and shield.is_pause_mode then
+        if shield.force == player.force and shield.is_afk_mode then
             local vehicle = player.vehicle
             if vehicle and vehicle.valid then
                 -- Kick players out of vehicles if needed
