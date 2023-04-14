@@ -803,6 +803,7 @@ local function kill_force(force_name, cause)
         message = town_name .. ' has fallen to the biters!'
     end
 
+    log(message)
     Server.to_discord_embed(message)
     game.print('>> ' .. message, Utils.scenario_color)
 end
