@@ -385,6 +385,28 @@ function Public.enemy_players_nearby(town_center, max_radius)
     return false
 end
 
+
+
+local function is_enemy_nearby(town_center, town_control_range)
+    local this = ScenarioTable.get_table()
+    local other_force_names = {}
+
+    -- check for nearby town centers
+    if table_size(this.town_centers) > 0 then
+        for _, other_town_center in pairs(this.town_centers) do
+            local other_market_force = other_town_center.market.force
+            if town_center.market.force.name ~= other_market_force.name and not town_center.market.force.get_friend(other_market_force) then
+                table_insert(other_force_names, other_market_force.name)
+            end
+        end
+    end
+    table_insert(other_force_names, 'player')
+    table_insert(other_force_names, 'rogue')
+
+    return town_center.market.surface.count_entities_filtered({
+        position = town_center.market.position, radius = town_control_range, name="character", force=other_force_names}) > 0
+end
+
 local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
@@ -400,6 +422,25 @@ local function update_pvp_shields_display()
             info = ''
         end
         rendering.set_text(town_center.shield_text, info)
+
+
+        -- Update enemy nearby display
+        local town_control_range = 30 + town_center.evolution.worms * 300
+        local enemies_nearby = is_enemy_nearby(town_center, town_control_range)
+
+        local info_enemies
+        local color
+        if enemies_nearby then
+            info_enemies = "Enemies"
+            color = {255, 0, 0}
+        else
+            info_enemies = "No enemies"
+            color = {0, 255, 0}
+        end
+
+        info_enemies = info_enemies .. " (" .. string.format('%.0f',  town_control_range) .. " tiles)"
+        rendering.set_text(town_center.enemies_text, info_enemies)
+        rendering.set_color(town_center.enemies_text, color)
     end
 end
 
@@ -637,12 +678,25 @@ local function found_town(event)
         scale_with_zoom = false
     }
 
-    town_center.shield_text = rendering.draw_text {
-        text = 'PvP Shield: (..)',
+    town_center.enemies_text = rendering.draw_text {
+        text = '',
         surface = surface,
         forces = {force_name, game.forces.player, game.forces.rogue},
         target = town_center.market,
         target_offset = {0, -2.25},
+        color = {0, 0, 0},
+        scale = 1.00,
+        font = 'default-game',
+        alignment = 'center',
+        scale_with_zoom = false
+    }
+
+    town_center.shield_text = rendering.draw_text {
+        text = '',
+        surface = surface,
+        forces = {force_name, game.forces.player, game.forces.rogue},
+        target = town_center.market,
+        target_offset = {0, -1.5},
         color = {200, 200, 200},
         scale = 1.00,
         font = 'default-game',
