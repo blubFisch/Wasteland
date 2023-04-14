@@ -113,45 +113,27 @@ function Public.in_area(position, area_center, area_radius)
     return false
 end
 
--- is the position near another town?
-function Public.near_another_town(force_name, position, surface, radius)
-    -- check for nearby town centers
-    if force_name == nil then
-        return false
-    end
+function Public.near_another_town(force_name, position, surface, radius, include_control_range)
     local this = ScenarioTable.get_table()
-    local forces = {}
+    local force_names = {}
+
     -- check for nearby town centers
-    local fail = false
     if table_size(this.town_centers) > 0 then
         for _, town_center in pairs(this.town_centers) do
-            if town_center ~= nil then
-                local market = town_center.market
-                if market ~= nil and market.valid then
-                    local market_force = market.force
-                    if market_force ~= nil then
-                        if market_force.name ~= nil then
-                            if force_name ~= market_force.name then
-                                table_insert(forces, market_force.name)
-                                if Public.in_range(position, market.position, radius) == true then
-                                    fail = true
-                                    break
-                                end
-                            end
-                        end
-                    end
+            local market_force_name = town_center.market.force.name
+            if force_name ~= market_force_name then
+                if Public.in_range(position, town_center.market.position, radius) then
+                    return true
                 end
+                table_insert(force_names, market_force_name)
             end
-        end
-        if fail == true then
-            return true
         end
     end
 
     -- check for nearby town entities
-    if table.size(forces) > 0 then
-        if surface.count_entities_filtered({position = position, radius = radius,
-                                            force = forces, type=town_zoning_entity_types, limit = 1}) > 0 then
+    if table.size(force_names) > 0 then
+        if surface.count_entities_filtered({ position = position, radius = radius,
+                                             force = force_names, type=town_zoning_entity_types, limit = 1}) > 0 then
             return true
         end
     end
