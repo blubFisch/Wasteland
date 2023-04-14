@@ -462,12 +462,8 @@ local function manage_offline_pvp_shields()
                 local town_control_range = Public.get_town_control_range(town_center)
                 if not activation and not Public.enemy_players_nearby(town_center, town_control_range) then
                     local time_to_full = 2 * 60 * 60
-                    if activation == -2 then    -- We're swapping one shield for another
-                        time_to_full = 1
-                    else
-                        game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now."..
-                                " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
-                    end
+                    game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now." ..
+                            " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
                     PvPShield.add_shield(market.surface, market.force, market.position, size,
                             offline_shield_duration_ticks, time_to_full, false, true)
                     this.pvp_shield_offline_activations[force.index] = -1
