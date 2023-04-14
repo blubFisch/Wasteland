@@ -113,20 +113,18 @@ function Public.in_area(position, area_center, area_radius)
     return false
 end
 
-function Public.near_another_town(force_name, position, surface, radius, include_control_range)
+function Public.near_another_town(force_name, position, surface, radius)
     local this = ScenarioTable.get_table()
     local force_names = {}
 
     -- check for nearby town centers
-    if table_size(this.town_centers) > 0 then
-        for _, town_center in pairs(this.town_centers) do
-            local market_force_name = town_center.market.force.name
-            if force_name ~= market_force_name then
-                if Public.in_range(position, town_center.market.position, radius) then
-                    return true
-                end
-                table_insert(force_names, market_force_name)
+    for _, town_center in pairs(this.town_centers) do
+        local market_force_name = town_center.market.force.name
+        if force_name ~= market_force_name then
+            if Public.in_range(position, town_center.market.position, radius) then
+                return true
             end
+            table_insert(force_names, market_force_name)
         end
     end
 

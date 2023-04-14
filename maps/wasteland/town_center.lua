@@ -22,7 +22,9 @@ local Utils = require 'maps.wasteland.utils'
 local MapLayout = require 'maps.wasteland.map_layout'
 
 local town_radius = 20
-local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
+local max_starter_shield_size = 101
+local radius_between_towns = max_starter_shield_size + 2
+
 local ore_amount = 1200
 
 local colors = {}
@@ -301,7 +303,7 @@ local function is_valid_location(force_name, surface, position)
         return false
     end
 
-    if Building.near_another_town(force_name, position, surface, radius_between_towns) == true then
+    if Building.near_another_town(force_name, position, surface, radius_between_towns) or Public.in_extended_control_range(position) then
         surface.create_entity(
             {
                 name = 'flying-text',
@@ -327,6 +329,19 @@ local function is_valid_location(force_name, surface, position)
     end
 
     return true
+end
+
+function Public.in_extended_control_range(position)
+    local this = ScenarioTable.get_table()
+    for _, town_center in pairs(this.town_centers) do
+        local town_position = town_center.market.position
+
+        local distance = math_floor(math_sqrt((position.x - town_position.x) ^ 2 + (position.y - town_position.y) ^ 2))
+        if distance < Public.get_town_control_range(town_center) * 1.5 + max_starter_shield_size / 2 then   -- Account for growing control range
+            return true
+        end
+    end
+    return false
 end
 
 function Public.in_any_town(position)
@@ -486,12 +501,11 @@ local function add_pvp_shield_scaled(position, force, surface)
     local min_evo_for_shield = 0.13 -- Compare with offensive research like tank, power armor, ...
     if evo >= min_evo_for_shield then
         local min_size = PvPShield.default_size
-        local max_size = 101
         local min_duration =   2 * 60 * 60 * 60
         local max_duration =  12 * 60 * 60 * 60
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
         local lifetime_ticks = math_min(min_duration + scale_factor * (max_duration - min_duration), max_duration)
-        local size = math_min(min_size + scale_factor * (max_size - min_size), max_size)
+        local size = math_min(min_size + scale_factor * (max_starter_shield_size - min_size), max_starter_shield_size)
 
         PvPShield.add_shield(surface, force, position, size, lifetime_ticks, 60 * 60)
         update_pvp_shields_display()
