@@ -367,16 +367,15 @@ function Public.update_coin_balance(force)
     rendering.set_text(town_center.coins_text, 'Coins: ' .. town_center.coin_balance)
 end
 
-function Public.enemy_players_nearby(town_center, max_radius)
+function Public.enemy_players_nearby(town_center, max_distance)
     local own_force = town_center.market.force
     local town_position = town_center.market.position
 
     for _, player in pairs(game.connected_players) do
         if player.surface == town_center.market.surface then
-            local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2
-                    + (player.position.y - town_position.y) ^ 2))
-            if distance < max_radius then
-                if player.force ~= "enemy" and (own_force ~= player.force and not own_force.get_friend(player.force)) then
+            local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2 + (player.position.y - town_position.y) ^ 2))
+            if distance < max_distance and player.force ~= own_force and not player.force.get_friend(own_force) then
+                if player.character or player.driving then
                     return true
                 end
             end
@@ -385,26 +384,8 @@ function Public.enemy_players_nearby(town_center, max_radius)
     return false
 end
 
-
-
-local function is_enemy_nearby(town_center, town_control_range)
-    local this = ScenarioTable.get_table()
-    local other_force_names = {}
-
-    -- check for nearby town centers
-    if table_size(this.town_centers) > 0 then
-        for _, other_town_center in pairs(this.town_centers) do
-            local other_market_force = other_town_center.market.force
-            if town_center.market.force.name ~= other_market_force.name and not town_center.market.force.get_friend(other_market_force) then
-                table_insert(other_force_names, other_market_force.name)
-            end
-        end
-    end
-    table_insert(other_force_names, 'player')
-    table_insert(other_force_names, 'rogue')
-
-    return town_center.market.surface.count_entities_filtered({
-        position = town_center.market.position, radius = town_control_range, name="character", force=other_force_names}) > 0
+function Public.get_town_control_range(town_center)
+    return 30 + town_center.evolution.worms * 300
 end
 
 local function update_pvp_shields_display()
@@ -425,8 +406,8 @@ local function update_pvp_shields_display()
 
 
         -- Update enemy nearby display
-        local town_control_range = 30 + town_center.evolution.worms * 300
-        local enemies_nearby = is_enemy_nearby(town_center, town_control_range)
+        local town_control_range = Public.get_town_control_range(town_center)
+        local enemies_nearby = Public.enemy_players_nearby(town_center, town_control_range)
 
         local info_enemies
         local color
