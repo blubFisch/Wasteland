@@ -5,7 +5,7 @@ local changelog =
  - Tank combat rebalance
    - Tanks are much weaker against physical damage
    - Tank vs Tank damage is now 10x increased
- - PvP shields are stronger and some bugs fixed
+ - PvP shields are stronger and some bugs/abuse fixed
  - Starting towns late game is easier
  - Research difficulty decreased for towns with multiple players
  - Chests with explosive items don't explode anymore]]
@@ -48,10 +48,10 @@ Survive as long as you can. Raid other towns. Defend your town.
 
 [font=heading-1]PvP Shields[/font]
 - PvP shields prevent players from entering, building and damaging
-- Offline PvP shields deploy automatically once all players of a town go offline
-    The size is same as your initial town wall, marked by the blue tiles
-- Your town has a AFK PvP shield that you can use to safely take a quick break
-    Deploy it from the market
+- Offline PvP shields deploy automatically once all players of a town leave the game
+    - The size is same as your initial town wall, marked by the blue tiles
+    - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if the market shows no enemies
+- Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
 - Big and behemoth biters can't penetrate your shield, but small and medium ones can
 
 [font=heading-1]Town members and alliances[/font]
