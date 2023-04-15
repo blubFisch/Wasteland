@@ -159,11 +159,13 @@ function Public.push_enemies_out(player)
                         player.character.driving = false
                     end
 
-                    -- Damage player
-                    player.character.health = player.character.health - 25
-                    player.character.surface.create_entity({name = 'water-splash', position = player.position})
-                    if player.character.health <= 0 then
-                        player.character.die('enemy')
+                    -- Punish player
+                    if player.character then
+                        player.character.health = player.character.health - 25
+                        player.character.surface.create_entity({name = 'water-splash', position = player.position})
+                        if player.character.health <= 0 then
+                            player.character.die('enemy')
+                        end
                     end
                 end
             end
