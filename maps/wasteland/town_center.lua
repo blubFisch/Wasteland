@@ -20,6 +20,7 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Evolution = require 'maps.wasteland.evolution'
 local Utils = require 'maps.wasteland.utils'
 local MapLayout = require 'maps.wasteland.map_layout'
+local GameMode = require 'maps.wasteland.game_mode'
 
 local town_radius = 20
 local max_starter_shield_size = 101
@@ -492,13 +493,14 @@ local function manage_offline_pvp_shields()
     end
 end
 
+local game_mode_shield_duration_scaling = {0.25, 0.5, 1}
 local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
     local min_evo_for_shield = 0.13 -- Compare with offensive research like tank, power armor, ...
     if evo >= min_evo_for_shield then
         local min_size = PvPShield.default_size
-        local min_duration =   2 * 60 * 60 * 60
-        local max_duration =  12 * 60 * 60 * 60
+        local min_duration =   2 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
+        local max_duration =  12 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
         local lifetime_ticks = math_min(min_duration + scale_factor * (max_duration - min_duration), max_duration)
         local size = math_min(min_size + scale_factor * (max_starter_shield_size - min_size), max_starter_shield_size)
