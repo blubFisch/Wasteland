@@ -1,10 +1,17 @@
 local Public = {}
 
+local GameMode = require 'maps.wasteland.game_mode'
+
 function Public.initialize()
     -- difficulty settings
     game.difficulty_settings.recipe_difficulty = defines.difficulty_settings.recipe_difficulty.normal
     game.difficulty_settings.technology_difficulty = defines.difficulty_settings.technology_difficulty.normal
-    game.difficulty_settings.technology_price_multiplier = 0.75
+    local tech_price_multipliers = {
+        0.25,
+        0.5,
+        1
+    }
+    game.difficulty_settings.technology_price_multiplier = tech_price_multipliers[GameMode.mode]
     game.difficulty_settings.research_queue_from_the_start = 'always'
 
     -- pollution settings
