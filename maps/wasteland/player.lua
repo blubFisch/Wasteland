@@ -100,28 +100,28 @@ local function init_position_frame(player)
     if player.gui.top[map_pos_frame_id] then
         player.gui.top[map_pos_frame_id].destroy()
     end
-    local b = player.gui.top.add({type = 'label', caption = "Position",
-                                  name = map_pos_frame_id})
-    b.tooltip = "Your player position"
-    b.style.font_color = {r = 255, g = 255, b = 255}
-    b.style.top_padding = 10
-    b.style.left_padding = 10
-    b.style.right_padding = 10
-    b.style.bottom_padding = 10
+    local button = player.gui.top.add({ type = 'label', caption = "Position",
+                                        name = map_pos_frame_id})
+    button.tooltip = "Your player position"
+    button.style.font_color = { r = 255, g = 255, b = 255}
+    button.style.top_padding = 10
+    button.style.left_padding = 10
+    button.style.right_padding = 10
+    button.style.bottom_padding = 10
 end
 
 local function init_evo_frame(player)
     if player.gui.top[evo_frame_id] then
         player.gui.top[evo_frame_id].destroy()
     end
-    local b = player.gui.top.add({type = 'label', caption = "Evolution",
-                                  name = evo_frame_id})
-    b.tooltip = "Biter evolution level at your position. In this scenario, evolution depends on the research of nearby towns"
-    b.style.font_color = {r = 255, g = 255, b = 255}
-    b.style.top_padding = 10
-    b.style.left_padding = 10
-    b.style.right_padding = 10
-    b.style.bottom_padding = 10
+    local button = player.gui.top.add({ type = 'label', caption = "Evolution",
+                                        name = evo_frame_id})
+    button.tooltip = "Biter evolution level at your position. In this scenario, evolution depends on the research of nearby towns"
+    button.style.font_color = { r = 255, g = 255, b = 255}
+    button.style.top_padding = 10
+    button.style.left_padding = 10
+    button.style.right_padding = 10
+    button.style.bottom_padding = 10
 end
 
 local function init_map_hint_frame(player)

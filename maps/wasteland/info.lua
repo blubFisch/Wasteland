@@ -2,12 +2,10 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Apr 2023 updates[/font]
- - Tank combat rebalance
-   - Tanks are much weaker against physical damage
-   - Tank vs Tank damage is now 10x increased
+ - Game mode support (short, medium, long): Changes research cost and others
+ - Complete tank combat rebalance
  - PvP shields are stronger and some bugs/abuse fixed
  - Starting towns late game is easier
- - Research difficulty decreased for towns with multiple players
  - Chests with explosive items don't explode anymore]]
 
 local info =
