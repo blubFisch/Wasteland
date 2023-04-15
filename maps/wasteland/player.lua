@@ -102,6 +102,7 @@ local function init_position_frame(player)
     end
     local b = player.gui.top.add({type = 'label', caption = "Position",
                                   name = map_pos_frame_id})
+    b.tooltip = "Your player position"
     b.style.font_color = {r = 255, g = 255, b = 255}
     b.style.top_padding = 10
     b.style.left_padding = 10
@@ -115,6 +116,7 @@ local function init_evo_frame(player)
     end
     local b = player.gui.top.add({type = 'label', caption = "Evolution",
                                   name = evo_frame_id})
+    b.tooltip = "Biter evolution level at your position. In this scenario, evolution depends on the research of nearby towns"
     b.style.font_color = {r = 255, g = 255, b = 255}
     b.style.top_padding = 10
     b.style.left_padding = 10

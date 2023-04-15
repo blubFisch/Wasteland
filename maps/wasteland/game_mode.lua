@@ -17,6 +17,7 @@ function Public.add_mode_button(player)
         caption = 'Game Mode: ' .. Public.mode_names[Public.mode],
         name = button_id
     }
+    button.tooltip = "Changes Game duration and technology cost"
     button.style.font_color = {r = 1, g = 1, b = 1}
     button.style.minimal_height = 38
     button.style.minimal_width = 150
