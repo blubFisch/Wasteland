@@ -62,7 +62,7 @@ local function on_chunk_charted(event)
         update_forces(shield_text)
         add_force(shield_text, force.name)
 
-        local enemies_text = town_center.shield_text
+        local enemies_text = town_center.enemies_text
         update_forces(enemies_text)
         add_force(enemies_text, force.name)
     end
