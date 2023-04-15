@@ -82,7 +82,13 @@ function Public.requests(player)
                 i.clear()
             end
 
-            player.print("Your town has fallen since you last played. Good luck next time!", {r = 1, g = 0, b = 0})
+            if this.killer_name[player.index] then
+                player.print("Your town has fallen to " .. this.killer_name[player.index] .. " since you last played!", {r = 1, g = 0, b = 0})
+                this.killer_name[player.index] = nil
+            else
+                player.print("Your town has fallen since you last played!", {r = 1, g = 0, b = 0})
+            end
+
             player.character.die()
         end
         this.requests[player.index] = nil

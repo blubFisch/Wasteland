@@ -16,6 +16,7 @@ Global.register(
 function Public.reset_table()
     this.rocket_launches = {}
     this.requests = {}
+    this.killer_name = {}
     this.town_centers = {}
     this.cooldowns_town_placement = {}
     this.last_respawn = {}

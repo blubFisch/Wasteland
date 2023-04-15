@@ -716,6 +716,18 @@ local function kill_force(force_name, cause)
         if player.character then
             player.character.die()
         elseif not player.connected then
+            this.killer_name[player.index] = 'unknown'
+            if is_suicide then
+                this.killer_name[player.index] = 'suicide'
+            else
+                if cause.force.name ~= 'enemy' then
+                    if cause.player.name ~= nil then
+                        this.killer_name[player.index] = cause.player.name
+                    end
+                else
+                    this.killer_name[player.index] = 'biters'
+                end
+            end
             this.requests[player.index] = 'kill-character'
         end
         Public.set_player_to_outlander(player)
