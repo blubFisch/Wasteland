@@ -2,8 +2,8 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Apr 2023 updates[/font]
+ - Further tweaks to tank combat and explo ammo
  - Game mode support (short, medium, long): Changes research cost and others
- - Complete tank combat rebalance
  - PvP shields are stronger and some bugs/abuse fixed
  - Starting towns late game is easier
  - Chests with explosive items don't explode anymore]]
