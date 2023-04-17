@@ -716,6 +716,18 @@ local function kill_force(force_name, cause)
         if player.character then
             player.character.die()
         elseif not player.connected then
+            this.killer_name[player.index] = 'unknown'
+            if is_suicide then
+                this.killer_name[player.index] = 'suicide'
+            else
+                if cause and cause.force then
+                    if cause.force.name ~= 'enemy' then
+                        this.killer_name[player.index] = cause.force.name   -- TODO: use correct player / town name
+                    else
+                        this.killer_name[player.index] = 'biters'
+                    end
+                end
+            end
             this.requests[player.index] = 'kill-character'
         end
         Public.set_player_to_outlander(player)
@@ -803,6 +815,7 @@ local function kill_force(force_name, cause)
         message = town_name .. ' has fallen to the biters!'
     end
 
+    log("kill_force: " .. message)
     Server.to_discord_embed(message)
     game.print('>> ' .. message, Utils.scenario_color)
 end

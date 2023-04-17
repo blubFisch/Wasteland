@@ -52,17 +52,17 @@ local function scale_size_by_lifetime(shield)
     shield.size = scaled_size
 end
 
-function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, is_pause_mode, is_offline_mode)
+function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, is_afk_mode, is_offline_mode)
     local this = ScenarioTable.get_table()
 
     local shield = {surface = surface, force = force, center = center, max_size = max_size, max_lifetime_ticks = lifetime_ticks,
-                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, is_pause_mode = is_pause_mode,
+                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, is_afk_mode = is_afk_mode,
                     is_offline_mode = is_offline_mode}
 
-    if is_pause_mode then
-        -- Freeze players to avoid AFK abuse
+    if is_afk_mode then
+        -- Freeze players to avoid abuse
         shield.force.character_running_speed_modifier = -1
-        -- Kick players out of vehicles if needed
+        -- Also kick players out of vehicles if needed
         for _, player in pairs(force.connected_players) do
             if player.character and player.character.driving then
                 player.character.driving = false
@@ -80,7 +80,7 @@ function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
 
-    if shield.is_pause_mode then
+    if shield.is_afk_mode then
         shield.force.character_running_speed_modifier = 0
     end
 
@@ -159,11 +159,13 @@ function Public.push_enemies_out(player)
                         player.character.driving = false
                     end
 
-                    -- Damage player
-                    player.character.health = player.character.health - 25
-                    player.character.surface.create_entity({name = 'water-splash', position = player.position})
-                    if player.character.health <= 0 then
-                        player.character.die('enemy')
+                    -- Punish player
+                    if player.character then
+                        player.character.health = player.character.health - 25
+                        player.character.surface.create_entity({name = 'water-splash', position = player.position})
+                        if player.character.health <= 0 then
+                            player.character.die('enemy')
+                        end
                     end
                 end
             end
@@ -188,7 +190,7 @@ local function on_player_driving_changed_state(event)
     end
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if shield.force == player.force and shield.is_pause_mode then
+        if shield.force == player.force and shield.is_afk_mode then
             local vehicle = player.vehicle
             if vehicle and vehicle.valid then
                 -- Kick players out of vehicles if needed
@@ -240,21 +242,26 @@ local function scan_protect_shield_area()
     -- Handle edge case damage situations
 
     local this = ScenarioTable.get_table()
+    local idx = 0
+    local update_limit = 10
     for _, shield in pairs(this.pvp_shields) do
+        if game.tick % update_limit == idx % update_limit then  -- Keep runtime low
 
-        -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
-        local tank_box = enlarge_bounding_box(shield.box, 1)
-        for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
-            if shield.force ~= e.force and not shield.force.get_friend(e.force) then
-                e.speed = 0
+            -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
+            local tank_box = enlarge_bounding_box(shield.box, 3)
+            for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
+                if shield.force ~= e.force and not shield.force.get_friend(e.force) then
+                    e.speed = 0
+                end
+            end
+
+            -- Protect against big biters that are lured in/glitched in
+            local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
+            for _, e in pairs(shield.surface.find_entities_filtered({ name = shield_disallowed_biters, area = biters_box, force = "enemy"})) do
+                e.die()
             end
         end
-
-        -- Protect against big biters that are lured in/glitched in
-        local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
-        for _, e in pairs(shield.surface.find_entities_filtered({ name = shield_disallowed_biters, area = biters_box })) do
-            e.die()
-        end
+        idx = idx + 1
     end
 end
 

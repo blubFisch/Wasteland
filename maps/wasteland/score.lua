@@ -5,10 +5,16 @@ local Event = require 'utils.event'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local Utils = require 'maps.wasteland.utils'
 local Team = require 'maps.wasteland.team'
+local GameMode = require 'maps.wasteland.game_mode'
 
 local Public = {}
 local button_id = 'towny-score-button'
 local evo_score_factor = 50
+
+local age_score_weights = {
+    2, 1, 0.5
+}
+local age_score_weight = age_score_weights[GameMode.mode]
 
 function Public.score_increment(evo_increase)
     return evo_increase * evo_score_factor
@@ -120,7 +126,7 @@ local function update_score()
             for _, town_center in pairs(this.town_centers) do
                 if town_center ~= nil then
                     town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
-                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * 0.5, 70)
+                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * age_score_weight, 70)
                     town_res_scores[town_center] = math.min(town_center.evolution.worms * evo_score_factor, 70)
                     town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
 

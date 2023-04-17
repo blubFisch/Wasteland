@@ -10,6 +10,7 @@ local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local CombatBalance = require 'maps.wasteland.combat_balance'
 local Evolution = require 'maps.wasteland.evolution'
+local GameMode = require 'maps.wasteland.game_mode'
 
 local map_pos_frame_id = 'towny_map_position'
 local evo_frame_id = 'towny_evo_display'
@@ -82,7 +83,13 @@ function Public.requests(player)
                 i.clear()
             end
 
-            player.print("Your town has fallen since you last played. Good luck next time!", {r = 1, g = 0, b = 0})
+            if this.killer_name[player.index] then
+                player.print("Your town has fallen to " .. this.killer_name[player.index] .. " since you last played!", {r = 1, g = 0, b = 0})
+                this.killer_name[player.index] = nil
+            else
+                player.print("Your town has fallen since you last played!", {r = 1, g = 0, b = 0})
+            end
+
             player.character.die()
         end
         this.requests[player.index] = nil
@@ -93,26 +100,28 @@ local function init_position_frame(player)
     if player.gui.top[map_pos_frame_id] then
         player.gui.top[map_pos_frame_id].destroy()
     end
-    local b = player.gui.top.add({type = 'label', caption = "Position",
-                                  name = map_pos_frame_id})
-    b.style.font_color = {r = 255, g = 255, b = 255}
-    b.style.top_padding = 10
-    b.style.left_padding = 10
-    b.style.right_padding = 10
-    b.style.bottom_padding = 10
+    local button = player.gui.top.add({ type = 'label', caption = "Position",
+                                        name = map_pos_frame_id})
+    button.tooltip = "Your player position"
+    button.style.font_color = { r = 255, g = 255, b = 255}
+    button.style.top_padding = 10
+    button.style.left_padding = 10
+    button.style.right_padding = 10
+    button.style.bottom_padding = 10
 end
 
 local function init_evo_frame(player)
     if player.gui.top[evo_frame_id] then
         player.gui.top[evo_frame_id].destroy()
     end
-    local b = player.gui.top.add({type = 'label', caption = "Evolution",
-                                  name = evo_frame_id})
-    b.style.font_color = {r = 255, g = 255, b = 255}
-    b.style.top_padding = 10
-    b.style.left_padding = 10
-    b.style.right_padding = 10
-    b.style.bottom_padding = 10
+    local button = player.gui.top.add({ type = 'label', caption = "Evolution",
+                                        name = evo_frame_id})
+    button.tooltip = "Biter evolution level at your position. In this scenario, evolution depends on the research of nearby towns"
+    button.style.font_color = { r = 255, g = 255, b = 255}
+    button.style.top_padding = 10
+    button.style.left_padding = 10
+    button.style.right_padding = 10
+    button.style.bottom_padding = 10
 end
 
 local function init_map_hint_frame(player)
@@ -186,6 +195,7 @@ local function on_player_joined_game(event)
         init_position_frame(player)
         init_map_hint_frame(player)
         init_evo_frame(player)
+        GameMode.add_mode_button(player)
 
         Public.initialize(player)
         Public.spawn(player)

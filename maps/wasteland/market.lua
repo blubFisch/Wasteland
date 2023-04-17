@@ -1,7 +1,7 @@
 local table_insert = table.insert
 
 local ScenarioTable = require 'maps.wasteland.table'
-local Town_center = require 'maps.wasteland.town_center'
+local TownCenter = require 'maps.wasteland.town_center'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 
@@ -15,7 +15,7 @@ local upgrade_functions = {
         end
         town_center.health = town_center.health + town_center.max_health
         town_center.max_health = town_center.max_health * 2
-        Town_center.set_market_health(market, 0)
+        TownCenter.set_market_health(market, 0)
         surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
         return true
     end,
@@ -100,7 +100,8 @@ local upgrade_functions = {
         if not this.pvp_shields[player.force.name] then
             -- Double-check with the player to prevent accidental clicks
             if this.pvp_shield_warned[player.force.name] ~= nil and game.tick - this.pvp_shield_warned[player.force.name] < 60 * 60 then
-                if not Town_center.enemy_players_nearby(town_center, 60) then
+                local town_control_range = TownCenter.get_town_control_range(town_center)
+                if not TownCenter.enemy_players_nearby(town_center, town_control_range) then
                     PvPShield.add_shield(surface, force, market.position, PvPShield.default_size, shield_lifetime_ticks, 2 * 60 * 60, true)
                     surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
                     this.pvp_shield_warned[player.force.name] = nil
@@ -444,7 +445,7 @@ local function trade_scrap_for_coin(town_center, market, trade, stack)
         town_center.input_buffer[item] = town_center.input_buffer[item] - price
         town_center.coin_balance = town_center.coin_balance + count
     end
-    Town_center.update_coin_balance(market.force)
+    TownCenter.update_coin_balance(market.force)
     --log("input_buffer[" .. item .. "] = " .. town_center.input_buffer[item])
 end
 
@@ -463,7 +464,7 @@ local function trade_coin_for_items(town_center, market, trade)
             break
         end
     end
-    Town_center.update_coin_balance(market.force)
+    TownCenter.update_coin_balance(market.force)
 end
 
 local function handle_loader_output(town_center, market, entity, index)
@@ -480,7 +481,7 @@ local function handle_loader_output(town_center, market, entity, index)
             local stack = {name = 'coin', count = 1}
             line.insert_at_back(stack)
         end
-        Town_center.update_coin_balance(market.force)
+        TownCenter.update_coin_balance(market.force)
     else
         -- output for matching purchases
         local offers = market.get_market_items()
@@ -519,7 +520,7 @@ local function handle_inserter_output(town_center, market, entity)
             town_center.coin_balance = town_center.coin_balance - amount
             entity.held_stack.set_stack(stack)
         end
-        Town_center.update_coin_balance(market.force)
+        TownCenter.update_coin_balance(market.force)
     else
         -- for matching coin purchases
         local offers = market.get_market_items()
@@ -552,7 +553,7 @@ local function handle_loader_input(town_center, market, entity, index)
                 -- insert coins
                 line.remove_item(stack)
                 town_center.coin_balance = town_center.coin_balance + stack.count
-                Town_center.update_coin_balance(market.force)
+                TownCenter.update_coin_balance(market.force)
             else
                 local offers = market.get_market_items()
                 if offers == nil then
@@ -582,7 +583,7 @@ local function handle_inserter_input(town_center, market, entity)
         -- insert coins
         entity.remove_item(stack)
         town_center.coin_balance = town_center.coin_balance + stack.count
-        Town_center.update_coin_balance(market.force)
+        TownCenter.update_coin_balance(market.force)
     else
         local offers = market.get_market_items()
         if offers == nil then

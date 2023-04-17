@@ -20,9 +20,12 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Evolution = require 'maps.wasteland.evolution'
 local Utils = require 'maps.wasteland.utils'
 local MapLayout = require 'maps.wasteland.map_layout'
+local GameMode = require 'maps.wasteland.game_mode'
 
 local town_radius = 20
-local radius_between_towns = 103     -- must be > max_shield_size + 2 (2 towns have full shield without overlap)
+local max_starter_shield_size = 101
+local radius_between_towns = max_starter_shield_size + 2
+
 local ore_amount = 1200
 
 local colors = {}
@@ -125,11 +128,11 @@ for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[2], {vector[1] * -1, vector[2]})
 end
 additional_resource_vectors[3] = {}
-for _, vector in pairs(additional_resource_vectors[3]) do
-    table_insert(additional_resource_vectors[4], {vector[1] * -1, vector[2] * -1})
+for _, vector in pairs(additional_resource_vectors[1]) do
+    table_insert(additional_resource_vectors[3], {vector[1] * -1, vector[2] * -1})
 end
 additional_resource_vectors[4] = {}
-for _, vector in pairs(additional_resource_vectors[3]) do
+for _, vector in pairs(additional_resource_vectors[1]) do
     table_insert(additional_resource_vectors[4], {vector[1], vector[2] * -1})
 end
 
@@ -301,7 +304,7 @@ local function is_valid_location(force_name, surface, position)
         return false
     end
 
-    if Building.near_another_town(force_name, position, surface, radius_between_towns) == true then
+    if Building.near_another_town(force_name, position, surface, radius_between_towns) or Public.in_extended_control_range(position) then
         surface.create_entity(
             {
                 name = 'flying-text',
@@ -327,6 +330,19 @@ local function is_valid_location(force_name, surface, position)
     end
 
     return true
+end
+
+function Public.in_extended_control_range(position)
+    local this = ScenarioTable.get_table()
+    for _, town_center in pairs(this.town_centers) do
+        local town_position = town_center.market.position
+
+        local distance = math_floor(math_sqrt((position.x - town_position.x) ^ 2 + (position.y - town_position.y) ^ 2))
+        if distance < Public.get_town_control_range(town_center) * 1.5 + max_starter_shield_size / 2 then   -- Account for growing control range
+            return true
+        end
+    end
+    return false
 end
 
 function Public.in_any_town(position)
@@ -367,16 +383,15 @@ function Public.update_coin_balance(force)
     rendering.set_text(town_center.coins_text, 'Coins: ' .. town_center.coin_balance)
 end
 
-function Public.enemy_players_nearby(town_center, max_radius)
+function Public.enemy_players_nearby(town_center, max_distance)
     local own_force = town_center.market.force
     local town_position = town_center.market.position
 
     for _, player in pairs(game.connected_players) do
         if player.surface == town_center.market.surface then
-            local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2
-                    + (player.position.y - town_position.y) ^ 2))
-            if distance < max_radius then
-                if player.force ~= "enemy" and (own_force ~= player.force and not own_force.get_friend(player.force)) then
+            local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2 + (player.position.y - town_position.y) ^ 2))
+            if distance < max_distance and player.force ~= own_force and not player.force.get_friend(own_force) then
+                if player.character or player.driving then
                     return true
                 end
             end
@@ -385,25 +400,50 @@ function Public.enemy_players_nearby(town_center, max_radius)
     return false
 end
 
+function Public.get_town_control_range(town_center)
+    return 30 + town_center.evolution.worms * 300
+end
+
 local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
         local shield = this.pvp_shields[town_center.market.force.name]
         local info
         if shield then
+            info = 'PvP Shield: '
             if shield.is_offline_mode then
-                info = 'PvP Shield: While offline, max ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
-            else
-                info = 'PvP Shield: ' .. PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
+                info = info .. 'While offline, max '
+            elseif shield.is_afk_mode then
+                info = info .. 'AFK '
             end
+            info = info ..  PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
         else
             info = ''
         end
         rendering.set_text(town_center.shield_text, info)
+
+
+        -- Update enemy nearby display
+        local town_control_range = Public.get_town_control_range(town_center)
+        local info_enemies
+        local color
+        if Public.enemy_players_nearby(town_center, town_control_range) then
+            info_enemies = "Enemies"
+            color = {255, 0, 0}
+        elseif Public.enemy_players_nearby(town_center, town_control_range + 10) then
+            info_enemies = "Enemies"
+            color = {255, 255, 0}
+        else
+            info_enemies = "No enemies"
+            color = {0, 255, 0}
+        end
+        info_enemies = info_enemies .. " (" .. string.format('%.0f',  town_control_range) .. " tiles)"
+        rendering.set_text(town_center.enemies_text, info_enemies)
+        rendering.set_color(town_center.enemies_text, color)
     end
 end
 
-local function update_offline_pvp_shields()
+local function manage_offline_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
     local size = PvPShield.default_size
@@ -417,36 +457,26 @@ local function update_offline_pvp_shields()
         if table_size(force.connected_players) == 0 and shield_eligible then
             if not shield then
                 -- Activations:
-                -- nil means not scheduled yet, waiting for players to go offline
-                -- positive means scheduled for tick x
+                -- nil means waiting for players to go offline
                 -- -1 it is not meant to renew until players join again
-                -- -2 a regular shield has been active and needs to be immediately switched to offline mode after expiry
                 local activation = this.pvp_shield_offline_activations[force.index]
-                if (activation and activation > 0 and game.tick > activation) or activation == -2 then
+                local town_control_range = Public.get_town_control_range(town_center)
+                if not activation and not Public.enemy_players_nearby(town_center, town_control_range) then
                     local time_to_full = 2 * 60 * 60
-                    if activation == -2 then    -- We're swapping one shield for another
-                        time_to_full = 1
-                    else
-                        game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now."..
-                                " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
-                    end
+                    game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now." ..
+                            " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
                     PvPShield.add_shield(market.surface, market.force, market.position, size,
                             offline_shield_duration_ticks, time_to_full, false, true)
                     this.pvp_shield_offline_activations[force.index] = -1
-                elseif not activation and activation ~= -1 then
-                    local delay_mins = 10
-                    this.pvp_shield_offline_activations[force.index] = game.tick + delay_mins * 60 * 60
                 end
-            elseif shield and not shield.is_offline_mode then
-                this.pvp_shield_offline_activations[force.index] = -2
             end
         elseif table_size(force.connected_players) > 0 then
             if shield and shield.is_offline_mode then
-                local delay_mins = 5
-                force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minutes."
-                        .. " After everyone from your town leaves, you will get a new shield for "
-                        .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
                 -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
+                local delay_mins = 3
+                force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minutes."
+                        .. " After everyone in your town leaves, you will get a new shield for "
+                        .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
                 shield.is_offline_mode = false
                 shield.max_lifetime_ticks = game.tick - shield.lifetime_start + delay_mins * 60 * 60
             end
@@ -463,17 +493,17 @@ local function update_offline_pvp_shields()
     end
 end
 
+local game_mode_shield_duration_scaling = {0.25, 0.5, 1}
 local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
     local min_evo_for_shield = 0.13 -- Compare with offensive research like tank, power armor, ...
     if evo >= min_evo_for_shield then
         local min_size = PvPShield.default_size
-        local max_size = 101
-        local min_duration =   2 * 60 * 60 * 60
-        local max_duration =  12 * 60 * 60 * 60
+        local min_duration =   2 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
+        local max_duration =  12 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
         local lifetime_ticks = math_min(min_duration + scale_factor * (max_duration - min_duration), max_duration)
-        local size = math_min(min_size + scale_factor * (max_size - min_size), max_size)
+        local size = math_min(min_size + scale_factor * (max_starter_shield_size - min_size), max_starter_shield_size)
 
         PvPShield.add_shield(surface, force, position, size, lifetime_ticks, 60 * 60)
         update_pvp_shields_display()
@@ -637,12 +667,25 @@ local function found_town(event)
         scale_with_zoom = false
     }
 
-    town_center.shield_text = rendering.draw_text {
-        text = 'PvP Shield: (..)',
+    town_center.enemies_text = rendering.draw_text {
+        text = '',
         surface = surface,
         forces = {force_name, game.forces.player, game.forces.rogue},
         target = town_center.market,
         target_offset = {0, -2.25},
+        color = {0, 0, 0},
+        scale = 1.00,
+        font = 'default-game',
+        alignment = 'center',
+        scale_with_zoom = false
+    }
+
+    town_center.shield_text = rendering.draw_text {
+        text = '',
+        surface = surface,
+        forces = {force_name, game.forces.player, game.forces.rogue},
+        target = town_center.market,
+        target_offset = {0, -1.5},
         color = {200, 200, 200},
         scale = 1.00,
         font = 'default-game',
@@ -742,7 +785,7 @@ commands.add_command(
 Event.add(defines.events.on_built_entity, on_built_entity)
 Event.add(defines.events.on_player_repaired_entity, on_player_repaired_entity)
 Event.on_nth_tick(60, update_pvp_shields_display)
-Event.on_nth_tick(60, update_offline_pvp_shields)
+Event.on_nth_tick(60, manage_offline_pvp_shields)
 --Event.add(defines.events.on_robot_repaired_entity, on_robot_repaired_entity)
 Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 
