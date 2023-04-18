@@ -135,14 +135,7 @@ local function ore_vein(event)
     end
 
     local position = event.entity.position
-    local ore_entities = {
-        {
-            ore = {
-                name = ore, position = {
-                    x = position.x, y = position.y}
-            }, amount = get_amount()
-        }
-    }
+    local ore_entities = {{ore = {name = ore, position = {x = position.x, y = position.y}}, amount = get_amount()}}
     if ore == 'mixed' then
         ore_entities = {
             {
@@ -185,8 +178,7 @@ end
 
 local function on_player_mined_entity(event)
     local this = ScenarioTable.get_table()
-    local rocks_yield_ore_veins = this.rocks_yield_ore_veins
-    if not rocks_yield_ore_veins then
+    if not this.rocks_yield_ore_veins then
         return
     end
 
