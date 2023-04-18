@@ -430,12 +430,18 @@ local function update_pvp_shields_display()
         if Public.enemy_players_nearby(town_center, town_control_range) then
             info_enemies = "Enemies"
             color = {255, 0, 0}
+
+            if not town_center.enemies_warning_status then
+                town_center.market.force.print("Enemies have been spotted near your town", {r = 1, g = 0, b = 0})
+                town_center.enemies_warning_status = 1
+            end
         elseif Public.enemy_players_nearby(town_center, town_control_range + 10) then
             info_enemies = "Enemies"
             color = {255, 255, 0}
         else
             info_enemies = "No enemies"
             color = {0, 255, 0}
+            town_center.enemies_warning_status = nil
         end
         info_enemies = info_enemies .. " (" .. string.format('%.0f',  town_control_range) .. " tiles)"
         rendering.set_text(town_center.enemies_text, info_enemies)
