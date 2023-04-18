@@ -4,7 +4,6 @@ local table_insert = table.insert
 local table_shuffle = table.shuffle_table
 
 local ScenarioTable = require 'maps.wasteland.table'
-
 local valid_entities = {
     ['rock-big'] = true,
     ['rock-huge'] = true,
@@ -12,11 +11,11 @@ local valid_entities = {
 }
 
 local size_raffle = {
-    {'giant', 500, 1000},
-    {'huge', 300, 500},
-    {'big', 150, 300},
-    {'small', 80, 150},
-    {'tiny', 50, 80}
+    {'giant', 400, 800},
+    {'huge', 270, 400},
+    {'big', 120, 260},
+    {'small', 60, 130},
+    {'tiny', 30, 60}
 }
 
 local function get_chances()
@@ -42,7 +41,7 @@ local function set_raffle()
 end
 
 local function get_amount()
-    return math_random(40, 400)
+    return math_random(100, 500)
 end
 
 local function draw_chain(surface, count, ore, ore_entities, ore_positions)
@@ -97,6 +96,7 @@ end
 local function ore_vein(event)
     local this = ScenarioTable.get_table()
     local surface = event.entity.surface
+    --# means lenght of the string or table
     local size = size_raffle[math_random(1, #size_raffle)]
     local ore = this.rocks_yield_ore_veins.raffle[math_random(1, #this.rocks_yield_ore_veins.raffle)]
     local icon
@@ -136,7 +136,14 @@ local function ore_vein(event)
     end
 
     local position = event.entity.position
-    local ore_entities = {{ore = {name = ore, position = {x = position.x, y = position.y}}, amount = get_amount()}}
+    local ore_entities = {
+        {
+            ore = {
+                name = ore, position = {
+                    x = position.x, y = position.y}
+            }, amount = get_amount()
+        }
+    }
     if ore == 'mixed' then
         ore_entities = {
             {
@@ -204,7 +211,7 @@ local function on_init()
     this.rocks_yield_ore_veins = {}
     this.rocks_yield_ore_veins.raffle = {}
     this.rocks_yield_ore_veins.mixed_ores = {}
-    this.rocks_yield_ore_veins.chance = 5
+    this.rocks_yield_ore_veins.chance = 4
     set_raffle()
 end
 
