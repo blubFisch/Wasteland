@@ -97,7 +97,6 @@ end
 local function ore_vein(event)
     local this = ScenarioTable.get_table()
     local surface = event.entity.surface
-    --# means lenght of the string or table
     local size = size_raffle[math_random(1, #size_raffle)]
     local ore = this.rocks_yield_ore_veins.raffle[math_random(1, #this.rocks_yield_ore_veins.raffle)]
     local icon
