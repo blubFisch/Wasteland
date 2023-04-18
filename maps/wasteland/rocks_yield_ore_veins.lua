@@ -11,7 +11,7 @@ local valid_entities = {
 }
 
 local size_raffle = {
-    {'giant', 110, 150},
+    {'giant', 90, 130},
     {'huge', 80, 100},
     {'big', 50, 70},
     {'small', 30, 40},
@@ -41,7 +41,7 @@ local function set_raffle()
 end
 
 local function get_amount()
-    return math_random(400, 800)
+    return math_random(500, 800)
 end
 
 local function draw_chain(surface, count, ore, ore_entities, ore_positions)
@@ -160,7 +160,7 @@ local function ore_vein(event)
     local count = math_random(size[2], size[3])
 
     for _ = 1, 128, 1 do
-        local c = math_random(math_floor(size[2] * 0.25) + 1, size[2])
+        local c = math_random(math_floor(size[2] * 0.5) + 1, size[2])
         if count < c then
             c = count
         end
@@ -199,14 +199,11 @@ local function on_player_mined_entity(event)
         return
     end
     if math_random(1, rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
-        game.print("darf nicht sein")
         return
-    else
-        game.print("mama")
     end
-    --if player.force.technologies['steel-processing'].researched == false then
-    --    return
-    --end
+    if player.force.technologies['steel-processing'].researched == false then
+        return
+    end
     ore_vein(event)
 end
 
