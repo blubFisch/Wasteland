@@ -2,7 +2,6 @@ local math_random = math.random
 local math_floor = math.floor
 local table_insert = table.insert
 local table_shuffle = table.shuffle_table
-
 local ScenarioTable = require 'maps.wasteland.table'
 local valid_entities = {
     ['rock-big'] = true,
