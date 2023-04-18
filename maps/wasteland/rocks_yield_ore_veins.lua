@@ -12,11 +12,11 @@ local valid_entities = {
 }
 
 local size_raffle = {
-    {'giant', 500, 1000},
-    {'huge', 300, 500},
-    {'big', 150, 300},
-    {'small', 80, 150},
-    {'tiny', 50, 80}
+    {'giant', 90, 130},
+    {'huge', 80, 100},
+    {'big', 50, 70},
+    {'small', 30, 40},
+    {'tiny', 10, 20}
 }
 
 local function get_chances()
@@ -42,7 +42,7 @@ local function set_raffle()
 end
 
 local function get_amount()
-    return math_random(40, 400)
+    return math_random(500, 800)
 end
 
 local function draw_chain(surface, count, ore, ore_entities, ore_positions)
@@ -153,7 +153,7 @@ local function ore_vein(event)
     local count = math_random(size[2], size[3])
 
     for _ = 1, 128, 1 do
-        local c = math_random(math_floor(size[2] * 0.25) + 1, size[2])
+        local c = math_random(math_floor(size[2] * 0.5) + 1, size[2])
         if count < c then
             c = count
         end
@@ -178,22 +178,22 @@ local function ore_vein(event)
 end
 
 local function on_player_mined_entity(event)
-    local rocks_yield_ore_veins = ScenarioTable.get('rocks_yield_ore_veins')
-    if not rocks_yield_ore_veins then
+    local this = ScenarioTable.get_table()
+    if not this.rocks_yield_ore_veins then
         return
     end
 
     local player = game.players[event.player_index]
-    if player.force.technologies['steel-processing'].researched == false then
-        return
-    end
     if not event.entity.valid then
         return
     end
     if not valid_entities[event.entity.name] then
         return
     end
-    if math_random(1, rocks_yield_ore_veins.chance) ~= 1 and not ScenarioTable.get('testing_mode') then
+    if math_random(1, rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
+        return
+    end
+    if player.force.technologies['steel-processing'].researched == false then
         return
     end
     ore_vein(event)
@@ -204,7 +204,7 @@ local function on_init()
     this.rocks_yield_ore_veins = {}
     this.rocks_yield_ore_veins.raffle = {}
     this.rocks_yield_ore_veins.mixed_ores = {}
-    this.rocks_yield_ore_veins.chance = 5
+    this.rocks_yield_ore_veins.chance = 4
     set_raffle()
 end
 
