@@ -23,7 +23,7 @@ function Public.reset_table()
     this.last_death = {}
     this.strikes = {}
     this.score_gui_frame = {}
-    this.testing_mode = false
+    this.testing_mode = true
     this.spawn_point = {}
     this.winner = nil
     this.buffs = {}

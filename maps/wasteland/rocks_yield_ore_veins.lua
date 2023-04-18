@@ -11,11 +11,11 @@ local valid_entities = {
 }
 
 local size_raffle = {
-    {'giant', 400, 800},
-    {'huge', 270, 400},
-    {'big', 120, 260},
-    {'small', 60, 130},
-    {'tiny', 30, 60}
+    {'giant', 110, 150},
+    {'huge', 80, 100},
+    {'big', 50, 70},
+    {'small', 30, 40},
+    {'tiny', 10, 20}
 }
 
 local function get_chances()
@@ -41,7 +41,7 @@ local function set_raffle()
 end
 
 local function get_amount()
-    return math_random(100, 500)
+    return math_random(400, 800)
 end
 
 local function draw_chain(surface, count, ore, ore_entities, ore_positions)
@@ -185,24 +185,28 @@ local function ore_vein(event)
 end
 
 local function on_player_mined_entity(event)
-    local rocks_yield_ore_veins = ScenarioTable.get('rocks_yield_ore_veins')
+    local this = ScenarioTable.get_table()
+    local rocks_yield_ore_veins = this.rocks_yield_ore_veins
     if not rocks_yield_ore_veins then
         return
     end
 
     local player = game.players[event.player_index]
-    if player.force.technologies['steel-processing'].researched == false then
-        return
-    end
     if not event.entity.valid then
         return
     end
     if not valid_entities[event.entity.name] then
         return
     end
-    if math_random(1, rocks_yield_ore_veins.chance) ~= 1 and not ScenarioTable.get('testing_mode') then
+    if math_random(1, rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
+        game.print("darf nicht sein")
         return
+    else
+        game.print("mama")
     end
+    --if player.force.technologies['steel-processing'].researched == false then
+    --    return
+    --end
     ore_vein(event)
 end
 
