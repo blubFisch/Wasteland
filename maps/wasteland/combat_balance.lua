@@ -6,7 +6,7 @@ local player_ammo_damage_starting_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
-    ['cannon-shell'] = -0.5,
+    ['cannon-shell'] = -0.75,
     ['capsule'] = 0,
     ['beam'] = -0.5,
     ['laser'] = -0.5,
@@ -22,7 +22,7 @@ local player_ammo_damage_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
-    ['cannon-shell'] = -0.5,
+    ['cannon-shell'] = -0.75,
     ['capsule'] = 0,
     ['beam'] = -0.5,
     ['laser'] = -0.75,
@@ -38,7 +38,7 @@ local player_gun_speed_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
-    ['cannon-shell'] = -0.5,
+    ['cannon-shell'] = -0.75,
     ['capsule'] = -0.5,
     ['beam'] = -0.5,
     ['laser'] = 0,
@@ -124,6 +124,7 @@ function Public.add_balance_ui(player)
         name = button_id
     }
     button.visible = false
+    button.tooltip = "Modifier on your team players damage. Doesn't apply to your turrets."
     button.style.font = 'default'
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
@@ -175,19 +176,19 @@ function Public.on_entity_damaged(event)
     --game.print("DMG_XDB entity " .. entity.name .. " damage_type " .. event.damage_type.name .. " cause " .. cause_name
     --        .. " original_damage_amount " .. event.original_damage_amount .. " final_damage_amount " .. event.final_damage_amount)
 
-    local is_tank_damage = false
-    local tank_modifier = 1
+    local is_vehicle_damage = false
+    local vehicle_modifier = 1
 
-    -- Reduce damage resistances of tanks
-    if entity.name == "tank" and (event.damage_type.name == "physical" or event.damage_type.name == "fire") then
-        is_tank_damage = true
-        tank_modifier = 0.3
-        if event.cause and event.cause.name == "tank" then
+    -- Reduce damage resistances of vehicles
+    if (entity.name == "tank" or entity.name == "car") and (event.damage_type.name == "physical" or event.damage_type.name == "fire") then
+        is_vehicle_damage = true
+        vehicle_modifier = 0.3
+        if event.cause and (event.cause.name == "tank" or event.cause.name == "car") then
             -- Boost player vs player tank battles
-            tank_modifier = tank_modifier * 5
+            vehicle_modifier = vehicle_modifier * 5
         end
         if event.damage_type.name == "fire" then
-            tank_modifier = tank_modifier * 1
+            vehicle_modifier = vehicle_modifier * 1
         end
     end
 
@@ -205,9 +206,9 @@ function Public.on_entity_damaged(event)
 
 
     -- Undo original damage and apply modified damage
-    if is_tank_damage then
+    if is_vehicle_damage then
         --game.print("DMG_XDB applying tank_damage force_modifier " .. force_modifier .. " tank_modifier " .. tank_modifier)
-        entity.health = entity.health + event.final_damage_amount - event.original_damage_amount * tank_modifier * force_modifier
+        entity.health = entity.health + event.final_damage_amount - event.original_damage_amount * vehicle_modifier * force_modifier
     else
         if force_modifier == 1 then
             return

@@ -16,6 +16,7 @@ function Public.add_balance_ui(player)
     }
     button.visible = false
     button.style.font = 'default'
+    button.tooltip = "Productivity modifier on research cost. 100% means no change, 200% means research costs only half"
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
     button.style.minimal_width = 180

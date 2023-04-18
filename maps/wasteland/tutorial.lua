@@ -48,7 +48,7 @@ local function tutorials_tick()
             end
 
             if this.tutorials[player.index].step == 4 and player.surface.count_entities_filtered({force = player.force,
-                                                 name = {'laser-turret'}}) > 0 then
+                                                 name = {'laser-turret'}, position = player.position, radius = 100}) > 0 then
                 player.set_goal_description("Great!\nThis is the end of the tutorial.\n\n"
                     .. "The goal of the game is to survive and advance through research.\nThe first town to reach 100 points wins!")
 
