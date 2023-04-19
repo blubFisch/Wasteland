@@ -422,7 +422,6 @@ local function update_pvp_shields_display()
         end
         rendering.set_text(town_center.shield_text, info)
 
-
         -- Update enemy nearby display
         local town_control_range = Public.get_town_control_range(town_center)
         local info_enemies
