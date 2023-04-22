@@ -185,7 +185,7 @@ function Public.on_entity_damaged(event)
         vehicle_modifier = 0.3
         if event.cause and (event.cause.name == "tank" or event.cause.name == "car") then
             -- Boost player vs player tank battles
-            vehicle_modifier = vehicle_modifier * 5
+            vehicle_modifier = vehicle_modifier * 3
         end
         if event.damage_type.name == "fire" then
             vehicle_modifier = vehicle_modifier * 1
