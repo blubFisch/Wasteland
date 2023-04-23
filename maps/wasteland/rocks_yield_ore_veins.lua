@@ -190,7 +190,7 @@ local function on_player_mined_entity(event)
     if not valid_entities[event.entity.name] then
         return
     end
-    if math_random(1, rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
+    if math_random(1, this.rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
         return
     end
     if player.force.technologies['steel-processing'].researched == false then
