@@ -196,8 +196,10 @@ local function on_player_mined_entity(event)
     if player.force.technologies['steel-axe'].researched == false then
         return
     end
-    this.tutorials[player.index].mined_rock = true
     ore_vein(event)
+    if this.tutorials[player.index] then
+        this.tutorials[player.index].mined_rock = true
+    end
 end
 
 local function on_init()
