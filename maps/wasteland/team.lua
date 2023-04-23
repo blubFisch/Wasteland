@@ -173,14 +173,11 @@ function Public.add_player_to_town(player, town_center)
     player.tag = ''
     Public.map_preset(player, true)
     Public.set_player_color(player)
-
+    ResearchBalance.player_changes_town_status(player, true)
+    CombatBalance.player_changes_town_status(player, true)
     if player.gui.screen['towny_map_hint'] then
         player.gui.screen['towny_map_hint'].destroy()
     end
-
-    ResearchBalance.player_changes_town_status(player, true)
-    CombatBalance.player_changes_town_status(player, true)
-
     force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
 end
 
