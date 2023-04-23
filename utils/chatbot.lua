@@ -33,6 +33,7 @@ local links = {
     ['admin'] = brain[2],
     ['administrator'] = brain[2],
     ['discord'] = brain[1],
+    ['dc'] = brain[1],
     ['greifer'] = brain[2],
     ['grief'] = brain[2],
     ['griefer'] = brain[2],
@@ -60,15 +61,12 @@ end
 
 local function process_bot_answers(event)
     local player = game.get_player(event.player_index)
-    if player.admin then
-        return
-    end
     local message = event.message
     message = string.lower(message)
     for word in string.gmatch(message, '%g+') do
         if links[word] then
             for _, bot_answer in pairs(links[word]) do
-                player.print('Bot Reply: ' .. bot_answer, Color.warning)
+                game.print('Bot Reply: ' .. bot_answer, Color.warning)
             end
             return
         end
