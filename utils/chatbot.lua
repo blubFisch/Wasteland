@@ -65,7 +65,7 @@ local function process_bot_answers(event)
     for word in string.gmatch(message, '%g+') do
         if links[word] then
             for _, bot_answer in pairs(links[word]) do
-                game.print('Bot Reply: ' .. bot_answer, Color.warning)
+                game.print('Wasteland bot: ' .. bot_answer)
             end
             return
         end
