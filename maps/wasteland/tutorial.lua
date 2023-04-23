@@ -48,15 +48,21 @@ local function tutorials_tick()
             end
 
             if this.tutorials[player.index].step == 4 and player.surface.count_entities_filtered({force = player.force,
-                                                 name = {'laser-turret'}, position = player.position, radius = 100}) > 0 then
+                                                                                                  name = {'laser-turret'}, position = player.position, radius = 100}) > 0 then
+                player.set_goal_description("Good!\nYour starter ore patches are limited, but there are many more ore patches hidden under rocks!\n\nResearch Steel Axe, then find a patch by hand mining big rocks")
+
+                this.tutorials[player.index].step = 5
+            end
+
+            if this.tutorials[player.index].step == 5 and this.tutorials[player.index].mined_rock then
                 player.set_goal_description("Great!\nThis is the end of the tutorial.\n\n"
                     .. "The goal of the game is to survive and advance through research.\nThe first town to reach 100 points wins!")
 
-                this.tutorials[player.index].step = 5
+                this.tutorials[player.index].step = 6
                 this.tutorials[player.index].finish_at_tick = game.tick + 60 * 30
             end
 
-            if this.tutorials[player.index].step == 5 and game.tick > this.tutorials[player.index].finish_at_tick then
+            if this.tutorials[player.index].step == 6 and game.tick > this.tutorials[player.index].finish_at_tick then
                 player.set_goal_description("")
                 this.tutorials[player.index] = nil
             end

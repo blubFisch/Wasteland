@@ -28,7 +28,7 @@ Survive as long as you can. Raid other towns. Defend your town.
 - It's best to found new towns far from existing towns, as enemies will become aggressive with town's research.
     Biters and spitters become more aggressive towards towns that are advanced in research.
     Their evolution will scale around technology progress in any nearby towns and pollution levels.
-- How to get more ores? Make sure you researched steel processing,
+- How to get more ores? Make sure you researched steel axe,
     then hand mine a few big rocks to find ore patches under them!
 - How to get more oil? Kill worms - some of them will leave you an oil patch
 - The town market is the heart of your town. If it is destroyed, you lose everything.

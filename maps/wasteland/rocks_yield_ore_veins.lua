@@ -193,9 +193,10 @@ local function on_player_mined_entity(event)
     if math_random(1, this.rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
         return
     end
-    if player.force.technologies['steel-processing'].researched == false then
+    if player.force.technologies['steel-axe'].researched == false then
         return
     end
+    this.tutorials[player.index].mined_rock = true
     ore_vein(event)
 end
 
