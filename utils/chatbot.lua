@@ -60,7 +60,6 @@ local function on_player_joined_game(event)
 end
 
 local function process_bot_answers(event)
-    local player = game.get_player(event.player_index)
     local message = event.message
     message = string.lower(message)
     for word in string.gmatch(message, '%g+') do
