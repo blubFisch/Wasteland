@@ -431,7 +431,7 @@ local function update_pvp_shields_display()
             color = {255, 0, 0}
 
             if not town_center.enemies_warning_status then
-                town_center.market.force.print("Enemies have been spotted near your town. Your offline PvP shield can not activate while they are nearby", {r = 1, g = 0, b = 0})
+                town_center.market.force.print("Enemies have been spotted near your town. Your offline PvP shield can not activate now.", {r = 1, g = 0, b = 0})
                 town_center.enemies_warning_status = 1
             end
         elseif Public.enemy_players_nearby(town_center, town_control_range + 10) then
