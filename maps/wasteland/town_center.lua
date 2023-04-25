@@ -629,6 +629,10 @@ local function found_town(event)
     town_center.evolution.worms = 0
     town_center.creation_tick = game.tick
     town_center.research_balance = {current_modifier = 1}
+    town_center.laser_turrets = {}
+    local market_pos = town_center.market.position
+    town_center.center_box = {left_top = {x = market_pos.x - town_radius, y = market_pos.y - town_radius},
+                              right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
 
     town_center.town_caption =
         rendering.draw_text {
