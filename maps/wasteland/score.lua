@@ -12,7 +12,7 @@ local button_id = 'towny-score-button'
 local evo_score_factor = 50
 
 local age_score_weights = {
-    2, 1, 0.5
+    2, 1, 0.4
 }
 local age_score_weight = age_score_weights[GameMode.mode]
 
