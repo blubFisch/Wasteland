@@ -20,7 +20,6 @@ local Supporters = require 'utils.datastore.supporters'
 local Gui = require 'utils.gui'
 local Global = require 'utils.global'
 local SpamProtection = require 'utils.spam_protection'
-local RPG = require 'modules.rpg.table'
 local Token = require 'utils.token'
 
 local Public = {}
@@ -384,15 +383,6 @@ local function get_sorted_list(sort_by)
         local t = 0
         if play_table[player.name] then
             t = play_table[player.name]
-        end
-
-        if this.rpg_enabled then
-            local char = RPG.get_value_from_player(player.index, 'level')
-            if not char then
-                char = 1
-            end
-
-            player_list[i].rpg_level = char
         end
 
         player_list[i].total_played_time = get_formatted_playtime(t)

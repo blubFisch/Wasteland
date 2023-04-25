@@ -6,7 +6,6 @@
 
 local Event = require 'utils.event'
 local LootDrop = require 'modules.mobs_drop_loot'
-local WD = require 'modules.wave_defense.table'
 local Global = require 'utils.global'
 local Task = require 'utils.task'
 local Token = require 'utils.token'
@@ -373,7 +372,7 @@ local function on_entity_died(event)
 
     local unit_number = biter.unit_number
     local health_pool = biter_health_boost_units[unit_number]
-    local wave_count = WD.get_wave()
+    local wave_count = 0
 
     if health_pool then
         Task.set_timeout_in_ticks(30, removeUnit, {unit_number = unit_number})
