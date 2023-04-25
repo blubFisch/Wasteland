@@ -21,10 +21,10 @@ local valid_entities = {
 
 local surface = town_center.market.surface
 local position = town_center.market.position
-local fishes = surface.find_entities_filtered({name = 'rock-big', position = position, radius = 27})
+local rocks = surface.find_entities_filtered({name = 'rock-big', position = position, radius = 27})
 
 local rockType = math_random(1, 3)
-local fish = fishes[t]
+local rock = rocks[t]
 
 
 surface.create_entity({name = 'rock-big', position = fish.position})
