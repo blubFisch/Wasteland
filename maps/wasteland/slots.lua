@@ -72,7 +72,6 @@ local function process_slots(actor, event)
     if entity.name == 'laser-turret' then
         local key = script.register_on_entity_destroyed(entity)
         this.laser_turrets[key] = force.index
-        locations = locations + 1
         town_center.upgrades.laser_turret.locations = locations
     end
 
@@ -97,10 +96,7 @@ end
 local function on_entity_destroyed(event)
     local key = event.registration_number
     local this = ScenarioTable.get_table()
-    if (this.laser_turrets == nil) then
-        return
-    end
-    if (this.laser_turrets[key] ~= nil) then
+    if this.laser_turrets[key] then
         local index = this.laser_turrets[key]
         local force = game.forces[index]
         if force ~= nil then
