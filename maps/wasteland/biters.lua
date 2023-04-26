@@ -67,23 +67,27 @@ local function get_commmands(target, group)
     return commands
 end
 
+local function swarm_eligible_town(town_center)
+    return town_center.evolution.biters > 0.2 and #town_center.market.force.connected_players > 0
+end
+
 local function roll_market()
     local this = ScenarioTable.get_table()
-    local town_centers = this.town_centers
-    if town_centers == nil or table_size(town_centers) == 0 then
-        return
-    end
     local keyset = {}
-    for town_name, town_center in pairs(town_centers) do
-        local evolution = Evolution.get_biter_evolution(town_center.market.position)
-        local tries = math_floor(evolution * 20)
-        -- 1 try for each 5% of evolution
-        for _ = 1, tries, 1 do
-            table_insert(keyset, town_name)
+    for town_name, town_center in pairs(this.town_centers) do
+        if swarm_eligible_town(town_center) then
+            -- Lottery system to assign higher chances to higher evo
+            local tries = math_floor(town_center.evolution.biters * 20)
+            for _ = 1, tries, 1 do
+                table_insert(keyset, town_name)
+            end
         end
     end
+    if #keyset == 0 then
+        return
+    end
     local tc = math_random(1, #keyset)
-    return town_centers[keyset[tc]]
+    return this.town_centers[keyset[tc]]
 end
 
 local function get_random_close_spawner(surface, market, radius)
@@ -142,21 +146,7 @@ function Public.unit_groups_start_moving()
     end
 end
 
-local function new_town(town_center)
-    -- cooldown for swarms on new towns is 15 minutes
-    local cooldown_ticks = 15 * 3600
-    local elapsed_ticks = game.tick - town_center.creation_tick
-    -- skip if within first 30 minutes and town evolution < 0.25
-    if elapsed_ticks < cooldown_ticks and town_center.evolution.biters < 0.15 then
-        return true
-    end
-    return false
-end
-
 function Public.swarm(town_center, radius)
-    if town_center == nil then
-        return
-    end
     local this = ScenarioTable.get_table()
     if this.testing_mode then
         return
@@ -166,14 +156,12 @@ function Public.swarm(town_center, radius)
     if not tc or r > 512 then
         return
     end
-    -- cancel if relatively new town
-    if new_town(tc) then
-        return
-    end
+
     -- skip if we have to many swarms already
     local count = table_size(this.swarms)
     local towns = table_size(this.town_centers)
     if count > 3 * towns then
+        log("too many active swarms!")
         return
     end
 
@@ -224,17 +212,17 @@ function Public.swarm(town_center, radius)
         return
     end
 
-    -- try up to 10 times to throw in a boss based on market evolution
-    -- evolution = 0%, chances 0 in 10
-    -- evoution = 10%, chances 1 in 10
-    -- evolution = 20%, chances 2 in 10
-    -- evolution = 100%, chances 10 in 10
-    local health_multiplier = 40 * market_evolution + 10
-    for _ = 1, math_floor(market_evolution * 10), 1 do
-        if math_random(1, 2) == 1 then
-            BiterHealthBooster.add_boss_unit(units[1], health_multiplier)
+    -- Turn strongest unit into a boss
+    local max_health = 0
+    local max_unit
+    for _, unit in pairs(units) do
+        if unit.health > max_health then
+            max_health = unit.health
+            max_unit = unit
         end
     end
+    local health_multiplier = 10 * market_evolution + 5
+    BiterHealthBooster.add_boss_unit(max_unit, health_multiplier)
 
     local unit_group_position = surface.find_non_colliding_position('biter-spawner', units[1].position, 256, 1)
     if not unit_group_position then
@@ -256,6 +244,7 @@ function Public.swarm(town_center, radius)
             commands = get_commmands(market, unit_group)
         }
     )
+    --game.print("XDB Swarm go " .. town_center.town_name)
     table_insert(this.swarms, {group = unit_group, timeout = game.tick + 36000})
 end
 
@@ -267,10 +256,8 @@ local function on_unit_group_finished_gathering(event)
     if target ~= nil then
         local force = target.force
         local this = ScenarioTable.get_table()
-        local town_centers = this.town_centers
-        local town_center = town_centers[force.name]
-        -- cancel if relatively new town
-        if new_town(town_center) then
+        local town_center = this.town_centers[force.name]
+        if not swarm_eligible_town(town_center) then
             return
         end
         unit_group.set_command(

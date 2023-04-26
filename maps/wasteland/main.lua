@@ -68,15 +68,15 @@ local function on_init()
 end
 
 local tick_actions = {
-    [60 * 0] = Radar.reset, -- each minute, at 00 seconds
-    [60 * 5] = Team.update_town_chart_tags, -- each minute, at 05 seconds
-    [60 * 10] = Team.set_all_player_colors, -- each minute, at 10 seconds
-    [60 * 15] = Fish.reproduce, -- each minute, at 15 seconds
-    [60 * 25] = Biters.unit_groups_start_moving, -- each minute, at 25 seconds
-    [60 * 30] = Radar.reset, -- each minute, at 30 seconds
-    [60 * 45] = Biters.validate_swarms, -- each minute, at 45 seconds
-    [60 * 50] = Biters.swarm, -- each minute, at 50 seconds
-    [60 * 55] = Pollution.market_scent -- each minute, at 55 seconds
+    [60 * 0] = Radar.reset,
+    [60 * 5] = Team.update_town_chart_tags,
+    [60 * 10] = Team.set_all_player_colors,
+    [60 * 15] = Fish.reproduce,
+    [60 * 25] = Biters.unit_groups_start_moving,
+    [60 * 30] = Radar.reset,
+    [60 * 45] = Biters.validate_swarms,
+    [60 * 50] = Biters.swarm,
+    [60 * 55] = Pollution.market_scent
 }
 
 local function run_tick_actions(event)
@@ -86,8 +86,6 @@ local function run_tick_actions(event)
     if not tick_actions[seconds] then
         return
     end
-    --game.surfaces['nauvis'].play_sound({path = 'utility/alert_destroyed', volume_modifier = 1})
-    --log('seconds = ' .. seconds)
     tick_actions[seconds]()
 end
 
