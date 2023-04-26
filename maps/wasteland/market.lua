@@ -393,7 +393,7 @@ local function output_inserter_items(town_center, trade, entity)
 
     if count > 0 then
         _output_inserter_stack.name = item
-        _output_inserter_stack.name = count
+        _output_inserter_stack.count = count
         entity.held_stack.set_stack(_output_inserter_stack)
     end
 end
