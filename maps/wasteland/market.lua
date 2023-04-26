@@ -5,10 +5,6 @@ local TownCenter = require 'maps.wasteland.town_center'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 
-
-local _coin_stack = {name = 'coin', count = 1}
-
-
 local upgrade_functions = {
     -- Upgrade Town Center Health
     [1] = function(town_center, player)
@@ -84,7 +80,7 @@ local upgrade_functions = {
     end,
     -- Set Spawn Point
     [7] = function(town_center, player)
-        local this = global.tokens.maps_wasteland_table
+        local this = ScenarioTable.get_table()
         local market = town_center.market
         local force = market.force
         local surface = market.surface
@@ -95,7 +91,7 @@ local upgrade_functions = {
     end,
     -- Pause-mode PvP Shield
     [8] = function(town_center, player)
-        local this = global.tokens.maps_wasteland_table
+        local this = ScenarioTable.get_table()
         local market = town_center.market
         local force = market.force
         local surface = market.surface
@@ -217,8 +213,8 @@ local function set_offers(town_center)
 end
 
 local function refresh_offers(event)
-    local this = global.tokens.maps_wasteland_table
-    local player = game.get_player(event.player_index)
+    local this = ScenarioTable.get_table()
+    local player = game.players[event.player_index]
     local market = event.entity or event.market
     if not market then
         return
@@ -252,8 +248,8 @@ local function refresh_offers(event)
 end
 
 local function offer_purchased(event)
-    local this = global.tokens.maps_wasteland_table
-    local player = game.get_player(event.player_index)
+    local this = ScenarioTable.get_table()
+    local player = game.players[event.player_index]
     local market = event.market
     local offer_index = event.offer_index
     local count = event.count
@@ -276,9 +272,8 @@ local function offer_purchased(event)
     else
         -- reimburse purchase
         local offers = market.get_market_items()
-        local prices = offers[offer_index].price
-        if prices ~= nil then
-            local price = prices[1].amount
+        if offers[offer_index].price ~= nil then
+            local price = offers[offer_index].price[1].amount
             player.insert({name = 'coin', count = price * (count)})
         end
     end
@@ -316,24 +311,64 @@ local function equal(pos1, pos2)
     return pos1.x == pos2.x and pos1.y == pos2.y
 end
 
+local function is_loader(entity)
+    return entity.name == 'loader' or entity.name == 'fast-loader' or entity.name == 'express-loader'
+end
+
+local function is_filtered_inserter(entity)
+    return entity.name == 'filter-inserter' or entity.name == 'stack-filter-inserter'
+end
+
 local function max_stack_size(entity)
-    if entity.type == "loader" then
+    if is_loader(entity) then
         return 1
     end
-
-    local override = entity.inserter_stack_size_override
-    if override > 0 then
-        return override
-    end
-
-    local entity_name = entity.name
-    if (entity_name == 'stack-inserter' or entity_name == 'stack-filter-inserter') then
+    if (entity.name == 'stack-inserter' or entity.name == 'stack-filter-inserter') then
+        local override = entity.inserter_stack_size_override
+        if override > 0 then
+            return override
+        end
         local capacity = entity.force.stack_inserter_capacity_bonus
         return 1 + capacity
     else
+        local override = entity.inserter_stack_size_override
+        if override > 0 then
+            return override
+        end
         local bonus = entity.force.inserter_stack_size_bonus
         return 1 + bonus
     end
+end
+
+local function get_connected_entities(market)
+    if not market.valid then
+        return {}
+    end
+    local items = {
+        'burner-inserter',
+        'inserter',
+        'long-handed-inserter',
+        'fast-inserter',
+        'filter-inserter',
+        'stack-inserter',
+        'stack-filter-inserter',
+        'loader',
+        'fast-loader',
+        'express-loader'
+    }
+    local items2 = {
+        'long-handed-inserter'
+    }
+    local bb = market.bounding_box
+    local s = market.surface
+    local area = {left_top = {bb.left_top.x - 1, bb.left_top.y - 1}, right_bottom = {bb.right_bottom.x + 1, bb.right_bottom.y + 1}}
+    local entities = s.find_entities_filtered({area = area, name = items})
+    local area2 = {left_top = {bb.left_top.x - 2, bb.left_top.y - 2}, right_bottom = {bb.right_bottom.x + 2, bb.right_bottom.y + 2}}
+    local entities2 = s.find_entities_filtered({area = area2, name = items2})
+    for k, v in pairs(entities2) do
+        entities[k] = v
+    end
+    return entities
 end
 
 local function get_inserter_filter(entity)
@@ -343,6 +378,11 @@ local function get_inserter_filter(entity)
         return entity.get_filter(1)
     end
     return nil
+end
+
+local function get_loader_filter(entity, index)
+    -- return first two filter types
+    return entity.get_filter(index)
 end
 
 local function get_loader_market_position(entity)
@@ -365,118 +405,95 @@ local function get_loader_market_position(entity)
     return position
 end
 
-local _output_loader_stack = {name = "", count = 1}
 local function output_loader_items(town_center, trade, entity, index)
     local item = trade.offer.item
     local line = entity.get_transport_line(index)
-    local output_buffer = town_center.output_buffer
-    if line.can_insert_at_back() and output_buffer[item] > 0 then
-        _output_loader_stack.name = item
-        output_buffer[item] = output_buffer[item] - 1
-        line.insert_at_back(_output_loader_stack)
+    if line.can_insert_at_back() and town_center.output_buffer[item] > 0 then
+        local stack = {name = item, count = 1}
+        town_center.output_buffer[item] = town_center.output_buffer[item] - 1
+        line.insert_at_back(stack)
     end
 end
 
-local _output_inserter_stack = {name = "", count = 1}
 local function output_inserter_items(town_center, trade, entity)
     local item = trade.offer.item
     local stack_size = max_stack_size(entity)
-    local output_buffer = town_center.output_buffer
-
     local count = 0
-    local output = output_buffer[item]
-    while output > 0 and count < stack_size do
-        output = output - 1
+    while town_center.output_buffer[item] > 0 and count < stack_size do
+        town_center.output_buffer[item] = town_center.output_buffer[item] - 1
         count = count + 1
     end
-    output_buffer[item] = output
-
     if count > 0 then
-        _output_inserter_stack.name = item
-        _output_inserter_stack.name = count
-        entity.held_stack.set_stack(_output_inserter_stack)
+        local stack = {name = item, count = count}
+        entity.held_stack.set_stack(stack)
     end
 end
 
-local function trade_scrap_for_coin(town_center, trade, stack)
+local function trade_scrap_for_coin(town_center, market, trade, stack)
     local item = stack.name
     local amount = stack.count
-    local input_buffer = town_center.input_buffer
     -- buffer the input in an item buffer that can be sold for coin
-    local input_amount = input_buffer[item]
-    if input_amount == nil then
-        input_amount = amount
-    else
-        input_amount = input_amount + amount
+    if town_center.input_buffer[item] == nil then
+        town_center.input_buffer[item] = 0
     end
-    --log("input_buffer[" .. item .. "] = " .. input_buffer[item])
+    town_center.input_buffer[item] = town_center.input_buffer[item] + amount
+    --log("input_buffer[" .. item .. "] = " .. town_center.input_buffer[item])
 
     local price = trade.price[1].amount
     local count = trade.offer.count
-    local coin_balance = town_center.coin_balance
-    while input_amount >= price do
-        input_amount = input_amount - price
-        coin_balance = coin_balance + count
+    while town_center.input_buffer[item] >= price do
+        town_center.input_buffer[item] = town_center.input_buffer[item] - price
+        town_center.coin_balance = town_center.coin_balance + count
     end
-    input_buffer[item] = input_amount
-    town_center.coin_balance = coin_balance
-
-    --log("input_buffer[" .. item .. "] = " .. input_buffer[item])
+    TownCenter.update_coin_balance(market.force)
+    --log("input_buffer[" .. item .. "] = " .. town_center.input_buffer[item])
 end
 
-local function trade_coin_for_items(town_center, trade)
+local function trade_coin_for_items(town_center, market, trade)
     local item = trade.offer.item
     local count = trade.offer.count
     local price = trade.price[1].amount
-    local output_buffer = town_center.output_buffer
-    if output_buffer[item] == nil then
-        output_buffer[item] = 0
+    if town_center.output_buffer[item] == nil then
+        town_center.output_buffer[item] = 0
     end
-
-    local coin_balance = town_center.coin_balance
-    local output_amount = output_buffer[item]
-    while coin_balance - price >= 0 do
-        if output_amount == 0 then
-            coin_balance = coin_balance - price
-            output_amount = output_amount + count
+    while town_center.coin_balance - price >= 0 do
+        if town_center.output_buffer[item] == 0 then
+            town_center.coin_balance = town_center.coin_balance - price
+            town_center.output_buffer[item] = town_center.output_buffer[item] + count
         else
             break
         end
     end
-    output_buffer[item] = output_amount
-    town_center.coin_balance = coin_balance
+    TownCenter.update_coin_balance(market.force)
 end
 
-local function handle_loader_output(town_center, entity, index, offers)
+local function handle_loader_output(town_center, market, entity, index)
+    local line = entity.get_transport_line(index)
     -- get loader filters
-    local filter = entity.get_filter(index)
+    local filter = get_loader_filter(entity, index)
     if filter == nil then
         return
     end
-
     if filter == 'coin' then
         -- output for coins
-        local line = entity.get_transport_line(index)
-        local can_insert_at_back = line.can_insert_at_back
-        local insert_at_back = line.insert_at_back
-        local coin_balance = town_center.coin_balance
-        while coin_balance > 0 and can_insert_at_back() do
-            coin_balance = coin_balance - 1
-            insert_at_back(_coin_stack)
+        while town_center.coin_balance > 0 and line.can_insert_at_back() do
+            town_center.coin_balance = town_center.coin_balance - 1
+            local stack = {name = 'coin', count = 1}
+            line.insert_at_back(stack)
         end
-        town_center.coin_balance = coin_balance
+        TownCenter.update_coin_balance(market.force)
     else
         -- output for matching purchases
+        local offers = market.get_market_items()
         if offers == nil then
             set_offers(town_center)
-        else
-            for i=1, #offers do
-                local trade = offers[i]
-                local offer = trade.offer
-                if offer.type == 'give-item' then
+        end
+        if offers ~= nil then
+            for _, trade in ipairs(offers) do
+                if trade.offer.type == 'give-item' then
                     local item = trade.price[1].name
-                    if item == 'coin' and offer.item == filter then
-                        trade_coin_for_items(town_center, trade)
+                    if item == 'coin' and trade.offer.item == filter then
+                        trade_coin_for_items(town_center, market, trade)
                         output_loader_items(town_center, trade, entity, index)
                     end
                 end
@@ -485,36 +502,37 @@ local function handle_loader_output(town_center, entity, index, offers)
     end
 end
 
-local _max_coin_inserter_stack = {name = 'coin', count = 1}
-local function handle_inserter_output(town_center, market, entity, offers)
+local function handle_inserter_output(town_center, market, entity)
     -- get inserter filter
     local filter = get_inserter_filter(entity)
     if filter == nil then
         return
     end
+    local amount = max_stack_size(entity)
+    local stack = {name = 'coin', count = amount}
     if filter == 'coin' then
-        local amount = max_stack_size(entity)
         -- output coins
         if amount > town_center.coin_balance then
             amount = town_center.coin_balance
         end
+        stack.count = amount
         if town_center.coin_balance > 0 then
             town_center.coin_balance = town_center.coin_balance - amount
-            _max_coin_inserter_stack.count = amount
-            entity.held_stack.set_stack(_max_coin_inserter_stack)
+            entity.held_stack.set_stack(stack)
         end
+        TownCenter.update_coin_balance(market.force)
     else
         -- for matching coin purchases
+        local offers = market.get_market_items()
         if offers == nil then
             set_offers(town_center)
-        else
-            for i=1, #offers do
-                local trade = offers[i]
-                local offer = trade.offer
-                if offer.type == 'give-item' and offer.item == filter then
+        end
+        if offers ~= nil then
+            for _, trade in ipairs(offers) do
+                if trade.offer.type == 'give-item' and trade.offer.item == filter then
                     local item = trade.price[1].name
                     if item == 'coin' then
-                        trade_coin_for_items(town_center, trade)
+                        trade_coin_for_items(town_center, market, trade)
                         output_inserter_items(town_center, trade, entity)
                     end
                 end
@@ -523,7 +541,7 @@ local function handle_inserter_output(town_center, market, entity, offers)
     end
 end
 
-local function handle_loader_input(town_center, market, entity, index, offers)
+local function handle_loader_input(town_center, market, entity, index)
     local line = entity.get_transport_line(index)
     -- check for a line item at the back where we can pull
     if line.valid then
@@ -535,18 +553,20 @@ local function handle_loader_input(town_center, market, entity, index, offers)
                 -- insert coins
                 line.remove_item(stack)
                 town_center.coin_balance = town_center.coin_balance + stack.count
+                TownCenter.update_coin_balance(market.force)
             else
+                local offers = market.get_market_items()
                 if offers == nil then
                     set_offers(town_center)
-                else
-                    for i=1, #offers do
-                        local trade = offers[i]
+                end
+                if offers ~= nil then
+                    for _, trade in ipairs(offers) do
                         if trade.offer.type == 'give-item' then
                             local item = trade.price[1].name
                             if item == stack.name and trade.offer.item == 'coin' then
                                 -- trade scrap for coin
                                 line.remove_item(stack)
-                                trade_scrap_for_coin(town_center, trade, stack)
+                                trade_scrap_for_coin(town_center, market, trade, stack)
                             end
                         end
                     end
@@ -556,41 +576,41 @@ local function handle_loader_input(town_center, market, entity, index, offers)
     end
 end
 
-local function handle_inserter_input(town_center, market, entity, offers)
+local function handle_inserter_input(town_center, market, entity)
     -- check if stack is coin or resource
     local stack = {name = entity.held_stack.name, count = entity.held_stack.count}
     if stack.name == 'coin' and stack.count > 0 then
         -- insert coins
         entity.remove_item(stack)
         town_center.coin_balance = town_center.coin_balance + stack.count
-        return
-    end
-
-    if offers == nil then
-        set_offers(town_center)
+        TownCenter.update_coin_balance(market.force)
     else
-        for i=1, #offers do
-            local trade = offers[i]
-            local offer = trade.offer
-            if offer.type == 'give-item' and offer.item == 'coin' then
-                local item = trade.price[1].name
-                if item == stack.name and offer.item == 'coin' then
-                    -- trade scrap for coin
-                    entity.remove_item(stack)
-                    trade_scrap_for_coin(town_center, trade, stack)
+        local offers = market.get_market_items()
+        if offers == nil then
+            set_offers(town_center)
+        end
+        if offers ~= nil then
+            for _, trade in ipairs(offers) do
+                if trade.offer.type == 'give-item' and trade.offer.item == 'coin' then
+                    local item = trade.price[1].name
+                    if item == stack.name and trade.offer.item == 'coin' then
+                        -- trade scrap for coin
+                        entity.remove_item(stack)
+                        trade_scrap_for_coin(town_center, market, trade, stack)
+                    end
                 end
             end
         end
     end
 end
 
-local function handle_market_input(town_center, market, entity, offers)
-    if entity.type == "loader" then
+local function handle_market_input(town_center, market, entity)
+    if is_loader(entity) then
         -- handle loader input
         -- we don't care about filters
         local max_index = entity.get_max_transport_line_index()
         for index = 1, max_index, 1 do
-            handle_loader_input(town_center, market, entity, index, offers)
+            handle_loader_input(town_center, market, entity, index)
         end
     else
         -- handle inserter input
@@ -604,40 +624,38 @@ local function handle_market_input(town_center, market, entity, offers)
                 if stack.valid_for_read and stack.count > 0 then
                     -- if there is a stack
                     -- insert an item into the market
-                    handle_inserter_input(town_center, market, entity, offers)
+                    handle_inserter_input(town_center, market, entity)
                 end
             end
         end
     end
 end
 
-local _allowed_market_output_inserters = {
-    ['filter-inserter'] = true,
-    ['stack-filter-inserter'] = true
-}
-local function handle_market_output(town_center, market, entity, offers)
-    if entity.type == "loader" then
+local function handle_market_output(town_center, market, entity)
+    if is_loader(entity) then
         -- handle loader output
         local max_index = entity.get_max_transport_line_index()
         for index = 1, max_index, 1 do
-            if entity.get_filter(index) ~= nil then
-                handle_loader_output(town_center, entity, index, offers)
+            if get_loader_filter(entity, index) ~= nil then
+                handle_loader_output(town_center, market, entity, index)
             end
         end
-    elseif _allowed_market_output_inserters[entity.name] then
-        -- handle inserter output
-        if entity.drop_target ~= nil then
-            -- if the pickup position is inside the market
-            --log("inside pickup position and there is a drop target")
-            local stack = entity.held_stack
-            local spos = entity.held_stack_position
-            local ppos = entity.pickup_position
-            if equal(spos, ppos) then
-                -- if the stack position is inside the market
-                if stack == nil or stack.count == 0 then
-                    -- if there is space on the stack
-                    -- pull an item from the market
-                    handle_inserter_output(town_center, market, entity, stack, offers)
+    else
+        if is_filtered_inserter(entity) then
+            -- handle inserter output
+            if entity.drop_target ~= nil then
+                -- if the pickup position is inside the market
+                --log("inside pickup position and there is a drop target")
+                local stack = entity.held_stack
+                local spos = entity.held_stack_position
+                local ppos = entity.pickup_position
+                if equal(spos, ppos) then
+                    -- if the stack position is inside the market
+                    if stack == nil or stack.count == 0 then
+                        -- if there is space on the stack
+                        -- pull an item from the market
+                        handle_inserter_output(town_center, market, entity, stack)
+                    end
                 end
             end
         end
@@ -646,107 +664,49 @@ end
 
 local function get_entity_mode(market, entity)
     local bb = market.bounding_box
-    if entity.type == "loader" then
-        local market_pos = get_loader_market_position(entity)
-        if inside(market_pos, bb) then
+    if is_loader(entity) then
+        local mpos = get_loader_market_position(entity)
+        if inside(mpos, bb) then
             return entity.loader_type
+        else
+            return 'none'
+        end
+    else
+        local dpos = entity.drop_position
+        local ppos = entity.pickup_position
+        if inside(dpos, bb) then
+            return 'input'
+        end
+        if inside(ppos, bb) then
+            return 'output'
         end
         return 'none'
     end
-
-    if inside(entity.drop_position, bb) then
-        return 'input'
-    end
-    if inside(entity.pickup_position, bb) then
-        return 'output'
-    end
-    return 'none'
 end
 
-local _market_entities_targets = {
-    'burner-inserter',
-    'inserter',
-    'long-handed-inserter',
-    'fast-inserter',
-    'filter-inserter',
-    'stack-inserter',
-    'stack-filter-inserter',
-    'loader',
-    'fast-loader',
-    'express-loader'
-}
-local _long_market_entities_targets = {
-    'long-handed-inserter'
-}
-local market_area_left_top = {0, 0}
-local market_area_right_bottom = {0, 0}
-local market_filter = {
-    area = {left_top = market_area_left_top, right_bottom = market_area_right_bottom},
-    name = _market_entities_targets, force = nil
-}
-local long_market_area_left_top = {0, 0}
-local long_market_area_right_bottom = {0, 0}
-local long_market_filter = {
-    area = {left_top = long_market_area_left_top, right_bottom = long_market_area_right_bottom},
-    name = _long_market_entities_targets, force = nil
-}
-local function on_tick(event)
-    local data = global.tokens.maps_wasteland_table
-    if not data.town_centers then
+local function handle_connected_entity(town_center, market, entity)
+    local mode = get_entity_mode(market, entity)
+    if mode == 'input' then
+        handle_market_input(town_center, market, entity)
+    end
+    if mode == 'output' then
+        handle_market_output(town_center, market, entity)
+    end
+end
+
+local function on_tick(_)
+    local this = ScenarioTable.get_table()
+    if not this.town_centers then
         return
     end
-
-    local is_update_balance_tick = false
-    if event.tick % 60 == 0 then
-        is_update_balance_tick = true
-    end
-
-    for _, town_center in pairs(data.town_centers) do
+    for _, town_center in pairs(this.town_centers) do
+        -- get connected entities on markets
         local market = town_center.market
-        if market.valid then
-            local offers = market.get_market_items() -- the slowest thing
-            local force = market.force
-
-            if is_update_balance_tick then
-                TownCenter.update_coin_balance(force)
-            end
-
-            -- find entities
-            local bb = market.bounding_box
-            local surface = market.surface
-            local left_top = bb.left_top
-            local right_bottom = bb.right_bottom
-            market_area_left_top[1] = left_top.x - 1
-            market_area_left_top[2] = left_top.y - 1
-            market_area_right_bottom[1] = right_bottom.x + 1
-            market_area_right_bottom[2] = right_bottom.y + 1
-            market_filter.force = force
-            local entities = surface.find_entities_filtered(market_filter)
-            -- handle connected entity
-            for i=1, #entities do
-                local entity = entities[i]
-                local mode = get_entity_mode(market, entity)
-                if mode == 'input' then
-                    handle_market_input(town_center, market, entity, offers)
-                elseif mode == 'output' then
-                    handle_market_output(town_center, market, entity, offers)
-                end
-            end
-
-            long_market_area_left_top[1] = left_top.x - 2
-            long_market_area_left_top[2] = left_top.y - 2
-            long_market_area_right_bottom[1] = right_bottom.x + 2
-            long_market_area_right_bottom[2] = right_bottom.y + 2
-            long_market_filter.force = force
-            entities = surface.find_entities_filtered(long_market_filter)
-            for i=1, #entities do
-                local entity = entities[i]
-                local mode = get_entity_mode(market, entity)
-                if mode == 'input' then
-                    handle_market_input(town_center, market, entity, offers)
-                elseif mode == 'output' then
-                    handle_market_output(town_center, market, entity, offers)
-                end
+        local entities = get_connected_entities(market)
+        -- handle connected entity
+        for _, entity in pairs(entities) do
+            if entity.force == market.force then
+                handle_connected_entity(town_center, market, entity)
             end
         end
     end
