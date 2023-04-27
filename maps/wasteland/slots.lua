@@ -14,6 +14,10 @@ local function process_slots(actor, event)
     local force = actor.force
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[force.name]
+    if not town_center then     -- only for town owners
+        return
+    end
+
     if entity.name ~= 'laser-turret' and not (table.array_contains(center_limited_types, entity.type)
             and CommonFunctions.point_in_bounding_box(entity.position, town_center.center_box)) then
         return
