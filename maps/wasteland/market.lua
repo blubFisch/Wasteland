@@ -486,6 +486,7 @@ local function handle_loader_output(town_center, entity, index, offers)
                 if item == 'coin' and offer.item == filter then
                     trade_coin_for_items(town_center, trade)
                     output_loader_items(town_center, trade, entity, index)
+                    break
                 end
             end
         end
@@ -523,6 +524,7 @@ local function handle_inserter_output(town_center, market, entity, offers)
                     if item == 'coin' then
                         trade_coin_for_items(town_center, trade)
                         output_inserter_items(town_center, trade, entity)
+                        break
                     end
                 end
             end
@@ -553,6 +555,7 @@ local function handle_loader_input(town_center, entity, index, offers)
                             -- trade scrap for coin
                             line.remove_item(stack)
                             trade_scrap_for_coin(town_center, trade, stack)
+                            break
                         end
                     end
                 end
@@ -583,6 +586,7 @@ local function handle_inserter_input(town_center, entity, offers)
                     -- trade scrap for coin
                     entity.remove_item(stack)
                     trade_scrap_for_coin(town_center, trade, stack)
+                    break
                 end
             end
         end
