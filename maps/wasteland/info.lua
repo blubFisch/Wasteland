@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Apr 2023 updates[/font]
+ - Added extra biter attack waves with boss units
  - Further tweaks to tank combat and explo ammo
  - Game mode support (short, medium, long): Changes research cost and others
  - PvP shields are stronger and some bugs/abuse fixed
@@ -43,6 +44,7 @@ Survive as long as you can. Raid other towns. Defend your town.
     except logistics entities (inserters, belts, boxes, rails) that can be used to steal items
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
+- Biter waves with boss units will attack more advanced towns (research) while its member players are online
 
 [font=heading-1]PvP Shields[/font]
 - PvP shields prevent players from entering, building and damaging
