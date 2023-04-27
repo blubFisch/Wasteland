@@ -22,7 +22,21 @@ local info_adv =
 
 
 [font=heading-1]Goal of the game[/font]
-Survive as long as you can. Raid other towns. Defend your town.
+- Build or join a town and survive as long as you can
+- Raid other towns. Defend your town. Reach 100 score on the leaderboard.
+
+[font=heading-1]Town members and alliances[/font]
+- To invite another player to your town, drop a coin on that player (with the Z key). To accept an invite, they also need to dropp a coin on you.
+- To leave a town, drop coal on the market. Note that their turrets will target you immediately.
+- To form any alliance with another town, drop a coin on a town member. If they agree they need to drop a coin on you too.
+
+[font=heading-1]PvP Shields[/font]
+- PvP shields prevent players from entering, building and damaging
+- Offline PvP shields deploy automatically once all players of a town leave the game
+    - The size is same as your initial town wall, marked by the blue tiles
+    - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if the market shows no enemies
+- Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
+- Big and behemoth biters can't penetrate your shield, but small and medium ones can
 
 [font=heading-1]Advanced tips and tricks[/font]
 - To join our discord, open wasteland-discord.fun in your web browser
@@ -44,22 +58,7 @@ Survive as long as you can. Raid other towns. Defend your town.
     except logistics entities (inserters, belts, boxes, rails) that can be used to steal items
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
-- Biter waves with boss units will attack more advanced towns (research) while its member players are online
-
-[font=heading-1]PvP Shields[/font]
-- PvP shields prevent players from entering, building and damaging
-- Offline PvP shields deploy automatically once all players of a town leave the game
-    - The size is same as your initial town wall, marked by the blue tiles
-    - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if the market shows no enemies
-- Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
-- Big and behemoth biters can't penetrate your shield, but small and medium ones can
-
-[font=heading-1]Town members and alliances[/font]
-- Once a town is formed, members may invite other players and teams using a coin. To invite another player, drop a coin
-on that player (with the Z key). To accept an invite, offer a coin in return to the member. To leave a town, simply drop coal
-on the market.
-- To form any alliance with another town, drop a coin on a member or their market. If they agree they can reciprocate with a
-coin offering.]]
+- Biter waves with boss units will attack more advanced towns (research) while its member players are online]]
 
 function Public.toggle_button(player)
     if player.gui.top['towny_map_intro_button'] then
