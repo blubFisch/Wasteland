@@ -380,7 +380,11 @@ end
 function Public.update_coin_balance(force)
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[force.name]
-    rendering.set_text(town_center.coins_text, 'Coins: ' .. town_center.coin_balance)
+    local coin_balance = town_center.coin_balance
+    if town_center.prev_coin_balance ~= coin_balance then
+        rendering.set_text(town_center.coins_text, 'Coins: ' .. coin_balance)
+        town_center.prev_coin_balance = coin_balance
+    end
 end
 
 function Public.enemy_players_nearby(town_center, max_distance)
@@ -611,6 +615,7 @@ local function found_town(event)
     town_center.chunk_position = {math.floor(town_center.market.position.x / 32), math.floor(town_center.market.position.y / 32)}
     town_center.max_health = 100
     town_center.coin_balance = 0
+    town_center.prev_coin_balance = 0
     town_center.input_buffer = {}
     town_center.output_buffer = {}
     town_center.health = town_center.max_health
