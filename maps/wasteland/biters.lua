@@ -221,7 +221,7 @@ function Public.swarm(town_center, radius)
             max_unit = unit
         end
     end
-    local health_multiplier = 10 * market_evolution + 5
+    local health_multiplier = 5 * market_evolution + 5
     BiterHealthBooster.add_boss_unit(max_unit, health_multiplier)
 
     local unit_group_position = surface.find_non_colliding_position('biter-spawner', units[1].position, 256, 1)
