@@ -494,7 +494,7 @@ local function handle_loader_output(town_center, entity, index, offers)
 end
 
 local _max_coin_inserter_stack = {name = 'coin', count = 1}
-local function handle_inserter_output(town_center, market, entity, offers)
+local function handle_inserter_output(town_center, entity, offers)
     -- get inserter filter
     local filter = get_inserter_filter(entity)
     if filter == nil then
@@ -635,7 +635,7 @@ local function handle_market_output(town_center, market, entity, offers)
         end
     elseif _allowed_market_output_inserters[entity.name] then
         -- handle inserter output
-        if entity.drop_target ~= nil then
+        if entity.drop_target ~= nil then -- TODO: refactor
             -- if the pickup position is inside the market
             --log("inside pickup position and there is a drop target")
             local stack = entity.held_stack
@@ -646,7 +646,7 @@ local function handle_market_output(town_center, market, entity, offers)
                 if stack == nil or stack.count == 0 then
                     -- if there is space on the stack
                     -- pull an item from the market
-                    handle_inserter_output(town_center, market, entity, stack, offers)
+                    handle_inserter_output(town_center, entity, offers)
                 end
             end
         end
@@ -710,6 +710,11 @@ local function on_tick(event)
         is_update_balance_tick = true
     end
 
+    local is_find_entities_near_market_tick = false
+    if event.tick % (60 * 8) == 0 then
+        is_find_entities_near_market_tick = true
+    end
+
     for _, town_center in pairs(data.town_centers) do
         local market = town_center.market
         if market.valid then
@@ -724,41 +729,69 @@ local function on_tick(event)
                 end
             end
 
-            -- find entities
-            local bb = market.bounding_box
-            local surface = market.surface
-            local left_top = bb.left_top
-            local right_bottom = bb.right_bottom
-            market_area_left_top[1] = left_top.x - 1
-            market_area_left_top[2] = left_top.y - 1
-            market_area_right_bottom[1] = right_bottom.x + 1
-            market_area_right_bottom[2] = right_bottom.y + 1
-            market_filter.force = force
-            local entities = surface.find_entities_filtered(market_filter)
-            -- handle connected entity
-            for i=1, #entities do
-                local entity = entities[i]
-                local mode = get_entity_mode(market, entity)
-                if mode == 'input' then
-                    handle_market_input(town_center, market, entity, offers)
-                elseif mode == 'output' then
+            if is_find_entities_near_market_tick then
+                local output_entities = {}
+                local input_entities = {}
+
+                -- find entities
+                local bb = market.bounding_box
+                local surface = market.surface
+                local left_top = bb.left_top
+                local right_bottom = bb.right_bottom
+                market_area_left_top[1] = left_top.x - 1
+                market_area_left_top[2] = left_top.y - 1
+                market_area_right_bottom[1] = right_bottom.x + 1
+                market_area_right_bottom[2] = right_bottom.y + 1
+                market_filter.force = force
+                local entities = surface.find_entities_filtered(market_filter)
+                -- handle connected entity
+                for i=1, #entities do
+                    local entity = entities[i]
+                    local mode = get_entity_mode(market, entity)
+                    if mode == 'input' then
+                        input_entities[#input_entities+1] = entity
+                    elseif mode == 'output' then
+                        output_entities[#output_entities+1] = entity
+                    end
+                end
+
+                long_market_area_left_top[1] = left_top.x - 2
+                long_market_area_left_top[2] = left_top.y - 2
+                long_market_area_right_bottom[1] = right_bottom.x + 2
+                long_market_area_right_bottom[2] = right_bottom.y + 2
+                long_market_filter.force = force
+                entities = surface.find_entities_filtered(long_market_filter)
+                for i=1, #entities do
+                    local entity = entities[i]
+                    local mode = get_entity_mode(market, entity)
+                    if mode == 'input' then
+                        input_entities[#input_entities+1] = entity
+                    elseif mode == 'output' then
+                        output_entities[#output_entities+1] = entity
+                    end
+                end
+
+                town_center.output_market_entities = output_entities
+                town_center.input_market_entities = input_entities
+            end
+
+            local output_market_entities = town_center.output_market_entities
+            for i=#output_market_entities, 1, -1 do
+                local entity = output_market_entities[i]
+                if entity.valid then
                     handle_market_output(town_center, market, entity, offers)
+                else
+                    table.remove(output_market_entities, i)
                 end
             end
 
-            long_market_area_left_top[1] = left_top.x - 2
-            long_market_area_left_top[2] = left_top.y - 2
-            long_market_area_right_bottom[1] = right_bottom.x + 2
-            long_market_area_right_bottom[2] = right_bottom.y + 2
-            long_market_filter.force = force
-            entities = surface.find_entities_filtered(long_market_filter)
-            for i=1, #entities do
-                local entity = entities[i]
-                local mode = get_entity_mode(market, entity)
-                if mode == 'input' then
+            local input_market_entities = town_center.input_market_entities
+            for i=#input_market_entities, 1, -1 do
+                local entity = input_market_entities[i]
+                if entity.valid then
                     handle_market_input(town_center, market, entity, offers)
-                elseif mode == 'output' then
-                    handle_market_output(town_center, market, entity, offers)
+                else
+                    table.remove(input_market_entities, i)
                 end
             end
         end

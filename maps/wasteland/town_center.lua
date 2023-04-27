@@ -618,6 +618,8 @@ local function found_town(event)
     town_center.prev_coin_balance = 0
     town_center.input_buffer = {}
     town_center.output_buffer = {}
+    town_center.output_market_entities = {}
+    town_center.input_market_entities = {}
     town_center.health = town_center.max_health
     local crayola = Colors.get_random_color()
     town_center.color = crayola.color
