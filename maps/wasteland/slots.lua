@@ -4,6 +4,7 @@ local ScenarioTable = require 'maps.wasteland.table'
 local CommonFunctions = require 'utils.common'
 
 local center_limited_types = { 'assembling-machine', 'furnace'}
+local center_forbidden_types = { 'lab'}
 
 local function process_slots(actor, event)
     local entity = event.created_entity
@@ -18,8 +19,11 @@ local function process_slots(actor, event)
         return
     end
 
-    if entity.name ~= 'laser-turret' and not (table.array_contains(center_limited_types, entity.type)
-            and CommonFunctions.point_in_bounding_box(entity.position, town_center.center_box)) then
+    if not (entity.name == 'laser-turret' or (
+            (table.array_contains(center_limited_types, entity.type) or table.array_contains(center_forbidden_types, entity.type))
+                    and CommonFunctions.point_in_bounding_box(entity.position, town_center.center_box)
+            )
+    ) then
         return
     end
 
@@ -41,12 +45,19 @@ local function process_slots(actor, event)
 
     local slots
     local locations
+    local disallowed_info_text
     if entity.name == 'laser-turret' then
         slots = town_center.upgrades.laser_turret.slots
         locations = town_center.upgrades.laser_turret.locations + 1
+        disallowed_info_text = "You do not have enough slots! Buy more at the market"
     elseif table.array_contains(center_limited_types, entity.type) then
         slots = 5
         locations = surface.count_entities_filtered({ force = force, type = center_limited_types, area=town_center.center_box})
+        disallowed_info_text = "Too many production machines in center, build outside!"
+    elseif table.array_contains(center_forbidden_types, entity.type) then
+        slots = 0
+        locations = 1
+        disallowed_info_text = "Can't build this in the town center, build outside!"
     else
         assert(false, "Unhandled case")
     end
@@ -56,7 +67,7 @@ local function process_slots(actor, event)
             {
                 name = 'flying-text',
                 position = entity.position,
-                text = entity.name == 'laser-turret' and 'You do not have enough slots!' or 'Too many production machines in center, build outside!',
+                text = disallowed_info_text,
                 color = {r = 0.77, g = 0.0, b = 0.0}
             }
         )
