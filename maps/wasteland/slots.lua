@@ -53,7 +53,7 @@ local function process_slots(actor, event)
     elseif table.array_contains(center_limited_types, entity.type) then
         slots = 5
         locations = surface.count_entities_filtered({ force = force, type = center_limited_types, area=town_center.center_box})
-        disallowed_info_text = "Too many production machines in center, build outside!"
+        disallowed_info_text = "Too many production machines in town center, build outside!"
     elseif table.array_contains(center_forbidden_types, entity.type) then
         slots = 0
         locations = 1
