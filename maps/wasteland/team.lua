@@ -661,15 +661,20 @@ function Public.add_new_force(force_name)
     enable_radar(force)
     disable_achievements(permission_group)
     disable_tips_and_tricks(permission_group)
+
     -- friendly fire
     force.friendly_fire = true
-    -- disable technologies
+
+    -- technologies
     for _, recipe_name in pairs(all_force_enabled_recipes) do
         force.recipes[recipe_name].enabled = true
     end
+    force.technologies['uranium-ammo'].enabled = false
     force.research_queue_enabled = true
+
     -- balance initial combat
     CombatBalance.init_player_weapon_damage(force)
+
     if (this.testing_mode == true) then
         local e_force = game.forces['enemy']
         e_force.set_friend(force, true) -- team force should not be attacked by turrets
