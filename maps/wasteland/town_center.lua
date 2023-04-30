@@ -23,8 +23,8 @@ local MapLayout = require 'maps.wasteland.map_layout'
 local GameMode = require 'maps.wasteland.game_mode'
 
 local town_radius = 20
-local max_starter_shield_size = 101
-local radius_between_towns = max_starter_shield_size + 2
+local starter_shield_size = 131
+local radius_between_towns = starter_shield_size + 2
 
 local ore_amount = 1200
 
@@ -338,7 +338,7 @@ function Public.in_extended_control_range(position)
         local town_position = town_center.market.position
 
         local distance = math_floor(math_sqrt((position.x - town_position.x) ^ 2 + (position.y - town_position.y) ^ 2))
-        if distance < Public.get_town_control_range(town_center) * 1.5 + max_starter_shield_size / 2 then   -- Account for growing control range
+        if distance < Public.get_town_control_range(town_center) * 1.5 + starter_shield_size / 2 then   -- Account for growing control range
             return true
         end
     end
@@ -503,19 +503,15 @@ local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
     local min_evo_for_shield = 0.13 -- Compare with offensive research like tank, power armor, ...
     if evo >= min_evo_for_shield then
-        local min_size = PvPShield.default_size
         local min_duration =   2 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
         local max_duration =  12 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
         local lifetime_ticks = math_min(min_duration + scale_factor * (max_duration - min_duration), max_duration)
-        local size = math_min(min_size + scale_factor * (max_starter_shield_size - min_size), max_starter_shield_size)
 
-        PvPShield.add_shield(surface, force, position, size, lifetime_ticks, 60 * 60)
+        PvPShield.add_shield(surface, force, position, starter_shield_size, lifetime_ticks, 60 * 60)
         update_pvp_shields_display()
-        force.print("Based on the highest tech on map, your town deploys a PvP shield of "
-                .. string.format("%.0f", size) .. " tiles"
-                .. " for " .. PvPShield.format_lifetime_str(lifetime_ticks)  .. "."
-                .. " Press help button for full info")
+        force.print("Your town deploys a late joiner PvP shield for " .. PvPShield.format_lifetime_str(lifetime_ticks)
+                .. " because there are advanced towns on the map", Utils.scenario_color)
     end
 end
 
@@ -717,9 +713,8 @@ local function found_town(event)
     force.chart(surface, {{-1, -1}, {1, 1}})
     add_pvp_shield_scaled(town_center.market.position, force, surface)    -- Market center is slightly shifted
 
-    game.print('>> ' .. player.name .. ' has founded a new town!', {255, 255, 0})
+    game.print(player.name .. ' has founded a new town!', {255, 255, 0})
     Server.to_discord_embed(player.name .. ' has founded a new town!')
-    player.print('Your town color is ' .. crayola.name, crayola.color)
 end
 
 local function on_built_entity(event)
