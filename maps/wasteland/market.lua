@@ -214,7 +214,7 @@ local function set_offers(town_center)
     for _, item in pairs(market_items) do
         market.add_market_item(item)
     end
-    town_center.offers = market.get_market_items() -- I'm lazy to refactor everything
+    town_center.offers = market.get_market_items() -- get rid of it by refactoring data.
     local offers = town_center.offers
     for i=#offers, 1, -1 do
         local trade = offers[i]
