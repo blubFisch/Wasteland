@@ -11,15 +11,15 @@ function Public.add_balance_ui(player)
     end
     local button = player.gui.top.add {
         type = 'sprite-button',
-        caption = 'Research modifier',
+        caption = 'Research cost',
         name = button_id
     }
     button.visible = false
     button.style.font = 'default'
-    button.tooltip = "Productivity modifier on research cost. 100% means no change, 200% means research costs only half"
+    button.tooltip = "Cost of your town's research. Lower values mean cheaper (=faster)"
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
-    button.style.minimal_width = 180
+    button.style.minimal_width = 150
     button.style.top_padding = 2
     button.style.left_padding = 4
     button.style.right_padding = 4
@@ -31,7 +31,7 @@ function Public.player_changes_town_status(player, in_town)
 end
 
 function Public.format_town_modifier(modifier)
-    return string.format('%.0f%%', 100 * modifier)
+    return string.format('%.0f%%', 100 * 1 / modifier)
 end
 
 -- Relative speed modifier, 1=no change
@@ -66,7 +66,7 @@ local function update_modifiers()
 
         -- Update UIs of all town players
         for _, player in pairs(town_center.market.force.connected_players) do
-            player.gui.top[button_id].caption = "Research modifier: " .. Public.format_town_modifier(town_center.research_balance.current_modifier)
+            player.gui.top[button_id].caption = "Research cost: " .. Public.format_town_modifier(town_center.research_balance.current_modifier)
         end
     end
 end

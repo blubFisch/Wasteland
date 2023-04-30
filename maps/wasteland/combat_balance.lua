@@ -120,15 +120,15 @@ function Public.add_balance_ui(player)
     end
     local button = player.gui.top.add {
         type = 'sprite-button',
-        caption = 'Damage modifier',
+        caption = 'Damage',
         name = button_id
     }
     button.visible = false
-    button.tooltip = "Modifier on your team players damage. Doesn't apply to your turrets."
+    button.tooltip = "Multiplier on the attack damage for your town players. Doesn't apply to your turrets."
     button.style.font = 'default'
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
-    button.style.minimal_width = 180
+    button.style.minimal_width = 130
     button.style.top_padding = 2
     button.style.left_padding = 4
     button.style.right_padding = 4
@@ -144,7 +144,7 @@ local function update_uis()
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force
         for _, player in pairs(force.connected_players) do
-            player.gui.top[button_id].caption = "Damage modifier: " .. Public.format_dmg_modifier(force)
+            player.gui.top[button_id].caption = "Damage: " .. Public.format_dmg_modifier(force)
         end
     end
 end
