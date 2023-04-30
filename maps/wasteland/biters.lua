@@ -69,6 +69,7 @@ end
 
 local function swarm_eligible_town(town_center)
     return town_center.evolution.biters > 0.2 and #town_center.market.force.connected_players > 0
+            and game.tick - town_center.last_swarm >= 10 * 60 * 60
 end
 
 local function roll_market()
@@ -84,7 +85,7 @@ local function roll_market()
         end
     end
     if #keyset == 0 then
-        return
+        return nil
     end
     local tc = math_random(1, #keyset)
     return this.town_centers[keyset[tc]]
@@ -192,9 +193,6 @@ function Public.swarm(town_center, radius)
         evolution = Evolution.get_spitter_evolution(spawner)
     end
 
-    -- get the evolution at the market location
-    local market_evolution = Evolution.get_evolution(market.position)
-
     -- get our target amount of enemies based on relative evolution
     local count2 = (evolution * 124) + 4
 
@@ -221,8 +219,7 @@ function Public.swarm(town_center, radius)
             max_unit = unit
         end
     end
-    local health_multiplier = 5 * market_evolution + 5
-    BiterHealthBooster.add_boss_unit(max_unit, health_multiplier)
+    BiterHealthBooster.add_boss_unit(max_unit, 5)
 
     local unit_group_position = surface.find_non_colliding_position('biter-spawner', units[1].position, 256, 1)
     if not unit_group_position then
@@ -244,6 +241,7 @@ function Public.swarm(town_center, radius)
             commands = get_commmands(market, unit_group)
         }
     )
+    town_center.last_swarm = game.tick
     --game.print("XDB Swarm go " .. town_center.town_name)
     table_insert(this.swarms, {group = unit_group, timeout = game.tick + 36000})
 end

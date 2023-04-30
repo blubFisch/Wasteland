@@ -628,6 +628,7 @@ local function found_town(event)
     town_center.evolution.spitters = 0
     town_center.evolution.worms = 0
     town_center.creation_tick = game.tick
+    town_center.last_swarm = 0
     town_center.research_balance = {current_modifier = 1}
     town_center.laser_turrets = {}
     local market_pos = town_center.market.position
