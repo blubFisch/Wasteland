@@ -26,7 +26,7 @@ local info_adv =
 - Raid other towns. Defend your town. Reach 100 score on the leaderboard.
 
 [font=heading-1]Town members and alliances[/font]
-- To invite another player to your town, drop a coin on that player (with the Z key). To accept an invite, they also need to dropp a coin on you.
+- To invite another player to your town, drop a coin on that player (with the Z key). To accept an invite, they also need to drop a coin on you.
 - To leave a town, drop coal on the market. Note that their turrets will target you immediately.
 - To form any alliance with another town, drop a coin on a town member. If they agree they need to drop a coin on you too.
 
@@ -58,7 +58,7 @@ local info_adv =
     except logistics entities (inserters, belts, boxes, rails) that can be used to steal items
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
-- Biter waves with boss units will attack more advanced towns (research) while its member players are online]]
+- Biter waves with boss units (the ones with health bar) will attack more advanced towns while their member players are online]]
 
 function Public.toggle_button(player)
     if player.gui.top['towny_map_intro_button'] then
