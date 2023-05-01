@@ -670,6 +670,7 @@ function Public.add_new_force(force_name)
         force.recipes[recipe_name].enabled = true
     end
     force.technologies['uranium-ammo'].enabled = false
+    force.technologies['power-armor-mk2'].enabled = false
     force.research_queue_enabled = true
 
     -- balance initial combat
