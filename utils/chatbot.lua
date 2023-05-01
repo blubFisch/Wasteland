@@ -38,7 +38,6 @@ local links = {
     ['grief'] = brain[2],
     ['griefer'] = brain[2],
     ['griefing'] = brain[2],
-    ['mod'] = brain[2],
     ['moderator'] = brain[2],
     ['stealing'] = brain[2],
     ['stole'] = brain[2],
