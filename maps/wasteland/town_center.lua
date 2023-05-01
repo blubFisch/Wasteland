@@ -507,8 +507,8 @@ local function add_pvp_shield_scaled(position, force, surface)
     local evo = Evolution.get_highest_evolution()
     local min_evo_for_shield = 0.13 -- Compare with offensive research like tank, power armor, ...
     if evo >= min_evo_for_shield then
-        local min_duration =   2 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
-        local max_duration =  12 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
+        local min_duration =   4 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
+        local max_duration =  24 * 60 * 60 * 60 * game_mode_shield_duration_scaling[GameMode.mode]
         local scale_factor = 1.5 * (evo - min_evo_for_shield)
         local lifetime_ticks = math_min(min_duration + scale_factor * (max_duration - min_duration), max_duration)
 
