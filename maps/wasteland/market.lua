@@ -7,14 +7,14 @@ local Utils = require 'maps.wasteland.utils'
 
 
 local _coin_stack = {name = 'coin', count = 1}
-
+local market_max_hp = 10000
 
 local upgrade_functions = {
     -- Upgrade Town Center Health
     [1] = function(town_center, player)
         local market = town_center.market
         local surface = market.surface
-        if town_center.max_health > 50000 then
+        if town_center.max_health > market_max_hp then
             return false
         end
         town_center.health = town_center.health + town_center.max_health
@@ -140,7 +140,7 @@ local function set_offers(town_center)
 
     -- special offers
     local special_offers = {}
-    if town_center.max_health < 20000 then
+    if town_center.max_health < market_max_hp then
         special_offers[1] = {{{'coin', town_center.max_health * 0.1}}, 'Upgrade Town Center Health'}
     else
         special_offers[1] = {{}, 'Maximum Health upgrades reached!'}
