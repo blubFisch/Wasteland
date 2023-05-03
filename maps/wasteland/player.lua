@@ -40,7 +40,8 @@ function Public.spawn(player)
     -- reset cooldown
     this.cooldowns_town_placement[player.index] = 0
     this.last_respawn[player.name] = 0
-    player.teleport(spawn_point, surface)
+    local new_pos = surface.find_non_colliding_position('character', spawn_point, 50, 0.5)
+    player.teleport(new_pos or spawn_point, surface)
 end
 
 function Public.load_buffs(player)
@@ -218,7 +219,8 @@ local function on_player_respawned(event)
 
     -- reset cooldown
     this.last_respawn[player.name] = game.tick
-    player.teleport(spawn_point, surface)
+    local new_pos = surface.find_non_colliding_position('character', spawn_point, 50, 0.5)
+    player.teleport(new_pos or spawn_point, surface)
     Public.load_buffs(player)
 end
 
