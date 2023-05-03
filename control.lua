@@ -37,7 +37,7 @@ require 'utils.gui.group'
 require 'utils.gui.score'
 require 'utils.gui.config'
 require 'utils.gui.poll'
-require 'utils.freeplay'
+-- require 'utils.freeplay'
 
 require 'maps.wasteland.main'
 
