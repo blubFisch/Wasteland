@@ -122,10 +122,12 @@ point_in_bounding_box - Check whatever point is within bb.
 @param bb - BoundingBox
 --]]
 Public.point_in_bounding_box = function(point, bb)
-    local x = Public.get_axis(point, 'x')
-    local y = Public.get_axis(point, 'y')
+    local x = point.x or point[1] or point.position.x
+    local y = point.y or point[2] or point.position.y
 
-    if bb.left_top.x <= x and bb.right_bottom.x >= x and bb.left_top.y <= y and bb.right_bottom.y >= y then
+    local left_top = bb.left_top
+    local right_bottom = bb.right_bottom
+    if left_top.x <= x and right_bottom.x >= x and left_top.y <= y and right_bottom.y >= y then
         return true
     end
 
