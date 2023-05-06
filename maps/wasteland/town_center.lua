@@ -405,7 +405,7 @@ function Public.enemy_players_nearby(town_center, max_distance)
 end
 
 function Public.get_town_control_range(town_center)
-    return 40 + town_center.evolution.worms * 200
+    return 50 + town_center.evolution.worms * 200
 end
 
 local function update_pvp_shields_display()
