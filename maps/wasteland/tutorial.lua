@@ -49,7 +49,7 @@ local function tutorials_tick()
 
             if this.tutorials[player.index].step == 4 and player.surface.count_entities_filtered({force = player.force,
                                                                                                   name = 'laser-turret', position = player.position, radius = 100}) > 0 then
-                player.set_goal_description("Good!\nYour starter ore patches are limited, but there are many more ore patches hidden under rocks!\n\nResearch Steel Axe, then find a patch by hand mining big rocks")
+                player.set_goal_description("Good!\nYour starter ore patches are limited, but there are many more ore patches hidden under rocks!\n\nFind a patch by hand mining big rocks")
 
                 this.tutorials[player.index].step = 5
             end
