@@ -131,7 +131,7 @@ local function update_score()
                     town_res_scores[town_center] = math.min(town_center.evolution.worms * evo_score_factor, 70)
                     town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
 
-                    if town_total_scores[town_center] >= 100 and this.winner == nil then
+                    if town_total_scores[town_center] >= score_to_win and this.winner == nil then
                         local winner_force = town_center.market.force
                         this.winner = town_center.town_name
                         game.print(town_center.town_name .. " has won the game! Server will be reset by an admin soon.", Utils.scenario_color)
