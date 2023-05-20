@@ -227,15 +227,21 @@ local function process_built_entities(event)
         force_name = force.name
     end
 
+    -- Handle entities placed within protected areas
     if not allowed_entities_keep_force[name] then  -- Some entities like vehicles are always ok to place
-        -- Handle entities placed within protected areas
-        if PvPShield.protected_by_other_zones(surface, position, force, 32)
-                or Public.near_another_town(force_name, position, surface, 32) == true then
+        local radius = 25
+
+        if table.array_contains(town_zoning_entity_types, entity.type) then
+            radius = 32 -- Prevent using these entities offensively to stop a base from repairing itself. Also prevents power pole connections for power theft
+        end
+
+        if PvPShield.protected_by_other_zones(surface, position, force, radius)
+                or Public.near_another_town(force_name, position, surface, radius) == true then
             -- Logistics are okay to place wherever you can access (=outside of shield)
             if allowed_entities_neutral[name] and not PvPShield.protected_by_other_zones(surface, position, force, 0) then
                 entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
                 surface.create_entity({name = 'flying-text', position = position,
-                                       text = "Built as neutral", color = {r = 0, g = 1, b = 0}})
+                                       text = "Neutral", color = {r = 0, g = 1, b = 0}})
             else
                 -- Prevent building
                 entity.destroy()

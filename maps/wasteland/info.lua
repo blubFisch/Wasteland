@@ -1,13 +1,9 @@
 local Public = {}
 
 local changelog =
-    [[[font=heading-1]Apr 2023 updates[/font]
- - Added extra biter attack waves with boss units
- - Further tweaks to tank combat and explo ammo
- - Game mode support (short, medium, long): Changes research cost and others
- - PvP shields are stronger and some bugs/abuse fixed
- - Starting towns late game is easier
- - Chests with explosive items don't explode anymore]]
+    [[[font=heading-1]May 2023 updates[/font]
+
+ - Fix an exploit of using power poles to block bots from rebuilding]]
 
 local info =
     [[[font=heading-1]Welcome to the wasteland[/font]
