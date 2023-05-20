@@ -124,7 +124,7 @@ function Public.add_balance_ui(player)
         name = button_id
     }
     button.visible = false
-    button.tooltip = "Multiplier on the attack damage for your town players. Doesn't apply to your turrets."
+    button.tooltip = "Multiplier on the attack damage for your town members. Doesn't apply to your turrets. Depends on the number of online town members."
     button.style.font = 'default'
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
