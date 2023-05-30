@@ -1,13 +1,9 @@
 local Public = {}
 
 local changelog =
-    [[[font=heading-1]Apr 2023 updates[/font]
- - Added extra biter attack waves with boss units
- - Further tweaks to tank combat and explo ammo
- - Game mode support (short, medium, long): Changes research cost and others
- - PvP shields are stronger and some bugs/abuse fixed
- - Starting towns late game is easier
- - Chests with explosive items don't explode anymore]]
+    [[[font=heading-1]May 2023 updates[/font]
+
+ - Fix an exploit of using power poles to block bots from rebuilding]]
 
 local info =
     [[[font=heading-1]Welcome to the wasteland[/font]
@@ -43,9 +39,8 @@ local info_adv =
 - It's best to found new towns far from existing towns, as enemies will become aggressive with town's research.
     Biters and spitters become more aggressive towards towns that are advanced in research.
     Their evolution will scale around technology progress in any nearby towns and pollution levels.
-- How to get more ores? Make sure you researched steel axe,
-    then hand mine a few big rocks to find ore patches under them!
-- How to get more oil? Kill worms - some of them will leave you an oil patch
+- Need more ores? Hand mine a few big rocks to find ore patches under them!
+- Need more oil? Kill biter worms - some of them will leave you an oil patch
 - The town market is the heart of your town. If it is destroyed, you lose everything.
     So protect it well, repair it whenever possible, and increase its health by purchasing upgrades.
 - It's possible to automate trading with the town center! How cool is that?!! Try it out.

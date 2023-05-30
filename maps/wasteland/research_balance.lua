@@ -16,7 +16,7 @@ function Public.add_balance_ui(player)
     }
     button.visible = false
     button.style.font = 'default'
-    button.tooltip = "Cost of your town's research. Lower values mean cheaper (=faster)"
+    button.tooltip = "Cost of your town's research. Lower values mean cheaper (=faster). Depends on the number of recently active town members"
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
     button.style.minimal_width = 150
