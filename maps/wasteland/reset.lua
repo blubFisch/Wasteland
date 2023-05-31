@@ -199,5 +199,5 @@ commands.add_command(
     end
 )
 
-Event.add(defines.events.on_tick, on_tick)
+--Event.add(defines.events.on_tick, on_tick)
 Event.add(defines.events.on_rocket_launched, on_rocket_launched)
