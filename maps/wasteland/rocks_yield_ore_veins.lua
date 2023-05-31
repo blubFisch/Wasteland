@@ -11,6 +11,12 @@ local valid_entities = {
     ['sand-rock-big'] = true
 }
 
+local rock_types = {
+    {'rock-big'},
+    {'rock-huge'},
+    {'sand-rock-big'}
+}
+
 local size_raffle = {
     {'giant', 90, 130},
     {'huge', 80, 100},
@@ -18,6 +24,34 @@ local size_raffle = {
     {'small', 30, 40},
     {'tiny', 10, 20}
 }
+
+local function spawn_new_rock(event)
+    local surface = event.entity.surface
+    local position = event.entity.position
+    local x_positive = math_random(1, 2)
+    local y_positive = math_random(1, 2)
+    local pos_x = math_random(1, 980)
+    local pos_y = math_random(1, 980)
+    if x_positive == 2 then
+        pos_x = pos_x * -1
+    end
+    if y_positive == 2 then
+        pos_y = pos_y * -1
+    end
+    surface.create_entity({ name = 'flying-text', position = position,
+                            text = pos_x..'_'..pos_y..'_'..x_positive..'_'..y_positive, color = { r = 0, g = 1, b = 0}})
+
+    position = {x = pos_x, y = pos_y}
+    local rock_type = rock_types[math_random(1, #rock_types)]
+    if surface.can_place_entity({name = rock_type[1], position = position, force = 'neutral'}) then
+        surface.create_entity({name = rock_type[1], position = position})
+        surface.create_entity({name = 'flying-text', position = position,
+                               text = rock_type[1], color = {r = 0, g = 1, b = 0}})
+    else
+        surface.create_entity({name = 'flying-text', position = position,
+        text = "cant place here!", color = {r = 0, g = 1, b = 0}})
+    end
+end
 
 local function get_chances()
     local chances = {}
@@ -190,6 +224,7 @@ local function on_player_mined_entity(event)
     if not valid_entities[event.entity.name] then
         return
     end
+    spawn_new_rock(event)
     if math_random(1, this.rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
         return
     end
