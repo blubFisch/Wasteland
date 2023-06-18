@@ -192,6 +192,18 @@ function Public.give_player_items(player)
     if player.force.name == 'rogue' or player.force.name == 'player' then
         player.insert {name = 'stone-furnace', count = '1'}
     end
+
+    player.insert {name = 'modular-armor', count = 1}
+    local p_armor = player.get_inventory(defines.inventory.character_armor)[1].grid
+    if p_armor and p_armor.valid then
+        for _=1,5 do
+            p_armor.put({name = 'solar-panel-equipment'})
+        end
+        p_armor.put({name = 'battery-equipment'})
+        p_armor.put({name = 'battery-equipment'})
+        p_armor.put({name = 'personal-roboport-equipment'})
+    end
+    player.insert {name = "construction-robot", count = 10}
 end
 
 function Public.set_player_to_outlander(player)
