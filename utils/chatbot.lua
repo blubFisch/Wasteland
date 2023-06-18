@@ -26,6 +26,9 @@ local brain = {
     [1] = {"Our Discord server is at >> " .. discord_url_styled .. " >> Enter that URL into your web browser to join"},
     [2] = {
         'Need an admin? Message in our discord at ' .. discord_url_styled
+    },
+    [3] = {
+        'Need to respawn? Type /suicide into chat'
     }
 }
 
@@ -40,6 +43,11 @@ local links = {
     ['griefing'] = brain[2],
     ['moderator'] = brain[2],
     ['troll'] = brain[2],
+    ['stuck'] = brain[3],
+    ['unstuck'] = brain[3],
+    ['suicide'] = brain[3],
+    ['spawn'] = brain[3],
+    ['respawn'] = brain[3],
 }
 
 local function on_player_joined_game(event)
