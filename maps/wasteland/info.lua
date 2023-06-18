@@ -1,9 +1,9 @@
 local Public = {}
 
 local changelog =
-    [[[font=heading-1]May 2023 updates[/font]
+    [[[font=heading-1]Jun 2023 updates[/font]
 
- - Fix an exploit of using power poles to block bots from rebuilding]]
+ - Limit all weapons research to level 5 to equalise the battlefield more]]
 
 local info =
     [[[font=heading-1]Welcome to the wasteland[/font]
