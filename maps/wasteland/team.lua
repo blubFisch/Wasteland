@@ -192,6 +192,18 @@ function Public.give_player_items(player)
     if player.force.name == 'rogue' or player.force.name == 'player' then
         player.insert {name = 'stone-furnace', count = '1'}
     end
+
+    player.insert {name = 'modular-armor', count = 1}
+    local p_armor = player.get_inventory(defines.inventory.character_armor)[1].grid
+    if p_armor and p_armor.valid then
+        for _=1,5 do
+            p_armor.put({name = 'solar-panel-equipment'})
+        end
+        p_armor.put({name = 'battery-equipment'})
+        p_armor.put({name = 'battery-equipment'})
+        p_armor.put({name = 'personal-roboport-equipment'})
+    end
+    player.insert {name = "construction-robot", count = 10}
 end
 
 function Public.set_player_to_outlander(player)
@@ -624,6 +636,21 @@ local function disable_cluster_grenades(force)
     force.recipes['cluster-grenade'].enabled = false
 end
 
+local function disable_high_weapon_research(force)
+    -- Limit the difference between small/big towns so that new towns have a chance
+    force.technologies['uranium-ammo'].enabled = false
+    force.technologies['power-armor-mk2'].enabled = false
+
+    force.technologies['laser-shooting-speed-6'].enabled = false
+    force.technologies['energy-weapons-damage-6'].enabled = false
+
+    force.technologies['refined-flammables-6'].enabled = false
+    force.technologies['stronger-explosives-6'].enabled = false
+
+    force.technologies['weapon-shooting-speed-6'].enabled = false
+    force.technologies['physical-projectile-damage-6'].enabled = false
+end
+
 local function enable_radar(force)
     force.recipes['radar'].enabled = true
     force.share_chart = true
@@ -655,6 +682,7 @@ function Public.add_new_force(force_name)
     enable_deconstruct(permission_group)
     disable_artillery(force, permission_group)
     disable_spidertron(force, permission_group)
+    disable_high_weapon_research(force)
     disable_rockets(force)
     disable_nukes(force)
     disable_cluster_grenades(force)
@@ -669,8 +697,6 @@ function Public.add_new_force(force_name)
     for _, recipe_name in pairs(all_force_enabled_recipes) do
         force.recipes[recipe_name].enabled = true
     end
-    force.technologies['uranium-ammo'].enabled = false
-    force.technologies['power-armor-mk2'].enabled = false
     force.research_queue_enabled = true
 
     -- balance initial combat
