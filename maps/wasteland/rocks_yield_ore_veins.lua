@@ -28,28 +28,35 @@ local size_raffle = {
 local function spawn_new_rock(event)
     local surface = event.entity.surface
     local position = event.entity.position
-    local x_positive = math_random(1, 2)
-    local y_positive = math_random(1, 2)
-    local pos_x = math_random(1, 980)
-    local pos_y = math_random(1, 980)
-    if x_positive == 2 then
-        pos_x = pos_x * -1
+    local this = ScenarioTable.get_table()
+    local force_names = {}
+    local counter = 0
+    for _, town_center in pairs(this.town_centers) do
+        table_insert(force_names, town_center.market.force.name)
     end
-    if y_positive == 2 then
-        pos_y = pos_y * -1
-    end
-    surface.create_entity({ name = 'flying-text', position = position,
-                            text = pos_x..'_'..pos_y..'_'..x_positive..'_'..y_positive, color = { r = 0, g = 1, b = 0}})
-
-    position = {x = pos_x, y = pos_y}
-    local rock_type = rock_types[math_random(1, #rock_types)]
-    if surface.can_place_entity({name = rock_type[1], position = position, force = 'neutral'}) then
-        surface.create_entity({name = rock_type[1], position = position})
-        surface.create_entity({name = 'flying-text', position = position,
-                               text = rock_type[1], color = {r = 0, g = 1, b = 0}})
-    else
-        surface.create_entity({name = 'flying-text', position = position,
-        text = "cant place here!", color = {r = 0, g = 1, b = 0}})
+    while true do
+        counter = counter + 1
+        if counter > 100 then
+            break
+        end
+        local x_positive = math_random(1, 2)
+        local y_positive = math_random(1, 2)
+        local pos_x = math_random(1, 980)
+        local pos_y = math_random(1, 980)
+        if x_positive == 2 then
+            pos_x = pos_x * -1
+        end
+        if y_positive == 2 then
+            pos_y = pos_y * -1
+        end
+        position = {x = pos_x, y = pos_y}
+        local rock_type = rock_types[math_random(1, #rock_types)]
+        if surface.can_place_entity({name = rock_type[1], position = position, force = 'neutral'}) then
+            if surface.count_entities_filtered({ position = position, radius = 2.0, force = force_names})<= 0  then
+                surface.create_entity({name = rock_type[1], position = position})
+                break
+            end
+        end
     end
 end
 
@@ -234,6 +241,16 @@ local function on_player_mined_entity(event)
     end
 end
 
+
+local function on_entity_died(event)
+
+    if not valid_entities[event.entity.name] then
+        return
+    end
+    log("on entity dies works")
+    spawn_new_rock(event)
+end
+
 local function on_init()
     local this = ScenarioTable.get_table()
     this.rocks_yield_ore_veins = {}
@@ -246,3 +263,4 @@ end
 local Event = require 'utils.event'
 Event.on_init(on_init)
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)
+Event.add(defines.events.on_entity_died, on_entity_died)
