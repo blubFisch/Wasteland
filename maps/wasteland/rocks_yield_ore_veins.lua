@@ -2,19 +2,13 @@ local math_random = math.random
 local math_floor = math.floor
 local table_insert = table.insert
 local table_shuffle = table.shuffle_table
-
+local utils_table = require 'utils.table'
 local ScenarioTable = require 'maps.wasteland.table'
 
 local valid_entities = {
     ['rock-big'] = true,
     ['rock-huge'] = true,
     ['sand-rock-big'] = true
-}
-
-local rock_types = {
-    {'rock-big'},
-    {'rock-huge'},
-    {'sand-rock-big'}
 }
 
 local size_raffle = {
@@ -50,10 +44,11 @@ local function spawn_new_rock(event)
             pos_y = pos_y * -1
         end
         position = {x = pos_x, y = pos_y}
-        local rock_type = rock_types[math_random(1, #rock_types)]
-        if surface.can_place_entity({name = rock_type[1], position = position, force = 'neutral'}) then
-            if surface.count_entities_filtered({ position = position, radius = 2.0, force = force_names})<= 0  then
-                surface.create_entity({name = rock_type[1], position = position})
+        position = {x = 338, y = -18}
+        rock_type = utils_table.get_random_dictionary_entry(valid_entities, true)
+        if surface.can_place_entity({name = rock_type, position = position, force = 'neutral'}) then
+            if surface.count_entities_filtered({ position = position, radius = 5.0, force = force_names})<= 0  then
+                surface.create_entity({name = rock_type, position = position})
                 break
             end
         end
@@ -247,7 +242,6 @@ local function on_entity_died(event)
     if not valid_entities[event.entity.name] then
         return
     end
-    log("on entity dies works")
     spawn_new_rock(event)
 end
 
