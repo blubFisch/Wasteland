@@ -2,9 +2,9 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Jun 2023 updates[/font]
-
- - Limit all weapons research to level 5 to equalise the battlefield more
- - [Experimental] Players spawn with modular armor and personal roboport]]
+ - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap
+ - Further reduce offensive power pole exploit (a power pole now guarantees 10 tiles around it to belong to its town)
+ - Limit all weapons research to level 5 to equalise the battlefield more]]
 
 local info =
     [[[font=heading-1]Welcome to the wasteland[/font]
