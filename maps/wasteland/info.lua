@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Jun 2023 updates[/font]
+ - Starter PvP shields depend on research instead of time
  - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap
  - Further reduce offensive power pole exploit (a power pole now guarantees 10 tiles around it to belong to its town)
  - Limit all weapons research to level 5 to equalise the battlefield more]]

@@ -11,6 +11,7 @@ local ResearchBalance = require 'maps.wasteland.research_balance'
 local CombatBalance = require 'maps.wasteland.combat_balance'
 local Evolution = require 'maps.wasteland.evolution'
 local GameMode = require 'maps.wasteland.game_mode'
+local TownCenter = require 'maps.wasteland.town_center'
 
 local map_pos_frame_id = 'towny_map_position'
 local evo_frame_id = 'towny_evo_display'
@@ -197,6 +198,7 @@ local function on_player_joined_game(event)
         init_map_hint_frame(player)
         init_evo_frame(player)
         GameMode.add_mode_button(player)
+        TownCenter.add_shield_limit_button(player)
 
         Public.initialize(player)
         Public.spawn(player)

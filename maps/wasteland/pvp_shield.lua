@@ -11,6 +11,8 @@ local beam_type = 'electric-beam-no-sound'
 
 Public.default_size = 41
 
+Public.SHIELD_TYPE = {AFK = 1, OFFLINE = 2, STARTER = 3, OTHER = 4}
+
 local function draw_borders(shield)
     local surface = shield.surface
     local right = shield.box.right_bottom.x
@@ -52,14 +54,13 @@ local function scale_size_by_lifetime(shield)
     shield.size = scaled_size
 end
 
-function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, is_afk_mode, is_offline_mode)
+function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, shield_type)
     local this = ScenarioTable.get_table()
 
     local shield = {surface = surface, force = force, center = center, max_size = max_size, max_lifetime_ticks = lifetime_ticks,
-                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, is_afk_mode = is_afk_mode,
-                    is_offline_mode = is_offline_mode}
+                  time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, shield_type = shield_type}
 
-    if is_afk_mode then
+    if shield_type == Public.SHIELD_TYPE.AFK then
         -- Freeze players to avoid abuse
         shield.force.character_running_speed_modifier = -1
         -- Also kick players out of vehicles if needed
@@ -80,7 +81,7 @@ function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
 
-    if shield.is_afk_mode then
+    if shield_type == Public.SHIELD_TYPE.AFK then
         shield.force.character_running_speed_modifier = 0
     end
 
@@ -92,12 +93,14 @@ function Public.remaining_lifetime(shield)
     if shield.max_lifetime_ticks then
         return shield.max_lifetime_ticks - (game.tick - shield.lifetime_start)
     else
-        return false
+        return nil
     end
 end
 
 function Public.format_lifetime_str(lifetime_ticks)
-    if lifetime_ticks > 10 * 60 * 60 * 60 then
+    if lifetime_ticks == nil then
+        return "unknown"
+    elseif lifetime_ticks > 10 * 60 * 60 * 60 then
         return string.format('%.0fh', lifetime_ticks / 60 / 60 / 60)
     elseif lifetime_ticks > 60 * 60 * 60 then
         return string.format('%.1fh', lifetime_ticks / 60 / 60 / 60)
@@ -190,7 +193,7 @@ local function on_player_driving_changed_state(event)
     end
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if shield.force == player.force and shield.is_afk_mode then
+        if shield.force == player.force and Public.SHIELD_TYPE.AFK then
             local vehicle = player.vehicle
             if vehicle and vehicle.valid then
                 -- Kick players out of vehicles if needed

@@ -87,6 +87,10 @@ local function init_score_board(player)
     frame.visible = false
 end
 
+function Public.research_score(evo)
+    return math.min(evo * evo_score_factor, 70)
+end
+
 local function update_score()
     local this = ScenarioTable.get_table()
     local score_to_win = 100
@@ -128,7 +132,7 @@ local function update_score()
                 if town_center ~= nil then
                     town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
                     town_age_scores[town_center] = math.min(town_ages_h[town_center] * age_score_weight, 70)
-                    town_res_scores[town_center] = math.min(town_center.evolution.worms * evo_score_factor, 70)
+                    town_res_scores[town_center] = Public.research_score(town_center.evolution.worms)
                     town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
 
                     if town_total_scores[town_center] >= score_to_win and this.winner == nil then
