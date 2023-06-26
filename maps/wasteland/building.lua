@@ -128,7 +128,7 @@ function Public.near_another_town(force_name, position, surface, radius)
         end
     end
 
-    -- check for nearby town entities
+    -- check for nearby town zoning entities
     if table.size(force_names) > 0 then
         if surface.count_entities_filtered({ position = position, radius = radius,
                                              force = force_names, type=town_zoning_entity_types, limit = 1}) > 0 then
@@ -229,7 +229,7 @@ local function process_built_entities(event)
 
     -- Handle entities placed within protected areas
     if not allowed_entities_keep_force[name] then  -- Some entities like vehicles are always ok to place
-        local radius = 25
+        local radius = 22
 
         if table.array_contains(town_zoning_entity_types, entity.type) then
             radius = 32 -- Prevent using these entities offensively to stop a base from repairing itself. Also prevents power pole connections for power theft
