@@ -44,7 +44,7 @@ local function spawn_new_rock(event)
             pos_y = pos_y * -1
         end
         position = {x = pos_x, y = pos_y}
-        position = {x = 338, y = -18}
+        --position = {x = 338, y = -18} for debugging
         rock_type = utils_table.get_random_dictionary_entry(valid_entities, true)
         if surface.can_place_entity({name = rock_type, position = position, force = 'neutral'}) then
             if surface.count_entities_filtered({ position = position, radius = 5.0, force = force_names})<= 0  then
