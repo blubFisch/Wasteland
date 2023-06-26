@@ -1,7 +1,7 @@
 local Public = {}
 
 local button_id = "wl_game_mode"
-Public.mode = 3
+Public.mode = 2
 Public.mode_names = {
     "Short",
     "Medium",
