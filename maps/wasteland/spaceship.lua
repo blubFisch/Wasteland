@@ -2,9 +2,28 @@ local table_insert = table.insert
 
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
+local Public = {}
 
 local function position_tostring(position)
     return '[x=' .. position.x .. ',y=' .. position.y .. ']'
+end
+
+function Public.place(surface, position)
+    local this = ScenarioTable.get_table()
+    local spaceship = {}
+    position = surface.find_non_colliding_position('market', position, 0, 1, true)
+    spaceship.market = surface.create_entity({name = 'market', position = position, force = 'neutral'})
+    spaceship.market.minable = false
+    spaceship.max_health = 300
+    spaceship.health = spaceship.max_health
+    if spaceship.market and spaceship.market.valid then
+        this.spaceships[position_tostring(spaceship.market.position)] = spaceship
+    end
+end
+
+function Public.is_spaceship_market(market)
+    local this = ScenarioTable.get_table()
+    return this.spaceships[position_tostring(market.position)] ~= nil
 end
 
 local upgrade_functions = {
@@ -12,7 +31,7 @@ local upgrade_functions = {
     [1] = function(player)
         local this = ScenarioTable.get_table()
         local surface = player.surface
-        if player.character.character_inventory_slots_bonus + 5 > 100 then
+        if player.character.character_inventory_slots_bonus + 5 > 50 then
             return false
         end
         player.character.character_inventory_slots_bonus = player.character.character_inventory_slots_bonus + 5
@@ -100,14 +119,14 @@ local function set_offers(market, player)
     -- special offers are only for outlanders and rogues
     local special_offers = {}
     local force = player.force
-    if force.index == game.forces['player'].index or force.index == game.forces['rogue'].index then
-        if player.character.character_inventory_slots_bonus + 5 <= 100 then
-            special_offers[1] = {{{'coin', (player.character.character_inventory_slots_bonus / 5 + 1) * 50}}, 'Upgrade Backpack +5 Slot'}
+    if force.name == 'player' or force.name == 'rogue' then
+        if player.character.character_inventory_slots_bonus + 5 <= 50 then
+            special_offers[1] = {{{'coin', (player.character.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
         else
             special_offers[1] = {{}, 'Maximum Backpack upgrades reached!'}
         end
         if player.character.character_mining_speed_modifier + 0.1 <= 1 then
-            special_offers[2] = {{{'coin', (player.character.character_mining_speed_modifier * 10 + 1) * 400}}, 'Upgrade Mining Speed +10%'}
+            special_offers[2] = {{{'coin', (player.character.character_mining_speed_modifier * 10 + 1) * 250}}, 'Upgrade Mining Speed +10%'}
         else
             special_offers[2] = {{}, 'Maximum Mining Speed upgrades reached!'}
         end
@@ -119,31 +138,33 @@ local function set_offers(market, player)
         end
         local spawn_point = 'Set Spawn Point'
         special_offers[4] = {{}, spawn_point}
-    else
-        local spawn_point = 'Set Spawn Point'
-        special_offers[1] = {{}, spawn_point}
     end
     for _, v in pairs(special_offers) do
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})
     end
 
-    -- coin purchases
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
+    table_insert(market_items, {price = {{'coin', 25}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
     table_insert(market_items, {price = {{'coin', 4}}, offer = {type = 'give-item', item = 'firearm-magazine', count = 5}})
     table_insert(market_items, {price = {{'coin', 10}}, offer = {type = 'give-item', item = 'grenade', count = 6}})
     table_insert(market_items, {price = {{'coin', 40}}, offer = {type = 'give-item', item = 'piercing-rounds-magazine', count = 10}})
-    table_insert(market_items, {price = {{'coin', 75}}, offer = {type = 'give-item', item = 'heavy-armor', count = 1}})
-    table_insert(market_items, {price = {{'coin', 150}}, offer = {type = 'give-item', item = 'modular-armor', count = 1}})
-    -- scrap selling
-    table_insert(market_items, {price = {{'raw-fish', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'wood', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'coin', 100}}, offer = {type = 'give-item', item = 'heavy-armor', count = 1}})
+    table_insert(market_items, {price = {{'coin', 500}}, offer = {type = 'give-item', item = 'modular-armor', count = 1}})
+    table_insert(market_items, {price = {{'coin', 50}}, offer = {type = 'give-item', item = 'solar-panel-equipment', count = 1}})
+    table_insert(market_items, {price = {{'coin', 100}}, offer = {type = 'give-item', item = 'battery-equipment', count = 1}})
+    table_insert(market_items, {price = {{'coin', 200}}, offer = {type = 'give-item', item = 'personal-roboport-equipment', count = 1}})
+    table_insert(market_items, {price = {{'coin', 50}}, offer = {type = 'give-item', item = 'construction-robot', count = 1}})
+    table_insert(market_items, {price = {{'coin', 100}}, offer = {type = 'give-item', item = 'car', count = 1}})
+    table_insert(market_items, {price = {{'coin', 2500}}, offer = {type = 'give-item', item = 'tank', count = 1}})
+
+    table_insert(market_items, {price = {{'raw-fish', 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
+    table_insert(market_items, {price = {{'wood', 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
     table_insert(market_items, {price = {{'copper-cable', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'copper-plate', 5}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'copper-plate', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'iron-stick', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'iron-gear-wheel', 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-plate', 5}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'steel-plate', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'empty-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'iron-plate', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'steel-plate', 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'empty-barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
     table_insert(market_items, {price = {{'crude-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'heavy-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'light-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
@@ -161,6 +182,8 @@ local function set_offers(market, player)
     table_insert(market_items, {price = {{'heat-pipe', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'pipe', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'pipe-to-ground', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'car', 1}}, offer = {type = 'give-item', item = 'coin', count = 10}})
+    table_insert(market_items, {price = {{'tank', 1}}, offer = {type = 'give-item', item = 'coin', count = 50}})
 
     for _, item in pairs(market_items) do
         market.add_market_item(item)
@@ -172,25 +195,12 @@ local function refresh_offers(event)
     if player_index == nil then
         return
     end
-    local player = game.players[event.player_index]
-    local this = ScenarioTable.get_table()
     local market = event.entity or event.market
-    if not market then
-        return
-    end
-    if not market.valid then
-        return
-    end
-    if market.name ~= 'crash-site-spaceship-market' then
-        return
-    end
-
-    local key = position_tostring(market.position)
-    local spaceship = this.spaceships[key]
-    if not spaceship then
+    if not market or not market.valid or market.name ~= 'market' or not Public.is_spaceship_market(market) then
         return
     end
     clear_offers(market)
+    local player = game.players[event.player_index]
     set_offers(market, player)
 end
 
@@ -200,12 +210,13 @@ local function offer_purchased(event)
     local market = event.market
     local offer_index = event.offer_index
     local count = event.count
-    if not upgrade_functions[offer_index] then
+    if not Public.is_spaceship_market(market) then
         return
     end
-    local key = position_tostring(market.position)
-    local spaceship = this.spaceships[key]
-    if not spaceship then
+    if player.force.name ~= 'player' and player.force.name ~= 'rogue' then
+        return
+    end
+    if not upgrade_functions[offer_index] then
         return
     end
     if upgrade_functions[offer_index](player) then
@@ -231,18 +242,15 @@ local function on_gui_opened(event)
     local gui_type = event.gui_type
     if gui_type == defines.gui_type.entity then
         local entity = event.entity
-        if entity ~= nil or entity.valid then
-            -- crash-site-spaceship
-            if entity.name == 'crash-site-spaceship-market' then
-                refresh_offers(event)
-            end
+        if entity ~= nil and entity.valid and entity.name == 'market' then
+            refresh_offers(event)
         end
     end
 end
 
 local function on_market_item_purchased(event)
     local market = event.market
-    if market.name == 'crash-site-spaceship-market' then
+    if market.name == 'market' and Public.is_spaceship_market(market) then
         offer_purchased(event)
         refresh_offers(event)
     end
@@ -259,7 +267,7 @@ end
 
 local function on_entity_died(event)
     local entity = event.entity
-    if entity.name == 'crash-site-spaceship-market' then
+    if entity.name == 'market' then
         kill_spaceship(entity)
     end
 end
@@ -267,3 +275,5 @@ end
 Event.add(defines.events.on_gui_opened, on_gui_opened)
 Event.add(defines.events.on_market_item_purchased, on_market_item_purchased)
 Event.add(defines.events.on_entity_died, on_entity_died)
+
+return Public

@@ -192,18 +192,6 @@ function Public.give_player_items(player)
     if player.force.name == 'rogue' or player.force.name == 'player' then
         player.insert {name = 'stone-furnace', count = '1'}
     end
-
-    player.insert {name = 'modular-armor', count = 1}
-    local p_armor = player.get_inventory(defines.inventory.character_armor)[1].grid
-    if p_armor and p_armor.valid then
-        for _=1,5 do
-            p_armor.put({name = 'solar-panel-equipment'})
-        end
-        p_armor.put({name = 'battery-equipment'})
-        p_armor.put({name = 'battery-equipment'})
-        p_armor.put({name = 'personal-roboport-equipment'})
-    end
-    player.insert {name = "construction-robot", count = 10}
 end
 
 function Public.set_player_to_outlander(player)
@@ -729,6 +717,9 @@ local function kill_force(force_name, cause)
     local this = ScenarioTable.get_table()
     local force = game.forces[force_name]
     local town_center = this.town_centers[force_name]
+    if not town_center then
+        return
+    end
     local market = town_center.market
     local position = market.position
     local surface = market.surface
@@ -1105,7 +1096,6 @@ local Event = require 'utils.event'
 Event.add(defines.events.on_player_dropped_item, on_player_dropped_item)
 Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.add(defines.events.on_entity_died, on_entity_died)
-Event.add(defines.events.on_post_entity_died, on_post_entity_died)
 Event.add(defines.events.on_console_command, on_console_command)
 Event.add(defines.events.on_console_chat, on_console_chat)
 Event.add(defines.events.on_forces_merged, on_forces_merged)

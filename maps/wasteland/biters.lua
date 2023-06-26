@@ -255,7 +255,7 @@ local function on_unit_group_finished_gathering(event)
         local force = target.force
         local this = ScenarioTable.get_table()
         local town_center = this.town_centers[force.name]
-        if not swarm_eligible_town(town_center) then
+        if not town_center or not swarm_eligible_town(town_center) then
             return
         end
         unit_group.set_command(

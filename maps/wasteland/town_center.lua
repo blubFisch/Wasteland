@@ -368,6 +368,9 @@ end
 function Public.set_market_health(entity, final_damage_amount)
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[entity.force.name]
+    if not town_center then
+        return
+    end
     town_center.health = math_floor(town_center.health - final_damage_amount)
     if town_center.health > town_center.max_health then
         town_center.health = town_center.max_health

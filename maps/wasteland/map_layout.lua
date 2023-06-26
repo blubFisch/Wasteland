@@ -8,6 +8,7 @@ local Public = {}
 local get_noise = require 'utils.get_noise'
 local ScenarioTable = require 'maps.wasteland.table'
 local Scrap = require 'maps.wasteland.scrap'
+local Spaceship = require 'maps.wasteland.spaceship'
 
 
 Public.central_ores_radius = 15
@@ -175,10 +176,7 @@ end
 local size_of_scrap_raffle = #scrap_raffle
 
 local function place_scrap(surface, position)
-    local this = ScenarioTable.get_table()
-    if this.spaceships == nil then
-        this.spaceships = {}
-    end
+    
     -- place turrets
     if math_random(1, 700) == 1 then
         if position.x ^ 2 + position.x ^ 2 > 4096 then
@@ -188,6 +186,12 @@ local function place_scrap(surface, position)
             e.insert({name = 'piercing-rounds-magazine', count = 100})
             return
         end
+    end
+
+    -- place market spaceship
+    if math_random(1, 1000) == 1 then
+        Spaceship.place(surface, position)
+        return
     end
 
     -- place scrap containers with loot

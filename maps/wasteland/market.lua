@@ -4,6 +4,7 @@ local ScenarioTable = require 'maps.wasteland.table'
 local TownCenter = require 'maps.wasteland.town_center'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
+local Spaceship = require 'maps.wasteland.spaceship'
 
 
 local _coin_stack = {name = 'coin', count = 1}
@@ -106,7 +107,7 @@ local upgrade_functions = {
             if this.pvp_shield_warned[player.force.name] ~= nil and game.tick - this.pvp_shield_warned[player.force.name] < 60 * 60 then
                 local town_control_range = TownCenter.get_town_control_range(town_center)
                 if not TownCenter.enemy_players_nearby(town_center, town_control_range) then
-                    PvPShield.add_shield(surface, force, market.position, PvPShield.default_size, shield_lifetime_ticks, 2 * 60 * 60, true)
+                    PvPShield.add_shield(surface, force, market.position, PvPShield.default_size, shield_lifetime_ticks, 2 * 60 * 60, PvPShield.SHIELD_TYPE.AFK)
                     surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
                     this.pvp_shield_warned[player.force.name] = nil
                 else
@@ -146,7 +147,7 @@ local function set_offers(town_center)
         special_offers[1] = {{}, 'Maximum Health upgrades reached!'}
     end
     if force.character_inventory_slots_bonus + 5 <= 50 then
-        special_offers[2] = {{{'coin', (force.character_inventory_slots_bonus / 5 + 1) * 50}}, 'Upgrade Backpack +5 Slot'}
+        special_offers[2] = {{{'coin', (force.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
     else
         special_offers[2] = {{}, 'Maximum Backpack upgrades reached!'}
     end
@@ -303,7 +304,7 @@ local function on_gui_opened(event)
     if entity == nil or not entity.valid then
         return
     end
-    if entity.name == 'market' then
+    if entity.name == 'market' and not Spaceship.is_spaceship_market(entity) then
         refresh_offers(event)
     end
 end
@@ -311,7 +312,7 @@ end
 -- called for all market events
 local function on_market_item_purchased(event)
     local market = event.market
-    if market.name == 'market' then
+    if market.name == 'market' and not Spaceship.is_spaceship_market(market) then
         offer_purchased(event)
         refresh_offers(event)
     end
