@@ -2,7 +2,7 @@ local math_random = math.random
 local math_floor = math.floor
 local table_insert = table.insert
 local table_shuffle = table.shuffle_table
-
+local utils_table = require 'utils.table'
 local ScenarioTable = require 'maps.wasteland.table'
 
 local valid_entities = {
@@ -18,6 +18,42 @@ local size_raffle = {
     {'small', 30, 40},
     {'tiny', 10, 20}
 }
+
+local function spawn_new_rock(event)
+    local surface = event.entity.surface
+    local position = event.entity.position
+    local this = ScenarioTable.get_table()
+    local force_names = {}
+    local counter = 0
+    for _, town_center in pairs(this.town_centers) do
+        table_insert(force_names, town_center.market.force.name)
+    end
+    while true do
+        counter = counter + 1
+        if counter > 100 then
+            break
+        end
+        local x_positive = math_random(1, 2)
+        local y_positive = math_random(1, 2)
+        local pos_x = math_random(1, 980)
+        local pos_y = math_random(1, 980)
+        if x_positive == 2 then
+            pos_x = pos_x * -1
+        end
+        if y_positive == 2 then
+            pos_y = pos_y * -1
+        end
+        position = {x = pos_x, y = pos_y}
+        --position = {x = 338, y = -18} for debugging
+        rock_type = utils_table.get_random_dictionary_entry(valid_entities, true)
+        if surface.can_place_entity({name = rock_type, position = position, force = 'neutral'}) then
+            if surface.count_entities_filtered({ position = position, radius = 5.0, force = force_names})<= 0  then
+                surface.create_entity({name = rock_type, position = position})
+                break
+            end
+        end
+    end
+end
 
 local function get_chances()
     local chances = {}
@@ -190,6 +226,7 @@ local function on_player_mined_entity(event)
     if not valid_entities[event.entity.name] then
         return
     end
+    spawn_new_rock(event)
     if math_random(1, this.rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
         return
     end
@@ -197,6 +234,15 @@ local function on_player_mined_entity(event)
     if this.tutorials[player.index] then
         this.tutorials[player.index].mined_rock = true
     end
+end
+
+
+local function on_entity_died(event)
+
+    if not valid_entities[event.entity.name] then
+        return
+    end
+    spawn_new_rock(event)
 end
 
 local function on_init()
@@ -211,3 +257,4 @@ end
 local Event = require 'utils.event'
 Event.on_init(on_init)
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)
+Event.add(defines.events.on_entity_died, on_entity_died)
