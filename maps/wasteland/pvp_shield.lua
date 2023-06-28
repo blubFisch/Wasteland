@@ -81,7 +81,7 @@ function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
 
-    if shield_type == Public.SHIELD_TYPE.AFK then
+    if shield.shield_type == Public.SHIELD_TYPE.AFK then
         shield.force.character_running_speed_modifier = 0
     end
 
@@ -193,7 +193,7 @@ local function on_player_driving_changed_state(event)
     end
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if shield.force == player.force and Public.SHIELD_TYPE.AFK then
+        if shield.force == player.force and shield.shield_type == Public.SHIELD_TYPE.AFK then
             local vehicle = player.vehicle
             if vehicle and vehicle.valid then
                 -- Kick players out of vehicles if needed
