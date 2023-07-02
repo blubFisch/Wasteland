@@ -25,7 +25,7 @@ local Score = require 'maps.wasteland.score'
 local Evolution = require 'maps.wasteland.evolution'
 
 local town_radius = 20
-local starter_shield_size = 131
+local starter_shield_size = 101
 local radius_between_towns = starter_shield_size + 2
 
 local ore_amount = 1200
