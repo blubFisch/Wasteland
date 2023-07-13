@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Jun 2023 updates[/font]
+ - No more tanks in scrap - but you can still buy them at outlander markets
  - Starter PvP shields depend on research instead of time
  - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap
  - Rocks respawn!
