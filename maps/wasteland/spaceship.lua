@@ -114,6 +114,10 @@ local function clear_offers(market)
 end
 
 local function set_offers(market, player)
+    if not player.character then
+        return
+    end
+
     local market_items = {}
 
     -- special offers are only for outlanders and rogues
