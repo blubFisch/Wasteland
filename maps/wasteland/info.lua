@@ -2,8 +2,8 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Jun 2023 updates[/font]
+ - Starter PvP shields now depend on total score
  - No more tanks in scrap - but you can still buy them at outlander markets
- - Starter PvP shields depend on research instead of time
  - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap
  - Rocks respawn!
  - Further reduce offensive power pole exploit (a power pole now guarantees 10 tiles around it to belong to its town)

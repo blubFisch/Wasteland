@@ -6,6 +6,7 @@ local ResearchBalance = require 'maps.wasteland.research_balance'
 local Utils = require 'maps.wasteland.utils'
 local Team = require 'maps.wasteland.team'
 local GameMode = require 'maps.wasteland.game_mode'
+local math_max = math.max
 
 local Public = {}
 local button_id = 'towny-score-button'
@@ -87,8 +88,33 @@ local function init_score_board(player)
     frame.visible = false
 end
 
-function Public.research_score(evo)
-    return math.min(evo * evo_score_factor, 70)
+function Public.research_score(town_center)
+    return math.min(town_center.evolution.worms * evo_score_factor, 70)
+end
+
+function Public.survival_score(town_center)
+    return math.min(Public.age_h(town_center) * age_score_weight, 70)
+end
+
+function Public.age_h(town_center)
+    return (game.tick - town_center.creation_tick) / 60 / 3600
+end
+
+function Public.total_score(town_center)
+    return Public.research_score(town_center) + Public.survival_score(town_center)
+end
+
+function Public.survival_score(town_center)
+    return math.min(Public.age_h(town_center) * age_score_weight, 70)
+end
+
+function Public.highest_total_score()
+    local this = ScenarioTable.get_table()
+    local max_score = 0
+    for _, town_center in pairs(this.town_centers) do
+        max_score = math_max(max_score, Public.total_score(town_center))
+    end
+    return max_score
 end
 
 local function update_score()
@@ -125,15 +151,9 @@ local function update_score()
             end
 
             local town_total_scores = {}
-            local town_age_scores = {}
-            local town_ages_h = {}
-            local town_res_scores = {}
             for _, town_center in pairs(this.town_centers) do
                 if town_center ~= nil then
-                    town_ages_h[town_center] = (game.tick - town_center.creation_tick) / 60 / 3600
-                    town_age_scores[town_center] = math.min(town_ages_h[town_center] * age_score_weight, 70)
-                    town_res_scores[town_center] = Public.research_score(town_center.evolution.worms)
-                    town_total_scores[town_center] = town_age_scores[town_center] + town_res_scores[town_center]
+                    town_total_scores[town_center] = Public.total_score(town_center)
 
                     if town_total_scores[town_center] >= score_to_win and this.winner == nil then
                         local winner_force = town_center.market.force
@@ -166,10 +186,10 @@ local function update_score()
                 }
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
-                information_table.add {type = 'label', caption = string.format('%.1f', town_res_scores[town_center]) ..
+                information_table.add {type = 'label', caption = string.format('%.1f', Public.research_score(town_center)) ..
                         " (" .. ResearchBalance.format_town_modifier(town_center.research_balance.current_modifier) .. ")"}
                 information_table.style.column_alignments[3] = 'right'
-                information_table.add {type = 'label', caption = string.format('%.1f  (%.1fh)', town_age_scores[town_center], town_ages_h[town_center])}
+                information_table.add {type = 'label', caption = string.format('%.1f  (%.1fh)', Public.survival_score(town_center), Public.age_h(town_center))}
                 information_table.style.column_alignments[4] = 'right'
                 information_table.add {type = 'label', caption = string.format('%.1f', town_total_scores[town_center])}
                 information_table.style.column_alignments[5] = 'right'

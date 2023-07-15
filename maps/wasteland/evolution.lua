@@ -483,17 +483,6 @@ local function get_relative_worm_evolution(position)
     return relative_evolution
 end
 
-function Public.get_highest_evolution()
-    local this = ScenarioTable.get_table()
-    local max_evo = 0
-    for _, town_center in pairs(this.town_centers) do
-		if town_center.evolution.worms > max_evo then
-			max_evo = town_center.evolution.worms
-		end
-    end
-    return max_evo
-end
-
 function Public.get_evolution(position, estimate_extra_range)
     return get_relative_biter_evolution(position, estimate_extra_range)
 end

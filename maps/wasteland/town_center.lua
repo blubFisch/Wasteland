@@ -413,20 +413,20 @@ function Public.get_town_control_range(town_center)
     return 50 + town_center.evolution.worms * 200
 end
 
-local button_id = "wasteland_shield_limit"
+local shield_button_id = "wasteland_shield_limit"
 function Public.add_shield_limit_button(player)
-    if player.gui.top[button_id] then
-        player.gui.top[button_id].destroy()
+    if player.gui.top[shield_button_id] then
+        player.gui.top[shield_button_id].destroy()
     end
     local button = player.gui.top.add {
         type = 'sprite-button',
         caption = '[SHIELD LIMIT]',
-        name = button_id
+        name = shield_button_id
     }
-    button.tooltip = "All towns with fewer research score than this limit get a shield"
+    button.tooltip = "All towns with fewer score than this limit get a shield"
     button.style.font_color = {r = 1, g = 1, b = 1}
     button.style.minimal_height = 38
-    button.style.minimal_width = 170
+    button.style.minimal_width = 140
     button.style.top_padding = 2
     button.style.left_padding = 4
     button.style.right_padding = 4
@@ -446,8 +446,8 @@ local function update_pvp_shields_display()
             elseif shield.shield_type == PvPShield.SHIELD_TYPE.AFK then
                 info = info .. 'AFK ' .. lifetime_str
             elseif shield.shield_type == PvPShield.SHIELD_TYPE.STARTER then
-                local town_research_score = Score.research_score(town_center.evolution.worms)
-                info = info .. 'Until ' .. string.format('%.1f / %.1f', town_research_score, this.pvp_shield_starter_limit) .. ' research score'
+                local score = Score.total_score(town_center)
+                info = info .. 'Until ' .. string.format('%.1f / %.1f', score, this.pvp_shield_starter_limit) .. ' score'
             end
         else
             info = ''
@@ -482,7 +482,7 @@ local function update_pvp_shields_display()
     -- Update Shield limit UIs
     local this = ScenarioTable.get_table()
     for _, player in pairs(game.connected_players) do
-        player.gui.top[button_id].caption = "Starter shield limit: " .. string.format('%.1f', this.pvp_shield_starter_limit)
+        player.gui.top[shield_button_id].caption = "Shield limit: " .. string.format('%.1f', this.pvp_shield_starter_limit)
     end
 end
 
@@ -492,14 +492,14 @@ local function manage_pvp_shields()
     local size = PvPShield.default_size
     local offset_to_max_evo = 10
     
-    this.pvp_shield_starter_limit = math.max(this.pvp_shield_starter_limit, Score.research_score(Evolution.get_highest_evolution()) - offset_to_max_evo, 0)
+    this.pvp_shield_starter_limit = math.max(this.pvp_shield_starter_limit, Score.highest_total_score() - offset_to_max_evo, 0)
 
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
-        local town_research_score = Score.research_score(town_center.evolution.worms)
-        local offline_shield_eligible = town_research_score > 0.05
+        local score = Score.total_score(town_center)
+        local offline_shield_eligible = score > 0.05
 
         if table_size(force.connected_players) == 0 and offline_shield_eligible then
             if not shield then
@@ -540,14 +540,14 @@ local function manage_pvp_shields()
             this.pvp_shield_offline_activations[force.index] = nil
             
             -- Add starter shield
-            if not shield and town_research_score < this.pvp_shield_starter_limit then
+            if not shield and score < this.pvp_shield_starter_limit then
                 force.print("Your town deploys a PvP shield because there are more advanced towns on the map", Utils.scenario_color)
                 PvPShield.add_shield(market.surface, market.force, market.position, starter_shield_size, nil, 60 * 60, PvPShield.SHIELD_TYPE.STARTER)
                 update_pvp_shields_display()
             end
             
             -- Remove starter shield
-            if shield and shield.shield_type == PvPShield.SHIELD_TYPE.STARTER and town_research_score > this.pvp_shield_starter_limit then
+            if shield and shield.shield_type == PvPShield.SHIELD_TYPE.STARTER and score > this.pvp_shield_starter_limit then
                 force.print("Your town's PvP starter shield has been deactivated as you have reached a higher level of advancement.", Utils.scenario_color)
                 PvPShield.remove_shield(shield)
             end
