@@ -182,8 +182,6 @@ local function set_offers(market, player)
     table_insert(market_items, {price = {{'heat-pipe', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'pipe', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'pipe-to-ground', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'car', 1}}, offer = {type = 'give-item', item = 'coin', count = 10}})
-    table_insert(market_items, {price = {{'tank', 1}}, offer = {type = 'give-item', item = 'coin', count = 50}})
 
     for _, item in pairs(market_items) do
         market.add_market_item(item)
