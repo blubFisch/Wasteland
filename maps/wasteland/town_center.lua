@@ -499,7 +499,7 @@ local function manage_pvp_shields()
         local force = market.force
         local shield = this.pvp_shields[force.name]
         local score = Score.total_score(town_center)
-        local offline_shield_eligible = score > 0.05
+        local offline_shield_eligible = Score.research_score(town_center) > 5
 
         if table_size(force.connected_players) == 0 and offline_shield_eligible then
             if not shield then
