@@ -4,7 +4,6 @@ local math_random = math.random
 local table_insert = table.insert
 local math_floor = math.floor
 local math_sqrt = math.sqrt
-local math_min = math.min
 local table_shuffle = table.shuffle_table
 local table_size = table.size
 
@@ -17,10 +16,8 @@ local Colors = require 'maps.wasteland.colors'
 local Enemy = require 'maps.wasteland.enemy'
 local Color = require 'utils.color_presets'
 local PvPShield = require 'maps.wasteland.pvp_shield'
-local Evolution = require 'maps.wasteland.evolution'
 local Utils = require 'maps.wasteland.utils'
 local MapLayout = require 'maps.wasteland.map_layout'
-local GameMode = require 'maps.wasteland.game_mode'
 local Score = require 'maps.wasteland.score'
 local Evolution = require 'maps.wasteland.evolution'
 
@@ -413,26 +410,6 @@ function Public.get_town_control_range(town_center)
     return 50 + town_center.evolution.worms * 200
 end
 
-local shield_button_id = "wasteland_shield_limit"
-function Public.add_shield_limit_button(player)
-    if player.gui.top[shield_button_id] then
-        player.gui.top[shield_button_id].destroy()
-    end
-    local button = player.gui.top.add {
-        type = 'sprite-button',
-        caption = '[SHIELD LIMIT]',
-        name = shield_button_id
-    }
-    button.tooltip = "All towns with fewer score than this limit get a shield"
-    button.style.font_color = {r = 1, g = 1, b = 1}
-    button.style.minimal_height = 38
-    button.style.minimal_width = 140
-    button.style.top_padding = 2
-    button.style.left_padding = 4
-    button.style.right_padding = 4
-    button.style.bottom_padding = 2
-end
-
 local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
@@ -440,7 +417,7 @@ local function update_pvp_shields_display()
         local info
         if shield then
             info = 'PvP Shield: '
-            lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
+            local lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
             if shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
                 info = info .. 'While offline, max ' .. lifetime_str
             elseif shield.shield_type == PvPShield.SHIELD_TYPE.AFK then
@@ -477,12 +454,6 @@ local function update_pvp_shields_display()
         info_enemies = info_enemies .. " (" .. string.format('%.0f',  town_control_range) .. " tiles)"
         rendering.set_text(town_center.enemies_text, info_enemies)
         rendering.set_color(town_center.enemies_text, color)
-    end
-    
-    -- Update Shield limit UIs
-    local this = ScenarioTable.get_table()
-    for _, player in pairs(game.connected_players) do
-        player.gui.top[shield_button_id].caption = "Shield limit: " .. string.format('%.1f', this.pvp_shield_starter_limit)
     end
 end
 
