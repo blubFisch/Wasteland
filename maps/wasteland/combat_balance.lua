@@ -154,7 +154,7 @@ function Public.format_dmg_modifier(force)
 end
 
 function Public.dmg_modifier_for_force(force)
-    if force == game.forces.player or force == game.forces.rogue then
+    if force == game.forces.player or force == game.forces.rogue or force == game.forces.neutral then
         return 1
     else
         return 1 / #force.connected_players
