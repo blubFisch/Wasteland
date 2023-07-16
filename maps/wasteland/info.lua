@@ -3,6 +3,7 @@ local Public = {}
 local changelog =
     [[[font=heading-1]Jul 2023 updates[/font]
  - Starter PvP shields now depend on total score
+ - Can build labs in town center again
  - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap]]
 
 local info =
