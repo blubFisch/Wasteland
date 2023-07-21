@@ -72,4 +72,20 @@ end
 
 Event.on_nth_tick(60, tutorials_tick)
 
+commands.add_command(
+        'skip-tutorial',
+        'Turns off the tutorial',
+        function(cmd)
+            local player = game.player
+
+            if not player or not player.valid then
+                return
+            end
+
+            local this = ScenarioTable.get_table()
+
+            player.set_goal_description("")
+            this.tutorials[player.index] = nil
+        end
+)
 return Public
