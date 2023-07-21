@@ -55,7 +55,8 @@ local info_adv =
     except logistics entities (inserters, belts, boxes, rails) that can be used to steal items
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
-- Biter waves with boss units (the ones with health bar) will attack more advanced towns while their member players are online]]
+- Biter waves with boss units (the ones with health bar) will attack more advanced towns while their member players are online
+- Played this for the 100th time? Try /skip-tutorial]]
 
 function Public.toggle_button(player)
     if player.gui.top['towny_map_intro_button'] then
