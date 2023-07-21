@@ -37,7 +37,7 @@ function Public.get_town_league(town_center)
     if score >= 80 then return 5 end
     if score >= 60 then return 4 end
     if score >= 40 then return 3 end
-    if tank_researched then return 2 end
+    if score >= 20 or tank_researched then return 2 end
     return 1
 end
 
