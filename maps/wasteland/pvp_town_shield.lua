@@ -176,16 +176,20 @@ local function manage_pvp_shields()
         end
 
         -- Balancing shield
-        local higher_league_nearby = Public.enemy_players_nearby(town_center, Public.league_balance_shield_size / 2 * 1.5, town_league)
+        local higher_league_nearby = Public.enemy_players_nearby(town_center, Public.league_balance_shield_size / 2 * 1.7, town_league)
+        if higher_league_nearby then
+            town_center.last_higher_league_nearby = game.tick
+        end
 
         if not shield and higher_league_nearby then
-            force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
+            game.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
             PvPShield.add_shield(market.surface, market.force, market.position, Public.league_balance_shield_size, nil, 10 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
             update_pvp_shields_display()
         end
 
-        if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby then
-            force.print("Your town's Balancing PvP Shield has been deactivated as there are no more higher league players nearby.", Utils.scenario_color)
+        local protect_time_after_nearby = 3 * 60 * 60
+        if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby and game.tick - town_center.last_higher_league_nearby > protect_time_after_nearby then
+            game.print("Your town's Balancing PvP Shield has been deactivated as there are no more higher league players nearby.", Utils.scenario_color)
             PvPShield.remove_shield(shield)
         end
     end
@@ -222,7 +226,7 @@ local function update_leagues()
             rendering.set_text(this.league_labels[player.index], "League " .. league)
 
             if this.previous_leagues[player.index] ~= nil and league ~= this.previous_leagues[player.index] then
-                player.print("You are now in league " .. league, Utils.scenario_color)
+                player.print("You are now in League " .. league, Utils.scenario_color)
             end
             this.previous_leagues[player.index] = league
         end
