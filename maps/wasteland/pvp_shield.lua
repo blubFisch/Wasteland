@@ -270,7 +270,7 @@ end
 
 Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
 Event.add(defines.events.on_player_changed_position, on_player_changed_position)
-Event.on_nth_tick(60, update_shield_lifetime)
+Event.on_nth_tick(3, update_shield_lifetime)
 Event.add(defines.events.on_tick, scan_protect_shield_area)
 
 return Public
