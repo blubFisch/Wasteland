@@ -589,13 +589,6 @@ local function on_player_repaired_entity(event)
     end
 end
 
---local function on_robot_repaired_entity(event)
---	local entity = event.entity
---	if entity.name == "market" then
---		Public.set_market_health(entity, -4)
---	end
---end
-
 local function on_entity_damaged(event)
     local entity = event.entity
     if not entity.valid then
@@ -650,7 +643,6 @@ commands.add_command(
 
 Event.add(defines.events.on_built_entity, on_built_entity)
 Event.add(defines.events.on_player_repaired_entity, on_player_repaired_entity)
---Event.add(defines.events.on_robot_repaired_entity, on_robot_repaired_entity)
 Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 
 return Public
