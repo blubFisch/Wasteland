@@ -34,10 +34,11 @@ function Public.get_town_league(town_center)
     local score = Score.total_score(town_center)
     local tank_researched = town_center.market.force.technologies['tank'].researched
 
-    if score >= 80 then return 5 end
-    if score >= 60 then return 4 end
-    if score >= 40 then return 3 end
-    if score >= 20 or tank_researched then return 2 end
+    if score >= 80 then return 6 end
+    if score >= 60 then return 5 end
+    if score >= 45 then return 4 end
+    if score >= 30 then return 3 end
+    if score >= 15 or tank_researched then return 2 end
     return 1
 end
 
