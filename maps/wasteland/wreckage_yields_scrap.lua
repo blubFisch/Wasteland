@@ -41,15 +41,15 @@ local entity_loot_chance = {
     {name = 'processing-unit', chance = 2},
     --{name = "rocket", chance = 3},
     --{name = "rocket-control-unit", chance = 1},
-    {name = "rocket-fuel", chance = 5},
+    {name = "rocket-fuel", chance = 10},
     {name = 'solid-fuel', chance = 100},
     {name = 'steel-plate', chance = 150},
     {name = 'sulfuric-acid-barrel', chance = 15},
     --{name = "uranium-cannon-shell", chance = 1},
-    {name = "uranium-fuel-cell", chance = 5},
+    {name = "uranium-fuel-cell", chance = 10},
     --{name = "used-up-uranium-fuel-cell", chance = 1},
     {name = 'water-barrel', chance = 10},
-    {name = 'logistic-chest-requester', chance = 8}
+    {name = 'logistic-chest-requester', chance = 15}
 }
 
 -- positive numbers can scale, 0 is disabled, and negative numbers are fixed absolute values
@@ -75,7 +75,6 @@ local entity_loot_amounts = {
     ['explosives'] = 4,
     ['green-wire'] = 8,
     ['grenade'] = 6,
-    ['heat-pipe'] = 1,
     ['heavy-oil-barrel'] = 3,
     ['iron-gear-wheel'] = 8,
     ['iron-plate'] = 16,
@@ -97,7 +96,7 @@ local entity_loot_amounts = {
     ['steel-plate'] = 4,
     ['sulfuric-acid-barrel'] = 3,
     --["uranium-cannon-shell"] = 2,
-    ["uranium-fuel-cell"] = 0.8,
+    ["uranium-fuel-cell"] = 5,
     --["used-up-uranium-fuel-cell"] = 1,
     ['water-barrel'] = 3,
     ['logistic-chest-requester'] = -1
@@ -130,8 +129,8 @@ local function on_player_mined_entity(event)
 
     local scrap = scrap_raffle[math.random(1, size_of_scrap_raffle)]
 
-    local scrap_amount_modifier = 3
-    local amount_bonus = scrap_amount_modifier * (game.forces.enemy.evolution_factor * 2) + (game.forces.player.mining_drill_productivity_bonus * 2)
+    local scrap_amount_modifier = 4
+    local amount_bonus = scrap_amount_modifier + (game.forces.player.mining_drill_productivity_bonus * 2)
     local amount
     if entity_loot_amounts[scrap] <= 0 then
         amount = math.abs(entity_loot_amounts[scrap])
