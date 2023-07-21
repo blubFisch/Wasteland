@@ -133,7 +133,7 @@ local function vector_norm(vector)
     return math_sqrt(vector.x ^ 2 + vector.y ^ 2)
 end
 
-function Public.protected_by_other_zones(surface, position, force, distance)
+function Public.protected_by_shields(surface, position, force, distance)
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
         if not (shield.force == force or surface ~= shield.surface) then
