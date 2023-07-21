@@ -3,6 +3,7 @@ local Public = {}
 local table_size = table.size
 local math_floor = math.floor
 local math_sqrt = math.sqrt
+local math_max = math.max
 
 local Score = require 'maps.wasteland.score'
 local ScenarioTable = require 'maps.wasteland.table'
@@ -10,7 +11,7 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 local Event = require 'utils.event'
 
-Public.starter_shield_size = 101
+Public.league_balance_shield_size = 101
 
 function Public.in_extended_control_range(position)
     local this = ScenarioTable.get_table()
@@ -18,7 +19,7 @@ function Public.in_extended_control_range(position)
         local town_position = town_center.market.position
 
         local distance = math_floor(math_sqrt((position.x - town_position.x) ^ 2 + (position.y - town_position.y) ^ 2))
-        if distance < Public.get_town_control_range(town_center) * 1.5 + Public.starter_shield_size / 2 then   -- Account for growing control range
+        if distance < Public.get_town_control_range(town_center) * 1.5 + Public.league_balance_shield_size / 2 then   -- Account for growing control range
             return true
         end
     end
@@ -27,6 +28,38 @@ end
 
 function Public.get_town_control_range(town_center)
     return 50 + town_center.evolution.worms * 200
+end
+
+function Public.get_town_league(town_center)
+    local score = Score.total_score(town_center)
+    local tank_researched = town_center.market.force.technologies['tank'].researched
+
+    if score >= 80 then return 5 end
+    if score >= 60 then return 4 end
+    if score >= 40 then return 3 end
+    if tank_researched then return 2 end
+    return 1
+end
+
+local function get_league_by_items(player)
+    if player.character and player.character.vehicle and player.character.vehicle.name == "tank" then
+        return 2
+    else
+        return 1
+    end
+end
+
+function Public.get_player_league(player)
+    local this = ScenarioTable.get_table()
+    local town_center = this.town_centers[player.force.name]
+
+    local league = get_league_by_items(player)
+    if town_center then
+        local town_league = Public.get_town_league(town_center)
+        league = math_max(town_league, league)
+    end
+
+    return league
 end
 
 function Public.enemy_players_nearby(town_center, max_distance)
@@ -46,24 +79,38 @@ function Public.enemy_players_nearby(town_center, max_distance)
     return false
 end
 
+function Public.are_higher_league_players_nearby(town_center, max_distance, town_league)
+    local market = town_center.market
+    local town_position = market.position
+    local town_force = market.force
+
+    for _, player in pairs(game.connected_players) do
+        if player.surface == market.surface and player.force ~= town_force and not player.force.get_friend(town_force) then
+            local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2 + (player.position.y - town_position.y) ^ 2))
+            if distance < max_distance and Public.get_player_league(player) > town_league then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
 local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
         local shield = this.pvp_shields[town_center.market.force.name]
-        local info
+        local info = 'League ' .. Public.get_town_league(town_center)
         if shield then
-            info = 'PvP Shield: '
+            info = info .. ', PvP Shield: '
             local lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
             if shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
                 info = info .. 'While offline, max ' .. lifetime_str
             elseif shield.shield_type == PvPShield.SHIELD_TYPE.AFK then
                 info = info .. 'AFK ' .. lifetime_str
-            elseif shield.shield_type == PvPShield.SHIELD_TYPE.STARTER then
-                local score = Score.total_score(town_center)
-                info = info .. 'Until ' .. string.format('%.1f / %.1f', score, this.pvp_shield_starter_limit) .. ' score'
+            elseif shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
+                info = info .. 'League balance'
             end
-        else
-            info = ''
         end
         rendering.set_text(town_center.shield_text, info)
 
@@ -97,16 +144,13 @@ local function manage_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
     local size = PvPShield.default_size
-    local offset_to_max_evo = 10
-
-    this.pvp_shield_starter_limit = math.max(this.pvp_shield_starter_limit, Score.highest_total_score() - offset_to_max_evo, 0)
 
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
-        local score = Score.total_score(town_center)
         local offline_shield_eligible = Score.research_score(town_center) > 1
+        local town_league = Public.get_town_league(town_center)
 
         if table_size(force.connected_players) == 0 and offline_shield_eligible then
             if not shield then
@@ -137,7 +181,7 @@ local function manage_pvp_shields()
             end
 
             -- Show hint
-            if offline_shield_eligible and not this.pvp_shields_displayed_offline_hint[force.name] then
+            if not this.pvp_shields_displayed_offline_hint[force.name] then
                 force.print("Your town is now advanced enough to deploy an offline shield."
                         .. " Once all of your members leave, the area marked by the blue floor tiles"
                         .. " will be protected from enemy players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
@@ -145,24 +189,54 @@ local function manage_pvp_shields()
                 this.pvp_shields_displayed_offline_hint[force.name] = true
             end
             this.pvp_shield_offline_activations[force.index] = nil
-
-            -- Add starter shield
-            if not shield and score < this.pvp_shield_starter_limit then
-                force.print("Your town deploys a PvP shield because there are more advanced towns on the map", Utils.scenario_color)
-                PvPShield.add_shield(market.surface, market.force, market.position, Public.starter_shield_size, nil, 60 * 60, PvPShield.SHIELD_TYPE.STARTER)
-                update_pvp_shields_display()
-            end
-
-            -- Remove starter shield
-            if shield and shield.shield_type == PvPShield.SHIELD_TYPE.STARTER and score > this.pvp_shield_starter_limit then
-                force.print("Your town's PvP starter shield has been deactivated as you have reached a higher level of advancement.", Utils.scenario_color)
-                PvPShield.remove_shield(shield)
-            end
         end
+
+        -- Balancing shield
+        local higher_league_nearby = Public.are_higher_league_players_nearby(town_center, Public.get_town_control_range(town_center), town_league)
+
+        if not shield and higher_league_nearby then
+            force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
+            PvPShield.add_shield(market.surface, market.force, market.position, Public.league_balance_shield_size, nil, 10 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
+            update_pvp_shields_display()
+        end
+
+        if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby then
+            force.print("Your town's Balancing PvP Shield has been deactivated as there are no more higher league players nearby.", Utils.scenario_color)
+            PvPShield.remove_shield(shield)
+        end
+    end
+end
+
+local league_labels = {} -- Store the league labels for each player
+
+local function init_league_label(player)
+    local league_label = rendering.draw_text{
+        text = "[League]",
+        surface = player.surface,
+        target = player.character,
+        target_offset = {0, 0},
+        color = {r = 1, g = 1, b = 1},
+        alignment = "center",
+        scale = 1.0
+    }
+    league_labels[player.index] = league_label
+end
+
+local function update_leagues()
+    if game.tick == 0 then return end
+
+    for _, player in pairs(game.connected_players) do
+        local league_label = league_labels[player.index]
+        if not league_label or not rendering.is_valid(league_label) then
+            init_league_label(player)
+        end
+
+        rendering.set_text(league_labels[player.index], "League " .. Public.get_player_league(player))
     end
 end
 
 Event.on_nth_tick(60, update_pvp_shields_display)
 Event.on_nth_tick(60, manage_pvp_shields)
+Event.on_nth_tick(60, update_leagues)
 
 return Public

@@ -11,7 +11,6 @@ local ResearchBalance = require 'maps.wasteland.research_balance'
 local CombatBalance = require 'maps.wasteland.combat_balance'
 local Evolution = require 'maps.wasteland.evolution'
 local GameMode = require 'maps.wasteland.game_mode'
-local TownCenter = require 'maps.wasteland.town_center'
 
 local map_pos_frame_id = 'towny_map_position'
 local evo_frame_id = 'towny_evo_display'

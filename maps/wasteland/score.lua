@@ -108,15 +108,6 @@ function Public.survival_score(town_center)
     return math.min(Public.age_h(town_center) * age_score_weight, 70)
 end
 
-function Public.highest_total_score()
-    local this = ScenarioTable.get_table()
-    local max_score = 0
-    for _, town_center in pairs(this.town_centers) do
-        max_score = math_max(max_score, Public.total_score(town_center))
-    end
-    return max_score
-end
-
 local function update_score()
     local this = ScenarioTable.get_table()
     local score_to_win = 100
