@@ -182,14 +182,14 @@ local function manage_pvp_shields()
         end
 
         if not shield and higher_league_nearby then
-            game.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
+            force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
             PvPShield.add_shield(market.surface, market.force, market.position, Public.league_balance_shield_size, nil, 10 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
             update_pvp_shields_display()
         end
 
         local protect_time_after_nearby = 3 * 60 * 60
         if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby and game.tick - town_center.last_higher_league_nearby > protect_time_after_nearby then
-            game.print("Your town's Balancing PvP Shield has been deactivated as there are no more higher league players nearby.", Utils.scenario_color)
+            force.print("Your town's Balancing PvP Shield has been deactivated as there are no more higher league players nearby.", Utils.scenario_color)
             PvPShield.remove_shield(shield)
         end
     end
