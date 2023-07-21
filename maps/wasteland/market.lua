@@ -1,10 +1,10 @@
 local table_insert = table.insert
 
-local ScenarioTable = require 'maps.wasteland.table'
 local TownCenter = require 'maps.wasteland.town_center'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 local Spaceship = require 'maps.wasteland.spaceship'
+local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 
 
 local _coin_stack = {name = 'coin', count = 1}
@@ -105,8 +105,8 @@ local upgrade_functions = {
         if not this.pvp_shields[player.force.name] then
             -- Double-check with the player to prevent accidental clicks
             if this.pvp_shield_warned[player.force.name] ~= nil and game.tick - this.pvp_shield_warned[player.force.name] < 60 * 60 then
-                local town_control_range = TownCenter.get_town_control_range(town_center)
-                if not TownCenter.enemy_players_nearby(town_center, town_control_range) then
+                local town_control_range = PvPTownShield.get_town_control_range(town_center)
+                if not PvPTownShield.enemy_players_nearby(town_center, town_control_range) then
                     PvPShield.add_shield(surface, force, market.position, PvPShield.default_size, shield_lifetime_ticks, 2 * 60 * 60, PvPShield.SHIELD_TYPE.AFK)
                     surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
                     this.pvp_shield_warned[player.force.name] = nil
