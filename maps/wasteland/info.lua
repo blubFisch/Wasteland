@@ -2,7 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Jul 2023 updates[/font]
- - Power poles can no longer be used to block enemy buildings
+ - Power poles can no longer be used to block enemy buildings - now only turrets block buildings
  - Introduced Leagues system: Players can only attack towns of same or higher leagues, which depend on town progress
  - Can build labs in town center again
  - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap]]
