@@ -40,6 +40,7 @@ function Public.reset_table()
     this.pvp_shield_offline_activations = {}
     this.pvp_shields_displayed_offline_hint = {}
     this.league_labels = {}
+    this.previous_leagues = {}
     this.tutorials = {}
     this.suicides = {}
     this.town_evo_warned = {}

@@ -217,7 +217,14 @@ local function update_leagues()
                 init_league_label(player)
             end
 
-            rendering.set_text(this.league_labels[player.index], "League " .. Public.get_player_league(player))
+            local league = Public.get_player_league(player)
+
+            rendering.set_text(this.league_labels[player.index], "League " .. league)
+
+            if this.previous_leagues[player.index] ~= nil and league ~= this.previous_leagues[player.index] then
+                player.print("You are now in league " .. league, Utils.scenario_color)
+            end
+            this.previous_leagues[player.index] = league
         end
     end
 end
