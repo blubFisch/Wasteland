@@ -231,7 +231,7 @@ local function process_built_entities(event)
         local radius = 26
 
         if table.array_contains(town_zoning_entity_types, entity.type) then
-            radius = 38 -- Prevent using these entities offensively to stop a base from repairing itself
+            radius = 38 -- Prevent using these entities offensively to stop a base from replacing entities of itself
         end
 
         if PvPShield.protected_by_shields(surface, position, force, radius)

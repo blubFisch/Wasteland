@@ -6,7 +6,7 @@ local Event = require 'utils.event'
 local Spawn = require 'maps.wasteland.spawn'
 local Info = require 'maps.wasteland.info'
 local Tutorial = require 'maps.wasteland.tutorial'
-local Score = require 'maps.wasteland.score'
+local ScoreBoard = require 'maps.wasteland.score_board'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local CombatBalance = require 'maps.wasteland.combat_balance'
 local Evolution = require 'maps.wasteland.evolution'
@@ -189,7 +189,7 @@ local function on_player_joined_game(event)
     if player.online_time == 0 then
         Info.toggle_button(player)
         Info.show(player)
-        Score.add_score_button(player)
+        ScoreBoard.add_score_button(player)
         Tutorial.register_for_tutorial(player)
         ResearchBalance.add_balance_ui(player)
         CombatBalance.add_balance_ui(player)
