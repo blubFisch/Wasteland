@@ -2,11 +2,10 @@ local Public = {}
 
 local math_floor = math.floor
 local table_insert = table.insert
-local table_size = table.size
 local ScenarioTable = require 'maps.wasteland.table'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 
-local town_zoning_entity_types = { "electric-pole", "ammo-turret", "electric-turret", "fluid-turret"}
+local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turret"}
 
 -- these should be allowed to place inside any base by anyone as neutral
 local allowed_entities_neutral = {
@@ -66,7 +65,7 @@ local function refund_item(event, item_name)
     end
 end
 
-local function error_floaty(surface, position, msg)
+local function build_error_notification(surface, position, msg, player_sound)
     surface.create_entity(
         {
             name = 'flying-text',
@@ -75,6 +74,9 @@ local function error_floaty(surface, position, msg)
             color = {r = 0.77, g = 0.0, b = 0.0}
         }
     )
+    if player_sound then
+        player_sound.play_sound({path = 'utility/cannot_build', position = player_sound.position, volume_modifier = 0.75})
+    end
 end
 
 function Public.in_range(pos1, pos2, radius)
@@ -170,11 +172,9 @@ local function prevent_entity_in_restricted_zone(event)
         end
     end
     if error == true then
-        if player_index ~= nil then
-            local player = game.players[player_index]
-            player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
-        end
-        error_floaty(surface, position, 'Can not build in restricted zone!')
+        local player
+        if player_index then player = game.players[player_index] end
+        build_error_notification(surface, position, 'Can not build in restricted zone!', player)
     end
 end
 
@@ -197,11 +197,9 @@ local function prevent_landfill_in_restricted_zone(event)
         end
     end
     if fail == true then
-        if player_index ~= nil then
-            local player = game.players[player_index]
-            player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
-        end
-        error_floaty(surface, position, 'Can not build in restricted zone!')
+        local player
+        if player_index ~= nil then player = game.players[player_index] end
+        build_error_notification(surface, position, 'Can not build in restricted zone!', player)
     end
     return fail
 end
@@ -217,8 +215,9 @@ local function process_built_entities(event)
     local position = entity.position
     local force
     local force_name
+    local player
     if player_index ~= nil then
-        local player = game.players[player_index]
+        player = game.players[player_index]
         force = player.force
         force_name = force.name
     else
@@ -232,7 +231,7 @@ local function process_built_entities(event)
         local radius = 22
 
         if table.array_contains(town_zoning_entity_types, entity.type) then
-            radius = 32 -- Prevent using these entities offensively to stop a base from repairing itself. Also prevents power pole connections for power theft
+            radius = 34 -- Prevent using these entities offensively to stop a base from repairing itself
         end
 
         if PvPShield.protected_by_other_zones(surface, position, force, radius)
@@ -245,14 +244,11 @@ local function process_built_entities(event)
             else
                 -- Prevent building
                 entity.destroy()
-                if player_index ~= nil then
-                    local player = game.players[player_index]
-                    player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
-                end
-                error_floaty(surface, position, "Can't build near town")
+                build_error_notification(surface, position, "Can't build near town", player)
                 if name ~= 'entity-ghost' then
                     refund_item(event, event.stack.name)
                 end
+                return
             end
         end
     end
@@ -260,6 +256,19 @@ local function process_built_entities(event)
     -- Build all outlander/rogue entities as neutral to make them compatible with all forces
     if entity and entity.valid and (force_name == 'player' or force_name == 'rogue') then
         entity.force = game.forces['neutral']
+    end
+
+    -- Prevent power poles of different forces from connecting to each other
+    if entity.type == 'electric-pole' then
+        local acting_force = force
+        if (force_name == 'player' or force_name == 'rogue') then acting_force = game.forces['neutral'] end
+
+        for _, other_pole in pairs(entity.neighbours["copper"]) do
+            if other_pole.force ~= acting_force then
+                entity.disconnect_neighbour(other_pole)
+                build_error_notification(surface, position, "Can't connect to other town", player)
+            end
+        end
     end
 end
 
@@ -300,11 +309,9 @@ local function prevent_tiles_near_towns(event)
         end
     end
     if fail == true then
-        if player_index ~= nil then
-            local player = game.players[player_index]
-            player.play_sound({path = 'utility/cannot_build', position = player.position, volume_modifier = 0.75})
-        end
-        error_floaty(surface, position, "Can't build near town!")
+        local player
+        if player_index ~= nil then player = game.players[player_index] end
+        build_error_notification(surface, position, "Can't build near town!", player)
     end
     return fail
 end
