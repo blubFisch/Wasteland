@@ -51,13 +51,13 @@ function Public.add_score_button(player)
     end
     local button = player.gui.top.add {
         type = 'sprite-button',
-        caption = 'Leaderboard',
+        caption = 'Towns',
         name = button_id
     }
     button.style.font = 'default-bold'
     button.style.font_color = {r = 1, g = 0.7, b = 0.1}
     button.style.minimal_height = 38
-    button.style.minimal_width = 100
+    button.style.minimal_width = 80
     button.style.top_padding = 2
     button.style.left_padding = 4
     button.style.right_padding = 4
