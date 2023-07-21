@@ -62,37 +62,21 @@ function Public.get_player_league(player)
     return league
 end
 
-function Public.enemy_players_nearby(town_center, max_distance)
-    local own_force = town_center.market.force
-    local town_position = town_center.market.position
+function Public.enemy_players_nearby(town_center, max_distance, min_league)
+    local market = town_center.market
+    local town_force = market.force
+    local town_position = market.position
 
     for _, player in pairs(game.connected_players) do
-        if player.surface == town_center.market.surface then
+        if player.surface == market.surface then
             local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2 + (player.position.y - town_position.y) ^ 2))
-            if distance < max_distance and player.force ~= own_force and not player.force.get_friend(own_force) then
-                if player.character or player.driving then
+            if distance < max_distance and player.force ~= town_force and not player.force.get_friend(town_force) then
+                if (not min_league or Public.get_player_league(player) > min_league) and (player.character or player.driving) then
                     return true
                 end
             end
         end
     end
-    return false
-end
-
-function Public.are_higher_league_players_nearby(town_center, max_distance, town_league)
-    local market = town_center.market
-    local town_position = market.position
-    local town_force = market.force
-
-    for _, player in pairs(game.connected_players) do
-        if player.surface == market.surface and player.force ~= town_force and not player.force.get_friend(town_force) then
-            local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2 + (player.position.y - town_position.y) ^ 2))
-            if distance < max_distance and Public.get_player_league(player) > town_league then
-                return true
-            end
-        end
-    end
-
     return false
 end
 
@@ -181,7 +165,7 @@ local function manage_pvp_shields()
             end
 
             -- Show hint
-            if not this.pvp_shields_displayed_offline_hint[force.name] then
+            if not this.pvp_shields_displayed_offline_hint[force.name] and offline_shield_eligible then
                 force.print("Your town is now advanced enough to deploy an offline shield."
                         .. " Once all of your members leave, the area marked by the blue floor tiles"
                         .. " will be protected from enemy players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
@@ -192,7 +176,7 @@ local function manage_pvp_shields()
         end
 
         -- Balancing shield
-        local higher_league_nearby = Public.are_higher_league_players_nearby(town_center, Public.get_town_control_range(town_center), town_league)
+        local higher_league_nearby = Public.enemy_players_nearby(town_center, Public.league_balance_shield_size / 2 * 1.5, town_league)
 
         if not shield and higher_league_nearby then
             force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
@@ -226,12 +210,14 @@ local function update_leagues()
     if game.tick == 0 then return end
 
     for _, player in pairs(game.connected_players) do
-        local league_label = league_labels[player.index]
-        if not league_label or not rendering.is_valid(league_label) then
-            init_league_label(player)
-        end
+        if player.character then
+            local league_label = league_labels[player.index]
+            if not league_label or not rendering.is_valid(league_label) then
+                init_league_label(player)
+            end
 
-        rendering.set_text(league_labels[player.index], "League " .. Public.get_player_league(player))
+            rendering.set_text(league_labels[player.index], "League " .. Public.get_player_league(player))
+        end
     end
 end
 
