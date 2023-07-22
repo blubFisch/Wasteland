@@ -81,23 +81,29 @@ function Public.enemy_players_nearby(town_center, max_distance, min_league)
     return false
 end
 
+function Public.shield_info_text(town_center)
+    local this = ScenarioTable.get_table()
+    local shield = this.pvp_shields[town_center.market.force.name]
+    local info = 'League ' .. Public.get_town_league(town_center)
+    if shield then
+        info = info .. ', PvP Shield: '
+        local lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
+        if shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
+            info = info .. 'While offline, max ' .. lifetime_str
+        elseif shield.shield_type == PvPShield.SHIELD_TYPE.AFK then
+            info = info .. 'AFK ' .. lifetime_str
+        elseif shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
+            info = info .. 'League balance'
+        end
+    end
+    return info
+end
+
 local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
-        local shield = this.pvp_shields[town_center.market.force.name]
-        local info = 'League ' .. Public.get_town_league(town_center)
-        if shield then
-            info = info .. ', PvP Shield: '
-            local lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
-            if shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
-                info = info .. 'While offline, max ' .. lifetime_str
-            elseif shield.shield_type == PvPShield.SHIELD_TYPE.AFK then
-                info = info .. 'AFK ' .. lifetime_str
-            elseif shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
-                info = info .. 'League balance'
-            end
-        end
-        rendering.set_text(town_center.shield_text, info)
+
+        rendering.set_text(town_center.shield_text, Public.shield_info_text(town_center))
 
         -- Update enemy nearby display
         local town_control_range = Public.get_town_control_range(town_center)

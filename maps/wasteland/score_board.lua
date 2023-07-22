@@ -152,8 +152,9 @@ local function update_score()
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
 
-                ranking_table.add { type = 'label', caption = PvPTownShield.get_town_league(town_center)}
+                local league = ranking_table.add { type = 'label', caption = PvPTownShield.get_town_league(town_center)}
                 ranking_table.style.column_alignments[3] = 'right'
+                league.tooltip = PvPTownShield.shield_info_text(town_center)
 
                 local res = ranking_table.add { type = 'label', caption = string.format('%.1f', Score.research_score(town_center))}
                 ranking_table.style.column_alignments[4] = 'right'
