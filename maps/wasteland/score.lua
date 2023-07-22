@@ -5,7 +5,7 @@ local GameMode = require 'maps.wasteland.game_mode'
 local evo_score_factor = 50
 
 local age_score_weights = {
-    2, 1, 0.4
+    1.4, 0.6, 0.25
 }
 local age_score_weight = age_score_weights[GameMode.mode]
 
