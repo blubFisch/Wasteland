@@ -81,6 +81,10 @@ local function init_score_board(player)
     frame.visible = false
 end
 
+local function format_score(score)
+    return string.format('%.1f', math.floor(score * 10) / 10)
+end
+
 local function update_score()
     local this = ScenarioTable.get_table()
     local score_to_win = 100
@@ -156,16 +160,17 @@ local function update_score()
                 ranking_table.style.column_alignments[3] = 'right'
                 league.tooltip = PvPTownShield.shield_info_text(town_center)
 
-                local res = ranking_table.add { type = 'label', caption = string.format('%.1f', Score.research_score(town_center))}
+                local res = ranking_table.add { type = 'label', caption = format_score(Score.research_score(town_center))}
                 ranking_table.style.column_alignments[4] = 'right'
 
                 res.tooltip = "Research cost: " .. ResearchBalance.format_town_modifier(town_center.research_balance.current_modifier)
                 ranking_table.add { type = 'label', caption = string.format('%.1fh', Score.age_h(town_center))}
                 ranking_table.style.column_alignments[5] = 'right'
 
-                local total = ranking_table.add { type = 'label', caption = string.format('%.1f', town_total_scores[town_center])}
+                local total = ranking_table.add { type = 'label', caption = format_score(town_total_scores[town_center])}
                 ranking_table.style.column_alignments[6] = 'right'
-                total.tooltip = string.format('%.1f (Tech) + %.1f (Time)', Score.research_score(town_center), Score.survival_score(town_center))
+                total.tooltip = format_score(Score.research_score(town_center)) .. " (Tech) + "
+                        .. format_score(Score.survival_score(town_center)) .. " (Age)"
 
                 rank = rank + 1
             end
