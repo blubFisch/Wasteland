@@ -11,7 +11,7 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 local Event = require 'utils.event'
 
-Public.league_balance_shield_size = 101
+Public.league_balance_shield_size = 111
 
 function Public.in_extended_control_range(position)
     local this = ScenarioTable.get_table()
@@ -183,7 +183,7 @@ local function manage_pvp_shields()
         end
 
         -- Balancing shield
-        local higher_league_nearby = Public.enemy_players_nearby(town_center, Public.league_balance_shield_size / 2 * 1.7, town_league)
+        local higher_league_nearby = Public.enemy_players_nearby(town_center, Public.league_balance_shield_size / 2 * 1.8, town_league)
         if higher_league_nearby then
             town_center.last_higher_league_nearby = game.tick
         end
