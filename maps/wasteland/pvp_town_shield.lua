@@ -11,7 +11,7 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 local Event = require 'utils.event'
 
-Public.league_balance_shield_size = 111
+Public.league_balance_shield_size = 121
 Public.offline_shield_size = 41
 
 function Public.in_extended_control_range(position)
