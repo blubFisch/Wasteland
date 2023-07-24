@@ -115,15 +115,17 @@ function Public.in_area(position, area_center, area_radius)
     return false
 end
 
-function Public.near_another_town(force_name, position, surface, radius)
+function Public.near_another_town(force_name, position, surface, radius, radius_center)
     local this = ScenarioTable.get_table()
     local force_names = {}
+
+    if not radius_center then radius_center = radius end
 
     -- check for nearby town centers
     for _, town_center in pairs(this.town_centers) do
         local market_force_name = town_center.market.force.name
         if force_name ~= market_force_name then
-            if Public.in_range(position, town_center.market.position, radius) then
+            if Public.in_range(position, town_center.market.position, radius_center) then
                 return true
             end
             table_insert(force_names, market_force_name)
@@ -228,14 +230,14 @@ local function process_built_entities(event)
 
     -- Handle entities placed within protected areas
     if not allowed_entities_keep_force[name] then  -- Some entities like vehicles are always ok to place
-        local radius = 26
+        local radius = 28
 
         if table.array_contains(town_zoning_entity_types, entity.type) then
-            radius = 38 -- Prevent using these entities offensively to stop a base from replacing entities of itself
+            radius = 40 -- Prevent using these entities offensively to stop a base from replacing entities of itself
         end
 
         if PvPShield.protected_by_shields(surface, position, force, radius)
-                or Public.near_another_town(force_name, position, surface, 65) == true then
+                or Public.near_another_town(force_name, position, surface, radius, radius + 30) == true then
             -- Logistics are okay to place wherever you can access (=outside of shield)
             if allowed_entities_neutral[name] and not PvPShield.protected_by_shields(surface, position, force, 0) then
                 entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
