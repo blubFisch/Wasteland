@@ -12,6 +12,7 @@ local Utils = require 'maps.wasteland.utils'
 local Event = require 'utils.event'
 
 Public.league_balance_shield_size = 111
+Public.offline_shield_size = 41
 
 function Public.in_extended_control_range(position)
     local this = ScenarioTable.get_table()
@@ -27,7 +28,7 @@ function Public.in_extended_control_range(position)
 end
 
 function Public.get_town_control_range(town_center)
-    return 50 + town_center.evolution.worms * 200
+    return 50 + town_center.evolution.worms * 150
 end
 
 function Public.get_town_league(town_center)
@@ -134,7 +135,6 @@ end
 local function manage_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
-    local size = PvPShield.default_size
 
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
@@ -154,7 +154,7 @@ local function manage_pvp_shields()
                     local time_to_full = 0.5 * 60 * 60
                     game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now." ..
                             " It will last up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
-                    PvPShield.add_shield(market.surface, market.force, market.position, size,
+                    PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,
                             offline_shield_duration_ticks, time_to_full, PvPShield.SHIELD_TYPE.OFFLINE)
                     this.pvp_shield_offline_activations[force.index] = -1
                 end

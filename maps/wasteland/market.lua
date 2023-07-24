@@ -107,7 +107,7 @@ local upgrade_functions = {
             if this.pvp_shield_warned[player.force.name] ~= nil and game.tick - this.pvp_shield_warned[player.force.name] < 60 * 60 then
                 local town_control_range = PvPTownShield.get_town_control_range(town_center)
                 if not PvPTownShield.enemy_players_nearby(town_center, town_control_range) then
-                    PvPShield.add_shield(surface, force, market.position, PvPShield.default_size, shield_lifetime_ticks, 2 * 60 * 60, PvPShield.SHIELD_TYPE.AFK)
+                    PvPShield.add_shield(surface, force, market.position, PvPTownShield.offline_shield_size, shield_lifetime_ticks, 2 * 60 * 60, PvPShield.SHIELD_TYPE.AFK)
                     surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
                     this.pvp_shield_warned[player.force.name] = nil
                 else

@@ -9,8 +9,6 @@ local Utils = require 'maps.wasteland.utils'
 
 local beam_type = 'electric-beam-no-sound'
 
-Public.default_size = 41
-
 Public.SHIELD_TYPE = { AFK = 1, OFFLINE = 2, LEAGUE_BALANCE = 3, OTHER = 4}
 
 local function draw_borders(shield)
