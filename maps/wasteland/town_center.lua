@@ -21,7 +21,7 @@ local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 
 local town_radius = 20
-local radius_between_towns = PvPTownShield.league_balance_shield_size + 2
+local radius_between_towns = PvPTownShield.league_balance_shield_size + 2 + 40
 
 local ore_amount = 1200
 

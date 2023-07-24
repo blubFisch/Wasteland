@@ -28,16 +28,15 @@ function Public.in_extended_control_range(position)
 end
 
 function Public.get_town_control_range(town_center)
-    return 50 + town_center.evolution.worms * 150
+    return 60 + town_center.evolution.worms * 150
 end
 
 function Public.get_town_league(town_center)
     local score = Score.total_score(town_center)
     local tank_researched = town_center.market.force.technologies['tank'].researched
 
-    if score >= 80 then return 6 end
-    if score >= 60 then return 5 end
-    if score >= 45 then return 4 end
+    if score >= 70 then return 5 end
+    if score >= 50 then return 4 end
     if score >= 30 then return 3 end
     if score >= 15 or tank_researched then return 2 end
     return 1
