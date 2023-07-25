@@ -38,24 +38,22 @@ local info_adv =
 
 [font=heading-1]Advanced tips and tricks[/font]
 - To join our discord, open wasteland-discord.fun in your web browser
-- It's best to found new towns far from existing towns, as enemies will become aggressive with town's research.
-    Biters and spitters become more aggressive towards towns that are advanced in research.
-    Their evolution will scale around technology progress in any nearby towns and pollution levels.
+- It's best to found new towns far from existing towns, as biters advance based on the tech of nearby towns
 - Need more ores? Hand mine a few big rocks to find ore patches under them!
 - Need more oil? Kill biter worms - some of them will leave you an oil patch
 - The town market is the heart of your town. If it is destroyed, you lose everything.
-    So protect it well, repair it whenever possible, and increase its health by purchasing upgrades.
+    Protect it well and increase its health by purchasing upgrades.
 - It's possible to automate trading with the town center! How cool is that?!! Try it out.
-    Tip: use filter inserters with to get coins/iron/.. out of the market
+    Tip: use filter inserters to get coins out of the market or to buy items
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
     Accidentally overfished? No problem, you can drop them back in
 - Use /rename-town NEWNAME (chat command) to rename your town
 - If you get stuck or trapped, use the /suicide chat command to respawn
-- It is not possible to build near enemy turrets or power poles
+- It is not possible to build near other towns turrets or town centers
     except logistics entities (inserters, belts, boxes, rails) that can be used to steal items
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
-- Biter waves with boss units (the ones with health bar) will attack more advanced towns while their member players are online
+- Biter waves with boss units (the ones with health bar) will attack advanced towns while their players are online
 - Played this for the 100th time? Try /skip-tutorial]]
 
 function Public.toggle_button(player)
