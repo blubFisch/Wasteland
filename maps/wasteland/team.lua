@@ -1,10 +1,8 @@
 local Public = {}
 
 local math_random = math.random
-local table_size = table.size
 local string_match = string.match
 local string_lower = string.lower
-local math_min = math.min
 
 local Server = require 'utils.server'
 local ScenarioTable = require 'maps.wasteland.table'
@@ -12,6 +10,7 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local CombatBalance = require 'maps.wasteland.combat_balance'
 local Utils = require 'maps.wasteland.utils'
 local ResearchBalance = require 'maps.wasteland.research_balance'
+local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
@@ -778,9 +777,9 @@ local function kill_force(force_name, cause)
             e.destroy()
         end
     end
-    for _, e in pairs(surface.find_tiles_filtered({area = {{position.x - r, position.y - r}, {position.x + r, position.y + r}}, name = 'blue-refined-concrete'})) do
-        surface.set_tiles({{name = 'landfill', position = e.position}}, true)
-    end
+
+    PvPTownShield.remove_all_shield_markers(surface, position)
+
     if this.pvp_shields[force_name] then
         PvPShield.remove_shield(this.pvp_shields[force_name])
     end

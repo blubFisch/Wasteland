@@ -48,19 +48,7 @@ for v = c1, c2, c3 do
     table_insert(colors, {v, 0, v})
 end
 
-local town_wall_vectors = {}
-for x = 2, town_radius, 1 do
-    table_insert(town_wall_vectors, {x, town_radius})
-    table_insert(town_wall_vectors, {x * -1, town_radius})
-    table_insert(town_wall_vectors, {x, town_radius * -1})
-    table_insert(town_wall_vectors, {x * -1, town_radius * -1})
-end
-for y = 2, town_radius - 1, 1 do
-    table_insert(town_wall_vectors, {town_radius, y})
-    table_insert(town_wall_vectors, {town_radius, y * -1})
-    table_insert(town_wall_vectors, {town_radius * -1, y})
-    table_insert(town_wall_vectors, {town_radius * -1, y * -1})
-end
+local town_wall_vectors = Utils.make_border_vectors(town_radius, 2)
 
 local gate_vectors_horizontal = {}
 for x = -1, 1, 1 do
@@ -191,26 +179,21 @@ local function draw_town_spawn(player_name)
     -- create walls
     for _, vector in pairs(gate_vectors_horizontal) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        if p then
-            surface.create_entity({name = 'gate', position = p, force = player_name, direction = 2})
-            surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
-        end
+        surface.create_entity({name = 'gate', position = p, force = player_name, direction = 2})
+        surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
     end
     for _, vector in pairs(gate_vectors_vertical) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        if p then
-            surface.create_entity({name = 'gate', position = p, force = player_name, direction = 0})
-            surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
-        end
+        surface.create_entity({name = 'gate', position = p, force = player_name, direction = 0})
+        surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
     end
 
     for _, vector in pairs(town_wall_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        if p then
-            surface.create_entity({name = 'stone-wall', position = p, force = player_name})
-            surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
-        end
+        surface.create_entity({name = 'stone-wall', position = p, force = player_name})
     end
+
+    PvPTownShield.draw_all_shield_markers(surface, position, town_wall_vectors)
 
     -- ore patches
     local ores_in = {'coal'}

@@ -11,8 +11,11 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 local Event = require 'utils.event'
 
-Public.league_balance_shield_size = 131
+Public.league_balance_shield_size = 121
 Public.offline_shield_size = 41
+
+local league_shield_radius = (Public.league_balance_shield_size - 1) / 2
+local league_shield_vectors = Utils.make_border_vectors(league_shield_radius)
 
 function Public.in_extended_control_range(position)
     local this = ScenarioTable.get_table()
@@ -235,6 +238,28 @@ local function update_leagues()
                 player.print("You are now in League " .. league, Utils.scenario_color)
             end
             this.previous_leagues[player.index] = league
+        end
+    end
+end
+
+function Public.remove_all_shield_markers(surface, position)
+    local r = Public.league_balance_shield_size
+    for _, e in pairs(surface.find_tiles_filtered({area = {{position.x - r, position.y - r}, {position.x + r, position.y + r}}, name = 'blue-refined-concrete'})) do
+        surface.set_tiles({{name = 'landfill', position = e.position}}, true)
+    end
+end
+
+function Public.draw_all_shield_markers(surface, position, town_wall_vectors)
+
+    for _, vector in pairs(town_wall_vectors) do
+        local p = {position.x + vector[1], position.y + vector[2]}
+        surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
+    end
+
+    for _, vector in pairs(league_shield_vectors) do
+        local p = {position.x + vector[1], position.y + vector[2]}
+        if not surface.get_tile(p).collides_with("water-tile") then
+            surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
         end
     end
 end
