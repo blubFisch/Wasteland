@@ -174,7 +174,8 @@ function Public.on_entity_damaged(event)
     --    cause_name = event.cause.name
     --end
     --game.print("DMG_XDB entity " .. entity.name .. " damage_type " .. event.damage_type.name .. " cause " .. cause_name
-    --        .. " original_damage_amount " .. event.original_damage_amount .. " final_damage_amount " .. event.final_damage_amount)
+    --        .. " original_damage_amount " .. event.original_damage_amount .. " final_damage_amount " .. event.final_damage_amount
+    --        .. " entity.health(before) " .. entity.health)
 
     local is_vehicle_damage = false
     local vehicle_modifier = 1
@@ -204,10 +205,12 @@ function Public.on_entity_damaged(event)
         force_modifier = Public.dmg_modifier_for_force(cause_force)
     end
 
+    local would_be_killed = entity.health == 0
 
     -- Undo original damage and apply modified damage
     if is_vehicle_damage then
-        --game.print("DMG_XDB applying tank_damage force_modifier " .. force_modifier .. " tank_modifier " .. tank_modifier)
+        --game.print("DMG_XDB applying vehicle damage force_modifier " .. force_modifier .. " vehicle_modifier " .. vehicle_modifier
+        --        .. " calc_dmg " .. event.original_damage_amount * vehicle_modifier * force_modifier)
         entity.health = entity.health + event.final_damage_amount - event.original_damage_amount * vehicle_modifier * force_modifier
     else
         if force_modifier == 1 then
@@ -221,6 +224,13 @@ function Public.on_entity_damaged(event)
             end
         end
     end
+
+    -- Handle the engine limitation that we can't know the applied damage if the originally resulting damage would be 0
+    if would_be_killed and entity.health < entity.prototype.max_health * 0.05 then
+        entity.health = 0
+    end
+
+    --game.print("DMG_XDB entity.health(after) " .. entity.health)
 end
 
 local Event = require 'utils.event'
