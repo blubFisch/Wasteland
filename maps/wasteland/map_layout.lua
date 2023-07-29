@@ -6,13 +6,12 @@ local math_abs = math.abs
 local Public = {}
 
 local get_noise = require 'utils.get_noise'
-local ScenarioTable = require 'maps.wasteland.table'
 local Scrap = require 'maps.wasteland.scrap'
 local Spaceship = require 'maps.wasteland.spaceship'
 
 
 Public.central_ores_radius = 15
-Public.central_ores_town_nobuild = 300
+Public.central_ores_town_nobuild = 350
 Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 

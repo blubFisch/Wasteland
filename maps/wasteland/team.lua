@@ -819,7 +819,7 @@ local function kill_force(force_name, cause)
             local killer_town_center = this.town_centers[cause.force.name]
             if balance > 0 then
                 killer_town_center.coin_balance = killer_town_center.coin_balance + balance
-                cause.force.print(balance .. " coins have been transferred to your town")
+                cause.force.print(balance .. " coins have been transferred to your town", Utils.scenario_color)
             end
             if cause.name == 'character' then
                 message = town_name .. ' has fallen to ' .. cause.player.name .. ' from '  .. killer_town_center.town_name .. '!'
