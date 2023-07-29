@@ -131,7 +131,11 @@ local function update_pvp_shields_display()
     end
 end
 
-local function manage_pvp_shields()
+local function town_shields_researched(force)
+    return force.technologies["automation"].researched
+end
+
+local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
 
@@ -139,11 +143,11 @@ local function manage_pvp_shields()
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
-        local offline_shield_eligible = Score.research_score(town_center) > 1 or this.pvp_shield_mark_afk[force.name]
+        local shields_researched = town_shields_researched(force)
         local town_league = Public.get_town_league(town_center)
-        local town_is_offline = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
+        local town_offline_or_afk = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
 
-        if town_is_offline and offline_shield_eligible then
+        if town_offline_or_afk and shields_researched then
             local is_first_activation = false
             if not this.pvp_shield_offline_since[force.index] then
                 this.pvp_shield_offline_since[force.index] = game.tick
@@ -165,7 +169,7 @@ local function manage_pvp_shields()
                             remaining_offline_shield_time, 0.5 * 60 * 60, PvPShield.SHIELD_TYPE.OFFLINE)
                 end
             end
-        elseif not town_is_offline then
+        elseif not town_offline_or_afk then
             this.pvp_shield_offline_since[force.index] = nil
 
             -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
@@ -179,11 +183,11 @@ local function manage_pvp_shields()
             end
 
             -- Show hint
-            if not this.pvp_shields_displayed_offline_hint[force.name] and offline_shield_eligible then
-                force.print("Your town is now advanced enough to deploy an offline shield."
-                        .. " Once all of your members leave, the area marked by the blue floor tiles"
-                        .. " will be protected from enemy players for " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
-                        .. " However, biters will always be able to attack your town!", Utils.scenario_color)
+            if not this.pvp_shields_displayed_offline_hint[force.name] and shields_researched then
+                force.print("Your town is now advanced enough to deploy PvP shields."
+                        .. " Once all of your town members leave, your town will be protected from enemy players"
+                        .. " for up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
+                        .. " However, biters will always be able to attack your town! See Help for more details.", Utils.scenario_color)
                 this.pvp_shields_displayed_offline_hint[force.name] = true
             end
         end
@@ -196,16 +200,20 @@ local function manage_pvp_shields()
         end
 
         if higher_league_nearby then
-            -- If we have any type of shield ongoing, swap it for a league shield
-            if shield and shield.shield_type ~= PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
-                PvPShield.remove_shield(shield)
-                shield = nil
-            end
+            if shields_researched then
+                -- If we have any type of shield ongoing, swap it for a league shield
+                if shield and shield.shield_type ~= PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
+                    PvPShield.remove_shield(shield)
+                    shield = nil
+                end
 
-            if not shield then
-                force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
-                PvPShield.add_shield(market.surface, market.force, market.position, Public.league_balance_shield_size, nil, 13 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
-                update_pvp_shields_display()
+                if not shield then
+                    force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
+                    PvPShield.add_shield(market.surface, market.force, market.position, Public.league_balance_shield_size, nil, 13 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
+                    update_pvp_shields_display()
+                end
+            else
+                force.print("There are enemy players of a higher league, but your town can't deploy a shield without automation research", Utils.scenario_color)
             end
         end
 
@@ -263,7 +271,6 @@ function Public.remove_all_shield_markers(surface, position)
 end
 
 function Public.draw_all_shield_markers(surface, position, town_wall_vectors)
-
     for _, vector in pairs(town_wall_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
         surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -300,14 +307,18 @@ function Public.request_afk_shield(town_center, player)
 
     if all_players_near_center(town_center) then
         if not Public.enemy_players_nearby(town_center, town_control_range) then
-            this.pvp_shield_mark_afk[force.name] = true
-            local shield = this.pvp_shields[force.name]
-            if shield then
-                PvPShield.remove_shield(shield)
+            if town_shields_researched(force) then
+                this.pvp_shield_mark_afk[force.name] = true
+                local shield = this.pvp_shields[force.name]
+                if shield then
+                    PvPShield.remove_shield(shield)
+                end
+                surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
+                force.print("You have enabled AFK mode", Utils.scenario_color)
+                update_pvp_shields()
+            else
+                player.print("You need to research automation to enable shields", Utils.scenario_color)
             end
-            surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
-            force.print("You have enabled AFK mode", Utils.scenario_color)
-            manage_pvp_shields()
         else
             player.print("Enemy players are too close, can't enter AFK mode", Utils.scenario_color)
         end
@@ -333,9 +344,9 @@ local function update_afk_shields()
 end
 
 
-Event.on_nth_tick(60, update_pvp_shields_display)
-Event.on_nth_tick(60, manage_pvp_shields)
-Event.on_nth_tick(60, update_leagues)
+Event.on_nth_tick(30, update_pvp_shields_display)
+Event.on_nth_tick(30, update_pvp_shields)
+Event.on_nth_tick(30, update_leagues)
 Event.on_nth_tick(13, update_afk_shields)
 
 return Public
