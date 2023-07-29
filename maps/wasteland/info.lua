@@ -3,6 +3,7 @@ local Public = {}
 local changelog =
     [[[font=heading-1]Jul 2023 updates[/font]
  - League shield now also protects towns offline towns
+ - Updated AFK shield in market now behaves like you're offline
  - Power poles can no longer be used to block enemy buildings - now only turrets block buildings
  - Introduced Leagues system: Players can only attack towns of same or higher leagues, which depend on town progress
  - Can build labs in town center again

@@ -36,9 +36,9 @@ function Public.reset_table()
     this.mining_target = {}
     this.spaceships = {}
     this.pvp_shields = {}
-    this.pvp_shield_warned = {}
     this.pvp_shield_offline_since = {}
     this.pvp_shields_displayed_offline_hint = {}
+    this.pvp_shield_mark_afk = {}
     this.league_labels = {}
     this.previous_leagues = {}
     this.tutorials = {}

@@ -5,11 +5,10 @@ local math_sqrt = math.sqrt
 local Event = require 'utils.event'
 local ScenarioTable = require 'maps.wasteland.table'
 local CommonFunctions = require 'utils.common'
-local Utils = require 'maps.wasteland.utils'
 
 local beam_type = 'electric-beam-no-sound'
 
-Public.SHIELD_TYPE = { AFK = 1, OFFLINE = 2, LEAGUE_BALANCE = 3, OTHER = 4}
+Public.SHIELD_TYPE = { OFFLINE = 1, OFFLINE_POST = 2, LEAGUE_BALANCE = 3}
 
 local function draw_borders(shield)
     local surface = shield.surface
@@ -58,19 +57,6 @@ function Public.add_shield(surface, force, center, max_size, lifetime_ticks, tim
     local shield = {surface = surface, force = force, center = center, max_size = max_size, max_lifetime_ticks = lifetime_ticks,
                   time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, shield_type = shield_type}
 
-    if shield_type == Public.SHIELD_TYPE.AFK then
-        -- Freeze players to avoid abuse
-        shield.force.character_running_speed_modifier = -1
-        -- Also kick players out of vehicles if needed
-        for _, player in pairs(force.connected_players) do
-            if player.character and player.character.driving then
-                player.character.driving = false
-            end
-        end
-        shield.force.print("Your AFK PvP shield is now rolling out. You will be frozen until it expires in " ..
-                Public.format_lifetime_str(Public.remaining_lifetime(shield)), Utils.scenario_color)
-    end
-
     scale_size_by_lifetime(shield)
     this.pvp_shields[force.name] = shield
 end
@@ -78,10 +64,6 @@ end
 function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
-
-    if shield.shield_type == Public.SHIELD_TYPE.AFK then
-        shield.force.character_running_speed_modifier = 0
-    end
 
     this.pvp_shields[shield.force.name] = nil
     shield.force.print("Your PvP Shield has expired", {r = 1, g = 0, b = 0})
@@ -182,26 +164,6 @@ local function on_player_changed_position(event)
     end
 
     Public.push_enemies_out(player)
-end
-
-local function on_player_driving_changed_state(event)
-    local player = game.players[event.player_index]
-    if not player or not player.valid then
-        return
-    end
-    local this = ScenarioTable.get_table()
-    for _, shield in pairs(this.pvp_shields) do
-        if shield.force == player.force and shield.shield_type == Public.SHIELD_TYPE.AFK then
-            local vehicle = player.vehicle
-            if vehicle and vehicle.valid then
-                -- Kick players out of vehicles if needed
-                if player.character.driving then
-                    player.character.driving = false
-                    player.print("Can't drive around while AFK PvP Shield is active", Utils.scenario_color)
-                end
-            end
-        end
-    end
 end
 
 function Public.entity_is_protected(entity, cause_force)
