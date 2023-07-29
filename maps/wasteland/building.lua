@@ -80,15 +80,6 @@ local function build_error_notification(surface, position, msg, player_sound)
 end
 
 function Public.in_range(pos1, pos2, radius)
-    if pos1 == nil then
-        return false
-    end
-    if pos2 == nil then
-        return false
-    end
-    if radius < 1 then
-        return true
-    end
     local dx = pos1.x - pos2.x
     local dy = pos1.y - pos2.y
     if dx ^ 2 + dy ^ 2 < radius ^ 2 then
@@ -230,16 +221,17 @@ local function process_built_entities(event)
 
     -- Handle entities placed within protected areas
     if not allowed_entities_keep_force[name] then  -- Some entities like vehicles are always ok to place
-        local radius = 28
+        local radius = 30
 
         if table.array_contains(town_zoning_entity_types, entity.type) then
-            radius = 40 -- Prevent using these entities offensively to stop a base from replacing entities of itself
+            radius = 42 -- Prevent using these entities offensively to stop a base from replacing entities of itself
         end
 
         if PvPShield.protected_by_shields(surface, position, force, radius)
                 or Public.near_another_town(force_name, position, surface, radius, radius + 30) == true then
             -- Logistics are okay to place wherever you can access (=outside of shield)
-            if allowed_entities_neutral[name] and not PvPShield.protected_by_shields(surface, position, force, 0) then
+            if allowed_entities_neutral[name] and not (PvPShield.protected_by_shields(surface, position, force, 0)
+                    or Public.near_another_town(force_name, position, surface, 10, 0)) then
                 entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
                 surface.create_entity({name = 'flying-text', position = position,
                                        text = "Neutral", color = {r = 0, g = 1, b = 0}})
