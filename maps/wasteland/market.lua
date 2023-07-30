@@ -1,4 +1,5 @@
 local table_insert = table.insert
+local table_remove = table.remove
 
 local TownCenter = require 'maps.wasteland.town_center'
 local Spaceship = require 'maps.wasteland.spaceship'
@@ -680,15 +681,8 @@ local function on_tick(event)
         return
     end
 
-    local is_update_balance_tick = false
-    if event.tick % 60 == 0 then
-        is_update_balance_tick = true
-    end
-
-    local is_find_entities_near_market_tick = false
-    if event.tick % (60 * 8) == 0 then
-        is_find_entities_near_market_tick = true
-    end
+    local is_update_balance_tick = event.tick % 30 == 0
+    local is_find_entities_near_market_tick = event.tick % 60 == 0
 
     for _, town_center in pairs(data.town_centers) do
         local market = town_center.market
@@ -756,7 +750,7 @@ local function on_tick(event)
                 if entity.valid then
                     handle_market_output(town_center, market, entity, offers)
                 else
-                    table.remove(output_market_entities, i)
+                    table_remove(output_market_entities, i)
                 end
             end
 
@@ -766,7 +760,7 @@ local function on_tick(event)
                 if entity.valid then
                     handle_market_input(town_center, market, entity, offers)
                 else
-                    table.remove(input_market_entities, i)
+                    table_remove(input_market_entities, i)
                 end
             end
         end
