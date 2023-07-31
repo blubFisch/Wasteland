@@ -127,7 +127,7 @@ end
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
-    local league_shield_activation_range = Public.league_balance_shield_size * 1.0
+    local league_shield_activation_range = Public.league_balance_shield_size * 1.3
 
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
