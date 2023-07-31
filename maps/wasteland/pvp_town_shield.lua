@@ -83,27 +83,11 @@ function Public.enemy_players_nearby(town_center, max_distance, min_league)
     return false
 end
 
-function Public.shield_info_text(town_center)
-    local this = ScenarioTable.get_table()
-    local shield = this.pvp_shields[town_center.market.force.name]
-    local info = 'League ' .. Public.get_town_league(town_center)
-    if shield then
-        info = info .. ', PvP Shield: '
-        local lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
-        if shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE or shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE_POST then
-            info = info .. 'While offline/afk, max ' .. lifetime_str
-        elseif shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
-            info = info .. 'League balance'
-        end
-    end
-    return info
-end
-
 local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
 
-        rendering.set_text(town_center.shield_text, Public.shield_info_text(town_center))
+        rendering.set_text(town_center.shield_text, town_center.pvp_shield_mgmt.shield_info)
 
         -- Update enemy nearby display
         local town_control_range = Public.get_town_control_range(town_center)
@@ -146,30 +130,34 @@ local function update_pvp_shields()
         local shields_researched = town_shields_researched(force)
         local town_league = Public.get_town_league(town_center)
         local town_offline_or_afk = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
+        local abandoned = false
 
-        if town_offline_or_afk and shields_researched then
-            local is_first_activation = false
-            if not this.pvp_shield_offline_since[force.index] then
-                this.pvp_shield_offline_since[force.index] = game.tick
-                is_first_activation = true
-            end
-            local remaining_offline_shield_time = offline_shield_duration_ticks - (game.tick - this.pvp_shield_offline_since[force.index])
+        if town_offline_or_afk then
+            if shields_researched then
+                local is_first_activation = false
+                if not this.pvp_shield_offline_since[force.index] then
+                    this.pvp_shield_offline_since[force.index] = game.tick
+                    is_first_activation = true
+                end
+                local remaining_offline_shield_time = offline_shield_duration_ticks - (game.tick - this.pvp_shield_offline_since[force.index])
+                abandoned = remaining_offline_shield_time <= 0
 
-            if not shield and remaining_offline_shield_time > 0 then
-                -- Activations:
-                -- nil means waiting for players to go offline
-                -- -1 it is not meant to renew until players join again
-                local town_control_range = Public.get_town_control_range(town_center)
-                if not (is_first_activation and Public.enemy_players_nearby(town_center, town_control_range)) then
-                    if is_first_activation then
-                        game.print("The offline/afk PvP Shield of " .. town_center.town_name .. " is activating now." ..
-                                " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time), Utils.scenario_color)
+                if not shield and not abandoned then
+                    -- Activations:
+                    -- nil means waiting for players to go offline
+                    -- -1 it is not meant to renew until players join again
+                    local town_control_range = Public.get_town_control_range(town_center)
+                    if not (is_first_activation and Public.enemy_players_nearby(town_center, town_control_range)) then
+                        if is_first_activation then
+                            game.print("The offline/afk PvP Shield of " .. town_center.town_name .. " is activating now." ..
+                                    " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time), Utils.scenario_color)
+                        end
+                        PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,
+                                remaining_offline_shield_time, 0.5 * 60 * 60, PvPShield.SHIELD_TYPE.OFFLINE)
                     end
-                    PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,
-                            remaining_offline_shield_time, 0.5 * 60 * 60, PvPShield.SHIELD_TYPE.OFFLINE)
                 end
             end
-        elseif not town_offline_or_afk then
+        else    -- Online
             this.pvp_shield_offline_since[force.index] = nil
 
             -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
@@ -199,7 +187,7 @@ local function update_pvp_shields()
             town_center.last_higher_league_nearby = game.tick
         end
 
-        if higher_league_nearby then
+        if higher_league_nearby and not abandoned then
             if shields_researched then
                 -- If we have any type of shield ongoing, swap it for a league shield
                 if shield and shield.shield_type ~= PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
@@ -222,6 +210,27 @@ local function update_pvp_shields()
             force.print("Your town's Balancing PvP Shield has been deactivated as there are no more higher league players nearby.", Utils.scenario_color)
             PvPShield.remove_shield(shield)
         end
+
+        -- Construct shield info text
+        local shield_info = 'League ' .. town_league
+        if shield then
+            shield_info = shield_info .. ', PvP Shield: '
+            local lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))
+            if shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE or shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE_POST then
+                shield_info = shield_info .. 'While offline/afk, max ' .. lifetime_str
+            elseif shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
+                shield_info = shield_info .. 'League balance'
+            end
+        else
+            if abandoned then
+                shield_info = shield_info .. ', Abandoned town'
+            elseif not shields_researched then
+                shield_info = shield_info .. ', Shields not researched'
+            else
+                shield_info = shield_info .. ', Shields ready'
+            end
+        end
+        town_center.pvp_shield_mgmt.shield_info = shield_info
     end
 end
 
@@ -343,6 +352,10 @@ local function update_afk_shields()
     end
 end
 
+function Public.init_town(town_center)
+    town_center.pvp_shield_mgmt = {}
+    update_pvp_shields()
+end
 
 Event.on_nth_tick(30, update_pvp_shields_display)
 Event.on_nth_tick(30, update_pvp_shields)

@@ -557,6 +557,8 @@ local function found_town(event)
 
     force.chart(surface, {{-1, -1}, {1, 1}})    -- Uncover center treasure
 
+    PvPTownShield.init_town(town_center)
+
     game.print(player.name .. ' has founded a new town!', {255, 255, 0})
     Server.to_discord_embed(player.name .. ' has founded a new town!')
 end

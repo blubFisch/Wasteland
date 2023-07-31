@@ -158,7 +158,7 @@ local function update_score()
 
                 local league = ranking_table.add { type = 'label', caption = PvPTownShield.get_town_league(town_center)}
                 ranking_table.style.column_alignments[3] = 'right'
-                league.tooltip = PvPTownShield.shield_info_text(town_center)
+                league.tooltip = town_center.pvp_shield_mgmt.shield_info
 
                 local res = ranking_table.add { type = 'label', caption = format_score(Score.research_score(town_center))}
                 ranking_table.style.column_alignments[4] = 'right'
