@@ -37,8 +37,6 @@ local function is_crash_site(entity)
 end
 
 local function mining_sound(player)
-    return -- Deactivated because this doesn't find the right sounds
-
     if game.tick % 15 ~= 0 then
         return
     end
@@ -46,10 +44,11 @@ local function mining_sound(player)
     if target == nil or not target.valid then
         return
     end
-    local surface = target.surface
-    local position = target.position
-    local path = 'entity-mining/' .. target.name
-    surface.play_sound({path = path, position = position, volume_modifier = 1, override_sound_type = 'game-effect'})
+    -- Deactivated because this doesn't find the right sounds
+    --local surface = target.surface
+    --local position = target.position
+    --local path = 'entity-mining/' .. target.name
+    --surface.play_sound({path = path, position = position, volume_modifier = 1, override_sound_type = 'game-effect'})
 end
 
 local function on_tick()
