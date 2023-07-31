@@ -11,6 +11,7 @@ local table_shuffle = table.shuffle_table
 local Event = require 'utils.event'
 local Global = require 'utils.global'
 local BiterHealthBooster = require 'modules.biter_health_booster_v2'
+local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 
 local tick_schedule = {}
 Global.register(
@@ -68,8 +69,8 @@ local function get_commmands(target, group)
 end
 
 local function swarm_eligible_town(town_center)
-    return town_center.evolution.biters > 0.2 and #town_center.market.force.connected_players > 0
-            and game.tick - town_center.last_swarm >= 10 * 60 * 60
+    return town_center.evolution.biters > 0.2 and not PvPTownShield.town_is_afk(town_center.market.force)
+            and game.tick - town_center.last_swarm >= 20 * 60 * 60
 end
 
 local function roll_market()
@@ -194,7 +195,7 @@ function Public.swarm(town_center, radius)
     end
 
     -- get our target amount of enemies based on relative evolution
-    local count2 = (evolution * 124) + 4
+    local count2 = (evolution * 150) + 10
 
     local units = spawner.surface.find_enemy_units(spawner.position, 16, market.force)
     if #units < count2 then
@@ -219,7 +220,7 @@ function Public.swarm(town_center, radius)
             max_unit = unit
         end
     end
-    BiterHealthBooster.add_boss_unit(max_unit, 5)
+    BiterHealthBooster.add_boss_unit(max_unit, 7)
 
     local unit_group_position = surface.find_non_colliding_position('biter-spawner', units[1].position, 256, 1)
     if not unit_group_position then

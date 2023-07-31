@@ -3,6 +3,7 @@ local math_random = math.random
 
 local ScenarioTable = require 'maps.wasteland.table'
 local Scrap = require 'maps.wasteland.scrap'
+local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 
 local pollution_index = {
     ['small-biter'] = {min = 0.1, max = 0.1},
@@ -56,7 +57,7 @@ function Public.market_scent()
     end
     for _, town_center in pairs(town_centers) do
         local market = town_center.market
-        if market ~= nil and market.valid and #market.force.connected_players > 0 then
+        if market ~= nil and market.valid and not PvPTownShield.town_is_afk(town_center.market.force) then
             local pollution = pollution_index['market']
             local amount = math_random(pollution.min, pollution.max)
             local evolution = town_center.evolution.biters

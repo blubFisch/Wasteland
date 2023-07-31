@@ -142,16 +142,22 @@ local function update_score()
                         return t[b] < t[a]
                     end
             ) do
+                local force = town_center.market.force
                 local position = ranking_table.add { type = 'label', caption = '#' .. rank}
                 if town_center == this.town_centers[player.force.name] then
                     position.style.font = 'default-semibold'
                     position.style.font_color = {r = 1, g = 1}
                 end
 
+                local label_extra = ""
+                if PvPTownShield.town_is_afk(force) then
+                    label_extra = " (AFK)"
+                end
+
                 local label =
                 ranking_table.add {
                     type = 'label',
-                    caption = town_center.town_name .. ' (' .. #town_center.market.force.connected_players .. '/' .. #town_center.market.force.players .. ')'
+                    caption = town_center.town_name .. ' (' .. #force.connected_players .. '/' .. #force.players .. ')' .. label_extra
                 }
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color

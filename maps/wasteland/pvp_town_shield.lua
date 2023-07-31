@@ -119,6 +119,11 @@ local function town_shields_researched(force)
     return force.technologies["automation"].researched
 end
 
+function Public.town_is_afk(force)
+    local this = ScenarioTable.get_table()
+    return this.pvp_shield_mark_afk[force.name] == true
+end
+
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
