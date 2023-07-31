@@ -172,8 +172,7 @@ local function update_pvp_shields()
             this.pvp_shield_offline_since[force.index] = nil
 
             -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
-            if shield and (shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE or shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
-                    and not higher_league_nearby then
+            if shield and shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
                 local delay_mins = 3
                 force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minutes."
                         .. " After everyone in your town leaves, you will get a new shield for "
