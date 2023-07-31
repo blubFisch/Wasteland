@@ -81,12 +81,11 @@ local function normalise(year, month, day, hour, min, sec)
     -- Propagate out of range values up
     -- e.g. if `min` is 70, `hour` increments by 1 and `min` becomes 10
     -- This has to happen for all columns after borrowing, as lower radixes may be pushed out of range
-    min, sec = carry(min, sec, 60) -- TODO: consider leap seconds?
+    min, sec = carry(min, sec, 60)
     hour, min = carry(hour, min, 60)
     day, hour = carry(day, hour, 24)
     -- Ensure `day` is not underflowed
     -- Add a whole year of days at a time, this is later resolved by adding months
-    -- TODO[OPTIMIZE]: This could be slow if `day` is far out of range
     while day < 0 do
         month = month - 1
         if month < 0 then
@@ -97,7 +96,6 @@ local function normalise(year, month, day, hour, min, sec)
     end
     year, month = carry(year, month, 12)
 
-    -- TODO[OPTIMIZE]: This could potentially be slow if `day` is very large
     while true do
         local i = month_length(month + 1, year)
         if day < i then

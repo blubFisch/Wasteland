@@ -611,7 +611,7 @@ local function handle_market_output(town_center, market, entity, offers)
         end
     elseif _allowed_market_output_inserters[entity.name] then
         -- handle inserter output
-        if entity.drop_target ~= nil then -- TODO: refactor
+        if entity.drop_target ~= nil then
             -- if the pickup position is inside the market
             --log("inside pickup position and there is a drop target")
             local stack = entity.held_stack

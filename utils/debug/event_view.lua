@@ -167,7 +167,6 @@ Gui.on_click(
     end
 )
 
--- Event registers (TODO: turn to removable hooks.. maybe)
 for name, id in pairs(events) do
     name_lookup[id] = name
     Event.add(id, event_callback)
