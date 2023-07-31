@@ -127,6 +127,7 @@ end
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
+    local league_shield_activation_range = Public.league_balance_shield_size * 1.0
 
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
@@ -136,6 +137,11 @@ local function update_pvp_shields()
         local town_league = Public.get_town_league(town_center)
         local town_offline_or_afk = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
         local abandoned = false
+
+        local higher_league_nearby = Public.enemy_players_nearby(town_center, league_shield_activation_range, town_league)
+        if higher_league_nearby then
+            town_center.last_higher_league_nearby = game.tick
+        end
 
         if town_offline_or_afk then
             if shields_researched then
@@ -166,7 +172,8 @@ local function update_pvp_shields()
             this.pvp_shield_offline_since[force.index] = nil
 
             -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
-            if shield and (shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE or shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE) then
+            if shield and (shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE or shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
+                    and not higher_league_nearby then
                 local delay_mins = 3
                 force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minutes."
                         .. " After everyone in your town leaves, you will get a new shield for "
@@ -186,12 +193,6 @@ local function update_pvp_shields()
         end
 
         -- Balancing shield
-        local league_shield_activation_range = Public.league_balance_shield_size * 1.0
-        local higher_league_nearby = Public.enemy_players_nearby(town_center, league_shield_activation_range, town_league)
-        if higher_league_nearby then
-            town_center.last_higher_league_nearby = game.tick
-        end
-
         if higher_league_nearby and not abandoned then
             if shields_researched then
                 -- If we have any type of shield ongoing, swap it for a league shield
