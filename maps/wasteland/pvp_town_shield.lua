@@ -31,7 +31,7 @@ function Public.in_extended_control_range(position)
 end
 
 function Public.get_town_control_range(town_center)
-    return 60 + town_center.evolution.worms * 100
+    return 70 + town_center.evolution.worms * 80
 end
 
 function Public.get_town_league(town_center)
@@ -127,7 +127,7 @@ end
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
-    local league_shield_activation_range = Public.league_balance_shield_size * 1.3
+    local league_shield_activation_range = Public.league_balance_shield_size + 60
 
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
