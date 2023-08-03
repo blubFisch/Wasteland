@@ -349,12 +349,17 @@ local function update_afk_shields()
 
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force
-        if this.pvp_shield_mark_afk[force.name] and not all_players_near_center(town_center) then
-            this.pvp_shield_mark_afk[force.name] = false
-            force.print("AFK mode has ended because players moved", Utils.scenario_color)
-            local shield = this.pvp_shields[force.name]
-            if shield then
-                PvPShield.remove_shield(shield)
+        if this.pvp_shield_mark_afk[force.name] then
+            local players_online = #force.connected_players > 0
+            if players_online and not all_players_near_center(town_center) then
+                this.pvp_shield_mark_afk[force.name] = false
+                force.print("AFK mode has ended because players moved", Utils.scenario_color)
+                local shield = this.pvp_shields[force.name]
+                if shield then
+                    PvPShield.remove_shield(shield)
+                end
+            elseif not players_online then
+                this.pvp_shield_mark_afk[force.name] = false
             end
         end
     end
