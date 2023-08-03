@@ -38,7 +38,7 @@ function Public.get_town_league(town_center)
     local score = Score.total_score(town_center)
     local tank_researched = town_center.market.force.technologies['tank'].researched
 
-    if score >= 60 then return 4 end
+    if score >= 60 then return 4 end      -- Note: referenced in info.lua
     if score >= 35 then return 3 end
     if score >= 15 or tank_researched then return 2 end
     return 1
@@ -137,6 +137,7 @@ local function update_pvp_shields()
         local town_league = Public.get_town_league(town_center)
         local town_offline_or_afk = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
         local abandoned = false
+        local high_score = Score.total_score(town_center) > 80  -- Note: referenced in info.lua
 
         local higher_league_nearby = Public.enemy_players_nearby(town_center, league_shield_activation_range, town_league)
         if higher_league_nearby then
@@ -144,7 +145,7 @@ local function update_pvp_shields()
         end
 
         if town_offline_or_afk then
-            if shields_researched then
+            if shields_researched and not high_score then
                 local is_first_activation = false
                 if not this.pvp_shield_offline_since[force.index] then
                     this.pvp_shield_offline_since[force.index] = game.tick
@@ -192,7 +193,7 @@ local function update_pvp_shields()
         end
 
         -- Balancing shield
-        if higher_league_nearby and not abandoned then
+        if higher_league_nearby and not abandoned and not high_score then
             if shields_researched then
                 -- If we have any type of shield ongoing, swap it for a league shield
                 if shield and shield.shield_type ~= PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
@@ -229,6 +230,8 @@ local function update_pvp_shields()
         else
             if abandoned then
                 shield_info = shield_info .. ', Abandoned town'
+            elseif high_score then
+                shield_info = shield_info .. ', No shield (High score)'
             elseif not shields_researched then
                 shield_info = shield_info .. ', Shields not researched'
             else
