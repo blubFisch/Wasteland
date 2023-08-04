@@ -1,8 +1,8 @@
-local Misc = require 'utils.commands.misc'
 local Event = require 'utils.event'
 local Global = require 'utils.global'
 local Gui = require 'utils.gui'
 local SpamProtection = require 'utils.spam_protection'
+local Utils = require 'maps.wasteland.utils'
 
 local this = {
     players = {},
@@ -22,7 +22,6 @@ local Public = {}
 Public.events = {bottom_quickbar_button_name = Event.generate_event_name('bottom_quickbar_button_name')}
 
 local main_frame_name = Gui.uid_name()
-local clear_corpse_button_name = Gui.uid_name()
 local bottom_quickbar_button_name = Gui.uid_name()
 
 function Public.get_player_data(player, remove_user_data)
@@ -85,6 +84,16 @@ local function destroy_frame(player)
     end
 end
 
+local function toggle_neutral_building(player)
+    local data = Public.get_player_data(player)
+    data.neutral_building = not data.neutral_building
+    if data.neutral_building then
+        player.print("Neutral building is now enabled. Your bots will ignore neutral buildings and all other players can access them.", Utils.scenario_color)
+    else
+        player.print("Neutral building is now disabled.", Utils.scenario_color)
+    end
+end
+
 local function create_frame(player, alignment, location, portable)
     local gui = player.gui
     local frame = gui.screen[main_frame_name]
@@ -130,14 +139,6 @@ local function create_frame(player, alignment, location, portable)
     }
     inner_frame.style = 'quick_bar_inner_panel'
 
-    inner_frame.add {
-        type = 'sprite-button',
-        sprite = 'entity/behemoth-biter',
-        name = clear_corpse_button_name,
-        tooltip = {'commands.clear_corpse'},
-        style = 'quick_bar_page_button'
-    }
-
     local bottom_quickbar_button =
         inner_frame.add {
         type = 'sprite-button',
@@ -151,6 +152,16 @@ local function create_frame(player, alignment, location, portable)
         bottom_quickbar_button.sprite = this.bottom_quickbar_button.sprite
         bottom_quickbar_button.tooltip = this.bottom_quickbar_button.tooltip
     end
+
+    local neutral_building_button =
+    inner_frame.add {
+        type = 'sprite-button',
+        name = 'neutral_building_button',
+        style = 'quick_bar_page_button'
+    }
+
+    neutral_building_button.sprite = 'utility/green_circle'
+    neutral_building_button.tooltip = 'Neutral Building'
 
     return frame
 end
@@ -217,17 +228,6 @@ function Public.is_custom_buttons_enabled()
 end
 
 Gui.on_click(
-    clear_corpse_button_name,
-    function(event)
-        local is_spamming = SpamProtection.is_spamming(event.player, nil, 'Clear Corpse')
-        if is_spamming then
-            return
-        end
-        Misc.clear_corpses(event)
-    end
-)
-
-Gui.on_click(
     bottom_quickbar_button_name,
     function(event)
         local is_spamming = SpamProtection.is_spamming(event.player, nil, 'Custom Bottom_quickbar_button_name')
@@ -236,6 +236,14 @@ Gui.on_click(
         end
         Event.raise(Public.events.bottom_quickbar_button_name, {player = event.player, event = event})
     end
+)
+
+-- Register the click event for the neutral building button
+Gui.on_click(
+        'neutral_building_button',
+        function(event)
+            toggle_neutral_building(event.player)
+        end
 )
 
 Event.add(

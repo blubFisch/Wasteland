@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Jul 2023 updates[/font]
+ - Added a button to build as neutral (bots will ignore+other players can access)
  - No offline shields for towns over 80 score
  - League shield now also protects towns offline towns
  - Fixed some base attack exploits
