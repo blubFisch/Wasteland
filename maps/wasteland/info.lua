@@ -3,7 +3,7 @@ local Public = {}
 local changelog =
     [[[font=heading-1]Jul 2023 updates[/font]
  - Added a button to build as neutral (bots will ignore+other players can access)
- - No offline shields for towns over 80 score
+ - No offline shields for towns over 70 score
  - League shield now also protects towns offline towns
  - Fixed some base attack exploits
  - Updated AFK shield in market now behaves like you're offline
@@ -38,7 +38,7 @@ local info_adv =
 - Offline PvP shields deploy automatically once all players of a town leave the game
     - The size is same as your initial town wall, marked by the inner blue tile square
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
-    - This shield is available up to 80 score
+    - This shield is available up to 70 score
 - The league shield protects your town from players of a higher league and covers the outer blue tile square. It also works while you're offline
     - League score limits: 0 score/outlander=L0, 15 score or tank=L1, 35 score=L2, 60 score=L3
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market

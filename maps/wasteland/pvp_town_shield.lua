@@ -137,7 +137,7 @@ local function update_pvp_shields()
         local town_league = Public.get_town_league(town_center)
         local town_offline_or_afk = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
         local abandoned = false
-        local high_score = Score.total_score(town_center) > 80  -- Note: referenced in info.lua
+        local high_score = Score.total_score(town_center) > 70  -- Note: referenced in info.lua
 
         local higher_league_nearby = Public.enemy_players_nearby(town_center, league_shield_activation_range, town_league)
         if higher_league_nearby then
