@@ -540,7 +540,11 @@ local function disable_blueprints(permission_group)
         defines.input_action.select_blueprint_entities,
         defines.input_action.setup_blueprint,
         defines.input_action.setup_single_blueprint_record,
-        defines.input_action.upgrade_open_blueprint
+        defines.input_action.upgrade_open_blueprint,
+        defines.input_action.activate_copy,
+        defines.input_action.activate_cut,
+        defines.input_action.activate_paste,
+        defines.input_action.alternative_copy
     }
     for _, d in pairs(defs) do
         permission_group.set_allows_action(d, false)
