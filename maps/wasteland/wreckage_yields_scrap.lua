@@ -46,7 +46,7 @@ local entity_loot_chance = {
     {name = 'steel-plate', chance = 150},
     {name = 'sulfuric-acid-barrel', chance = 15},
     --{name = "uranium-cannon-shell", chance = 1},
-    {name = "uranium-fuel-cell", chance = 10},
+    {name = "uranium-fuel-cell", chance = 5},
     --{name = "used-up-uranium-fuel-cell", chance = 1},
     {name = 'water-barrel', chance = 10},
     {name = 'logistic-chest-requester', chance = 15}
