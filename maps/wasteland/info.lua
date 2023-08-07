@@ -1,15 +1,14 @@
 local Public = {}
 
 local changelog =
-    [[[font=heading-1]Jul 2023 updates[/font]
+    [[[font=heading-1]Aug 2023 updates[/font]
+ - Market prices rebalanced: Uranium ore 4x expensive & reduced profit for internal economy
  - Added a button to build as neutral (bots will ignore+other players can access)
  - No offline shields for towns over 70 score
  - League shield now also protects towns offline towns
- - Fixed some base attack exploits
- - Updated AFK shield in market now behaves like you're offline
+ - Fixed many base attack exploits
  - Power poles can no longer be used to block enemy buildings - now only turrets block buildings
  - Introduced Leagues system: Players can only attack towns of same or higher leagues, which depend on town progress
- - Can build labs in town center again
  - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap]]
 
 local info =

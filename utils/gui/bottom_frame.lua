@@ -88,7 +88,7 @@ local function toggle_neutral_building(player)
     local data = Public.get_player_data(player)
     data.neutral_building = not data.neutral_building
     if data.neutral_building then
-        player.print("Neutral building is now enabled. Your bots will ignore neutral buildings and all other players can access them.", Utils.scenario_color)
+        player.print("Neutral building is now enabled. Your bots will ignore these buildings and they can interact with other towns.", Utils.scenario_color)
     else
         player.print("Neutral building is now disabled.", Utils.scenario_color)
     end
