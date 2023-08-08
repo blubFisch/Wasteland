@@ -6,6 +6,8 @@ local ScenarioTable = require 'maps.wasteland.table'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 
 local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turret"}
+local default_protected_radius = 30
+local turret_protected_radius = 42
 
 -- these should be allowed to place inside any base by anyone as neutral
 local allowed_entities_neutral = {
@@ -221,14 +223,14 @@ local function process_built_entities(event)
 
     -- Handle entities placed within protected areas
     if not allowed_entities_keep_force[name] then  -- Some entities like vehicles are always ok to place
-        local radius = 30
+        local radius = default_protected_radius
 
         if table.array_contains(town_zoning_entity_types, entity.type) then
-            radius = 42 -- Prevent using these entities offensively to stop a base from replacing entities of itself
+            radius = turret_protected_radius -- Prevent using these entities offensively to stop a base from replacing entities of itself
         end
 
         if PvPShield.protected_by_shields(surface, position, force, radius)
-                or Public.near_another_town(force_name, position, surface, radius, radius + 30) == true then
+                or Public.near_another_town(force_name, position, surface, radius, radius + 30) then
             -- Logistics are okay to place wherever you can access (=outside of shield)
             if allowed_entities_neutral[name] and not (PvPShield.protected_by_shields(surface, position, force, 0)
                     or Public.near_another_town(force_name, position, surface, 10, 0)) then
@@ -319,7 +321,6 @@ local function prevent_tiles_near_towns(event)
     return fail
 end
 
--- called when a player places an item, or a ghost
 local function on_built_entity(event)
     if prevent_entity_in_restricted_zone(event) then
         return
@@ -338,7 +339,6 @@ local function on_robot_built_entity(event)
     end
 end
 
--- called when a player places landfill
 local function on_player_built_tile(event)
     if prevent_landfill_in_restricted_zone(event) then
         return
@@ -360,7 +360,21 @@ local function on_robot_built_tile(event)
     end
 end
 
+local function on_pre_build(event)
+    local p = event.position
+    local surface = game.surfaces.nauvis
+
+    -- Prevent deleting other players ghosts to breach their defenses
+    local player = game.players[event.player_index]
+    if surface.count_entities_filtered({position=p, name='entity-ghost'}) > 0
+            and Public.near_another_town(player.force.name, p, surface, default_protected_radius) then
+        player.clear_cursor()
+        build_error_notification(surface, p, "Can't override enemy blueprint", player)
+    end
+end
+
 local Event = require 'utils.event'
+Event.add(defines.events.on_pre_build, on_pre_build)
 Event.add(defines.events.on_built_entity, on_built_entity)
 Event.add(defines.events.on_player_built_tile, on_player_built_tile)
 Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
