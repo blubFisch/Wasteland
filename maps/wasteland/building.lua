@@ -247,14 +247,15 @@ local function process_built_entities(event)
         end
     end
 
-    -- Build all outlander/rogue entities as neutral to make them compatible with all forces
-    if entity and entity.valid and (force_name == 'player' or force_name == 'rogue') then
-        entity.force = game.forces['neutral']
+    -- Ensure compatibility between outlander/rogue
+    if force_name == 'rogue' then
+        entity.force = game.forces['player']
     end
 
     -- Feature to build neutral = all players can access + robots will ignore
     local players_prefs = global.tokens.utils_gui_bottom_frame.players[player_index]
-    if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building then
+    if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
+        and not allowed_entities_keep_force[name] then
         entity.force = game.forces['neutral']
         surface.create_entity({name = 'flying-text', position = position,
                                text = "Neutral (setting)", color = {r = 0, g = 1, b = 0}})

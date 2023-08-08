@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
+ - Outlanders can build turrets/mines again to fight towns
  - Bunch of bugfixes
  - Market prices rebalanced: Uranium ore 4x expensive & reduced profit for internal economy
  - Added a button to build as neutral (bots will ignore+other players can access)

@@ -201,14 +201,13 @@ function Public.set_player_to_outlander(player)
         log('player nil or not valid!')
         return
     end
+
     player.force = game.forces.player
-    if game.permissions.get_group('outlander') == nil then
-        game.permissions.create_group('outlander')
-    end
     game.permissions.get_group('outlander').add_player(player)
     player.tag = '[Outlander]'
     Public.map_preset(player, false)
     Public.set_player_color(player)
+
     ResearchBalance.player_changes_town_status(player, false)
     CombatBalance.player_changes_town_status(player, false)
 end
@@ -219,18 +218,10 @@ local function set_player_to_rogue(player)
         return
     end
 
-    player.force = 'rogue'
-    local group = game.permissions.get_group('rogue')
-    if group == nil then
-        group = game.permissions.create_group('rogue')
-    end
-
-    if not player.object_name == 'LuaPlayer' then
-        log('Given object is not of LuaPlayer!')
-        return
-    end
     player.print("You have broken the peace with the biters. They will seek revenge!", {r = 1, g = 0, b = 0})
-    group.add_player(player)
+
+    player.force = game.forces.rogue
+    game.permissions.get_group('rogue').add_player(player)
     player.tag = '[Rogue]'
     Public.map_preset(player, false)
     Public.set_player_color(player)
@@ -842,7 +833,7 @@ local function kill_force(force_name, cause)
 end
 
 local function on_forces_merged()
-    -- Remove any ghosts that have been moved into neutral after a town is destroyed. This caused desyncs before.
+    -- Remove any ghosts that have been moved into neutral after a town is destroyed
     for _, e in pairs(game.surfaces.nauvis.find_entities_filtered({force = 'neutral', type = "entity-ghost"})) do
         if e.valid then
             e.destroy()
@@ -850,26 +841,13 @@ local function on_forces_merged()
     end
 end
 
-local function setup_neutral_force()
-    local force = game.forces['neutral']
-    force.technologies['military'].researched = true
-    force.technologies['automation'].researched = true
-    force.technologies['logistic-science-pack'].researched = true
-    force.technologies['steel-processing'].researched = true
-    force.technologies['engine'].researched = true
-    force.recipes['submachine-gun'].enabled = true
-    force.recipes['engine-unit'].enabled = true
-    force.recipes['stone-brick'].enabled = false
-    force.recipes['radar'].enabled = false
-    force.recipes['lab'].enabled = false
-    force.recipes['automation-science-pack'].enabled = false
-    force.recipes['logistic-science-pack'].enabled = false
-end
-
 -- setup the player force (this is the default for Outlanders)
 local function setup_player_force()
     local this = ScenarioTable.get_table()
     local force = game.forces.player
+
+    force.set_friend(game.forces.rogue, true)
+
     local permission_group = game.permissions.create_group('outlander')
     -- disable permissions
     reset_permissions(permission_group)
@@ -908,6 +886,9 @@ local function setup_rogue_force()
     if game.forces['rogue'] == nil then
         force = game.create_force('rogue')
     end
+
+    force.set_friend(game.forces.player, true)
+
     local permission_group = game.permissions.create_group('rogue')
     -- disable permissions
     reset_permissions(permission_group)
@@ -1087,9 +1068,8 @@ end
 
 function Public.initialize()
     reset_forces()
-    setup_neutral_force()
-    setup_player_force()
     setup_rogue_force()
+    setup_player_force()
     setup_enemy_force()
 end
 

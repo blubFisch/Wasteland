@@ -548,6 +548,13 @@ local function found_town(event)
         e.destroy()
     end
 
+    -- Reassign brought property
+    for _, e in pairs(surface.find_entities_filtered({area = {{position.x - town_radius, position.y - town_radius},
+                                                              {position.x + town_radius, position.y + town_radius}},
+                                                      force = 'player'})) do
+        e.force = force
+    end
+
     draw_town_spawn(force_name)
 
     -- set the spawn point
