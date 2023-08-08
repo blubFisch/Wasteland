@@ -192,7 +192,7 @@ function Public.give_player_items(player)
     player.clear_items_inside()
     player.insert({name = 'raw-fish', count = 3})
     if player.force.name == 'rogue' or player.force.name == 'player' then
-        player.insert {name = 'stone-furnace', count = '1'}
+        player.insert {name = 'linked-chest', count = '1'}
     end
 end
 
@@ -433,7 +433,7 @@ local function delete_chart_tag_for_all_forces(market)
         local tags = force.find_chart_tags(surface, {{position.x - 0.1, position.y - 0.1}, {position.x + 0.1, position.y + 0.1}})
         local tag = tags[1]
         if tag then
-            if tag.icon.name == 'stone-furnace' then
+            if tag.icon.name == 'signal-dot' then
                 tag.destroy()
             end
         end
@@ -452,7 +452,7 @@ function Public.add_chart_tag(town_center)
     if tags[1] then
         return
     end
-    force.add_chart_tag(market.surface, {icon = {type = 'item', name = 'stone-furnace'}, position = position, text = town_center.town_name})
+    force.add_chart_tag(market.surface, {icon = {type = 'virtual', name = 'signal-dot'}, position = position, text = town_center.town_name})
 end
 
 function Public.update_town_chart_tags()

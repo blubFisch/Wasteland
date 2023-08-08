@@ -20,7 +20,7 @@ local function tutorials_tick()
 
             if tut.show_after_tick and game.tick > tut.show_after_tick then
                 this.tutorials[player.index].step = 1
-                player.set_goal_description("Found a town by building your stone furnace.\n\nThis will also unlock your map.")
+                player.set_goal_description("Found a town by building your white chest.\n\nThis will also unlock your map.")
                 tut.show_after_tick = nil
             end
 

@@ -128,7 +128,7 @@ local function init_map_hint_frame(player)
     if player.gui.screen['towny_map_hint'] then
         player.gui.screen['towny_map_hint'].destroy()
     end
-    local b = player.gui.screen.add({type = 'label', caption = "To activate map, build a town (stone furnace)",
+    local b = player.gui.screen.add({type = 'label', caption = "To activate map, build a town (white chest)",
                                      name = 'towny_map_hint'})
     b.location = {x = 2200, y = 100}
     b.style.font_color = {r = 255, g = 255, b = 255}

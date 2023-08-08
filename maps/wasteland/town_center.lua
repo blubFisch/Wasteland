@@ -362,21 +362,23 @@ local function found_town(event)
         return
     end
 
-    local player = game.players[event.player_index]
-
-    -- is player not a character?
-    local character = player.character
-    if character == nil then
+    if entity.name ~= 'linked-chest' then
         return
     end
 
-    -- is it a stone-furnace?
-    if entity.name ~= 'stone-furnace' then
+    if event.robot then
+        entity.destroy()    -- Can't allow placing the special item for this
+        return
+    end
+
+    local player = game.players[event.player_index]
+    if not player.character then
         return
     end
 
     -- is player in a town already?
     if player.force.index ~= game.forces.player.index and player.force.index ~= game.forces['rogue'].index then
+        entity.destroy()    -- Can't allow placing the special item for this
         return
     end
 
@@ -393,7 +395,7 @@ local function found_town(event)
 
     -- is player mayor of town that still exists?
     if Team.is_towny(player.force) then
-        player.insert({name = 'stone-furnace', count = 1})
+        player.insert({name = 'linked-chest', count = 1})
         return
     end
 
@@ -408,14 +410,14 @@ local function found_town(event)
                     color = {r = 0.77, g = 0.0, b = 0.0}
                 }
             )
-            player.insert({name = 'stone-furnace', count = 1})
+            player.insert({name = 'linked-chest', count = 1})
             return
         end
     end
 
     -- is it a valid location to place a town?
     if not is_valid_location(force_name, surface, position) then
-        player.insert({name = 'stone-furnace', count = 1})
+        player.insert({name = 'linked-chest', count = 1})
         return
     end
 
@@ -433,7 +435,7 @@ local function found_town(event)
 
             this.town_evo_warned[player.index] = game.tick
 
-            player.insert({name = 'stone-furnace', count = 1})
+            player.insert({name = 'linked-chest', count = 1})
             return
         end
     end
@@ -574,10 +576,6 @@ local function found_town(event)
     Server.to_discord_embed(player.name .. ' has founded a new town!')
 end
 
-local function on_built_entity(event)
-    found_town(event)
-end
-
 local function on_player_repaired_entity(event)
     local entity = event.entity
     if entity.name == 'market' then
@@ -637,7 +635,8 @@ commands.add_command(
     end
 )
 
-Event.add(defines.events.on_built_entity, on_built_entity)
+Event.add(defines.events.on_built_entity, found_town)
+Event.add(defines.events.on_robot_built_entity, found_town)
 Event.add(defines.events.on_player_repaired_entity, on_player_repaired_entity)
 Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 
