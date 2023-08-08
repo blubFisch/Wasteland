@@ -145,7 +145,7 @@ local function set_offers(town_center)
     special_offers[6] = {{{'coin', (town_center.upgrades.laser_turret.slots * 400)}}, laser_turret}
     local spawn_point = 'Set Spawn Point'
     special_offers[7] = {{}, spawn_point}
-    special_offers[8] = {{}, 'AFK PvP Shield'}
+    special_offers[8] = {{}, 'AFK Mode (PvP Shield, No boss attacks, Less pollution)'}
     for _, v in pairs(special_offers) do
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})
     end

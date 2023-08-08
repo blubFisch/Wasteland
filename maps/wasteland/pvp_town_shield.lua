@@ -146,21 +146,18 @@ local function update_pvp_shields()
 
         if town_offline_or_afk then
             if shields_researched and not high_score then
-                local is_first_activation = false
-                if not this.pvp_shield_offline_since[force.index] then
-                    this.pvp_shield_offline_since[force.index] = game.tick
-                    is_first_activation = true
+                if this.pvp_shield_offline_eligible_since[force.index] == nil then
+                    this.pvp_shield_offline_eligible_since[force.index] = game.tick
                 end
-                local remaining_offline_shield_time = offline_shield_duration_ticks - (game.tick - this.pvp_shield_offline_since[force.index])
+                local remaining_offline_shield_time = offline_shield_duration_ticks - (game.tick - this.pvp_shield_offline_eligible_since[force.index])
                 abandoned = remaining_offline_shield_time <= 0
 
                 if not shield and not abandoned then
                     -- Activations:
                     -- nil means waiting for players to go offline
                     -- -1 it is not meant to renew until players join again
-                    local town_control_range = Public.get_town_control_range(town_center)
-                    if not (is_first_activation and Public.enemy_players_nearby(town_center, town_control_range)) then
-                        if is_first_activation then
+                    if not Public.enemy_players_nearby(town_center, Public.get_town_control_range(town_center)) then
+                        if this.pvp_shield_offline_eligible_since[force.index] == game.tick then
                             game.print("The offline/afk PvP Shield of " .. town_center.town_name .. " is activating now." ..
                                     " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time), Utils.scenario_color)
                         end
@@ -170,7 +167,7 @@ local function update_pvp_shields()
                 end
             end
         else    -- Online
-            this.pvp_shield_offline_since[force.index] = nil
+            this.pvp_shield_offline_eligible_since[force.index] = nil
 
             -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
             if shield and shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
