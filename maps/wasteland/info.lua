@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
+ - Bunch of bugfixes
  - Market prices rebalanced: Uranium ore 4x expensive & reduced profit for internal economy
  - Added a button to build as neutral (bots will ignore+other players can access)
  - No offline shields for towns over 70 score

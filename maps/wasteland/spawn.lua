@@ -110,7 +110,7 @@ local function find_valid_spawn_point(force_name, surface)
             local x = math_floor(initial_position.x + math_cos(t) * radius)
             local y = math_floor(initial_position.y + math_sin(t) * radius)
             local variation_position = { x = x, y = y}
-            log("testing {" .. variation_position.x .. "," .. variation_position.y .. "}")
+            --log("testing {" .. variation_position.x .. "," .. variation_position.y .. "}")
             force_load(initial_position, surface, 1)
             if not in_use(variation_position) then
                 local distance_center = math.sqrt(variation_position.x ^ 2 + variation_position.y ^ 2)

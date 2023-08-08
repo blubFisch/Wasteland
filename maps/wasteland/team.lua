@@ -170,14 +170,17 @@ function Public.add_player_to_town(player, town_center)
     this.spawn_point[player.index] = force.get_spawn_position(surface)
     game.permissions.get_group(force.name).add_player(player)
     player.tag = ''
+
     Public.map_preset(player, true)
     Public.set_player_color(player)
+
     ResearchBalance.player_changes_town_status(player, true)
     CombatBalance.player_changes_town_status(player, true)
+    force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
+
     if player.gui.screen['towny_map_hint'] then
         player.gui.screen['towny_map_hint'].destroy()
     end
-    force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
 end
 
 -- given to player upon respawn
@@ -467,20 +470,14 @@ function Public.update_town_chart_tags()
     local forces = game.forces
     for _, town_center in pairs(town_centers) do
         local market = town_center.market
-        if market ~= nil and market.valid then
-            for _, force in pairs(forces) do
-                if force.is_chunk_visible(market.surface, town_center.chunk_position) then
-                    Public.add_chart_tag(town_center)
-                end
+        for _, force in pairs(forces) do
+            if force.is_chunk_visible(market.surface, town_center.chunk_position) then
+                Public.add_chart_tag(town_center)
             end
         end
     end
-    if game.forces['player'] ~= nil then
-        game.forces['player'].clear_chart(game.surfaces['nauvis'])
-    end
-    if game.forces['rogue'] ~= nil then
-        game.forces['rogue'].clear_chart(game.surfaces['nauvis'])
-    end
+    game.forces['player'].clear_chart(game.surfaces['nauvis'])
+    game.forces['rogue'].clear_chart(game.surfaces['nauvis'])
 end
 
 local function reset_permissions(permission_group)
@@ -544,7 +541,8 @@ local function disable_blueprints(permission_group)
         defines.input_action.activate_copy,
         defines.input_action.activate_cut,
         defines.input_action.activate_paste,
-        defines.input_action.alternative_copy
+        defines.input_action.alternative_copy,
+        defines.input_action.smart_pipette
     }
     for _, d in pairs(defs) do
         permission_group.set_allows_action(d, false)

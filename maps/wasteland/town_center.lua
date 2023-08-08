@@ -558,7 +558,8 @@ local function found_town(event)
     Team.add_player_to_town(player, town_center)
     Team.add_chart_tag(town_center)
 
-    force.chart(surface, {{-1, -1}, {1, 1}})    -- Uncover center treasure
+    -- Uncover center treasure
+    force.chart(surface, {{-1, -1}, {1, 1}})
 
     PvPTownShield.init_town(town_center)
 
