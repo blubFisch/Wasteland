@@ -33,7 +33,7 @@ local max_pollution_behemoth = 256
 local max_pollution_big = 64
 local max_pollution_medium = 16
 -- max_factor < 1.0 means technology sum of weights will be greater than 1.0
-local max_factor = 0.7
+local max_factor = 0.8
 
 -- technology weights
 local technology_weights = {

@@ -43,7 +43,7 @@ local function calculate_modifier_for_town(town_center)
     for _, town_center in pairs(this.town_centers) do
         max_res = math.max(town_center.evolution.worms, max_res)
     end
-    local research_modifier = math.min(math.max(max_res, 0.01) / math.max(town_center.evolution.worms, 0.01), 10)
+    local research_modifier = math.min(math.max(max_res, 0.01) / math.max(town_center.evolution.worms, 0.01), 5)
 
     local active_player_count = 0
     for _, player in pairs(town_center.market.force.players) do

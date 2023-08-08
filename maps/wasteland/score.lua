@@ -2,12 +2,12 @@ local Public = {}
 
 local GameMode = require 'maps.wasteland.game_mode'
 
-local evo_score_factor = 50
+local evo_score_factor = 65
 
-local age_score_weights = {
-    1.4, 0.6, 0.25
+local age_score_factors = {
+    1.6, 0.8, 0.25
 }
-local age_score_weight = age_score_weights[GameMode.mode]
+local age_score_weight = age_score_factors[GameMode.mode]
 
 function Public.score_increment(evo_increase)
     return evo_increase * evo_score_factor
