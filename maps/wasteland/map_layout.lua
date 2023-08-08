@@ -15,6 +15,11 @@ Public.central_ores_town_nobuild = 350
 Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
+Public.league_balance_shield_size = 121
+
+Public.radius_between_towns = Public.league_balance_shield_size + 60 + 2 + 40
+
+
 local scrap_entities = {
     -- simple entity with owner
     {name = 'crash-site-spaceship-wreck-small-1'}, -- these do not have mining animation

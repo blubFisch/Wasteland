@@ -10,11 +10,11 @@ local ScenarioTable = require 'maps.wasteland.table'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 local Event = require 'utils.event'
+local MapLayout = require 'maps.wasteland.map_layout'
 
-Public.league_balance_shield_size = 121
 Public.offline_shield_size = 41
 
-local league_shield_radius = (Public.league_balance_shield_size - 1) / 2
+local league_shield_radius = (MapLayout.league_balance_shield_size - 1) / 2
 local league_shield_vectors = Utils.make_border_vectors(league_shield_radius)
 
 function Public.in_extended_control_range(position)
@@ -23,7 +23,7 @@ function Public.in_extended_control_range(position)
         local town_position = town_center.market.position
 
         local distance = math_floor(math_sqrt((position.x - town_position.x) ^ 2 + (position.y - town_position.y) ^ 2))
-        if distance < Public.get_town_control_range(town_center) * 1.5 + Public.league_balance_shield_size / 2 then   -- Account for growing control range
+        if distance < Public.get_town_control_range(town_center) * 1.5 + MapLayout.league_balance_shield_size / 2 then   -- Account for growing control range
             return true
         end
     end
@@ -127,7 +127,7 @@ end
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
-    local league_shield_activation_range = Public.league_balance_shield_size + 60
+    local league_shield_activation_range = MapLayout.league_balance_shield_size + 60
 
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
@@ -200,7 +200,7 @@ local function update_pvp_shields()
 
                 if not shield then
                     force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
-                    PvPShield.add_shield(market.surface, market.force, market.position, Public.league_balance_shield_size, nil, 13 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
+                    PvPShield.add_shield(market.surface, market.force, market.position, MapLayout.league_balance_shield_size, nil, 13 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
                     update_pvp_shields_display()
                 end
             else
@@ -278,7 +278,7 @@ local function update_leagues()
 end
 
 function Public.remove_all_shield_markers(surface, position)
-    local r = Public.league_balance_shield_size
+    local r = MapLayout.league_balance_shield_size
     for _, e in pairs(surface.find_tiles_filtered({area = {{position.x - r, position.y - r}, {position.x + r, position.y + r}}, name = 'blue-refined-concrete'})) do
         surface.set_tiles({{name = 'landfill', position = e.position}}, true)
     end

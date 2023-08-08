@@ -86,7 +86,7 @@ local function reset_map()
     for _, player in pairs(game.players) do
         Player.initialize(player)
         Team.set_player_color(player)
-        Player.spawn(player)
+        Player.spawn_initially(player)
         Player.load_buffs(player)
         Player.requests(player)
     end

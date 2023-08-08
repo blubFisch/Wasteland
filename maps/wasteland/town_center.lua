@@ -12,7 +12,6 @@ local ScenarioTable = require 'maps.wasteland.table'
 local Team = require 'maps.wasteland.team'
 local Building = require 'maps.wasteland.building'
 local Colors = require 'maps.wasteland.colors'
-local Enemy = require 'maps.wasteland.enemy'
 local Color = require 'utils.color_presets'
 local Utils = require 'maps.wasteland.utils'
 local MapLayout = require 'maps.wasteland.map_layout'
@@ -21,7 +20,6 @@ local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 
 local town_radius = 20
-local radius_between_towns = PvPTownShield.league_balance_shield_size + 60 + 2 + 40
 
 local ore_amount = 1200
 
@@ -284,7 +282,7 @@ local function is_valid_location(force_name, surface, position)
         return false
     end
 
-    if Building.near_another_town(force_name, position, surface, radius_between_towns) or PvPTownShield.in_extended_control_range(position) then
+    if Building.near_another_town(force_name, position, surface, MapLayout.radius_between_towns) or PvPTownShield.in_extended_control_range(position) then
         surface.create_entity(
             {
                 name = 'flying-text',
@@ -544,7 +542,12 @@ local function found_town(event)
         scale_with_zoom = false
     }
 
-    Enemy.clear_enemies(position, surface, town_radius * 5)
+    -- Clear enemies around spawn
+    for _, e in pairs(surface.find_entities_filtered({force = 'enemy', type = {'unit-spawner', 'unit', 'turret', 'gun-turret'},
+                                                      position = position, radius = town_radius * 5})) do
+        e.destroy()
+    end
+
     draw_town_spawn(force_name)
 
     -- set the spawn point

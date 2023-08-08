@@ -9,17 +9,8 @@ local math_cos = math.cos
 local math_floor = math.floor
 
 local ScenarioTable = require 'maps.wasteland.table'
-local Enemy = require 'maps.wasteland.enemy'
 local Building = require 'maps.wasteland.building'
 local MapLayout = require 'maps.wasteland.map_layout'
-
--- don't spawn if town is within this range
-local spawn_point_town_buffer = 256
--- clear enemies within this distance from spawn
-local spawn_point_safety = 16
--- incremental spawn distance from existing town
--- this is how much each attempt is incremented by for checking a pollution free area
-local spawn_point_incremental_distance = 16
 
 local function force_load(position, surface, radius)
     --log("is_chunk_generated = " .. tostring(surface.is_chunk_generated(position)))
@@ -35,23 +26,6 @@ local function get_area(position, w, h)
     local y1 = math_floor(h / 2)
     local y2 = h - y1
     return {{position.x - x1, position.y - y1}, {position.x + x2, position.y + y2}}
-end
-
-local function clear_spawn(position, surface, w, h)
-    --log("clear_spawn {" .. position.x .. "," .. position.y .. "}")
-    local area = get_area(position, w, h)
-    for _, e in pairs(surface.find_entities_filtered({area = area})) do
-        if e.type ~= 'character' then
-            e.destroy()
-        end
-    end
-end
-
--- does the position have any pollution
-local function has_pollution(position, surface)
-    local result = surface.get_pollution(position) > 0.0
-    --log("has_pollution = " .. tostring(result))
-    return result
 end
 
 -- is the position already used
@@ -94,91 +68,78 @@ local function is_empty(position, surface)
     return result
 end
 
--- finds a valid spawn point that is not near a town and not in a polluted area
 local function find_valid_spawn_point(force_name, surface)
     local this = ScenarioTable.get_table()
 
-    -- check center of map first if valid
-    local fallback_position = {x = MapLayout.central_ores_town_nobuild + 50, y = 0}
-    local position = fallback_position
-    --log("testing {" .. position.x .. "," .. position.y .. "}")
-    force_load(position, surface, 1)
+    local default_position = { x = MapLayout.central_ores_town_nobuild + 50, y = 0}
+    local initial_position
 
-    -- is the point near any buildings
-    if in_use(position) == false then
-        if Building.near_another_town(force_name, position, surface, spawn_point_town_buffer) == false then
-            -- force load the position
-            if is_empty(position, surface) == true then
-                --log("found valid spawn point at {" .. position.x .. "," .. position.y .. "}")
-                return position
-            end
-        end
-    end
-
-    -- otherwise find a nearby town
-    local keyset = {}
+    -- Make an initial rough position pick
+    -- Prefer spawns near a town center
+    local town_names_keyset = {}
     for town_name, _ in pairs(this.town_centers) do
-        table_insert(keyset, town_name)
+        table_insert(town_names_keyset, town_name)
     end
-    local count = table_size(keyset)
-    if count > 0 then
-        local town_name = keyset[math_random(1, count)]
-        local town_center = this.town_centers[town_name]
-        if town_center ~= nil then
-            position = town_center.market.position
-        end
-    --log("town center is {" .. position.x .. "," .. position.y .. "}")
+    local town_count = table_size(town_names_keyset)
+    if town_count > 0 then
+        local town_center = this.town_centers[town_names_keyset[math_random(1, town_count)]]
+        initial_position = town_center.market.position
+        --log("XDB Town center is {" .. initial_position.x .. "," .. initial_position.y .. "}")
+    else
+        --log("XDB Starting with default_spawn")
+        -- Use the default spawn area
+        initial_position = default_position
     end
 
-    -- and start checking around it for a suitable spawn position
+    -- Then start checking around it for a suitable spawn position
     local tries = 0
-    local radius = spawn_point_town_buffer
+    local radius
+    local min_distance_to_town_center = MapLayout.league_balance_shield_size * 0.75
+    if town_count > 0 then
+        radius = min_distance_to_town_center
+    else
+        radius = 5 -- Spawn players next to each other for extra fun
+    end
     local angle
-    while (tries < 100) do
+    while tries < 100 do
         -- 8 attempts each position
         for _ = 1, 8 do
             -- position on the circle radius
             angle = math_random(0, 360)
             local t = math_rad(angle)
-            local x = math_floor(position.x + math_cos(t) * radius)
-            local y = math_floor(position.y + math_sin(t) * radius)
-            local target = {x = x, y = y}
-            --log("testing {" .. target.x .. "," .. target.y .. "}")
-            force_load(position, surface, 1)
-            if in_use(target) == false then
-                if has_pollution(target, surface) == false then
-                    local distance_center = math.sqrt(position.x ^ 2 + position.y ^ 2)
-                    if distance_center > MapLayout.central_ores_town_nobuild + 50 then
-                        if Building.near_another_town(force_name, target, surface, spawn_point_town_buffer) == false then
-                            if is_empty(target, surface) == true then
-                                --log("found valid spawn point at {" .. target.x .. "," .. target.y .. "}")
-                                position = target
-                                return position
-                            end
+            local x = math_floor(initial_position.x + math_cos(t) * radius)
+            local y = math_floor(initial_position.y + math_sin(t) * radius)
+            local variation_position = { x = x, y = y}
+            log("testing {" .. variation_position.x .. "," .. variation_position.y .. "}")
+            force_load(initial_position, surface, 1)
+            if not in_use(variation_position) then
+                local distance_center = math.sqrt(variation_position.x ^ 2 + variation_position.y ^ 2)
+                if distance_center > MapLayout.central_ores_town_nobuild + 50 then
+                    if not Building.near_another_town(force_name, variation_position, surface, 40, min_distance_to_town_center) then
+                    --    or PvPTownShield.in_extended_control_range(variation_position) then
+                        if is_empty(variation_position, surface) then
+                            --log("found valid spawn point at {" .. variation_position.x .. "," .. variation_position.y .. "}")
+                            return variation_position
                         end
                     end
                 end
             end
         end
         -- near a town, increment the radius and select another angle
-        radius = radius + math_random(1, spawn_point_incremental_distance)
+        radius = radius + math_random(1, 30)
         tries = tries + 1
     end
-    return fallback_position
+
+    log("ERROR: found no good spawn, using default")
+    return default_position
 end
 
-function Public.get_new_spawn_point(player, surface)
+function Public.set_new_spawn_point(player, surface)
     local this = ScenarioTable.get_table()
     -- get a new spawn point
-    local position = {0, 0}
-    if player ~= nil then
-        local force = player.force
-        if force ~= nil then
-            local force_name = force.name
-            position = find_valid_spawn_point(force_name, surface)
-        end
-    end
-    -- should never be invalid or blocked
+    local force = player.force
+    local force_name = force.name
+    local position = find_valid_spawn_point(force_name, surface)
     this.spawn_point[player.index] = position
     --log("player " .. player.name .. " assigned new spawn point at {" .. position.x .. "," .. position.y .. "}")
     return position
@@ -200,13 +161,7 @@ function Public.get_spawn_point(player, surface)
         end
     end
     -- otherwise get a new spawn point
-    return Public.get_new_spawn_point(player, surface)
-end
-
-function Public.clear_spawn_point(position, surface)
-    Enemy.clear_worms(position, surface, spawn_point_safety) -- behemoth worms can attack from a range of 48, clear first time only
-    Enemy.clear_enemies(position, surface, spawn_point_safety) -- behemoth worms can attack from a range of 48
-    clear_spawn(position, surface, 7, 9)
+    return Public.set_new_spawn_point(player, surface)
 end
 
 return Public

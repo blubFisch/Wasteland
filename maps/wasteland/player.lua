@@ -30,13 +30,12 @@ function Public.initialize(player)
     end
 end
 
-function Public.spawn(player)
-    -- first time spawn point
-    local surface = game.surfaces['nauvis']
-    local spawn_point = Spawn.get_new_spawn_point(player, surface)
+function Public.spawn_initially(player)
     local this = ScenarioTable.get()
+    local surface = game.surfaces['nauvis']
+    local spawn_point = Spawn.set_new_spawn_point(player, surface)
     this.strikes[player.name] = 0
-    Spawn.clear_spawn_point(spawn_point, surface)
+
     -- reset cooldown
     this.cooldowns_town_placement[player.index] = 0
     this.last_respawn[player.name] = 0
@@ -199,7 +198,7 @@ local function on_player_joined_game(event)
         GameMode.add_mode_button(player)
 
         Public.initialize(player)
-        Public.spawn(player)
+        Public.spawn_initially(player)
     end
     Public.load_buffs(player)
     Public.requests(player)
@@ -209,18 +208,20 @@ local function on_player_respawned(event)
     local this = ScenarioTable.get()
     local player = game.players[event.player_index]
     local surface = player.surface
+
     Team.give_player_items(player)
+
     if player.force == game.forces['rogue'] then
         Team.set_player_to_outlander(player)
     end
 
-    -- get_spawn_point will always return a valid spawn
     local spawn_point = Spawn.get_spawn_point(player, surface)
 
     -- reset cooldown
     this.last_respawn[player.name] = game.tick
     local new_pos = surface.find_non_colliding_position('character', spawn_point, 50, 0.5)
     player.teleport(new_pos or spawn_point, surface)
+
     Public.load_buffs(player)
 end
 
