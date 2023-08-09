@@ -651,11 +651,19 @@ local function disable_tips_and_tricks(permission_group)
     permission_group.set_allows_action(defines.input_action.open_tips_and_tricks_gui, false)
 end
 
+local function set_initial_combat_bot_slots(force)
+    force.maximum_following_robot_count = 5
+end
+
 -- setup a team force
 function Public.add_new_force(force_name)
     local this = ScenarioTable.get_table()
-    -- disable permissions
     local force = game.create_force(force_name)
+
+    -- diplomacy
+    force.friendly_fire = true
+
+    -- permissions
     local permission_group = game.permissions.create_group(force_name)
     reset_permissions(permission_group)
     enable_blueprints(permission_group)
@@ -670,16 +678,13 @@ function Public.add_new_force(force_name)
     disable_achievements(permission_group)
     disable_tips_and_tricks(permission_group)
 
-    -- friendly fire
-    force.friendly_fire = true
-
-    -- technologies
+    -- research
     for _, recipe_name in pairs(all_force_enabled_recipes) do
         force.recipes[recipe_name].enabled = true
     end
     force.research_queue_enabled = true
+    set_initial_combat_bot_slots(force)
 
-    -- balance initial combat
     CombatBalance.init_player_weapon_damage(force)
 
     if (this.testing_mode == true) then
@@ -690,6 +695,123 @@ function Public.add_new_force(force_name)
         force.research_all_technologies()
     end
     return force
+end
+
+local function setup_player_force() -- Note: default for outlanders
+    local this = ScenarioTable.get_table()
+    local force = game.forces.player
+
+    -- diplomacy
+    force.set_friend(game.forces.rogue, true)
+    force.set_friend(game.forces.enemy, true)
+    force.friendly_fire = true
+
+    -- permissions
+    local permission_group = game.permissions.create_group('outlander')
+    reset_permissions(permission_group)
+    disable_blueprints(permission_group)
+    disable_deconstruct(permission_group)
+    disable_artillery(force, permission_group)
+    disable_spidertron(force, permission_group)
+    disable_rockets(force)
+    disable_nukes(force)
+    disable_cluster_grenades(force)
+    disable_radar(force)
+    disable_achievements(permission_group)
+    disable_tips_and_tricks(permission_group)
+
+    -- research
+    force.disable_research()
+    force.research_queue_enabled = false
+    set_initial_combat_bot_slots(force)
+
+    -- recipes
+    local recipes = force.recipes
+    for _, recipe_name in pairs(player_force_disabled_recipes) do
+        recipes[recipe_name].enabled = false
+    end
+    for _, recipe_name in pairs(all_force_enabled_recipes) do
+        recipes[recipe_name].enabled = true
+    end
+
+    CombatBalance.init_player_weapon_damage(force)
+    if (this.testing_mode == true) then
+        force.enable_all_prototypes()
+    end
+end
+
+local function setup_rogue_force()
+    local this = ScenarioTable.get_table()
+    local force = game.forces['rogue']
+    if game.forces['rogue'] == nil then
+        force = game.create_force('rogue')
+    end
+
+    -- diplomacy
+    force.set_friend(game.forces.player, true)
+    force.friendly_fire = true
+
+    -- permissions
+    local permission_group = game.permissions.create_group('rogue')
+    reset_permissions(permission_group)
+    disable_blueprints(permission_group)
+    disable_deconstruct(permission_group)
+    disable_artillery(force, permission_group)
+    disable_spidertron(force, permission_group)
+    disable_rockets(force)
+    disable_nukes(force)
+    disable_cluster_grenades(force)
+    disable_radar(force)
+    disable_achievements(permission_group)
+    disable_tips_and_tricks(permission_group)
+
+    -- research
+    force.disable_research()
+    force.research_queue_enabled = false
+    set_initial_combat_bot_slots(force)
+
+    -- recipes
+    local recipes = force.recipes
+    for _, recipe_name in pairs(player_force_disabled_recipes) do
+        recipes[recipe_name].enabled = false
+    end
+    for _, recipe_name in pairs(all_force_enabled_recipes) do
+        recipes[recipe_name].enabled = true
+    end
+
+    CombatBalance.init_player_weapon_damage(force)
+
+    if (this.testing_mode == true) then
+        force.enable_all_prototypes()
+    end
+end
+
+local function setup_enemy_force()
+    local this = ScenarioTable.get_table()
+    local e_force = game.forces['enemy']
+    e_force.evolution_factor = 1 -- this should never change since we are changing biter types on spawn
+    e_force.set_friend(game.forces.player, true) -- outlander force (player) should not be attacked by turrets
+    e_force.set_cease_fire(game.forces.player, true) -- outlander force (player) should not be attacked by units
+    if (this.testing_mode == true) then
+        e_force.set_friend(game.forces['rogue'], true) -- rogue force (rogue) should not be attacked by turrets
+        e_force.set_cease_fire(game.forces['rogue'], true) -- rogue force (rogue) should not be attacked by units
+    else
+        -- note, these don't prevent an outlander or rogue from attacking a unit or spawner, we need to handle separately
+        e_force.set_friend(game.forces['rogue'], false) -- rogue force (rogue) should be attacked by turrets
+        e_force.set_cease_fire(game.forces['rogue'], false) -- rogue force (rogue) should be attacked by units
+    end
+end
+
+local function reset_forces()
+    local players = game.players
+    local forces = game.forces
+    for i = 1, #players do
+        local player = players[i]
+        local force = forces[player.name]
+        if force then
+            game.merge_forces(force, 'player')
+        end
+    end
 end
 
 function Public.reset_all_forces()
@@ -837,114 +959,6 @@ local function on_forces_merged()
     for _, e in pairs(game.surfaces.nauvis.find_entities_filtered({force = 'neutral', type = "entity-ghost"})) do
         if e.valid then
             e.destroy()
-        end
-    end
-end
-
--- setup the player force (this is the default for Outlanders)
-local function setup_player_force()
-    local this = ScenarioTable.get_table()
-    local force = game.forces.player
-
-    force.set_friend(game.forces.rogue, true)
-
-    local permission_group = game.permissions.create_group('outlander')
-    -- disable permissions
-    reset_permissions(permission_group)
-    disable_blueprints(permission_group)
-    disable_deconstruct(permission_group)
-    disable_artillery(force, permission_group)
-    disable_spidertron(force, permission_group)
-    disable_rockets(force)
-    disable_nukes(force)
-    disable_cluster_grenades(force)
-    disable_radar(force)
-    disable_achievements(permission_group)
-    disable_tips_and_tricks(permission_group)
-    -- disable research
-    force.disable_research()
-    force.research_queue_enabled = false
-    -- friendly fire
-    force.friendly_fire = true
-    -- disable recipes
-    local recipes = force.recipes
-    for _, recipe_name in pairs(player_force_disabled_recipes) do
-        recipes[recipe_name].enabled = false
-    end
-    for _, recipe_name in pairs(all_force_enabled_recipes) do
-        recipes[recipe_name].enabled = true
-    end
-    CombatBalance.init_player_weapon_damage(force)
-    if (this.testing_mode == true) then
-        force.enable_all_prototypes()
-    end
-end
-
-local function setup_rogue_force()
-    local this = ScenarioTable.get_table()
-    local force = game.forces['rogue']
-    if game.forces['rogue'] == nil then
-        force = game.create_force('rogue')
-    end
-
-    force.set_friend(game.forces.player, true)
-
-    local permission_group = game.permissions.create_group('rogue')
-    -- disable permissions
-    reset_permissions(permission_group)
-    disable_blueprints(permission_group)
-    disable_deconstruct(permission_group)
-    disable_artillery(force, permission_group)
-    disable_spidertron(force, permission_group)
-    disable_rockets(force)
-    disable_nukes(force)
-    disable_cluster_grenades(force)
-    disable_radar(force)
-    disable_achievements(permission_group)
-    disable_tips_and_tricks(permission_group)
-    -- disable research
-    force.disable_research()
-    force.research_queue_enabled = false
-    -- friendly fire
-    force.friendly_fire = true
-    -- disable recipes
-    local recipes = force.recipes
-    for _, recipe_name in pairs(player_force_disabled_recipes) do
-        recipes[recipe_name].enabled = false
-    end
-    for _, recipe_name in pairs(all_force_enabled_recipes) do
-        recipes[recipe_name].enabled = true
-    end
-    CombatBalance.init_player_weapon_damage(force)
-    if (this.testing_mode == true) then
-        force.enable_all_prototypes()
-    end
-end
-
-local function setup_enemy_force()
-    local this = ScenarioTable.get_table()
-    local e_force = game.forces['enemy']
-    e_force.evolution_factor = 1 -- this should never change since we are changing biter types on spawn
-    e_force.set_friend(game.forces.player, true) -- outlander force (player) should not be attacked by turrets
-    e_force.set_cease_fire(game.forces.player, true) -- outlander force (player) should not be attacked by units
-    if (this.testing_mode == true) then
-        e_force.set_friend(game.forces['rogue'], true) -- rogue force (rogue) should not be attacked by turrets
-        e_force.set_cease_fire(game.forces['rogue'], true) -- rogue force (rogue) should not be attacked by units
-    else
-        -- note, these don't prevent an outlander or rogue from attacking a unit or spawner, we need to handle separately
-        e_force.set_friend(game.forces['rogue'], false) -- rogue force (rogue) should be attacked by turrets
-        e_force.set_cease_fire(game.forces['rogue'], false) -- rogue force (rogue) should be attacked by units
-    end
-end
-
-local function reset_forces()
-    local players = game.players
-    local forces = game.forces
-    for i = 1, #players do
-        local player = players[i]
-        local force = forces[player.name]
-        if force then
-            game.merge_forces(force, 'player')
         end
     end
 end
