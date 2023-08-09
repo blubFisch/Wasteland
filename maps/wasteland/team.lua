@@ -71,14 +71,6 @@ local function can_force_accept_member(force)
     return true
 end
 
-function Public.is_rogue(force)
-    return force.name == 'rogue'
-end
-
-function Public.is_outlander(force)
-    return force.name == 'player'
-end
-
 function Public.is_towny(force)
     return force.name ~= 'rogue' and force.name ~= 'player'
 end
@@ -742,10 +734,7 @@ end
 
 local function setup_rogue_force()
     local this = ScenarioTable.get_table()
-    local force = game.forces['rogue']
-    if game.forces['rogue'] == nil then
-        force = game.create_force('rogue')
-    end
+    local force = game.create_force('rogue')
 
     -- diplomacy
     force.set_friend(game.forces.player, true)

@@ -80,9 +80,6 @@ local function reset_map()
     end
     Nauvis.initialize()
     Team.initialize()
-    if game.forces['rogue'] == nil then
-        log('rogue force is missing!')
-    end
     for _, player in pairs(game.players) do
         Player.initialize(player)
         Team.set_player_color(player)
