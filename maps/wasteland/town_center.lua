@@ -377,7 +377,7 @@ local function found_town(event)
     end
 
     -- is player in a town already?
-    if player.force.index ~= game.forces.player.index and player.force.index ~= game.forces['rogue'].index then
+    if Team.is_towny(player.force) then
         entity.destroy()    -- Can't allow placing the special item for this
         return
     end
@@ -599,7 +599,7 @@ local function rename_town(cmd)
         return
     end
     local force = player.force
-    if force.name == 'player' or force.name == 'rogue' then
+    if not Team.is_towny(force) then
         player.print('You are not member of a town!', Color.fail)
         return
     end

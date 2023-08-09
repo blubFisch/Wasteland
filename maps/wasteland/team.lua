@@ -183,7 +183,7 @@ function Public.give_player_items(player)
     end
     player.clear_items_inside()
     player.insert({name = 'raw-fish', count = 3})
-    if player.force.name == 'rogue' or player.force.name == 'player' then
+    if not Public.is_towny(player.force) then
         player.insert {name = 'linked-chest', count = '1'}
     end
 end
@@ -776,19 +776,9 @@ local function setup_rogue_force()
 end
 
 local function setup_enemy_force()
-    local this = ScenarioTable.get_table()
     local e_force = game.forces['enemy']
-    e_force.evolution_factor = 1 -- this should never change since we are changing biter types on spawn
-    e_force.set_friend(game.forces.player, true) -- outlander force (player) should not be attacked by turrets
-    e_force.set_cease_fire(game.forces.player, true) -- outlander force (player) should not be attacked by units
-    if (this.testing_mode == true) then
-        e_force.set_friend(game.forces['rogue'], true) -- rogue force (rogue) should not be attacked by turrets
-        e_force.set_cease_fire(game.forces['rogue'], true) -- rogue force (rogue) should not be attacked by units
-    else
-        -- note, these don't prevent an outlander or rogue from attacking a unit or spawner, we need to handle separately
-        e_force.set_friend(game.forces['rogue'], false) -- rogue force (rogue) should be attacked by turrets
-        e_force.set_cease_fire(game.forces['rogue'], false) -- rogue force (rogue) should be attacked by units
-    end
+    e_force.evolution_factor = 1
+    e_force.set_cease_fire(game.forces.player, true)
 end
 
 local function reset_forces()
