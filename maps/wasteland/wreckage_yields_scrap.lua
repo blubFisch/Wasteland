@@ -49,7 +49,9 @@ local entity_loot_chance = {
     {name = "uranium-fuel-cell", chance = 5},
     --{name = "used-up-uranium-fuel-cell", chance = 1},
     {name = 'water-barrel', chance = 10},
-    {name = 'logistic-chest-requester', chance = 15}
+    {name = 'logistic-chest-requester', chance = 15},
+    {name = 'military-science-pack', chance = 15},
+    {name = 'chemical-science-pack', chance = 15}
 }
 
 -- positive numbers can scale, 0 is disabled, and negative numbers are fixed absolute values
@@ -99,7 +101,9 @@ local entity_loot_amounts = {
     ["uranium-fuel-cell"] = 5,
     --["used-up-uranium-fuel-cell"] = 1,
     ['water-barrel'] = 3,
-    ['logistic-chest-requester'] = -1
+    ['logistic-chest-requester'] = -1,
+    ['military-science-pack'] = 4,
+    ['chemical-science-pack'] = 4
 }
 
 local scrap_raffle = {}
