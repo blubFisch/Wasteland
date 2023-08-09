@@ -70,46 +70,39 @@ local function on_entity_died(event)
     end
 
     local players_to_reward = {}
-    local reward_has_been_given = false
+    local cause = event.cause
 
-    if event.cause then
-        if event.cause.valid then
-            if event.cause.name == 'character' then
-                insert(players_to_reward, event.cause)
-                reward_has_been_given = true
+    if cause and cause.valid then
+        --game.print("XDB " .. cause.type .. " " .. cause.name)
+        if cause.type == 'combat-robot' then
+            local owner = cause.combat_robot_owner
+            if owner then
+                insert(players_to_reward, owner.player)
             end
-            if event.cause.type == 'car' then
-                local player = event.cause.get_driver()
-                local passenger = event.cause.get_passenger()
-                if player then
-                    insert(players_to_reward, player.player)
+        elseif cause.name == 'character' then
+            insert(players_to_reward, cause)
+        elseif cause.type == 'car' then
+            local driver = cause.get_driver()
+            local passenger = cause.get_passenger()
+            if driver then
+                insert(players_to_reward, driver.player)
+            end
+            if passenger then
+                insert(players_to_reward, passenger.player)
+            end
+        elseif cause.type == 'locomotive' then
+            local train_passengers = cause.train.passengers
+            if train_passengers then
+                for _, passenger in pairs(train_passengers) do
+                    insert(players_to_reward, passenger)
                 end
-                if passenger then
-                    insert(players_to_reward, passenger.player)
-                end
-                reward_has_been_given = true
             end
-            if event.cause.type == 'locomotive' then
-                local train_passengers = event.cause.train.passengers
-                if train_passengers then
-                    for _, passenger in pairs(train_passengers) do
-                        insert(players_to_reward, passenger)
-                    end
-                    reward_has_been_given = true
-                end
-            end
-            for _, player in pairs(players_to_reward) do
-                player.insert({name = 'coin', count = coin_count})
-            end
+        elseif entities_that_earn_coins[cause.name] then
+            event.entity.surface.spill_item_stack(cause.position, {name = 'coin', count = coin_count}, true)
         end
-        if entities_that_earn_coins[event.cause.name] then
-            event.entity.surface.spill_item_stack(event.cause.position, {name = 'coin', count = coin_count}, true)
-            reward_has_been_given = true
+        for _, player in pairs(players_to_reward) do
+            player.insert({name = 'coin', count = coin_count})
         end
-    end
-
-    if reward_has_been_given == false then
-        event.entity.surface.spill_item_stack(event.entity.position, {name = 'coin', count = coin_count}, true)
     end
 end
 

@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
+ - Shields now protect against all biters, so bases with offline shield are 100% safe
  - Fix more offline base attack exploits
  - Outlanders can build turrets/mines again to fight towns
  - Bunch of bugfixes
@@ -44,7 +45,7 @@ local info_adv =
 - The league shield protects your town from players of a higher league and covers the outer blue tile square. It also works while you're offline
     - League score limits: 0 score/outlander=L0, 15 score or tank=L1, 35 score=L2, 60 score=L3
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
-- Big and behemoth biters can't penetrate your shield, but small and medium ones can
+- Biters can't penetrate your shield
 
 [font=heading-1]Advanced tips and tricks[/font]
 - To join our discord, open wasteland-discord.fun in your web browser

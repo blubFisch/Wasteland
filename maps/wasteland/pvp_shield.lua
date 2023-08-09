@@ -199,7 +199,6 @@ function Public.protect_if_needed(event)
     end
 end
 
-local shield_disallowed_biters = { 'big-biter', 'behemoth-biter', 'big-spitter', 'behemoth-spitter'}
 local shield_disallowed_vehicles = {'tank', 'car'}
 local function scan_protect_shield_area()
     -- Handle edge case damage situations
@@ -220,7 +219,7 @@ local function scan_protect_shield_area()
 
             -- Protect against big biters that are lured in/glitched in
             local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
-            for _, e in pairs(shield.surface.find_entities_filtered({ name = shield_disallowed_biters, area = biters_box, force = "enemy"})) do
+            for _, e in pairs(shield.surface.find_entities_filtered({ type = "unit", area = biters_box, force = "enemy"})) do
                 e.die()
             end
         end
@@ -228,7 +227,6 @@ local function scan_protect_shield_area()
     end
 end
 
-Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
 Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(3, update_shield_lifetime)
 Event.add(defines.events.on_tick, scan_protect_shield_area)
