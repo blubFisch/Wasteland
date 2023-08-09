@@ -9,6 +9,21 @@ local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turre
 local default_protected_radius = 30
 local turret_protected_radius = 42
 
+local ghost_time_after_destruction = 168 * 60 * 60 * 60 -- Note: After unlocking construction bots tech. This might not be stable after engine changes
+local ghost_age_to_prevent_building = 60 * 60
+
+local NEAR_TOWN_CENTER = 1
+local NEAR_TOWN_TURRET = 2
+local NEAR_TOWN_TURRET_GHOST = 3
+local NEAR_TOWN_SHIELD = 4
+
+local REASON_TEXTS = {
+    [NEAR_TOWN_CENTER] = "town center",
+    [NEAR_TOWN_TURRET] = "turret",
+    [NEAR_TOWN_TURRET_GHOST] = "recently destroyed turret blueprint",
+    [NEAR_TOWN_SHIELD] = "PvP shield"
+}
+
 -- these should be allowed to place inside any base by anyone as neutral
 local allowed_entities_neutral = {
     ['burner-inserter'] = true,
@@ -54,6 +69,7 @@ local function refund_item(event, item_name)
     if item_name == 'blueprint' then
         return
     end
+
     if event.player_index ~= nil then
         game.players[event.player_index].insert({name = item_name, count = 1})
         return
@@ -108,28 +124,42 @@ function Public.in_area(position, area_center, area_radius)
     return false
 end
 
-function Public.near_another_town(force_name, position, surface, radius, radius_center)
+function Public.near_another_town(force_name, position, surface, radius, radius_center, include_ghosts)
     local this = ScenarioTable.get_table()
-    local force_names = {}
+    local enemy_force_names = {}
 
     if not radius_center then radius_center = radius end
 
-    -- check for nearby town centers
+    -- Nearby town centers
     for _, town_center in pairs(this.town_centers) do
         local market_force_name = town_center.market.force.name
         if force_name ~= market_force_name then
             if Public.in_range(position, town_center.market.position, radius_center) then
-                return true
+                return true, NEAR_TOWN_CENTER
             end
-            table_insert(force_names, market_force_name)
+            table_insert(enemy_force_names, market_force_name)
         end
     end
 
-    -- check for nearby town zoning entities
-    if table.size(force_names) > 0 then
+    if table.size(enemy_force_names) > 0 then
+        -- Nearby town zoning entities
         if surface.count_entities_filtered({ position = position, radius = radius,
-                                             force = force_names, type=town_zoning_entity_types, limit = 1}) > 0 then
-            return true
+                                             force = enemy_force_names, type=town_zoning_entity_types, limit = 1}) > 0 then
+            return true, NEAR_TOWN_TURRET
+        end
+
+        -- Prevent placing turrets to block an enemy base from rebuilding itself (turret creep)
+        if include_ghosts then
+            local ghosts = surface.find_entities_filtered({ position = position, radius = radius,
+                                                            force = enemy_force_names, type='entity-ghost',
+                                                            ghost_type=town_zoning_entity_types})
+            for _, ghost in pairs(ghosts) do
+                local ghost_age = ghost_time_after_destruction - ghost.time_to_live
+                --game.print("XDB " .. ghost.type .. " " .. ghost_age)
+                if ghost_age > 0 and ghost_age < ghost_age_to_prevent_building then
+                    return true, NEAR_TOWN_TURRET_GHOST
+                end
+            end
         end
     end
     return false
@@ -188,7 +218,7 @@ local function prevent_landfill_in_restricted_zone(event)
         if Public.in_restricted_zone(surface, position) then
             fail = true
             surface.set_tiles({{name = old_tile.name, position = position}}, true)
-            refund_item(event, tile.name)
+            refund_item(event, event.item.name)
         end
     end
     if fail == true then
@@ -224,13 +254,24 @@ local function process_built_entities(event)
     -- Handle entities placed within protected areas
     if not allowed_entities_keep_force[name] then  -- Some entities like vehicles are always ok to place
         local radius = default_protected_radius
+        local prevented_by_ghosts = false
 
         if table.array_contains(town_zoning_entity_types, entity.type) then
             radius = turret_protected_radius -- Prevent using these entities offensively to stop a base from replacing entities of itself
+            prevented_by_ghosts = true
         end
 
-        if PvPShield.protected_by_shields(surface, position, force, radius)
-                or Public.near_another_town(force_name, position, surface, radius, radius + 30) then
+        local prevent = false
+        local reason
+
+        prevent, reason = Public.near_another_town(force_name, position, surface, radius, radius + 30, prevented_by_ghosts)
+
+        if not prevent and PvPShield.protected_by_shields(surface, position, force, radius) then
+            prevent = true
+            reason = NEAR_TOWN_SHIELD
+        end
+
+        if prevent then
             -- Logistics are okay to place wherever you can access (=outside of shield)
             if allowed_entities_neutral[name] and not (PvPShield.protected_by_shields(surface, position, force, 0)
                     or Public.near_another_town(force_name, position, surface, 10, 0)) then
@@ -240,7 +281,7 @@ local function process_built_entities(event)
             else
                 -- Prevent building
                 entity.destroy()
-                build_error_notification(surface, position, "Can't build near town", player)
+                build_error_notification(surface, position, "Can't build near " .. REASON_TEXTS[reason], player)
                 if name ~= 'entity-ghost' then
                     refund_item(event, event.stack.name)
                 end
@@ -307,10 +348,10 @@ local function prevent_tiles_near_towns(event)
     for _, t in pairs(event.tiles) do
         local old_tile = t.old_tile
         position = t.position
-        if Public.near_another_town(force_name, position, surface, 32) == true then
+        if Public.near_another_town(force_name, position, surface, 32) then
             fail = true
             surface.set_tiles({{name = old_tile.name, position = position}}, true)
-            refund_item(event, tile.name)
+            refund_item(event, event.item.name)
         end
     end
     if fail == true then
