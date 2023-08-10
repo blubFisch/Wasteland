@@ -11,6 +11,8 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Utils = require 'maps.wasteland.utils'
 local Event = require 'utils.event'
 local MapLayout = require 'maps.wasteland.map_layout'
+local TeamBasics = require 'maps.wasteland.team_basics'
+
 
 Public.offline_shield_size = 41
 
@@ -65,15 +67,16 @@ function Public.get_player_league(player)
     return league
 end
 
-function Public.enemy_players_nearby(town_center, max_distance, min_league)
+function Public.enemy_players_near_town(town_center, max_distance, min_league)
     local market = town_center.market
-    local town_force = market.force
-    local town_position = market.position
+    return Public.enemy_players_nearby(market.position, market.surface, market.force, max_distance, min_league)
+end
 
+function Public.enemy_players_nearby(position, surface, force, max_distance, min_league)
     for _, player in pairs(game.connected_players) do
-        if player.surface == market.surface then
-            local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2 + (player.position.y - town_position.y) ^ 2))
-            if distance < max_distance and player.force ~= town_force and not player.force.get_friend(town_force) and not player.force.get_cease_fire(town_force) then
+        if player.surface == surface then
+            local distance = math_floor(math_sqrt((player.position.x - position.x) ^ 2 + (player.position.y - position.y) ^ 2))
+            if distance < max_distance and not TeamBasics.is_friendly_towards(player.force, force) then
                 if (not min_league or Public.get_player_league(player) > min_league) and (player.character or player.driving) then
                     return true
                 end
@@ -93,7 +96,7 @@ local function update_pvp_shields_display()
         local town_control_range = Public.get_town_control_range(town_center)
         local info_enemies
         local color
-        if Public.enemy_players_nearby(town_center, town_control_range) then
+        if Public.enemy_players_near_town(town_center, town_control_range) then
             info_enemies = "Enemies"
             color = {255, 0, 0}
 
@@ -101,7 +104,7 @@ local function update_pvp_shields_display()
                 town_center.market.force.print("Enemies have been spotted near your town. Your offline PvP shield can not activate now.", {r = 1, g = 0, b = 0})
                 town_center.enemies_warning_status = 1
             end
-        elseif Public.enemy_players_nearby(town_center, town_control_range + 10) then
+        elseif Public.enemy_players_near_town(town_center, town_control_range + 10) then
             info_enemies = "Enemies"
             color = {255, 255, 0}
         else
@@ -139,7 +142,7 @@ local function update_pvp_shields()
         local abandoned = false
         local high_score_no_shield = town_league >= 4  -- Note: referenced in info.lua
 
-        local higher_league_nearby = Public.enemy_players_nearby(town_center, league_shield_activation_range, town_league)
+        local higher_league_nearby = Public.enemy_players_near_town(town_center, league_shield_activation_range, town_league)
         if higher_league_nearby then
             town_center.last_higher_league_nearby = game.tick
         end
@@ -156,7 +159,7 @@ local function update_pvp_shields()
                     -- Activations:
                     -- nil means waiting for players to go offline
                     -- -1 it is not meant to renew until players join again
-                    if not Public.enemy_players_nearby(town_center, Public.get_town_control_range(town_center)) then
+                    if not Public.enemy_players_near_town(town_center, Public.get_town_control_range(town_center)) then
                         if this.pvp_shield_offline_eligible_since[force.index] == game.tick then
                             game.print("The offline/afk PvP Shield of " .. town_center.town_name .. " is activating now." ..
                                     " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time), Utils.scenario_color)
@@ -323,7 +326,7 @@ function Public.request_afk_shield(town_center, player)
     local town_control_range = Public.get_town_control_range(town_center)
 
     if all_players_near_center(town_center) then
-        if not Public.enemy_players_nearby(town_center, town_control_range) then
+        if not Public.enemy_players_near_town(town_center, town_control_range) then
             if town_shields_researched(force) then
                 this.pvp_shield_mark_afk[force.name] = true
                 local shield = this.pvp_shields[force.name]

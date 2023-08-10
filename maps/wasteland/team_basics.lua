@@ -19,4 +19,8 @@ function Public.non_town_display_name(force)
     end
 end
 
+function Public.is_friendly_towards(my_force, other_force)
+    return my_force == other_force or my_force.get_friend(other_force) or my_force.get_cease_fire(other_force)
+end
+
 return Public

@@ -1,5 +1,8 @@
 local ScenarioTable = require 'maps.wasteland.table'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local Building = require 'maps.wasteland.building'
+local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
+
 
 local Public = {}
 
@@ -180,6 +183,27 @@ function Public.on_entity_damaged(event)
 
     local is_vehicle_damage = false
     local vehicle_modifier = 1
+
+    -- Bulldozer mode
+    if event.damage_type.name == "explosion" and event.cause then
+        local min_clear_distance = 30
+        if not Building.near_another_town(event.cause.force.name, entity.position, entity.surface, min_clear_distance)
+                and not PvPTownShield.enemy_players_nearby(entity.position, entity.surface, event.cause.force, min_clear_distance)
+                and not TeamBasics.is_friendly_towards(entity.force, event.cause.force)
+                and entity.force ~= game.forces.enemy
+        then
+            entity.surface.create_entity(
+                {
+                    name = 'flying-text',
+                    position = entity.position,
+                    text = 'Bulldozer mode!',
+                    color = {r = 0.8, g = 0.7, b = 0.0}
+                }
+            )
+            entity.health = 0
+            return
+        end
+    end
 
     -- Reduce damage resistances of vehicles
     if (entity.name == "tank" or entity.name == "car") and (event.damage_type.name == "physical" or event.damage_type.name == "fire") then
