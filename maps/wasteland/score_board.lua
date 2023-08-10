@@ -125,7 +125,7 @@ local function update_score()
             local ranking_table = inner_frame.add { type = 'table', column_count = 6, style = 'bordered_table'}
             ranking_table.style.margin = 4
 
-            for _, caption in pairs({'Rank', 'Town', 'League', 'Tech', 'Age', 'Score'}) do
+            for _, caption in pairs({'Rank', 'Town', 'League', 'Research', 'Age', 'Score'}) do
                 local label = ranking_table.add { type = 'label', caption = caption}
                 label.style.font = 'default-bold'
             end
@@ -187,7 +187,7 @@ local function update_score()
 
                 local total = ranking_table.add { type = 'label', caption = format_score(town_total_scores[town_center])}
                 ranking_table.style.column_alignments[6] = 'right'
-                total.tooltip = format_score(Score.research_score(town_center)) .. " (Tech) + "
+                total.tooltip = format_score(Score.research_score(town_center)) .. " (Research) + "
                         .. format_score(Score.survival_score(town_center)) .. " (Age)"
 
                 rank = rank + 1
