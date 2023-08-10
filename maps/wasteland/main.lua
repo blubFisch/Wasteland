@@ -1,4 +1,3 @@
-require 'modules.custom_death_messages'
 require 'modules.flashlight_toggle_button'
 require 'modules.global_chat_toggle'
 require 'modules.biters_yield_coins'
@@ -20,6 +19,7 @@ require 'maps.wasteland.score_board'
 require 'maps.wasteland.research_balance'
 require 'maps.wasteland.map_layout'
 require 'maps.wasteland.evolution'
+require 'maps.wasteland.custom_death_messages'
 
 local Event = require 'utils.event'
 local Autostash = require 'modules.autostash'

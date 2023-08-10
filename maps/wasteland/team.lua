@@ -63,7 +63,7 @@ local all_force_enabled_recipes = {
     'shotgun-shell',
 }
 
-local function force_display_name(force)
+function Public.force_display_name(force)
     local this = ScenarioTable.get_table()
     if TeamBasics.is_town_force(force) then
         local town_center = this.town_centers[force.name]
@@ -282,10 +282,10 @@ local function ally_neighbour_towns(player, target)
     end
 
     requesting_force.set_friend(target_force, true)
-    game.print('>> ' .. force_display_name(requesting_force) .. ' has declared ' .. force_display_name(target_force) .. ' their friend!', Utils.scenario_color)
+    game.print('>> ' .. Public.force_display_name(requesting_force) .. ' has declared ' .. Public.force_display_name(target_force) .. ' their friend!', Utils.scenario_color)
 
     if target_force.get_friend(requesting_force) then
-        game.print('>> ' .. force_display_name(requesting_force) .. ' and ' .. force_display_name(target_force) .. ' have formed an alliance!', Utils.scenario_color)
+        game.print('>> ' .. Public.force_display_name(requesting_force) .. ' and ' .. Public.force_display_name(target_force) .. ' have formed an alliance!', Utils.scenario_color)
     end
 end
 
@@ -347,18 +347,18 @@ local function set_cease_fire(player, entity)
     end
 
     if requesting_force.get_cease_fire(target_force) then
-        player.print("You already have a cease fire agreement with " .. force_display_name(target_force), Utils.scenario_color)
+        player.print("You already have a cease fire agreement with " .. Public.force_display_name(target_force), Utils.scenario_color)
         return
     end
 
     requesting_force.set_cease_fire(target_force, true)
 
     if target_force.get_cease_fire(requesting_force) then
-        requesting_force.print("You have agreed on a mutual cease-fire with " .. force_display_name(target_force), Utils.scenario_color)
-        target_force.print(force_display_name(requesting_force) .. " has agreed on a mutual cease-fire with you", Utils.scenario_color)
+        requesting_force.print("You have agreed on a mutual cease-fire with " .. Public.force_display_name(target_force), Utils.scenario_color)
+        target_force.print(Public.force_display_name(requesting_force) .. " has agreed on a mutual cease-fire with you", Utils.scenario_color)
     else
-        requesting_force.print("You have set a one-sided cease-fire with " .. force_display_name(target_force), Utils.scenario_color)
-        target_force.print(force_display_name(requesting_force) .. " has set one-sided cease-fire with you", Utils.scenario_color)
+        requesting_force.print("You have set a one-sided cease-fire with " .. Public.force_display_name(target_force), Utils.scenario_color)
+        target_force.print(Public.force_display_name(requesting_force) .. " has set one-sided cease-fire with you", Utils.scenario_color)
     end
 end
 
@@ -903,9 +903,9 @@ function Public.on_entity_damaged(event)
         if damaged_force == game.forces.enemy then
             attacker_force.print("You have broken the peace with the biters. They will seek revenge!", {r = 1, g = 0, b = 0})
         else
-            attacker_force.print("You broke a cease fire agreement with " .. force_display_name(damaged_force), Utils.scenario_color)
+            attacker_force.print("You broke a cease fire agreement with " .. Public.force_display_name(damaged_force), Utils.scenario_color)
         end
-        damaged_force.print("A cease fire agreement with you was broken by " .. force_display_name(attacker_force), Utils.scenario_color)
+        damaged_force.print("A cease fire agreement with you was broken by " .. Public.force_display_name(attacker_force), Utils.scenario_color)
 
         if attacker_force ~= game.forces.enemy then  -- ignore accidental damage
             damaged_force.set_cease_fire(attacker_force, false)
