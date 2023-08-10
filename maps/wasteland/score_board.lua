@@ -93,7 +93,7 @@ local function update_score()
     local outlander_online = 0
     local outlander_total = 0
     for _, player in pairs(game.players) do
-        if not TeamBasics.is_town_force(player.force) then
+        if TeamBasics.is_outlander_force(player.force) then
             if player.connected then
                 outlander_online = outlander_online + 1
             else

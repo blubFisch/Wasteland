@@ -10,6 +10,10 @@ local beam_type = 'electric-beam-no-sound'
 
 Public.SHIELD_TYPE = { OFFLINE = 1, OFFLINE_POST = 2, LEAGUE_BALANCE = 3}
 
+local function is_allowed_in_shield(shield, other_force)
+    return shield.force == other_force or shield.force.get_friend(other_force) or shield.force.get_cease_fire(other_force)
+end
+
 local function draw_borders(shield)
     local surface = shield.surface
     local right = shield.box.right_bottom.x
@@ -128,7 +132,7 @@ end
 function Public.push_enemies_out(player)
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if not (shield.force == player.force or shield.force.get_friend(player.force) or player.surface ~= shield.surface) then
+        if not is_allowed_in_shield(shield, player.force) or player.surface ~= shield.surface then
             if CommonFunctions.point_in_bounding_box(player.position, shield.box) then
                 if player.character then
                     -- Push player away from center
@@ -175,7 +179,7 @@ function Public.entity_is_protected(entity, cause_force)
     for _, shield in pairs(this.pvp_shields) do
         if entity.surface == shield.surface and CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
             if (entity.force == shield.force or entity.force.name == "neutral") and cause_force.name ~= "enemy" then
-                if shield.force ~= cause_force and not shield.force.get_friend(cause_force) then
+                if not is_allowed_in_shield(shield, cause_force) then
                     return true
                 end
             end
@@ -212,7 +216,7 @@ local function scan_protect_shield_area()
             -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
             local tank_box = enlarge_bounding_box(shield.box, 3)
             for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
-                if shield.force ~= e.force and not shield.force.get_friend(e.force) then
+                if not is_allowed_in_shield(shield, e.force) then
                     e.speed = 0
                 end
             end

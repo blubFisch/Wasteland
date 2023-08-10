@@ -73,7 +73,7 @@ function Public.enemy_players_nearby(town_center, max_distance, min_league)
     for _, player in pairs(game.connected_players) do
         if player.surface == market.surface then
             local distance = math_floor(math_sqrt((player.position.x - town_position.x) ^ 2 + (player.position.y - town_position.y) ^ 2))
-            if distance < max_distance and player.force ~= town_force and not player.force.get_friend(town_force) then
+            if distance < max_distance and player.force ~= town_force and not player.force.get_friend(town_force) and not player.force.get_cease_fire(town_force) then
                 if (not min_league or Public.get_player_league(player) > min_league) and (player.character or player.driving) then
                     return true
                 end
