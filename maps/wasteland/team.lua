@@ -351,13 +351,13 @@ local function set_cease_fire(player, entity)
     end
 
     if player.force.get_cease_fire(target_force) then
-        player.print("You already have a cease fire agreement with " .. force_display_name(target_force.name))
+        player.print("You already have a cease fire agreement with " .. force_display_name(target_force), Utils.scenario_color)
     end
 
     player.force.set_cease_fire(target_force, true)
 
-    player.force.print("You have agreed on cease fire with " .. force_display_name(target_force.name))
-    target_force.print(force_display_name(player.force) .. " has agreed to cease fire with you")
+    player.force.print("You have agreed on cease fire with " .. force_display_name(target_force), Utils.scenario_color)
+    target_force.print(force_display_name(player.force) .. " has agreed to cease fire with you", Utils.scenario_color)
 end
 
 local function declare_war(player, item)
