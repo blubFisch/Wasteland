@@ -369,7 +369,9 @@ local function found_town(event)
     end
 
     if event.robot then
-        entity.destroy()    -- Can't allow placing the special item for this
+        entity.destroy()
+        local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
+        inventory.insert({name = 'linked-chest', count = 1})
         return
     end
 
@@ -431,7 +433,7 @@ local function found_town(event)
                         color = {r = 0.77, g = 0.0, b = 0.0}
                     }
             )
-            player.print("Hint: Big towns nearby cause evolution. Check the evolution number at the top of the screen.", Utils.scenario_color)
+            player.print("Hint: Towns nearby increase evolution. Check the evolution number at the top of the screen.", Utils.scenario_color)
 
             this.town_evo_warned[player.index] = game.tick
 
