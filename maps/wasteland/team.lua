@@ -62,6 +62,16 @@ local all_force_enabled_recipes = {
     'shotgun-shell',
 }
 
+local function force_display_name(force)
+    local this = ScenarioTable.get_table()
+    if TeamBasics.is_town_force(force) then
+        local town_center = this.town_centers[force.name]
+        return town_center.town_name
+    else
+        return TeamBasics.non_town_display_name(force)
+    end
+end
+
 local function can_force_accept_member(force)
     if not force or not force.valid then
         log('force nil or not valid!')
@@ -175,16 +185,6 @@ end
 function Public.set_biter_peace(force, peace)
     game.forces.enemy.set_cease_fire(force, peace)
     force.set_cease_fire(game.forces.enemy, peace)
-end
-
-local function biter_peace_broken(player)
-    if not player or not player.valid then
-        log('player nil or not valid!')
-        return
-    end
-
-    player.print("You have broken the peace with the biters. They will seek revenge!", {r = 1, g = 0, b = 0})
-    Public.set_biter_peace(player.force, false)
 end
 
 local function ally_outlander(player, target)
@@ -322,6 +322,42 @@ local function ally_town(player, item)
         return
     end
     ally_neighbour_towns(player, target)
+end
+
+local function set_cease_fire(player, entity)
+    if not player or not player.valid then
+        log('player nil or not valid!')
+        return
+    end
+    local position = entity.position
+    local surface = player.surface
+    local area = {{position.x - item_drop_radius, position.y - item_drop_radius}, {position.x + item_drop_radius, position.y + item_drop_radius}}
+    local requesting_force = player.force
+    local target = false
+
+    for _, e in pairs(surface.find_entities_filtered({type = {'character', 'market'}, area = area})) do
+        if e.force.name ~= requesting_force.name then
+            target = e
+            break
+        end
+    end
+
+    if not target then
+        return
+    end
+    local target_force = target.force
+    if target_force == game.forces['enemy'] or target_force == game.forces['neutral'] then
+        return
+    end
+
+    if player.force.get_cease_fire(target_force) then
+        player.print("You already have a cease fire agreement with " .. force_display_name(target_force.name))
+    end
+
+    player.force.set_cease_fire(target_force, true)
+
+    player.force.print("You have agreed on cease fire with " .. force_display_name(target_force.name))
+    target_force.print(force_display_name(player.force) .. " has agreed to cease fire with you")
 end
 
 local function declare_war(player, item)
@@ -719,7 +755,7 @@ end
 
 
 function Public.player_joined(player)
-    if #game.connected_players > Team.max_player_slots then
+    if #game.connected_players > Public.max_player_slots then
         game.print("WARNING: Too many players connected. Things might start going wrong")
         return
     end
@@ -917,78 +953,35 @@ local function on_player_dropped_item(event)
         ally_town(player, entity)
         return
     end
+    if entity.stack.name == 'raw-fish' then
+        set_cease_fire(player, entity)
+        return
+    end
     if entity.stack.name == 'coal' then
         declare_war(player, entity)
         return
     end
 end
 
-local function on_entity_damaged(event)
+function Public.on_entity_damaged(event)
     local entity = event.entity
     if not entity or not entity.valid then
         return
     end
-    local cause = event.cause
-    local force = event.force
+    local damaged_force = entity.force
+    local attacker_force = event.force
 
-    -- special case to handle enemies attacked by outlanders
-    if entity.force == game.forces['enemy'] then
-        if cause ~= nil then
-            if cause.type == 'character' and force.index == game.forces['player'].index then
-                local player = cause.player
-                if player and player.valid and force.index == game.forces['player'].index then
-                    biter_peace_broken(player)
-                end
-            end
-            -- cars and tanks
-            if cause.type == 'car' or cause.type == 'tank' then
-                local driver = cause.get_driver()
-                if driver and driver.valid then
-                    -- driver may be LuaEntity or LuaPlayer
-                    local player = driver
-                    if driver.object_name == 'LuaEntity' then
-                        player = driver.player
-                    end
-                    if player and player.valid and player.force.index == game.forces['player'].index then
-                        biter_peace_broken(player)
-                    end
-                end
+    if damaged_force.get_cease_fire(attacker_force) or attacker_force.get_cease_fire(damaged_force) then
+        if damaged_force == game.forces.enemy then
+            attacker_force.print("You have broken the peace with the biters. They will seek revenge!", {r = 1, g = 0, b = 0})
+        else
+            attacker_force.print("You broke a cease fire agreement with " .. force_display_name(damaged_force), Utils.scenario_color)
+        end
+        damaged_force.print("A cease fire agreement with you was broken by " .. force_display_name(attacker_force), Utils.scenario_color)
 
-                local passenger = cause.get_passenger()
-                if passenger and passenger.valid then
-                    -- passenger may be LuaEntity or LuaPlayer
-                    local player = passenger
-                    if passenger.object_name == 'LuaEntity' then
-                        player = passenger.player
-                    end
-                    if player and player.valid and player.force.index == game.forces['player'].index then
-                        biter_peace_broken(player)
-                    end
-                end
-            end
-            -- trains
-            if cause.type == 'locomotive' or cause.type == 'cargo-wagon' or cause.type == 'fluid-wagon' or cause.type == 'artillery-wagon' then
-                local train = cause.train
-                for _, passenger in pairs(train.passengers) do
-                    if passenger and passenger.valid then
-                        -- passenger may be LuaEntity or LuaPlayer
-                        local player = passenger
-                        if passenger.object_name == 'LuaEntity' then
-                            player = passenger.player
-                        end
-                        if player and player.valid and player.force.index == game.forces['player'].index then
-                            biter_peace_broken(player)
-                        end
-                    end
-                end
-            end
-            -- combat robots
-            if cause.type == 'combat-robot' then
-                local owner = cause.combat_robot_owner
-                if owner and owner.valid and owner.force == game.forces['player'] then
-                    biter_peace_broken(owner)
-                end
-            end
+        if attacker_force ~= game.forces.enemy then  -- ignore accidental damage
+            damaged_force.set_cease_fire(attacker_force, false)
+            attacker_force.set_cease_fire(damaged_force, false)
         end
     end
 end
@@ -1025,7 +1018,6 @@ end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_player_dropped_item, on_player_dropped_item)
-Event.add(defines.events.on_entity_damaged, on_entity_damaged)
 Event.add(defines.events.on_entity_died, on_entity_died)
 Event.add(defines.events.on_console_command, on_console_command)
 Event.add(defines.events.on_console_chat, on_console_chat)

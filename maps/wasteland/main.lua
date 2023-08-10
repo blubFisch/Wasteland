@@ -96,6 +96,7 @@ local function on_entity_damaged(event)
 
     if not PvPShield.protect_if_needed(event) then
         CombatBalance.on_entity_damaged(event)
+        Team.on_entity_damaged(event)
         Pollution.on_entity_damaged(event)
         FluidsAreExplosive.on_entity_damaged(event)
     end
