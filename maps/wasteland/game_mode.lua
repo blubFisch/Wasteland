@@ -3,9 +3,9 @@ local Public = {}
 local button_id = "wl_game_mode"
 Public.mode = 2
 Public.mode_names = {
-    "Short",
-    "Medium",
-    "Long"
+    "Short",    -- Target: 10 hours game
+    "Medium",   -- Target: 2 days game
+    "Long"      -- Target: 7 days game
 }
 
 function Public.add_mode_button(player)

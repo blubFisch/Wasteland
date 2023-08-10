@@ -151,9 +151,6 @@ function Public.add_player_to_town(player, town_center)
     local surface = market.surface
 
     reset_player(player)
-    -- TODO: fix chart sharing.. maybe do this in previous tick?
-    player.force.set_friend(market.force, true)   -- To share the chart
-    market.force.set_friend(player.force, true)   -- To share the chart
     game.merge_forces(player.force, market.force)
 
     this.spawn_point[player.index] = force.get_spawn_position(surface)
@@ -238,7 +235,7 @@ local function ally_outlander(player, target)
     end
 
     -- handle the approval
-    if TeamBasics.is_town_force(requesting_force) and not TeamBasics.is_town_force(target_force) then
+    if TeamBasics.is_town_force(requesting_force) and TeamBasics.is_outlander_force(target_force) then
         if target.type ~= 'character' then
             return true
         end
@@ -284,10 +281,10 @@ local function ally_neighbour_towns(player, target)
     end
 
     requesting_force.set_friend(target_force, true)
-    game.print('>> Town ' .. requesting_force.name .. ' has set ' .. target_force.name .. ' as their friend!', Utils.scenario_color)
+    game.print('>> Town ' .. force_display_name(requesting_force) .. ' has set ' .. force_display_name(target_force) .. ' as their friend!', Utils.scenario_color)
 
     if target_force.get_friend(requesting_force) then
-        game.print('>> The towns ' .. requesting_force.name .. ' and ' .. target_force.name .. ' have formed an alliance!', Utils.scenario_color)
+        game.print('>> The towns ' .. force_display_name(requesting_force) .. ' and ' .. force_display_name(target_force) .. ' have formed an alliance!', Utils.scenario_color)
     end
 end
 

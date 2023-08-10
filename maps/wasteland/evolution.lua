@@ -674,7 +674,7 @@ local function update_evolution(force_name, technology)
             .. " has increased the evolution around your town to "
             .. string.format('%.1f%%', 100 * evo.worms) .. string.format(' (+%.1f%%)', 100 * w)
             .. " and increased your town score by "
-            .. string.format('+%.2f', Score.score_increment(w)), Utils.scenario_color)
+            .. string.format('+%.2f', Score.score_increment_for_research(w)), Utils.scenario_color)
 
 end
 

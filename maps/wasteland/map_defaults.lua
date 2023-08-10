@@ -6,11 +6,7 @@ function Public.initialize()
     -- difficulty settings
     game.difficulty_settings.recipe_difficulty = defines.difficulty_settings.recipe_difficulty.normal
     game.difficulty_settings.technology_difficulty = defines.difficulty_settings.technology_difficulty.normal
-    local tech_price_multipliers = {
-        0.2,
-        0.35,
-        0.75
-    }
+    local tech_price_multipliers = { 0.2, 0.35, 0.75 }
     game.difficulty_settings.technology_price_multiplier = tech_price_multipliers[GameMode.mode]
     game.difficulty_settings.research_queue_from_the_start = 'always'
 
@@ -63,16 +59,6 @@ function Public.initialize()
     game.map_settings.unit_group.tick_tolerance_when_member_arrives = 60
     game.map_settings.unit_group.max_gathering_unit_groups = 30
     game.map_settings.unit_group.max_unit_group_size = 200
-
-    ---- steering settings
-    --game.map_settings.steering.default.radius = 1.2
-    --game.map_settings.steering.default.separation_force = 0.005
-    --game.map_settings.steering.default.separation_factor = 1.2
-    --game.map_settings.steering.default.force_unit_fuzzy_goto_behavior = false
-    --game.map_settings.steering.moving.radius = 3
-    --game.map_settings.steering.moving.separation_force = 0.01
-    --game.map_settings.steering.moving.separation_factor = 3
-    --game.map_settings.steering.moving.force_unit_fuzzy_goto_behavior = false
 end
 
 return Public
