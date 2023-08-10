@@ -187,16 +187,19 @@ function Public.on_entity_damaged(event)
     -- Bulldozer mode
     if event.damage_type.name == "explosion" and event.cause then
         local min_clear_distance = 30
-        if not Building.near_another_town(event.cause.force.name, entity.position, entity.surface, min_clear_distance)
-                and not PvPTownShield.enemy_players_nearby(entity.position, entity.surface, event.cause.force, min_clear_distance)
-                and not TeamBasics.is_friendly_towards(entity.force, event.cause.force)
+        local cause_force = event.cause.force
+        local position = entity.position
+        if not Building.near_another_town(cause_force.name, position, entity.surface, min_clear_distance)
+                and not Building.near_outlander_town(cause_force, position, entity.surface, min_clear_distance)
+                and not PvPTownShield.enemy_players_nearby(position, entity.surface, cause_force, min_clear_distance)
+                and not TeamBasics.is_friendly_towards(cause_force, entity.force)
                 and entity.force ~= game.forces.enemy
         then
             entity.surface.create_entity(
                 {
                     name = 'flying-text',
-                    position = entity.position,
-                    text = 'Bulldozer mode!',
+                    position = position,
+                    text = 'Bulldozed!',
                     color = {r = 0.8, g = 0.7, b = 0.0}
                 }
             )

@@ -125,7 +125,17 @@ function Public.in_area(position, area_center, area_radius)
     return false
 end
 
-function Public.near_another_town(force_name, position, surface, radius, radius_center, include_ghosts)
+function Public.near_outlander_town(my_force, position, surface, radius)
+    local entities = surface.find_entities_filtered({ position = position, radius = radius, type=town_zoning_entity_types})
+    for _, entity in pairs(entities) do
+        if not TeamBasics.is_friendly_towards(my_force, entity.force) then
+            return true
+        end
+    end
+    return false
+end
+
+function Public.near_another_town(my_force_name, position, surface, radius, radius_center, include_ghosts)
     local this = ScenarioTable.get_table()
     local enemy_force_names = {}
 
@@ -134,7 +144,7 @@ function Public.near_another_town(force_name, position, surface, radius, radius_
     -- Nearby town centers
     for _, town_center in pairs(this.town_centers) do
         local market_force_name = town_center.market.force.name
-        if force_name ~= market_force_name then
+        if my_force_name ~= market_force_name then
             if Public.in_range(position, town_center.market.position, radius_center) then
                 return true, NEAR_TOWN_CENTER
             end
