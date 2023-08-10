@@ -2,7 +2,7 @@ local Public = {}
 
 local GameMode = require 'maps.wasteland.game_mode'
 
-local age_score_factors = { 3.0, 0.8, 0.25 }
+local age_score_factors = { 5.0, 0.8, 0.25 }
 local age_score_factor = age_score_factors[GameMode.mode]
 local research_evo_score_factors = { 100, 65, 65 }
 local research_evo_score_factor = research_evo_score_factors[GameMode.mode]
