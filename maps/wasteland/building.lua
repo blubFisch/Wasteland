@@ -4,6 +4,7 @@ local math_floor = math.floor
 local table_insert = table.insert
 local ScenarioTable = require 'maps.wasteland.table'
 local PvPShield = require 'maps.wasteland.pvp_shield'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turret"}
 local default_protected_radius = 30
@@ -406,11 +407,27 @@ local function on_pre_build(event)
     end
 end
 
+local disabled_for_outlander_deconstruction = {
+    ['fish'] = true,
+    ['rock-huge'] = true,
+    ['rock-big'] = true,
+    ['sand-rock-big'] = true
+}
+
+local function on_marked_for_deconstruction(event)
+    if TeamBasics.is_outlander_force(game.players[event.player_index].force)
+            and (disabled_for_outlander_deconstruction[event.entity.name] or event.entity.type == 'tree') then
+        event.entity.cancel_deconstruction(game.players[event.player_index].force.name)
+    end
+end
+
+
 local Event = require 'utils.event'
 Event.add(defines.events.on_pre_build, on_pre_build)
 Event.add(defines.events.on_built_entity, on_built_entity)
 Event.add(defines.events.on_player_built_tile, on_player_built_tile)
 Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
 Event.add(defines.events.on_robot_built_tile, on_robot_built_tile)
+Event.add(defines.events.on_marked_for_deconstruction, on_marked_for_deconstruction)
 
 return Public

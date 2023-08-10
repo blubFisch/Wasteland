@@ -478,7 +478,7 @@ local function reset_permissions(permission_group)
     end
 end
 
-local function enable_blueprints(permission_group)
+local function set_full_blueprint_functions(permission_group, enabled)
     local defs = {
         defines.input_action.alt_select_blueprint_entities,
         defines.input_action.cancel_new_blueprint,
@@ -503,71 +503,7 @@ local function enable_blueprints(permission_group)
         defines.input_action.upgrade_open_blueprint
     }
     for _, d in pairs(defs) do
-        permission_group.set_allows_action(d, true)
-    end
-end
-
-local function disable_blueprints(permission_group)
-    local defs = {
-        defines.input_action.alt_select_blueprint_entities,
-        defines.input_action.cancel_new_blueprint,
-        defines.input_action.change_blueprint_record_label,
-        defines.input_action.clear_selected_blueprint,
-        defines.input_action.create_blueprint_like,
-        defines.input_action.cycle_blueprint_backwards,
-        defines.input_action.cycle_blueprint_forwards,
-        defines.input_action.delete_blueprint_library,
-        defines.input_action.delete_blueprint_record,
-        defines.input_action.drop_blueprint_record,
-        defines.input_action.drop_to_blueprint_book,
-        defines.input_action.export_blueprint,
-        defines.input_action.grab_blueprint_record,
-        defines.input_action.import_blueprint,
-        defines.input_action.import_blueprint_string,
-        defines.input_action.open_blueprint_library_gui,
-        defines.input_action.open_blueprint_record,
-        defines.input_action.select_blueprint_entities,
-        defines.input_action.setup_blueprint,
-        defines.input_action.setup_single_blueprint_record,
-        defines.input_action.upgrade_open_blueprint,
-        defines.input_action.activate_copy,
-        defines.input_action.activate_cut,
-        defines.input_action.activate_paste,
-        defines.input_action.alternative_copy,
-        defines.input_action.smart_pipette
-    }
-    for _, d in pairs(defs) do
-        permission_group.set_allows_action(d, false)
-    end
-end
-
-local function enable_deconstruct(permission_group)
-    local defs = {
-        defines.input_action.deconstruct,
-        defines.input_action.clear_selected_deconstruction_item,
-        defines.input_action.cancel_deconstruct,
-        defines.input_action.toggle_deconstruction_item_entity_filter_mode,
-        defines.input_action.toggle_deconstruction_item_tile_filter_mode,
-        defines.input_action.set_deconstruction_item_tile_selection_mode,
-        defines.input_action.set_deconstruction_item_trees_and_rocks_only
-    }
-    for _, d in pairs(defs) do
-        permission_group.set_allows_action(d, true)
-    end
-end
-
-local function disable_deconstruct(permission_group)
-    local defs = {
-        defines.input_action.deconstruct,
-        defines.input_action.clear_selected_deconstruction_item,
-        defines.input_action.cancel_deconstruct,
-        defines.input_action.toggle_deconstruction_item_entity_filter_mode,
-        defines.input_action.toggle_deconstruction_item_tile_filter_mode,
-        defines.input_action.set_deconstruction_item_tile_selection_mode,
-        defines.input_action.set_deconstruction_item_trees_and_rocks_only
-    }
-    for _, d in pairs(defs) do
-        permission_group.set_allows_action(d, false)
+        permission_group.set_allows_action(d, enabled)
     end
 end
 
@@ -662,8 +598,7 @@ end
 local function assign_outlander_permissions(force)
     local permission_group = game.permissions.get_group('outlander')
     reset_permissions(permission_group)
-    disable_blueprints(permission_group)
-    disable_deconstruct(permission_group)
+    set_full_blueprint_functions(permission_group, false)
     disable_artillery(force, permission_group)
     disable_spidertron(force, permission_group)
     disable_rockets(force)
@@ -685,8 +620,7 @@ function Public.create_town_force(player)
     -- permissions
     local permission_group = game.permissions.create_group(force.name)
     reset_permissions(permission_group)
-    enable_blueprints(permission_group)
-    enable_deconstruct(permission_group)
+    set_full_blueprint_functions(permission_group, true)
     disable_artillery(force, permission_group)
     disable_spidertron(force, permission_group)
     disable_high_weapon_research(force)
