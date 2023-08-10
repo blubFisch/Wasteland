@@ -11,11 +11,10 @@ local CombatBalance = require 'maps.wasteland.combat_balance'
 local Utils = require 'maps.wasteland.utils'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
-local rogue_color = {150, 150, 150}
-local rogue_chat_color = {170, 170, 170}
 local item_drop_radius = 1.65
 
 local destroy_wall_types = {
@@ -71,33 +70,21 @@ local function can_force_accept_member(force)
     return true
 end
 
-function Public.is_towny(force)
-    return force.name ~= 'rogue' and force.name ~= 'player'
-end
-
 function Public.set_player_color(player)
     if not player or not player.valid then
         log('player nil or not valid!')
         return
     end
     local this = ScenarioTable.get_table()
-    local force_name = player.force.name
-    if force_name == 'player' then
+    if not TeamBasics.is_town_force(player.force) then
         player.color = outlander_color
         player.chat_color = outlander_chat_color
         return
+    else
+        local town_center = this.town_centers[player.force.name]
+        player.color = town_center.color
+        player.chat_color = town_center.color
     end
-    if force_name == 'rogue' then
-        player.color = rogue_color
-        player.chat_color = rogue_chat_color
-        return
-    end
-    local town_center = this.town_centers[player.force.name]
-    if not town_center then
-        return
-    end
-    player.color = town_center.color
-    player.chat_color = town_center.color
 end
 
 local function set_town_color(event)
@@ -138,12 +125,6 @@ local function reset_player(player)
     end
 end
 
-function Public.map_preset(player, is_town_member)
-    player.show_on_map = is_town_member
-    player.game_view_settings.show_minimap = is_town_member
-    player.game_view_settings.show_map_view_options = is_town_member
-end
-
 function Public.add_player_to_town(player, town_center)
     if not player or not player.valid then
         log('player nil or not valid!')
@@ -157,22 +138,24 @@ function Public.add_player_to_town(player, town_center)
     local market = town_center.market
     local force = market.force
     local surface = market.surface
+
     reset_player(player)
-    player.force = market.force
+    -- TODO: fix chart sharing.. maybe do this in previous tick?
+    player.force.share_chart = true
+    market.force.share_chart = true
+    player.force.set_friend(market.force, true)   -- To share the chart
+    market.force.set_friend(player.force, true)   -- To share the chart
+    game.merge_forces(player.force, market.force)
+
     this.spawn_point[player.index] = force.get_spawn_position(surface)
     game.permissions.get_group(force.name).add_player(player)
     player.tag = ''
 
-    Public.map_preset(player, true)
     Public.set_player_color(player)
 
     ResearchBalance.player_changes_town_status(player, true)
     CombatBalance.player_changes_town_status(player, true)
     force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
-
-    if player.gui.screen['towny_map_hint'] then
-        player.gui.screen['towny_map_hint'].destroy()
-    end
 end
 
 -- given to player upon respawn
@@ -183,40 +166,24 @@ function Public.give_player_items(player)
     end
     player.clear_items_inside()
     player.insert({name = 'raw-fish', count = 3})
-    if not Public.is_towny(player.force) then
+    if not TeamBasics.is_town_force(player.force) then
         player.insert {name = 'linked-chest', count = '1'}
     end
 end
 
-function Public.set_player_to_outlander(player)
-    if not player or not player.valid then
-        log('player nil or not valid!')
-        return
-    end
-
-    player.force = game.forces.player
-    game.permissions.get_group('outlander').add_player(player)
-    player.tag = '[Outlander]'
-    Public.map_preset(player, false)
-    Public.set_player_color(player)
-
-    ResearchBalance.player_changes_town_status(player, false)
-    CombatBalance.player_changes_town_status(player, false)
+function Public.set_biter_peace(force, peace)
+    game.forces.enemy.set_cease_fire(force, peace)
+    force.set_cease_fire(game.forces.enemy, peace)
 end
 
-local function set_player_to_rogue(player)
+local function biter_peace_broken(player)
     if not player or not player.valid then
         log('player nil or not valid!')
         return
     end
 
     player.print("You have broken the peace with the biters. They will seek revenge!", {r = 1, g = 0, b = 0})
-
-    player.force = game.forces.rogue
-    game.permissions.get_group('rogue').add_player(player)
-    player.tag = '[Rogue]'
-    Public.map_preset(player, false)
-    Public.set_player_color(player)
+    Public.set_biter_peace(player.force, false)
 end
 
 local function ally_outlander(player, target)
@@ -234,17 +201,17 @@ local function ally_outlander(player, target)
     local target_town_center = this.town_centers[target_force.name]
 
     -- don't handle request if target is not a town
-    if not Public.is_towny(requesting_force) and not Public.is_towny(target_force) then
+    if not TeamBasics.is_town_force(requesting_force) and not TeamBasics.is_town_force(target_force) then
         return false
     end
 
     -- don't handle request to  another town if already in a town
-    if Public.is_towny(requesting_force) and Public.is_towny(target_force) then
+    if TeamBasics.is_town_force(requesting_force) and TeamBasics.is_town_force(target_force) then
         return false
     end
 
     -- handle the request
-    if not Public.is_towny(requesting_force) and Public.is_towny(target_force) then
+    if not TeamBasics.is_town_force(requesting_force) and TeamBasics.is_town_force(target_force) then
         this.requests[player.index] = target_force.name
 
         local target_player
@@ -272,7 +239,7 @@ local function ally_outlander(player, target)
     end
 
     -- handle the approval
-    if Public.is_towny(requesting_force) and not Public.is_towny(target_force) then
+    if TeamBasics.is_town_force(requesting_force) and not TeamBasics.is_town_force(target_force) then
         if target.type ~= 'character' then
             return true
         end
@@ -373,7 +340,7 @@ local function declare_war(player, item)
         return
     end
     local target_force = target.force
-    if not Public.is_towny(target_force) then
+    if not TeamBasics.is_town_force(target_force) then
         return
     end
 
@@ -403,7 +370,7 @@ local function declare_war(player, item)
         return
     end
 
-    if not Public.is_towny(requesting_force) then
+    if not TeamBasics.is_town_force(requesting_force) then
         return
     end
 
@@ -459,8 +426,6 @@ function Public.update_town_chart_tags()
             end
         end
     end
-    game.forces['player'].clear_chart(game.surfaces['nauvis'])
-    game.forces['rogue'].clear_chart(game.surfaces['nauvis'])
 end
 
 local function reset_permissions(permission_group)
@@ -647,16 +612,20 @@ local function set_initial_combat_bot_slots(force)
     force.maximum_following_robot_count = 5
 end
 
+local function uncover_treasure(force)
+    force.chart(game.surfaces.nauvis, {{-1, -1}, {1, 1}})
+end
+
 -- setup a team force
-function Public.add_new_force(force_name)
+function Public.add_towny_force(player)
     local this = ScenarioTable.get_table()
-    local force = game.create_force(force_name)
+    local force = game.create_force("t_" .. player.name)
 
     -- diplomacy
     force.friendly_fire = true
 
     -- permissions
-    local permission_group = game.permissions.create_group(force_name)
+    local permission_group = game.permissions.create_group(force.name)
     reset_permissions(permission_group)
     enable_blueprints(permission_group)
     enable_deconstruct(permission_group)
@@ -680,68 +649,22 @@ function Public.add_new_force(force_name)
     CombatBalance.init_player_weapon_damage(force)
 
     if (this.testing_mode == true) then
-        local e_force = game.forces['enemy']
-        e_force.set_friend(force, true) -- team force should not be attacked by turrets
-        e_force.set_cease_fire(force, true) -- team force should not be attacked by units
+        Public.set_biter_peace(force, true)
         force.enable_all_prototypes()
         force.research_all_technologies()
     end
+
+    uncover_treasure(force)
+
     return force
 end
 
-local function setup_player_force() -- Note: default for outlanders
-    local this = ScenarioTable.get_table()
-    local force = game.forces.player
-
-    -- diplomacy
-    force.set_friend(game.forces.rogue, true)
-    force.set_friend(game.forces.enemy, true)
-    force.friendly_fire = true
-
-    -- permissions
-    local permission_group = game.permissions.create_group('outlander')
-    reset_permissions(permission_group)
-    disable_blueprints(permission_group)
-    disable_deconstruct(permission_group)
-    disable_artillery(force, permission_group)
-    disable_spidertron(force, permission_group)
-    disable_rockets(force)
-    disable_nukes(force)
-    disable_cluster_grenades(force)
-    disable_radar(force)
-    disable_achievements(permission_group)
-    disable_tips_and_tricks(permission_group)
-
-    -- research
-    force.disable_research()
-    force.research_queue_enabled = false
-    set_initial_combat_bot_slots(force)
-
-    -- recipes
-    local recipes = force.recipes
-    for _, recipe_name in pairs(player_force_disabled_recipes) do
-        recipes[recipe_name].enabled = false
-    end
-    for _, recipe_name in pairs(all_force_enabled_recipes) do
-        recipes[recipe_name].enabled = true
-    end
-
-    CombatBalance.init_player_weapon_damage(force)
-    if (this.testing_mode == true) then
-        force.enable_all_prototypes()
-    end
+local function setup_outlander_permissions()
+    game.permissions.create_group('outlander')
 end
 
-local function setup_rogue_force()
-    local this = ScenarioTable.get_table()
-    local force = game.create_force('rogue')
-
-    -- diplomacy
-    force.set_friend(game.forces.player, true)
-    force.friendly_fire = true
-
-    -- permissions
-    local permission_group = game.permissions.create_group('rogue')
+local function assign_outlander_permissions(force)
+    local permission_group = game.permissions.get_group('outlander')
     reset_permissions(permission_group)
     disable_blueprints(permission_group)
     disable_deconstruct(permission_group)
@@ -753,6 +676,17 @@ local function setup_rogue_force()
     disable_radar(force)
     disable_achievements(permission_group)
     disable_tips_and_tricks(permission_group)
+end
+
+local function assign_player_to_outlander_force(player)
+    local this = ScenarioTable.get_table()
+    local force = game.create_force("o_" .. player.name)
+
+    assign_outlander_permissions(force)
+
+    -- diplomacy
+    Public.set_biter_peace(force, true)
+    force.friendly_fire = true
 
     -- research
     force.disable_research()
@@ -769,16 +703,46 @@ local function setup_rogue_force()
     end
 
     CombatBalance.init_player_weapon_damage(force)
-
     if (this.testing_mode == true) then
         force.enable_all_prototypes()
     end
+
+    uncover_treasure(force)
+
+    player.force = force
 end
 
 local function setup_enemy_force()
-    local e_force = game.forces['enemy']
-    e_force.evolution_factor = 1
-    e_force.set_cease_fire(game.forces.player, true)
+    game.forces.enemy.evolution_factor = 1
+end
+
+
+function Public.player_joined(player)
+    if player.force.name == 'neutral' then
+        assign_player_to_outlander_force(player)
+    end
+end
+
+function Public.player_left(player)
+    if not TeamBasics.is_town_force(player.force) then
+        game.merge_forces(player.force, 'neutral')
+    end
+end
+
+function Public.set_player_to_outlander(player)
+    if not player or not player.valid then
+        log('player nil or not valid!')
+        return
+    end
+
+    assign_player_to_outlander_force(player)
+
+    game.permissions.get_group('outlander').add_player(player)
+    player.tag = '[Outlander]'
+    Public.set_player_color(player)
+
+    ResearchBalance.player_changes_town_status(player, false)
+    CombatBalance.player_changes_town_status(player, false)
 end
 
 local function reset_forces()
@@ -796,7 +760,7 @@ end
 function Public.reset_all_forces()
     for _, force in pairs(game.forces) do
         if force and force.valid then
-            if force.name ~= 'enemy' and force.name ~= 'player' and force.name ~= 'neutral' and force.name ~= 'rogue' then
+            if force.name ~= 'enemy' and force.name ~= 'player' and force.name ~= 'neutral' then
                 game.merge_forces(force.name, 'player')
             end
         end
@@ -888,7 +852,7 @@ local function kill_force(force_name, cause)
         message = town_name .. ' has given up'
     elseif cause == nil or not cause.valid or cause.force == nil then
         message = town_name .. ' has fallen!'
-    elseif cause.force.name == 'player' or cause.force.name == 'rogue' then
+    elseif not TeamBasics.is_town_force(cause.force) then
         local items = {name = 'coin', count = balance}
         town_center.coin_balance = 0
         if balance > 0 then
@@ -901,10 +865,8 @@ local function kill_force(force_name, cause)
         end
         if cause.name == 'character' then
             message = town_name .. ' has fallen to ' .. cause.player.name .. '!'
-        elseif cause.force.name == 'player' then
+        elseif not TeamBasics.is_town_force(cause.force) then
             message = town_name .. ' has fallen to outlanders!'
-        elseif cause.force.name == 'rogue' then
-            message = town_name .. ' has fallen to rogues!'
         else
             message = town_name .. ' has fallen!'
         end
@@ -969,8 +931,7 @@ local function on_entity_damaged(event)
             if cause.type == 'character' and force.index == game.forces['player'].index then
                 local player = cause.player
                 if player and player.valid and force.index == game.forces['player'].index then
-                    -- set the force of the player to rogue until they die or create a town
-                    set_player_to_rogue(player)
+                    biter_peace_broken(player)
                 end
             end
             -- cars and tanks
@@ -983,8 +944,7 @@ local function on_entity_damaged(event)
                         player = driver.player
                     end
                     if player and player.valid and player.force.index == game.forces['player'].index then
-                        -- set the force of the player to rogue until they die or create a town
-                        set_player_to_rogue(player)
+                        biter_peace_broken(player)
                     end
                 end
 
@@ -996,10 +956,7 @@ local function on_entity_damaged(event)
                         player = passenger.player
                     end
                     if player and player.valid and player.force.index == game.forces['player'].index then
-                        -- set the force of the player to rogue until they die or create a town
-                        set_player_to_rogue(player)
-                        -- set the vehicle to rogue
-                        cause.force = game.forces['rogue']
+                        biter_peace_broken(player)
                     end
                 end
             end
@@ -1014,9 +971,7 @@ local function on_entity_damaged(event)
                             player = passenger.player
                         end
                         if player and player.valid and player.force.index == game.forces['player'].index then
-                            set_player_to_rogue(player)
-                            -- set the vehicle to rogue
-                            cause.force = game.forces['rogue']
+                            biter_peace_broken(player)
                         end
                     end
                 end
@@ -1025,10 +980,7 @@ local function on_entity_damaged(event)
             if cause.type == 'combat-robot' then
                 local owner = cause.combat_robot_owner
                 if owner and owner.valid and owner.force == game.forces['player'] then
-                    -- set the force of the player to rogue until they die or create a town
-                    set_player_to_rogue(owner)
-                    -- set the robot to rogue
-                    cause.force = game.forces['rogue']
+                    biter_peace_broken(owner)
                 end
             end
         end
@@ -1061,8 +1013,7 @@ end
 
 function Public.initialize()
     reset_forces()
-    setup_rogue_force()
-    setup_player_force()
+    setup_outlander_permissions()
     setup_enemy_force()
 end
 

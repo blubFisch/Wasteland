@@ -274,10 +274,6 @@ local function on_entity_died(event)
     end
 end
 
---local function on_init(event)
---
---end
-
 local function on_chunk_generated(event)
     --log("wasteland::on_chunk_generated")
     local surface = event.surface
@@ -368,31 +364,21 @@ local function on_chunk_generated(event)
     end
 
     move_away_biteys(surface, event.area)
-    --this.chunk_generated[key] = true
 end
 
 local function on_chunk_charted(event)
     local force = event.force
     local surface = game.surfaces[event.surface_index]
     if force.valid then
-        if force == game.forces['player'] or force == game.forces['rogue'] then
-            force.clear_chart(surface)
-        else
-            local position = event.position
-            if position.x == 0 and position.y == 0 then
-                force.add_chart_tag(surface, {icon = {type = 'item', name = 'coin'}, position = position, text = "Treasure"})
-            end
+        local position = event.position
+        if position.x == 0 and position.y == 0 then
+            force.add_chart_tag(surface, {icon = {type = 'item', name = 'coin'}, position = position, text = "Treasure"})
         end
     end
 end
 
--- local on_init = function ()
--- 	local this = ScenarioTable.get_table()
---  this.chunk_generated = {}
--- end
 
 local Event = require 'utils.event'
--- Event.on_init(on_init)
 Event.add(defines.events.on_chunk_generated, on_chunk_generated)
 Event.add(defines.events.on_chunk_charted, on_chunk_charted)
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)

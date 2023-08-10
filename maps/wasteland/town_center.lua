@@ -18,6 +18,8 @@ local MapLayout = require 'maps.wasteland.map_layout'
 local Evolution = require 'maps.wasteland.evolution'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local PvPShield = require 'maps.wasteland.pvp_shield'
+local TeamBasics = require 'maps.wasteland.team_basics'
+
 
 local town_radius = 20
 
@@ -377,14 +379,12 @@ local function found_town(event)
     end
 
     -- is player in a town already?
-    if Team.is_towny(player.force) then
+    if TeamBasics.is_town_force(player.force) then
         entity.destroy()    -- Can't allow placing the special item for this
         return
     end
 
     -- try to place the town
-
-    local force_name = tostring(player.name)
     local surface = entity.surface
     local position = entity.position
 
@@ -394,7 +394,7 @@ local function found_town(event)
     local this = ScenarioTable.get_table()
 
     -- is player mayor of town that still exists?
-    if Team.is_towny(player.force) then
+    if TeamBasics.is_town_force(player.force) then
         player.insert({name = 'linked-chest', count = 1})
         return
     end
@@ -440,7 +440,9 @@ local function found_town(event)
         end
     end
 
-    local force = Team.add_new_force(force_name)
+
+    local force = Team.add_towny_force(player)
+    local force_name = force.name
 
     this.town_centers[force_name] = {}
     local town_center = this.town_centers[force_name]
@@ -480,7 +482,7 @@ local function found_town(event)
         rendering.draw_text {
         text = town_center.town_name,
         surface = surface,
-        forces = {force_name, game.forces.player, game.forces.rogue},
+        forces = {force_name},
         target = town_center.market,
         target_offset = {0, -4.25},
         color = town_center.color,
@@ -494,7 +496,7 @@ local function found_town(event)
         rendering.draw_text {
         text = 'HP: ' .. town_center.health .. ' / ' .. town_center.max_health,
         surface = surface,
-        forces = {force_name, game.forces.player, game.forces.rogue},
+        forces = {force_name},
         target = town_center.market,
         target_offset = {0, -3.25},
         color = {200, 200, 200},
@@ -521,7 +523,7 @@ local function found_town(event)
     town_center.enemies_text = rendering.draw_text {
         text = '',
         surface = surface,
-        forces = {force_name, game.forces.player, game.forces.rogue},
+        forces = {force_name},
         target = town_center.market,
         target_offset = {0, -2.25},
         color = {0, 0, 0},
@@ -534,7 +536,7 @@ local function found_town(event)
     town_center.shield_text = rendering.draw_text {
         text = '',
         surface = surface,
-        forces = {force_name, game.forces.player, game.forces.rogue},
+        forces = {force_name},
         target = town_center.market,
         target_offset = {0, -1.5},
         color = {200, 200, 200},
@@ -550,13 +552,6 @@ local function found_town(event)
         e.destroy()
     end
 
-    -- Reassign brought property
-    for _, e in pairs(surface.find_entities_filtered({area = {{position.x - town_radius, position.y - town_radius},
-                                                              {position.x + town_radius, position.y + town_radius}},
-                                                      force = 'player'})) do
-        e.force = force
-    end
-
     draw_town_spawn(force_name)
 
     -- set the spawn point
@@ -566,9 +561,6 @@ local function found_town(event)
 
     Team.add_player_to_town(player, town_center)
     Team.add_chart_tag(town_center)
-
-    -- Uncover center treasure
-    force.chart(surface, {{-1, -1}, {1, 1}})
 
     PvPTownShield.init_town(town_center)
 
@@ -599,7 +591,7 @@ local function rename_town(cmd)
         return
     end
     local force = player.force
-    if not Team.is_towny(force) then
+    if not TeamBasics.is_town_force(force) then
         player.print('You are not member of a town!', Color.fail)
         return
     end

@@ -290,11 +290,6 @@ local function process_built_entities(event)
         end
     end
 
-    -- Ensure compatibility between outlander/rogue
-    if force_name == 'rogue' then
-        entity.force = game.forces['player']
-    end
-
     -- Feature to build neutral = all players can access + robots will ignore
     local players_prefs = global.tokens.utils_gui_bottom_frame.players[player_index]
     if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
@@ -306,11 +301,8 @@ local function process_built_entities(event)
 
     -- Prevent power poles of different forces from connecting to each other
     if entity.type == 'electric-pole' then
-        local acting_force = force
-        if (force_name == 'player' or force_name == 'rogue') then acting_force = game.forces['neutral'] end
-
         for _, other_pole in pairs(entity.neighbours["copper"]) do
-            if other_pole.force ~= acting_force then
+            if other_pole.force ~= force then
                 entity.disconnect_neighbour(other_pole)
                 build_error_notification(surface, position, "Can't connect to other town", player)
             end

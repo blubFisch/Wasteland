@@ -4,6 +4,7 @@ local table_shuffle = table.shuffle_table
 
 local ScenarioTable = require 'maps.wasteland.table'
 local Color = require 'utils.color_presets'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 local colors = {}
 colors[1] = {name = 'Almond', rgb = {239, 222, 205}}
@@ -183,7 +184,7 @@ local function random_color(cmd)
         return
     end
     local force = player.force
-    if force.name == 'player' or force.name == 'rogue' then
+    if not TeamBasics.is_town_force(force) then
         player.print('You are not member of a town!', Color.fail)
         return
     end

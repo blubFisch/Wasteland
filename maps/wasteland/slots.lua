@@ -2,6 +2,8 @@ require 'utils.table'
 
 local ScenarioTable = require 'maps.wasteland.table'
 local CommonFunctions = require 'utils.common'
+local TeamBasics = require 'maps.wasteland.team_basics'
+
 
 local center_limited_types = { 'assembling-machine', 'furnace', 'lab'}
 
@@ -26,7 +28,7 @@ local function process_slots(actor, event)
 
     local surface = entity.surface
 
-    if force.index == game.forces['player'].index or force.index == game.forces['rogue'].index or town_center == nil then
+    if not TeamBasics.is_town_force(force) then
         surface.create_entity(
             {
                 name = 'flying-text',
@@ -110,7 +112,7 @@ local function on_entity_destroyed(event)
         if force ~= nil then
             local town_center = this.town_centers[force.name]
             if town_center ~= nil then
-                if force.index == game.forces['player'].index or force.index == game.forces['rogue'].index or town_center == nil then
+                if not TeamBasics.is_town_force(force) then
                     return
                 end
                 local locations = town_center.upgrades.laser_turret.locations

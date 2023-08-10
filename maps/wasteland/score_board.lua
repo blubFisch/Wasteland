@@ -9,6 +9,7 @@ local Utils = require 'maps.wasteland.utils'
 local Team = require 'maps.wasteland.team'
 local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 
 local button_id = 'towny-score-button'
@@ -88,6 +89,18 @@ end
 local function update_score()
     local this = ScenarioTable.get_table()
     local score_to_win = 100
+
+    local outlander_online = 0
+    local outlander_total = 0
+    for _, player in pairs(game.players) do
+        if not TeamBasics.is_town_force(player.force) then
+            if player.connected then
+                outlander_online = outlander_online + 1
+            else
+                outlander_total = outlander_total + 1
+            end
+        end
+    end
 
     for _, player in pairs(game.connected_players) do
         local frame = this.score_gui_frame[player.index]
@@ -183,13 +196,11 @@ local function update_score()
 
             -- Outlander section
             ranking_table.add { type = 'label', caption = '-'}
-            local outlander_on = #game.forces['player'].connected_players + #game.forces['rogue'].connected_players
-            local outlander_total = #game.forces['player'].players + #game.forces['rogue'].players
 
             local label =
             ranking_table.add {
                 type = 'label',
-                caption = 'Outlanders' .. ' (' .. outlander_on .. '/' .. outlander_total .. ')'
+                caption = 'Outlanders' .. ' (' .. outlander_online .. '/' .. outlander_total .. ')'
             }
             label.style.font_color = {170, 170, 170}
             ranking_table.add { type = 'label', caption = '-'}

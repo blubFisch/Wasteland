@@ -11,6 +11,7 @@ local ResearchBalance = require 'maps.wasteland.research_balance'
 local CombatBalance = require 'maps.wasteland.combat_balance'
 local Evolution = require 'maps.wasteland.evolution'
 local GameMode = require 'maps.wasteland.game_mode'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 local map_pos_frame_id = 'towny_map_position'
 local evo_frame_id = 'towny_evo_display'
@@ -44,7 +45,7 @@ function Public.spawn_initially(player)
 end
 
 function Public.load_buffs(player)
-    if player.force.name ~= 'player' and player.force.name ~= 'rogue' then
+    if TeamBasics.is_town_force(player.force) then
         return
     end
     local this = ScenarioTable.get()
@@ -124,20 +125,6 @@ local function init_evo_frame(player)
     button.style.bottom_padding = 10
 end
 
-local function init_map_hint_frame(player)
-    if player.gui.screen['towny_map_hint'] then
-        player.gui.screen['towny_map_hint'].destroy()
-    end
-    local b = player.gui.screen.add({type = 'label', caption = "To activate map, build a town (white chest)",
-                                     name = 'towny_map_hint'})
-    b.location = {x = 2200, y = 100}
-    b.style.font_color = {r = 255, g = 255, b = 255}
-    b.style.top_padding = 10
-    b.style.left_padding = 10
-    b.style.right_padding = 10
-    b.style.bottom_padding = 10
-end
-
 local function update_player_position_displays()
     for _, player in pairs(game.connected_players) do
         player.gui.top[map_pos_frame_id].caption = "Position: "
@@ -193,15 +180,20 @@ local function on_player_joined_game(event)
         ResearchBalance.add_balance_ui(player)
         CombatBalance.add_balance_ui(player)
         init_position_frame(player)
-        init_map_hint_frame(player)
         init_evo_frame(player)
         GameMode.add_mode_button(player)
 
         Public.initialize(player)
         Public.spawn_initially(player)
     end
+    Team.player_joined(player)
     Public.load_buffs(player)
     Public.requests(player)
+end
+
+local function on_player_left_game(event)
+    local player = game.players[event.player_index]
+    Team.player_left(player)
 end
 
 local function on_player_respawned(event)
@@ -211,9 +203,7 @@ local function on_player_respawned(event)
 
     Team.give_player_items(player)
 
-    if player.force == game.forces['rogue'] then
-        Team.set_player_to_outlander(player)
-    end
+    Team.set_biter_peace(player.force, true)
 
     local spawn_point = Spawn.get_spawn_point(player, surface)
 
@@ -245,6 +235,7 @@ Event.on_nth_tick(60, update_player_evo_displays)
 Event.on_nth_tick(60, hint_treasure)
 
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
+Event.add(defines.events.on_player_left_game, on_player_left_game)
 Event.add(defines.events.on_player_respawned, on_player_respawned)
 Event.add(defines.events.on_player_died, on_player_died)
 

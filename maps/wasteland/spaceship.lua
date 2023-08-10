@@ -2,6 +2,7 @@ local table_insert = table.insert
 
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
+local TeamBasics = require 'maps.wasteland.team_basics'
 local Public = {}
 
 local function position_tostring(position)
@@ -120,10 +121,9 @@ local function set_offers(market, player)
 
     local market_items = {}
 
-    -- special offers are only for outlanders and rogues
+    -- special offers are only for outlanders
     local special_offers = {}
-    local force = player.force
-    if force.name == 'player' or force.name == 'rogue' then
+    if not TeamBasics.is_town_force(player.force) then
         if player.character.character_inventory_slots_bonus + 5 <= 50 then
             special_offers[1] = {{{'coin', (player.character.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
         else
@@ -205,7 +205,6 @@ local function refresh_offers(event)
 end
 
 local function offer_purchased(event)
-    local this = ScenarioTable.get_table()
     local player = game.players[event.player_index]
     local market = event.market
     local offer_index = event.offer_index
@@ -213,7 +212,7 @@ local function offer_purchased(event)
     if not Public.is_spaceship_market(market) then
         return
     end
-    if player.force.name ~= 'player' and player.force.name ~= 'rogue' then
+    if TeamBasics.is_town_force(player.force) then
         return
     end
     if not upgrade_functions[offer_index] then

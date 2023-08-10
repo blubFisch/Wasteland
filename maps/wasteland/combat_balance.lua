@@ -1,4 +1,5 @@
 local ScenarioTable = require 'maps.wasteland.table'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 local Public = {}
 
@@ -154,10 +155,10 @@ function Public.format_dmg_modifier(force)
 end
 
 function Public.dmg_modifier_for_force(force)
-    if force == game.forces.player or force == game.forces.rogue or force == game.forces.neutral then
-        return 1
-    else
+    if TeamBasics.is_town_force(force) then
         return 1 / #force.connected_players
+    else
+        return 1
     end
 end
 

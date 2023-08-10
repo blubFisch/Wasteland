@@ -2,8 +2,7 @@ local Public = {}
 
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
-local Team = require 'maps.wasteland.team'
-
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 
 function Public.register_for_tutorial(player)
@@ -20,11 +19,11 @@ local function tutorials_tick()
 
             if tut.show_after_tick and game.tick > tut.show_after_tick then
                 this.tutorials[player.index].step = 1
-                player.set_goal_description("Found a town by building your white chest.\n\nThis will also unlock your map.")
+                player.set_goal_description("Welcome to harsh survival!\n\nFound a town by building your white chest or keep roaming as a lawless outlander.")
                 tut.show_after_tick = nil
             end
 
-            if this.tutorials[player.index].step == 1 and Team.is_towny(player.force) then
+            if this.tutorials[player.index].step == 1 and TeamBasics.is_town_force(player.force) then
                 player.set_goal_description("Good!\nMake sure your town stays alive. If your market building gets destroyed, everything is lost!"
                 .. "\nNext, collect some scrap from around your town to get resources."
                 .. "\n\nCollect 500 iron plates.")
