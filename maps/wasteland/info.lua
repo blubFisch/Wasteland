@@ -2,18 +2,14 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
+ - Outlanders now have their own fractions, allowing them to ally with towns without joining (drop a fish on them)
+ - Offline shields now only work before league 4
  - Shields now protect against all biters, so bases with offline shield are 100% safe
  - Fix more offline base attack exploits
  - Outlanders can build turrets/mines again to fight towns
- - Bunch of bugfixes
- - Market prices rebalanced: Uranium ore 4x expensive & reduced profit for internal economy
  - Added a button to build as neutral (bots will ignore+other players can access)
- - No offline shields for towns over 70 score
  - League shield now also protects towns offline towns
- - Fixed many base attack exploits
- - Power poles can no longer be used to block enemy buildings - now only turrets block buildings
- - Introduced Leagues system: Players can only attack towns of same or higher leagues, which depend on town progress
- - Added scrap markets, they are hidden in scrap and allow to buy goodies for your scrap]]
+ - Power poles can no longer be used to block enemy buildings - now only turrets block buildings]]
 
 local info =
     [[[font=heading-1]Welcome to the wasteland[/font]
@@ -31,19 +27,25 @@ local info_adv =
 - Build or join a town and survive as long as you can
 - Raid other towns. Defend your town. Reach 100 score on the leaderboard.
 
-[font=heading-1]Town members and alliances[/font]
-- To invite another player to your town, drop a coin on that player (with the Z key). To accept an invite, they also need to drop a coin on you.
-- To leave a town, drop coal on the market. Note that their turrets will target you immediately.
-- To form any alliance with another town, drop a coin on a town member. If they agree they need to drop a coin on you too.
+[font=heading-1]Town members, alliances and cease fire[/font]
+- Join town: Drop a coin on that outlander (with the Z key). To accept an invite, they also need to drop a coin on you.
+- Cease fire: Drop a fish on one of them or their town center (works for outlanders too). If they agree they need to drop a fish on you too.
+    - Cease fire only means your weapons (turrets, bots, ..) won't fire on each other automatically. You still can't access the other's bases.
+    - If you damage the other party, the ceasefire stops
+- Town alliance: Drop a coin on a town member. If they agree they need to drop a coin on you too.
+    - They can now access all of your stuff and radar is shared
+    - To cancel an alliance, drop coal on them or their member
+- Leave a town: Drop coal on the market. Note that their turrets will target you immediately.
 
-[font=heading-1]PvP Shields[/font]
+[font=heading-1]Leagues and PvP Shields[/font]
+- A system to give a chance to players who join later and to protect while offline
 - PvP shields prevent players from entering, building and damaging
+- League shield protects your town from players of a higher league and cover the outer blue tile square of your town
+    - League score limits: 15 score or tank=L2, 35 score=L3, 60 score=L4
 - Offline PvP shields deploy automatically once all players of a town leave the game
     - The size is same as your initial town wall, marked by the inner blue tile square
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
-    - This shield is available up to 70 score
-- The league shield protects your town from players of a higher league and covers the outer blue tile square. It also works while you're offline
-    - League score limits: 0 score/outlander=L0, 15 score or tank=L1, 35 score=L2, 60 score=L3
+    - This shield is available before League 4
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
 - Biters can't penetrate your shield
 

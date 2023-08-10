@@ -137,7 +137,7 @@ local function update_pvp_shields()
         local town_league = Public.get_town_league(town_center)
         local town_offline_or_afk = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
         local abandoned = false
-        local high_score = Score.total_score(town_center) > 70  -- Note: referenced in info.lua
+        local high_score_no_shield = town_league >= 4  -- Note: referenced in info.lua
 
         local higher_league_nearby = Public.enemy_players_nearby(town_center, league_shield_activation_range, town_league)
         if higher_league_nearby then
@@ -145,7 +145,7 @@ local function update_pvp_shields()
         end
 
         if town_offline_or_afk then
-            if shields_researched and not high_score then
+            if shields_researched and not high_score_no_shield then
                 if this.pvp_shield_offline_eligible_since[force.index] == nil then
                     this.pvp_shield_offline_eligible_since[force.index] = game.tick
                 end
@@ -190,7 +190,7 @@ local function update_pvp_shields()
         end
 
         -- Balancing shield
-        if higher_league_nearby and not abandoned and not high_score then
+        if higher_league_nearby and not abandoned and not high_score_no_shield then
             if shields_researched then
                 -- If we have any type of shield ongoing, swap it for a league shield
                 if shield and shield.shield_type ~= PvPShield.SHIELD_TYPE.LEAGUE_BALANCE then
@@ -227,7 +227,7 @@ local function update_pvp_shields()
         else
             if abandoned then
                 shield_info = shield_info .. ', Abandoned town'
-            elseif high_score then
+            elseif high_score_no_shield then
                 shield_info = shield_info .. ', No shield (High score)'
             elseif not shields_researched then
                 shield_info = shield_info .. ', Shields not researched'
