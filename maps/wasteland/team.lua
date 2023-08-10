@@ -17,6 +17,7 @@ local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
 local item_drop_radius = 1.65
 Public.max_player_slots = 30
+local town_serial_no = 1
 
 local destroy_wall_types = {
     ['gate'] = true,
@@ -347,6 +348,7 @@ local function set_cease_fire(player, entity)
 
     if player.force.get_cease_fire(target_force) then
         player.print("You already have a cease fire agreement with " .. force_display_name(target_force), Utils.scenario_color)
+        return
     end
 
     player.force.set_cease_fire(target_force, true)
@@ -371,17 +373,22 @@ local function declare_war(player, item)
     if not target then
         return
     end
+    if target.name == "character" and target.player == player then
+        return
+    end
     local target_force = target.force
     if not TeamBasics.is_town_force(target_force) then
         return
     end
 
     if requesting_force.name == target_force.name then
-        if player.name ~= target.force.name then
+        if #target.force.players > 1 then
             Public.set_player_to_outlander(player)
             local town_center = this.town_centers[target_force.name]
             game.print('>> ' .. player.name .. ' has abandoned ' .. town_center.town_name, Utils.scenario_color)
             this.requests[player.index] = nil
+        else
+            player.print(">> The town's last player can't abandon the town.", Utils.scenario_color)
         end
         if player.name == target.force.name then
             if target.type ~= 'character' then
@@ -639,7 +646,8 @@ end
 -- setup a team force
 function Public.add_towny_force(player)
     local this = ScenarioTable.get_table()
-    local force = game.create_force("t_" .. player.name)
+    local force = game.create_force("t_" .. town_serial_no .. "_" .. player.name)
+    town_serial_no = town_serial_no + 1
 
     -- diplomacy
     force.friendly_fire = true
