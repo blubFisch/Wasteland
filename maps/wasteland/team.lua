@@ -589,6 +589,7 @@ local function set_default_tech(force)
         force.recipes[recipe_name].enabled = true
     end
     force.technologies['gun-turret'].researched = true
+    force.technologies['stone-wall'].researched = true
 end
 
 local function setup_outlander_permissions()

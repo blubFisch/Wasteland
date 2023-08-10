@@ -3,6 +3,7 @@ local Public = {}
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
  - Outlanders now have their own fractions, allowing them to ally with towns without joining (drop a fish on them)
+ - Outlanders can build mini-bases again, with turrets and walls. Note: They lose ownership on disconnect!
  - Offline shields now only work before league 4
  - Shields now protect against all biters, so bases with offline shield are 100% safe
  - Fix more offline base attack exploits
