@@ -8,7 +8,6 @@ function Public.initialize()
     game.difficulty_settings.technology_difficulty = defines.difficulty_settings.technology_difficulty.normal
     local tech_price_multipliers = { 0.2, 0.35, 0.75 }
     game.difficulty_settings.technology_price_multiplier = tech_price_multipliers[GameMode.mode]
-    game.difficulty_settings.research_queue_from_the_start = 'always'
 
     -- pollution settings
     game.map_settings.pollution.enabled = true

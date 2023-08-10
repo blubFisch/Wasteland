@@ -441,7 +441,7 @@ local function found_town(event)
     end
 
 
-    local force = Team.add_towny_force(player)
+    local force = Team.create_town_force(player)
     local force_name = force.name
 
     this.town_centers[force_name] = {}

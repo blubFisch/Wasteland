@@ -51,7 +51,7 @@ local storage_types = {
     ['storage-tank'] = true
 }
 
-local player_force_disabled_recipes = {
+local outlander_force_disabled_recipes = {
     'lab',
     'automation-science-pack',
     'stone-brick',
@@ -648,8 +648,32 @@ local function uncover_treasure(force)
     force.chart(game.surfaces.nauvis, {{-1, -1}, {1, 1}})
 end
 
--- setup a team force
-function Public.add_towny_force(player)
+local function set_default_tech(force)
+    for _, recipe_name in pairs(all_force_enabled_recipes) do
+        force.recipes[recipe_name].enabled = true
+    end
+    force.technologies['gun-turret'].researched = true
+end
+
+local function setup_outlander_permissions()
+    game.permissions.create_group('outlander')
+end
+
+local function assign_outlander_permissions(force)
+    local permission_group = game.permissions.get_group('outlander')
+    reset_permissions(permission_group)
+    disable_blueprints(permission_group)
+    disable_deconstruct(permission_group)
+    disable_artillery(force, permission_group)
+    disable_spidertron(force, permission_group)
+    disable_rockets(force)
+    disable_nukes(force)
+    disable_cluster_grenades(force)
+    disable_achievements(permission_group)
+    disable_tips_and_tricks(permission_group)
+end
+
+function Public.create_town_force(player)
     local this = ScenarioTable.get_table()
     local force = game.create_force("t_" .. town_serial_no .. "_" .. player.name)
     town_serial_no = town_serial_no + 1
@@ -673,82 +697,56 @@ function Public.add_towny_force(player)
     disable_tips_and_tricks(permission_group)
 
     -- research
-    for _, recipe_name in pairs(all_force_enabled_recipes) do
-        force.recipes[recipe_name].enabled = true
-    end
+    set_default_tech(force)
     force.research_queue_enabled = true
     set_initial_combat_bot_slots(force)
 
     CombatBalance.init_player_weapon_damage(force)
+    uncover_treasure(force)
 
-    if (this.testing_mode == true) then
+    if this.testing_mode then
         Public.set_biter_peace(force, true)
         force.enable_all_prototypes()
         force.research_all_technologies()
     end
 
-    uncover_treasure(force)
-
     return force
 end
 
-local function setup_outlander_permissions()
-    game.permissions.create_group('outlander')
-end
-
-local function assign_outlander_permissions(force)
-    local permission_group = game.permissions.get_group('outlander')
-    reset_permissions(permission_group)
-    disable_blueprints(permission_group)
-    disable_deconstruct(permission_group)
-    disable_artillery(force, permission_group)
-    disable_spidertron(force, permission_group)
-    disable_rockets(force)
-    disable_nukes(force)
-    disable_cluster_grenades(force)
-    disable_achievements(permission_group)
-    disable_tips_and_tricks(permission_group)
-end
-
-local function assign_player_to_outlander_force(player)
+local function create_outlander_force(player)
     local this = ScenarioTable.get_table()
     local force = game.create_force("o_" .. player.name)
-
-    assign_outlander_permissions(force)
 
     -- diplomacy
     Public.set_biter_peace(force, true)
     force.share_chart = true
     force.friendly_fire = true
 
+    assign_outlander_permissions(force)
+
     -- research
+    set_default_tech(force)
     force.disable_research()
-    force.research_queue_enabled = false
     set_initial_combat_bot_slots(force)
 
     -- recipes
-    local recipes = force.recipes
-    for _, recipe_name in pairs(player_force_disabled_recipes) do
-        recipes[recipe_name].enabled = false
-    end
-    for _, recipe_name in pairs(all_force_enabled_recipes) do
-        recipes[recipe_name].enabled = true
+    for _, recipe_name in pairs(outlander_force_disabled_recipes) do
+        force.recipes[recipe_name].enabled = false
     end
 
     CombatBalance.init_player_weapon_damage(force)
-    if (this.testing_mode == true) then
+    uncover_treasure(force)
+
+    if this.testing_mode then
         force.enable_all_prototypes()
     end
 
-    uncover_treasure(force)
-
-    player.force = force
+    return force
 end
 
 local function setup_enemy_force()
     game.forces.enemy.evolution_factor = 1
 end
-
 
 function Public.player_joined(player)
     if #game.connected_players > Public.max_player_slots then
@@ -757,7 +755,7 @@ function Public.player_joined(player)
     end
 
     if player.force.name == 'neutral' then
-        assign_player_to_outlander_force(player)
+        player.force = create_outlander_force(player)
     end
 end
 
@@ -773,7 +771,7 @@ function Public.set_player_to_outlander(player)
         return
     end
 
-    assign_player_to_outlander_force(player)
+    player.force = create_outlander_force(player)
 
     game.permissions.get_group('outlander').add_player(player)
     player.tag = '[Outlander]'
