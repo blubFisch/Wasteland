@@ -96,9 +96,8 @@ local function update_score()
         if TeamBasics.is_outlander_force(player.force) then
             if player.connected then
                 outlander_online = outlander_online + 1
-            else
-                outlander_total = outlander_total + 1
             end
+            outlander_total = outlander_total + 1
         end
     end
 
