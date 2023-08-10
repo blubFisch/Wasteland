@@ -50,8 +50,8 @@ local entity_loot_chance = {
     --{name = "used-up-uranium-fuel-cell", chance = 1},
     {name = 'water-barrel', chance = 10},
     {name = 'logistic-chest-requester', chance = 15},
-    {name = 'military-science-pack', chance = 15},
-    {name = 'chemical-science-pack', chance = 15}
+    {name = 'military-science-pack', chance = 10},
+    {name = 'chemical-science-pack', chance = 10}
 }
 
 -- positive numbers can scale, 0 is disabled, and negative numbers are fixed absolute values
