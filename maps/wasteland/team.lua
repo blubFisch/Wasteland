@@ -16,6 +16,7 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
 local item_drop_radius = 1.65
+Public.max_player_slots = 30
 
 local destroy_wall_types = {
     ['gate'] = true,
@@ -718,6 +719,11 @@ end
 
 
 function Public.player_joined(player)
+    if #game.connected_players > Team.max_player_slots then
+        game.print("WARNING: Too many players connected. Things might start going wrong")
+        return
+    end
+
     if player.force.name == 'neutral' then
         assign_player_to_outlander_force(player)
     end

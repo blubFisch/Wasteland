@@ -272,7 +272,7 @@ local function is_valid_location(force_name, surface, position)
         end
     end
 
-    if table_size(this.town_centers) > 48 then
+    if table_size(this.town_centers) > 64 - 4 - Team.max_player_slots then
         surface.create_entity(
             {
                 name = 'flying-text',
