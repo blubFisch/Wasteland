@@ -282,10 +282,10 @@ local function ally_neighbour_towns(player, target)
     end
 
     requesting_force.set_friend(target_force, true)
-    game.print('>> Town ' .. force_display_name(requesting_force) .. ' has set ' .. force_display_name(target_force) .. ' as their friend!', Utils.scenario_color)
+    game.print('>> ' .. force_display_name(requesting_force) .. ' has declared ' .. force_display_name(target_force) .. ' their friend!', Utils.scenario_color)
 
     if target_force.get_friend(requesting_force) then
-        game.print('>> The towns ' .. force_display_name(requesting_force) .. ' and ' .. force_display_name(target_force) .. ' have formed an alliance!', Utils.scenario_color)
+        game.print('>> ' .. force_display_name(requesting_force) .. ' and ' .. force_display_name(target_force) .. ' have formed an alliance!', Utils.scenario_color)
     end
 end
 
@@ -346,15 +346,20 @@ local function set_cease_fire(player, entity)
         return
     end
 
-    if player.force.get_cease_fire(target_force) then
+    if requesting_force.get_cease_fire(target_force) then
         player.print("You already have a cease fire agreement with " .. force_display_name(target_force), Utils.scenario_color)
         return
     end
 
-    player.force.set_cease_fire(target_force, true)
+    requesting_force.set_cease_fire(target_force, true)
 
-    player.force.print("You have agreed on cease fire with " .. force_display_name(target_force), Utils.scenario_color)
-    target_force.print(force_display_name(player.force) .. " has agreed to cease fire with you", Utils.scenario_color)
+    if target_force.get_cease_fire(requesting_force) then
+        requesting_force.print("You have agreed on a mutual cease-fire with " .. force_display_name(target_force), Utils.scenario_color)
+        target_force.print(force_display_name(requesting_force) .. " has agreed on a mutual cease-fire with you", Utils.scenario_color)
+    else
+        requesting_force.print("You have set a one-sided cease-fire with " .. force_display_name(target_force), Utils.scenario_color)
+        target_force.print(force_display_name(requesting_force) .. " has set one-sided cease-fire with you", Utils.scenario_color)
+    end
 end
 
 local function declare_war(player, item)
@@ -402,7 +407,7 @@ local function declare_war(player, item)
                 return
             end
             Public.set_player_to_outlander(target_player)
-            local town_center = this.town_centers[player.force.name]
+            local town_center = this.town_centers[requesting_force.name]
             game.print('>> ' .. player.name .. ' has banished ' .. target_player.name .. ' from ' .. town_center.town_name, Utils.scenario_color)
             this.requests[player.index] = nil
         end
