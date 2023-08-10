@@ -203,7 +203,9 @@ local function on_player_respawned(event)
 
     Team.give_player_items(player)
 
-    Team.set_biter_peace(player.force, true)
+    if TeamBasics.is_outlander_force(player.force) then
+        Team.set_biter_peace(player.force, true)
+    end
 
     local spawn_point = Spawn.get_spawn_point(player, surface)
 
