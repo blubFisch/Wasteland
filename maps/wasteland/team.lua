@@ -152,8 +152,6 @@ function Public.add_player_to_town(player, town_center)
 
     reset_player(player)
     -- TODO: fix chart sharing.. maybe do this in previous tick?
-    player.force.share_chart = true
-    market.force.share_chart = true
     player.force.set_friend(market.force, true)   -- To share the chart
     market.force.set_friend(player.force, true)   -- To share the chart
     game.merge_forces(player.force, market.force)
@@ -625,18 +623,6 @@ local function disable_high_weapon_research(force)
     force.technologies['physical-projectile-damage-6'].enabled = false
 end
 
-local function enable_radar(force)
-    force.recipes['radar'].enabled = true
-    force.share_chart = true
-    force.clear_chart('nauvis')
-end
-
-local function disable_radar(force)
-    force.recipes['radar'].enabled = false
-    force.share_chart = false
-    force.clear_chart('nauvis')
-end
-
 local function disable_achievements(permission_group)
     permission_group.set_allows_action(defines.input_action.open_achievements_gui, false)
 end
@@ -660,6 +646,7 @@ function Public.add_towny_force(player)
 
     -- diplomacy
     force.friendly_fire = true
+    force.share_chart = true
 
     -- permissions
     local permission_group = game.permissions.create_group(force.name)
@@ -672,7 +659,6 @@ function Public.add_towny_force(player)
     disable_rockets(force)
     disable_nukes(force)
     disable_cluster_grenades(force)
-    enable_radar(force)
     disable_achievements(permission_group)
     disable_tips_and_tricks(permission_group)
 
@@ -710,7 +696,6 @@ local function assign_outlander_permissions(force)
     disable_rockets(force)
     disable_nukes(force)
     disable_cluster_grenades(force)
-    disable_radar(force)
     disable_achievements(permission_group)
     disable_tips_and_tricks(permission_group)
 end
@@ -723,6 +708,7 @@ local function assign_player_to_outlander_force(player)
 
     -- diplomacy
     Public.set_biter_peace(force, true)
+    force.share_chart = true
     force.friendly_fire = true
 
     -- research
