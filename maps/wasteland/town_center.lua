@@ -297,12 +297,25 @@ local function is_valid_location(force_name, surface, position)
     end
 
     local distance_center = math.sqrt(position.x ^ 2 + position.y ^ 2)
-    if not this.testing_mode and distance_center < MapLayout.central_ores_town_nobuild then
+    if distance_center < MapLayout.central_ores_town_nobuild then
         surface.create_entity(
                 {
                     name = 'flying-text',
                     position = position,
                     text = string.format("%.0f", MapLayout.central_ores_town_nobuild - distance_center) .. ' tiles too close to the treasure!',
+                    color = {r = 0.77, g = 0.0, b = 0.0}
+                }
+        )
+        return false
+    end
+
+    local distance_uranium = math.sqrt((MapLayout.uranium_patch_location.x - position.x) ^ 2 + (MapLayout.uranium_patch_location.y - position.y) ^ 2)
+    if distance_uranium < MapLayout.uranium_patch_nobuild then
+        surface.create_entity(
+                {
+                    name = 'flying-text',
+                    position = position,
+                    text = string.format("%.0f", MapLayout.uranium_patch_nobuild - distance_uranium) .. ' tiles too close to the deep uranium patch!',
                     color = {r = 0.77, g = 0.0, b = 0.0}
                 }
         )
