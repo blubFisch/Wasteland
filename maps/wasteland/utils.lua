@@ -3,6 +3,7 @@ local Public = {}
 local table_insert = table.insert
 
 Public.scenario_color = { r = 255, g = 255, b = 0 }
+Public.scenario_color_warning = { r = 255, g = 0, b = 0 }
 
 function Public.make_border_vectors(radius, center_gap)
     if not center_gap then center_gap = 0 end
