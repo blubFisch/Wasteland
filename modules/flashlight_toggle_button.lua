@@ -17,6 +17,9 @@ local function on_gui_click(event)
         return
     end
     local player = game.players[event.player_index]
+    if not player.character then
+        return
+    end
 
     if global.flashlight_enabled[player.name] == true then
         player.character.disable_flashlight()
