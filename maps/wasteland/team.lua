@@ -559,13 +559,22 @@ local function disable_high_weapon_research(force)
     force.technologies['power-armor-mk2'].enabled = false
 
     force.technologies['laser-shooting-speed-6'].enabled = false
+    force.technologies['laser-shooting-speed-7'].enabled = false
     force.technologies['energy-weapons-damage-6'].enabled = false
+    force.technologies['energy-weapons-damage-7'].enabled = false
 
     force.technologies['refined-flammables-6'].enabled = false
+    force.technologies['refined-flammables-7'].enabled = false
+
     force.technologies['stronger-explosives-6'].enabled = false
+    force.technologies['stronger-explosives-7'].enabled = false
+
+    force.technologies['follower-robot-count-6'].enabled = false
+    force.technologies['follower-robot-count-7'].enabled = false
 
     force.technologies['weapon-shooting-speed-6'].enabled = false
     force.technologies['physical-projectile-damage-6'].enabled = false
+    force.technologies['physical-projectile-damage-7'].enabled = false
 end
 
 local function disable_achievements(permission_group)
