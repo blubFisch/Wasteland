@@ -29,8 +29,8 @@ local function gen_uranium_location()
 end
 
 local function on_init()
-    Public.uranium_patch_location = gen_uranium_location()
-    log(Public.uranium_patch_location.x .. " " .. Public.uranium_patch_location.y)
+    local this = global.tokens.maps_wasteland_table
+    this.uranium_patch_location = gen_uranium_location()
 end
 
 local scrap_entities = {
@@ -293,6 +293,7 @@ local function on_chunk_generated(event)
     if (surface.name ~= 'nauvis') then
         return
     end
+    local this = global.tokens.maps_wasteland_table
     local seed = surface.map_gen_settings.seed
     local left_top_x = event.area.left_top.x
     local left_top_y = event.area.left_top.y
@@ -379,7 +380,7 @@ local function on_chunk_generated(event)
     -- deep uranium patch
     local uranium_patch_radius = 3
     local uranium_amount = 50000
-    local uranium_patch_location = Public.uranium_patch_location
+    local uranium_patch_location = this.uranium_patch_location
     if math.abs(chunk_position.x - math.floor(uranium_patch_location.x / 32)) <= 1 and math.abs(chunk_position.y - math.floor(uranium_patch_location.y / 32)) <= 1 then
         for x = 0, 31, 1 do
             for y = 0, 31, 1 do
@@ -399,13 +400,14 @@ end
 local function on_chunk_charted(event)
     local force = event.force
     local surface = game.surfaces[event.surface_index]
+    local this = global.tokens.maps_wasteland_table
     if force.valid then
         local position = event.position
         if position.x == 0 and position.y == 0 then
             force.add_chart_tag(surface, {icon = {type = 'item', name = 'coin'}, position = position, text = "Treasure"})
         end
 
-        local uranium_patch_location = Public.uranium_patch_location
+        local uranium_patch_location = this.uranium_patch_location
         if math.abs(position.x - math.floor(uranium_patch_location.x / 32)) <= 1 and math.abs(position.y - math.floor(uranium_patch_location.y / 32)) <= 1 then
             -- Add a chart tag at the uranium patch location
             force.add_chart_tag(surface, {icon = {type = 'item', name = 'uranium-ore'}, position = uranium_patch_location, text = "Deep Uranium"})

@@ -39,7 +39,7 @@ local function set_location(player)
         local scale = player.display_scale
         button.location = {
             x = 6 * scale,
-            y = resolution.height -142 * scale
+            y = resolution.height -128 * scale
         }
     end
 end
