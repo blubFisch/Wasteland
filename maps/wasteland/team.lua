@@ -54,7 +54,6 @@ local storage_types = {
 local outlander_force_disabled_recipes = {
     'lab',
     'automation-science-pack',
-    'stone-brick',
     'radar'
 }
 local all_force_enabled_recipes = {
