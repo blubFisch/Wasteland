@@ -309,7 +309,7 @@ local function is_valid_location(force_name, surface, position)
         return false
     end
 
-    local distance_uranium = math.sqrt((MapLayout.uranium_patch_location.x - position.x) ^ 2 + (MapLayout.uranium_patch_location.y - position.y) ^ 2)
+    local distance_uranium = math.sqrt((this.uranium_patch_location.x - position.x) ^ 2 + (this.uranium_patch_location.y - position.y) ^ 2)
     if distance_uranium < MapLayout.uranium_patch_nobuild then
         surface.create_entity(
                 {
