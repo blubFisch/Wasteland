@@ -44,7 +44,13 @@ local function set_location(player)
     end
 end
 
-local function create_gui_button(player)
+local function on_player_joined_game(event)
+    local player = game.players[event.player_index]
+
+    if player.gui.screen['global_chat_toggle'] then
+        return
+    end
+
     local button = player.gui.screen.add({type = 'sprite-button', name = 'global_chat_toggle', caption = ''})
     button.style.font = 'default'
     button.style.minimal_width = 85
@@ -56,11 +62,6 @@ local function create_gui_button(player)
     set_location(player)
 
     setChatMode(player, CHAT_MODES.GLOBAL)
-end
-
-local function on_player_joined_game(event)
-    local player = game.players[event.player_index]
-    create_gui_button(player)
 end
 
 local function on_gui_click(event)
