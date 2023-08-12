@@ -29,6 +29,7 @@ require 'modules.inserter_drops_pickup'
 require 'modules.autostash'
 require 'modules.blueprint_requesting'
 require 'modules.charging_station'
+require 'modules.limited_crafting_queue'
 
 require 'utils.gui'
 require 'utils.gui.player_list'
