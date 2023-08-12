@@ -27,7 +27,7 @@ local function on_pre_player_crafted_item(event)
         local cancel_count = math.ceil(excess / ingredients_used)
         player.cancel_crafting({index = index, count = cancel_count})
         total_item_count_in_queue = total_item_count_in_queue - cancel_count * ingredients_used
-        game.print("Your crafting queue is full", {r = 0.7, g = 0, b = 0})
+        player.print("Your crafting queue is full", {r = 0.7, g = 0, b = 0})
         if total_item_count_in_queue <= MAX_INGREDIENT_COUNT then break end
     end
 end
