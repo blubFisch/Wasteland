@@ -19,6 +19,19 @@ Public.league_balance_shield_size = 121
 
 Public.radius_between_towns = Public.league_balance_shield_size + 60 + 2 + 40
 
+Public.map_size = {2000, 2000}
+Public.uranium_patch_nobuild = 180
+
+local function gen_uranium_location()
+    local east = (math.random(2) == 1) and -1 or 1
+    local top = (math.random(2) == 1) and -1 or 1
+    return {x=east * Public.map_size[1] / 2 * 0.9, y=top * Public.map_size[2] / 2 * 0.9 }
+end
+
+local function on_init()
+    local this = global.tokens.maps_wasteland_table
+    this.uranium_patch_location = gen_uranium_location()
+end
 
 local scrap_entities = {
     -- simple entity with owner
@@ -280,6 +293,7 @@ local function on_chunk_generated(event)
     if (surface.name ~= 'nauvis') then
         return
     end
+    local this = global.tokens.maps_wasteland_table
     local seed = surface.map_gen_settings.seed
     local left_top_x = event.area.left_top.x
     local left_top_y = event.area.left_top.y
@@ -363,22 +377,47 @@ local function on_chunk_generated(event)
         end
     end
 
+    -- deep uranium patch
+    local uranium_patch_radius = 3
+    local uranium_amount = 50000
+    local uranium_patch_location = this.uranium_patch_location
+    if math.abs(chunk_position.x - math.floor(uranium_patch_location.x / 32)) <= 1 and math.abs(chunk_position.y - math.floor(uranium_patch_location.y / 32)) <= 1 then
+        for x = 0, 31, 1 do
+            for y = 0, 31, 1 do
+                position = {x = left_top_x + x, y = left_top_y + y}
+                local distance_to_uranium_patch_center = math.sqrt((position.x - uranium_patch_location.x)^2 + (position.y - uranium_patch_location.y)^2)
+                if distance_to_uranium_patch_center <= uranium_patch_radius then
+                    surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
+                    surface.create_entity({name = 'uranium-ore', position = position, amount = uranium_amount})
+                end
+            end
+        end
+    end
+
     move_away_biteys(surface, event.area)
 end
 
 local function on_chunk_charted(event)
     local force = event.force
     local surface = game.surfaces[event.surface_index]
+    local this = global.tokens.maps_wasteland_table
     if force.valid then
         local position = event.position
         if position.x == 0 and position.y == 0 then
             force.add_chart_tag(surface, {icon = {type = 'item', name = 'coin'}, position = position, text = "Treasure"})
+        end
+
+        local uranium_patch_location = this.uranium_patch_location
+        if math.abs(position.x - math.floor(uranium_patch_location.x / 32)) <= 1 and math.abs(position.y - math.floor(uranium_patch_location.y / 32)) <= 1 then
+            -- Add a chart tag at the uranium patch location
+            force.add_chart_tag(surface, {icon = {type = 'item', name = 'uranium-ore'}, position = uranium_patch_location, text = "Deep Uranium"})
         end
     end
 end
 
 
 local Event = require 'utils.event'
+Event.on_init(on_init)
 Event.add(defines.events.on_chunk_generated, on_chunk_generated)
 Event.add(defines.events.on_chunk_charted, on_chunk_charted)
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)
