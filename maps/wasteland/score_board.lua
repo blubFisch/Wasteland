@@ -45,7 +45,7 @@ function Public.add_score_button(player)
     end
     local button = player.gui.top.add {
         type = 'sprite-button',
-        caption = 'Towns',
+        caption = {'wasteland.gui_scoreboard'},
         name = button_id
     }
     button.style.font = 'default-bold'

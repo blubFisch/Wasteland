@@ -16,7 +16,7 @@ function Public.add_balance_ui(player)
     }
     button.visible = false
     button.style.font = 'default'
-    button.tooltip = "Cost of your town's research. Lower values mean cheaper (=faster). Depends on the number of recently active town members"
+    button.tooltip = {'wasteland.gui_research_cost_tooltip'}
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
     button.style.minimal_width = 150
@@ -66,7 +66,7 @@ local function update_modifiers()
 
         -- Update UIs of all town players
         for _, player in pairs(town_center.market.force.connected_players) do
-            player.gui.top[button_id].caption = "Research cost: " .. Public.format_town_modifier(town_center.research_balance.current_modifier)
+            player.gui.top[button_id].caption = {'wasteland.gui_research_cost', "" .. Public.format_town_modifier(town_center.research_balance.current_modifier)} -- I love dynamic typing
         end
     end
 end

@@ -218,7 +218,7 @@ local function update_pvp_shields()
         end
 
         -- Construct shield info text
-        local shield_info = 'League ' .. town_league
+        local shield_info = {'wasteland.league'} .. " " .. town_league
         if shield then
             shield_info = shield_info .. ', PvP Shield: '
             local lifetime_str = PvPShield.format_lifetime_str(PvPShield.remaining_lifetime(shield))

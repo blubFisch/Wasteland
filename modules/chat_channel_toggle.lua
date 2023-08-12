@@ -2,9 +2,9 @@ global.chat_modes = {}
 
 local CHAT_MODES = {GLOBAL = 1, TEAM = 2, ALLIANCE = 3}
 local BUTTON_PROPERTIES = {
-    [CHAT_MODES.GLOBAL] = {'Global Chat', 'Chat messages are sent to everyone.', {r = 0.0, g = 0.77, b = 0.0}},
-    [CHAT_MODES.TEAM] = {'Team Chat', 'Chat messages are only sent to your team.', {r = 0.77, g = 0.77, b = 0.0}},
-    [CHAT_MODES.ALLIANCE] = {'Alliance Chat', 'Chat messages are only sent to your alliance.', {r = 0.5, g = 0.6, b = 0.9}}
+    [CHAT_MODES.GLOBAL] = {{'wasteland.gui_chat_mode_global'}, {'wasteland.gui_chat_mode_global_tooltip'}},
+    [CHAT_MODES.TEAM] = {{'wasteland.gui_chat_mode_team'}, {'wasteland.gui_chat_mode_team_tooltip'}},
+    [CHAT_MODES.ALLIANCE] = {{'wasteland.gui_chat_mode_alliance'}, {'wasteland.gui_chat_mode_alliance_tooltip'}}
 }
 
 local function setChatMode(player, mode)
@@ -14,7 +14,6 @@ local function setChatMode(player, mode)
     local properties = BUTTON_PROPERTIES[mode]
     button.caption = properties[1]
     button.tooltip = properties[2]
-    button.style.font_color = properties[3]
 end
 
 local function toggle(player)
@@ -39,14 +38,14 @@ local function set_location(player)
         local scale = player.display_scale
         button.location = {
             x = 6 * scale,
-            y = resolution.height -128 * scale
+            y = resolution.height -130 * scale
         }
     end
 end
 
 local function create_gui_button(player)
-    local button = player.gui.screen.add({type = 'sprite-button', name = 'global_chat_toggle', caption = ''})
-    button.style.font = 'default'
+    local button = player.gui.screen.add({type = 'button', name = 'global_chat_toggle', caption = ''})
+    button.style.font = 'default-semibold'
     button.style.minimal_width = 85
     button.style.minimal_height = 30
     button.style.maximal_height = 30

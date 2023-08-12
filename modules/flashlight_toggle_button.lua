@@ -23,14 +23,14 @@ local function on_gui_click(event)
 
     if global.flashlight_enabled[player.name] == true then
         player.character.disable_flashlight()
-        player.print('Flashlight disabled.', message_color)
+        player.print({'wasteland.chat_flashlight_off'}, message_color)
         global.flashlight_enabled[player.name] = false
         return
     end
 
     if global.flashlight_enabled[player.name] == false then
         player.character.enable_flashlight()
-        player.print('Flashlight enabled.', message_color)
+        player.print({'wasteland.chat_flashlight_on'}, message_color)
         global.flashlight_enabled[player.name] = true
         return
     end
@@ -57,7 +57,7 @@ local function on_player_joined_game(event)
     if player.gui.top['flashlight_toggle'] then
         return
     end
-    local b = player.gui.top.add({type = 'sprite-button', name = 'flashlight_toggle', sprite = 'item/small-lamp', tooltip = 'Toggle flashlight'})
+    local b = player.gui.top.add({type = 'sprite-button', name = 'flashlight_toggle', sprite = 'item/small-lamp', tooltip = {'wasteland.gui_flashlight_tooltip'}})
     b.style.minimal_height = 38
     b.style.maximal_height = 38
     b.style.minimal_width = 38
