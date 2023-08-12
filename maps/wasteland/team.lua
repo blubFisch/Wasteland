@@ -704,7 +704,7 @@ function Public.player_joined(player)
 
     if player.force.name == 'player' then
         if player.online_time > 0 then
-            player.print("Welcome back, outlander! After you have left, your buildings have become neutral and your diplomacy has reset", Utils.scenario_color)
+            player.print("Welcome back, outlander! After you left, your buildings have become neutral and your diplomacy has reset", Utils.scenario_color)
         end
         player.force = create_outlander_force(player)
     end
