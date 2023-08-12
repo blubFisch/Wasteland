@@ -28,6 +28,7 @@ require 'modules.floaty_chat'
 require 'modules.inserter_drops_pickup'
 require 'modules.autostash'
 require 'modules.blueprint_requesting'
+require 'modules.charging_station'
 
 require 'utils.gui'
 require 'utils.gui.player_list'
