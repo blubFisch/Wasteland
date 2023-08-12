@@ -712,7 +712,8 @@ end
 
 function Public.player_left(player)
     if not TeamBasics.is_town_force(player.force) then
-        game.merge_forces(player.force, 'player')
+        game.merge_forces(player.force, 'neutral')  -- All of their buildings become common property
+        player.force = 'player'
     end
 end
 

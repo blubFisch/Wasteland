@@ -6,11 +6,9 @@ local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
  - Uranium ore is now a strategic resource: It is hard to find and expensive to buy in the market
  - Outlanders now have their own fractions, allowing them to ally with towns without joining (drop a fish on them)
- - Outlanders can build mini-bases again, with turrets and walls. Note: They lose ownership on disconnect!
+ - Outlanders can build turrets, walls and simple production chains. Note: They lose ownership on disconnect!
  - Offline shields now only work before league 4
- - Shields now protect against all biters, so bases with offline shield are 100% safe
- - Fix more offline base attack exploits
- - Outlanders can build turrets/mines again to fight towns
+ - Offline towns with offline shields are now 100% safe, including biters
  - Added a button to build as neutral (bots will ignore+other players can access)
  - League shield now also protects towns offline towns
  - Power poles can no longer be used to block enemy buildings - now only turrets block buildings]]
