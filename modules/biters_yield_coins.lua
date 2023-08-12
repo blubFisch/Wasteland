@@ -28,7 +28,6 @@ local entities_that_earn_coins = {
     ['flamethrower-turret'] = true
 }
 
---extra coins for "boss" biters from biter_health_booster.lua
 local function get_coin_count(entity)
     local coin_count = coin_yield[entity.name]
     if not coin_count then

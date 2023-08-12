@@ -5,7 +5,6 @@
 -- do not use values below 1
 
 local Event = require 'utils.event'
-local LootDrop = require 'modules.mobs_drop_loot'
 local Global = require 'utils.global'
 local Task = require 'utils.task'
 local Token = require 'utils.token'
@@ -372,16 +371,10 @@ local function on_entity_died(event)
 
     local unit_number = biter.unit_number
     local health_pool = biter_health_boost_units[unit_number]
-    local wave_count = 0
 
     if health_pool then
         Task.set_timeout_in_ticks(30, removeUnit, {unit_number = unit_number})
         if health_pool[3] and health_pool[3].healthbar_id then
-            if this.enable_boss_loot then
-                if random(1, 128) == 1 then
-                    LootDrop.drop_loot(biter, wave_count)
-                end
-            end
             if this.boss_spawns_projectiles then
                 if random(1, 32) == 1 then
                     loaded_biters(event)
