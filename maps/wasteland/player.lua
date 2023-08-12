@@ -103,9 +103,10 @@ local function init_position_frame(player)
     end
     local button = player.gui.top.add({ type = 'label', caption = "Position",
                                         name = map_pos_frame_id})
-    button.tooltip = "Your player position"
+    button.tooltip = {'wasteland.gui_player_pos_tooltip'}
+    button.style.font = 'default-game'
     button.style.font_color = { r = 255, g = 255, b = 255}
-    button.style.top_padding = 10
+    button.style.top_padding = 6
     button.style.left_padding = 10
     button.style.right_padding = 10
     button.style.bottom_padding = 10
@@ -115,11 +116,12 @@ local function init_evo_frame(player)
     if player.gui.top[evo_frame_id] then
         player.gui.top[evo_frame_id].destroy()
     end
-    local button = player.gui.top.add({ type = 'label', caption = "Evolution",
+    local button = player.gui.top.add({ type = 'label', caption = 'Evolution',
                                         name = evo_frame_id})
-    button.tooltip = "Biter evolution level at your position. In this scenario, evolution depends on the research of nearby towns"
+    button.tooltip = {'wasteland.gui_evo_tooltip'}
+    button.style.font = 'default-game'
     button.style.font_color = { r = 255, g = 255, b = 255}
-    button.style.top_padding = 10
+    button.style.top_padding = 6
     button.style.left_padding = 10
     button.style.right_padding = 10
     button.style.bottom_padding = 10
@@ -127,8 +129,8 @@ end
 
 local function update_player_position_displays()
     for _, player in pairs(game.connected_players) do
-        player.gui.top[map_pos_frame_id].caption = "Position: "
-                .. string.format('%.0f, %.0f', player.position.x,  player.position.y)
+        player.gui.top[map_pos_frame_id].caption = {'wasteland.gui_player_pos',
+            string.format('%.0f, %.0f', player.position.x,  player.position.y)}
     end
 end
 
@@ -143,7 +145,7 @@ local function update_player_evo_displays()
         else
             color = {r = 255, g = 0, b = 0}
         end
-        player.gui.top[evo_frame_id].caption = "Evolution: " .. string.format('%.0f%%', e * 100)
+        player.gui.top[evo_frame_id].caption = {'wasteland.gui_evo', string.format('%.0f%%', e * 100)}
         player.gui.top[evo_frame_id].style.font_color = color
     end
 end
@@ -156,7 +158,7 @@ local function hint_treasure()
                 player.create_local_flying_text(
                     {
                         position = player.position,
-                        text = 'You hear rumors about a huge treasure at the center of the map',
+                        text = {'wasteland.treasure_hint'},
                         color = {r = 0.4, g = 0.6, b = 0.8},
                         time_to_live = 160
                     }

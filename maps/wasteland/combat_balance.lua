@@ -128,7 +128,7 @@ function Public.add_balance_ui(player)
         name = button_id
     }
     button.visible = false
-    button.tooltip = "Multiplier on the attack damage for your town members. Doesn't apply to your turrets. Depends on the number of online town members."
+    button.tooltip = {'wasteland.gui_damage_mult_tooltip'}
     button.style.font = 'default'
     button.style.font_color = {r = 255, g = 255, b = 255}
     button.style.minimal_height = 38
@@ -148,7 +148,7 @@ local function update_uis()
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force
         for _, player in pairs(force.connected_players) do
-            player.gui.top[button_id].caption = "Damage: " .. Public.format_dmg_modifier(force)
+            player.gui.top[button_id].caption = {'wasteland.gui_damage_mult', "" .. Public.format_dmg_modifier(force)} -- I love dynamic typing
         end
     end
 end

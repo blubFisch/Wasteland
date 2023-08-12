@@ -2,9 +2,9 @@ global.chat_modes = {}
 
 local CHAT_MODES = {GLOBAL = 1, TEAM = 2, ALLIANCE = 3}
 local BUTTON_PROPERTIES = {
-    [CHAT_MODES.GLOBAL] = {'Global Chat', 'Chat messages are sent to everyone.', {r = 0.0, g = 0.77, b = 0.0}},
-    [CHAT_MODES.TEAM] = {'Team Chat', 'Chat messages are only sent to your team.', {r = 0.77, g = 0.77, b = 0.0}},
-    [CHAT_MODES.ALLIANCE] = {'Alliance Chat', 'Chat messages are only sent to your alliance.', {r = 0.5, g = 0.6, b = 0.9}}
+    [CHAT_MODES.GLOBAL] = {{'wasteland.gui_chat_mode_global'}, {'wasteland.gui_chat_mode_global_tooltip'}, {r = 0.0, g = 0.77, b = 0.0}},
+    [CHAT_MODES.TEAM] = {{'wasteland.gui_chat_mode_team'}, {'wasteland.gui_chat_mode_team_tooltip'}, {r = 0.77, g = 0.77, b = 0.0}},
+    [CHAT_MODES.ALLIANCE] = {{'wasteland.gui_chat_mode_alliance'}, {'wasteland.gui_chat_mode_alliance_tooltip'}, {r = 0.5, g = 0.6, b = 0.9}}
 }
 
 local function setChatMode(player, mode)

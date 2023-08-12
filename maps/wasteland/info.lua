@@ -74,7 +74,7 @@ function Public.toggle_button(player)
     if player.gui.top['towny_map_intro_button'] then
         return
     end
-    local b = player.gui.top.add({type = 'sprite-button', caption = 'Help', name = 'towny_map_intro_button'})
+    local b = player.gui.top.add({type = 'sprite-button', caption = {'wasteland.gui_info'}, name = 'towny_map_intro_button'})
     b.style.font_color = {r = 0.5, g = 0.3, b = 0.99}
     b.style.font = 'heading-1'
     b.style.minimal_height = 38
@@ -85,7 +85,7 @@ function Public.toggle_button(player)
     b.style.bottom_padding = 1
 
     local last_winner_name = "[[WINNER_NAME]]"
-    local b = player.gui.top.add({type = 'sprite-button', caption = "Last round winner: " .. last_winner_name,
+    local b = player.gui.top.add({type = 'sprite-button', caption = {'wasteland.gui_last_round_winner', last_winner_name},
                                   name = 'towny_map_last_winner'})
     b.style.font_color = {r = 1, g = 0.7, b = 0.1}
     b.style.minimal_height = 38
