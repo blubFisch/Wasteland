@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
+ - Uranium ore is now a strategic resource: It is hard to find and expensive to buy in the market
  - Outlanders now have their own fractions, allowing them to ally with towns without joining (drop a fish on them)
  - Outlanders can build mini-bases again, with turrets and walls. Note: They lose ownership on disconnect!
  - Offline shields now only work before league 4
