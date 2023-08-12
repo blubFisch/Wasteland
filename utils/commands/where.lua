@@ -112,8 +112,9 @@ local function create_mini_camera_gui(player, target)
             surface_index = surface
         }
     )
-    camera.style.minimal_width = 740
-    camera.style.minimal_height = 580
+    local res = player.display_resolution
+    camera.style.minimal_width = res.width * 0.6
+    camera.style.minimal_height = res.height * 0.6
     local player_data = create_player_data(player)
     player_data.camera_frame = camera
 end
