@@ -48,7 +48,6 @@ local function on_init()
     BottomFrame.reset()
     BottomFrame.activate_custom_buttons(true)
     Where.module_disabled(true)
-    Inventory.module_disabled(true)
 
     -- Disable AntiGrief as it has too many side effects and is not so useful for this mode
     local AG = AntiGrief.get()
