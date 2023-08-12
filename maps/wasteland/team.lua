@@ -697,14 +697,18 @@ function Public.player_joined(player)
         return
     end
 
-    if player.force.name == 'neutral' then
+    if player.online_time > 0 then
+        player.print("Welcome back, outlander! After you have left, your buildings have become neutral and your diplomacy has reset", Utils.scenario_color)
+    end
+
+    if player.force.name == 'player' then
         player.force = create_outlander_force(player)
     end
 end
 
 function Public.player_left(player)
     if not TeamBasics.is_town_force(player.force) then
-        game.merge_forces(player.force, 'neutral')
+        game.merge_forces(player.force, 'player')
     end
 end
 
