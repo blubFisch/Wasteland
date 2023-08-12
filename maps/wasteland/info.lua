@@ -1,5 +1,7 @@
 local Public = {}
 
+local GameSettings = require 'game_settings'
+
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
  - Uranium ore is now a strategic resource: It is hard to find and expensive to buy in the market
@@ -85,16 +87,15 @@ function Public.toggle_button(player)
     b.style.right_padding = 1
     b.style.bottom_padding = 1
 
-    local last_winner_name = "[[WINNER_NAME]]"
-    local b = player.gui.top.add({type = 'sprite-button', caption = "Last round winner: " .. last_winner_name,
-                                  name = 'towny_map_last_winner'})
-    b.style.font_color = {r = 1, g = 0.7, b = 0.1}
-    b.style.minimal_height = 38
-    b.style.minimal_width = 320
-    b.style.top_padding = 1
-    b.style.left_padding = 1
-    b.style.right_padding = 1
-    b.style.bottom_padding = 1
+    local b2 = player.gui.top.add({ type = 'sprite-button', caption = "Last round winner: " .. GameSettings.last_winner_name,
+                                    name = 'towny_map_last_winner'})
+    b2.style.font_color = { r = 1, g = 0.7, b = 0.1}
+    b2.style.minimal_height = 38
+    b2.style.minimal_width = 320
+    b2.style.top_padding = 1
+    b2.style.left_padding = 1
+    b2.style.right_padding = 1
+    b2.style.bottom_padding = 1
 end
 
 function Public.show(player, info_type)

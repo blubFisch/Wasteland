@@ -1,7 +1,9 @@
 local Public = {}
 
+local GameSettings = require 'game_settings'
+
 local button_id = "wl_game_mode"
-Public.mode = 2
+Public.mode = GameSettings.game_mode
 Public.mode_names = {
     "Short",    -- Target: 10 hours game
     "Medium",   -- Target: 2 days game
