@@ -431,7 +431,7 @@ local function found_town(event)
     end
 
     -- is it a valid location to place a town?
-    if not is_valid_location(force_name, surface, position) then
+    if not is_valid_location(player.force.name, surface, position) then
         player.insert({name = 'linked-chest', count = 1})
         return
     end

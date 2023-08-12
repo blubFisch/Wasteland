@@ -151,7 +151,12 @@ function Public.add_player_to_town(player, town_center)
     local surface = market.surface
 
     reset_player(player)
-    game.merge_forces(player.force, market.force)
+
+    if TeamBasics.is_outlander_force(player.force) then
+        game.merge_forces(player.force, market.force)
+    else
+        player.force = market.force
+    end
 
     this.spawn_point[player.index] = force.get_spawn_position(surface)
     game.permissions.get_group(force.name).add_player(player)
