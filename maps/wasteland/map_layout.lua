@@ -22,6 +22,15 @@ Public.radius_between_towns = Public.league_balance_shield_size + 60 + 2 + 40
 Public.map_size = {2000, 2000}
 Public.uranium_patch_nobuild = 180
 
+function Public.reveal_strategic_resources(force)
+    -- We do this to even the battlefield with players who just check out the map in SP
+
+    local this = global.tokens.maps_wasteland_table
+    local surface = game.surfaces.nauvis
+    force.chart(surface, {{-1, -1}, {1, 1}})
+    force.chart(surface, {this.uranium_patch_location, this.uranium_patch_location})
+end
+
 local function gen_uranium_location()
     local east = (math.random(2) == 1) and -1 or 1
     local top = (math.random(2) == 1) and -1 or 1

@@ -12,6 +12,7 @@ local Utils = require 'maps.wasteland.utils'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local MapLayout = require 'maps.wasteland.map_layout'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
@@ -593,10 +594,6 @@ local function set_initial_combat_bot_slots(force)
     force.maximum_following_robot_count = 5
 end
 
-local function uncover_treasure(force)
-    force.chart(game.surfaces.nauvis, {{-1, -1}, {1, 1}})
-end
-
 local function set_default_tech(force)
     for _, recipe_name in pairs(all_force_enabled_recipes) do
         force.recipes[recipe_name].enabled = true
@@ -650,7 +647,7 @@ function Public.create_town_force(player)
     set_initial_combat_bot_slots(force)
 
     CombatBalance.init_player_weapon_damage(force)
-    uncover_treasure(force)
+    MapLayout.reveal_strategic_resources(force)
 
     if this.testing_mode then
         Public.set_biter_peace(force, true)
@@ -683,7 +680,7 @@ local function create_outlander_force(player)
     end
 
     CombatBalance.init_player_weapon_damage(force)
-    uncover_treasure(force)
+    MapLayout.reveal_strategic_resources(force)
 
     if this.testing_mode then
         force.enable_all_prototypes()
