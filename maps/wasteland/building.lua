@@ -421,13 +421,23 @@ local disabled_for_outlander_deconstruction = {
     ['fish'] = true,
     ['rock-huge'] = true,
     ['rock-big'] = true,
-    ['sand-rock-big'] = true
+    ['sand-rock-big'] = true,
+    ['cliff'] = true
 }
 
 local function on_marked_for_deconstruction(event)
-    if TeamBasics.is_outlander_force(game.players[event.player_index].force)
+    local player = game.get_player(event.player_index)
+    if TeamBasics.is_outlander_force(player.force)
             and (disabled_for_outlander_deconstruction[event.entity.name] or event.entity.type == 'tree') then
-        event.entity.cancel_deconstruction(game.players[event.player_index].force.name)
+        event.entity.cancel_deconstruction(player.force.name)
+        player.create_local_flying_text(
+                {
+                    position = event.entity.position,
+                    text = "Not possible as outlander",
+                    color = {r = 1, g = 0.0, b = 0.0},
+                    time_to_live = 160
+                }
+        )
     end
 end
 
