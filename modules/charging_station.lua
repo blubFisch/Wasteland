@@ -37,27 +37,41 @@ local function discharge_accumulators(surface, position, force, power_needs)
     return power_drained / global.charging_station_multiplier
 end
 
+local function info_floaty(player, text, color)
+    player.create_local_flying_text({
+        name = 'flying-text',
+        position = player.position,
+        text = text,
+        color = color
+    })
+end
+
 local function charge(player)
     if not player.character then
         return
     end
     local armor_inventory = player.get_inventory(defines.inventory.character_armor)
     if not armor_inventory.valid then
+        log("error: not armor_inventory.valid")
         return
     end
     local armor = armor_inventory[1]
     if not armor.valid_for_read then
+        info_floaty(player,"No armor", {r = 255, g = 0, b = 0})
         return
     end
     local grid = armor.grid
     if not grid or not grid.valid then
+        info_floaty(player,"Your armor has no grid", {r = 255, g = 0, b = 0})
         return
     end
+    local can_store_energy = false
     local equip = grid.equipment
     for _, piece in pairs(equip) do
         if piece.valid and piece.generator_power == 0 then
             local energy_needs = piece.max_energy - piece.energy
             if energy_needs > 0 then
+                can_store_energy = true
                 local energy = discharge_accumulators(player.surface, player.position, player.force, energy_needs)
                 if energy > 0 then
                     if piece.energy + energy >= piece.max_energy then
@@ -65,9 +79,16 @@ local function charge(player)
                     else
                         piece.energy = piece.energy + energy
                     end
+                    info_floaty(player,"Charged", {r = 100, g = 100, b = 255})
+                else
+                    info_floaty(player,"Not enough energy nearby on accumulators", {r = 255, g = 0, b = 0})
                 end
             end
         end
+    end
+
+    if not can_store_energy then
+        info_floaty(player, "Energy storage full", {r = 50, g = 255, b = 50})
     end
 end
 
