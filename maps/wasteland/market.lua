@@ -156,20 +156,20 @@ local function set_offers(town_center)
     table_insert(market_items, {price = {{'coin', 6}}, offer = {type = 'give-item', item = 'wood', count = 1}})
     table_insert(market_items, {price = {{'wood', 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'iron-ore', count = 5}})
-    table_insert(market_items, {price = {{'iron-ore', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'iron-ore', count = 4}})
+    table_insert(market_items, {price = {{'iron-ore', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'copper-ore', count = 5}})
-    table_insert(market_items, {price = {{'copper-ore', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'copper-ore', count = 4}})
+    table_insert(market_items, {price = {{'copper-ore', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'stone', count = 5}})
-    table_insert(market_items, {price = {{'stone', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'stone', count = 4}})
+    table_insert(market_items, {price = {{'stone', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'coal', count = 5}})
-    table_insert(market_items, {price = {{'coal', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'coal', count = 4}})
+    table_insert(market_items, {price = {{'coal', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     table_insert(market_items, {price = {{'coin', 4}}, offer = {type = 'give-item', item = 'uranium-ore', count = 1}})
-    table_insert(market_items, {price = {{'uranium-ore', 1}}, offer = {type = 'give-item', item = 'coin', count = 2}})
+    table_insert(market_items, {price = {{'uranium-ore', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     -- composition of crude-oil-barrel = 1 barrel + 10 raw oil = 5 iron ore + 1 coal ore (liquefaction)
     table_insert(market_items, {price = {{'coin', 3}}, offer = {type = 'give-item', item = 'crude-oil-barrel', count = 1}})
@@ -184,6 +184,8 @@ local function set_offers(town_center)
     table_insert(market_items, {price = {{'iron-gear-wheel', 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'iron-stick', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'empty-barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
+
+    table_insert(market_items, {price = {{'linked-chest', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     for _, item in pairs(market_items) do
         market.add_market_item(item)
