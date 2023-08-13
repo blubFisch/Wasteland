@@ -1,6 +1,5 @@
 --made by Hanakocz
 --charge your armor equipment from nearby accumulators!
---change global.charging_station_multiplier if you want different conversion rate than 1:1.
 local Event = require 'utils.event'
 local SpamProtection = require 'utils.spam_protection'
 
@@ -17,7 +16,6 @@ end
 local function discharge_accumulators(surface, position, force, power_needs)
     local accumulators = surface.find_entities_filtered {name = 'accumulator', force = force, position = position, radius = 13}
     local power_drained = 0
-    power_needs = power_needs * global.charging_station_multiplier
     for _, accu in pairs(accumulators) do
         if accu.valid then
             if accu.energy > 3000000 and power_needs > 0 then
@@ -34,7 +32,7 @@ local function discharge_accumulators(surface, position, force, power_needs)
             end
         end
     end
-    return power_drained / global.charging_station_multiplier
+    return power_drained
 end
 
 local function info_floaty(player, text, color)
@@ -128,10 +126,5 @@ local function on_gui_click(event)
     end
 end
 
-local function on_init()
-    global.charging_station_multiplier = 1
-end
-
-Event.on_init(on_init)
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
 Event.add(defines.events.on_gui_click, on_gui_click)
