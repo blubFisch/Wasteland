@@ -19,7 +19,7 @@ Public.league_balance_shield_size = 121
 
 Public.radius_between_towns = Public.league_balance_shield_size + 60 + 2 + 40
 
-Public.map_size = {2000, 2000}
+Public.map_size = {2048, 2048}
 Public.uranium_patch_nobuild = 180
 
 function Public.reveal_strategic_resources(force)
@@ -34,7 +34,7 @@ end
 local function gen_uranium_location()
     local east = (math.random(2) == 1) and -1 or 1
     local top = (math.random(2) == 1) and -1 or 1
-    return {x=east * Public.map_size[1] / 2 * 0.9, y=top * Public.map_size[2] / 2 * 0.9 }
+    return {x=east * (Public.map_size[1] / 2 - 50), y=top * (Public.map_size[2] / 2  - 50) }
 end
 
 local function on_init()
