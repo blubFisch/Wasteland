@@ -275,7 +275,7 @@ local function update_leagues()
             if this.previous_leagues[player.index] ~= nil and league ~= this.previous_leagues[player.index] then
                 player.print("You are now in League " .. league, Utils.scenario_color)
                 if league == 4 and this.previous_leagues[player.index] < 4 then
-                    player.print("Your town does not have offline PvP shields anymore", Utils.scenario_color_warning)
+                    player.print("From now on, your town can not deploy offline PvP shields anymore", Utils.scenario_color_warning)
                 end
             end
             this.previous_leagues[player.index] = league

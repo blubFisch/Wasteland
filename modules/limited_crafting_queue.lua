@@ -1,5 +1,7 @@
+-- Limit crafting queue to prevent players from cheekily carrying a huge amount of extra items
+
 local Event = require 'utils.event'
-local MAX_INGREDIENT_COUNT = 2000
+local MAX_INGREDIENT_COUNT = 4000
 
 local function on_pre_player_crafted_item(event)
     local player = game.players[event.player_index]
