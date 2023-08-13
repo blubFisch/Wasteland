@@ -65,30 +65,41 @@ local function charge(player)
         info_floaty(player,"Your armor has no grid", {r = 255, g = 0, b = 0})
         return
     end
-    local can_store_energy = false
+    local armor_can_store_energy = false
+    local armor_was_charged = false
+    local not_enough_energy_nearby = false
     local equip = grid.equipment
     for _, piece in pairs(equip) do
         if piece.valid and piece.generator_power == 0 then
             local energy_needs = piece.max_energy - piece.energy
+            if piece.max_energy > 0 then
+                armor_can_store_energy = true
+            end
             if energy_needs > 0 then
-                can_store_energy = true
-                local energy = discharge_accumulators(player.surface, player.position, player.force, energy_needs)
-                if energy > 0 then
-                    if piece.energy + energy >= piece.max_energy then
+                local energy_transfer = discharge_accumulators(player.surface, player.position, player.force, energy_needs)
+                if energy_transfer > 0 then
+                    if piece.energy + energy_transfer >= piece.max_energy then
                         piece.energy = piece.max_energy
                     else
-                        piece.energy = piece.energy + energy
+                        piece.energy = piece.energy + energy_transfer
                     end
-                    info_floaty(player,"Charged", {r = 100, g = 100, b = 255})
+                    armor_was_charged = true
                 else
-                    info_floaty(player,"Not enough energy nearby on accumulators", {r = 255, g = 0, b = 0})
+                    not_enough_energy_nearby = true
                 end
             end
         end
     end
 
-    if not can_store_energy then
-        info_floaty(player, "Energy storage full", {r = 50, g = 255, b = 50})
+    -- The above situations can happen for multiple equipment pieces, but we display only the most useful info
+    if armor_was_charged then
+        info_floaty(player,"Batteries charged", {r = 100, g = 100, b = 255})
+    elseif not armor_can_store_energy then
+        info_floaty(player, "Your armor can't store energy", {r = 255, g = 0, b = 0})
+    elseif not_enough_energy_nearby then
+        info_floaty(player,"Not enough energy in nearby accumulators", {r = 255, g = 0, b = 0})
+    elseif armor_can_store_energy and not armor_was_charged then
+        info_floaty(player, "Is fully charged", {r = 50, g = 255, b = 50})
     end
 end
 
