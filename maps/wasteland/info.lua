@@ -32,10 +32,11 @@ local info_adv =
 [font=heading-1]Town members, alliances and cease fire[/font]
 - Join town: Drop a coin on that outlander (with the Z key). To accept an invite, they also need to drop a coin on you.
 - Cease fire: Drop a fish on one of them or their town center (works for outlanders too). If they agree they need to drop a fish on you too.
-    - Cease fire only means your weapons (turrets, bots, ..) won't fire on each other automatically. You still can't access the other's bases.
+    - Cease fire means your weapons (turrets, bots, ..) won't target them automatically. You still can't access the other's bases.
     - If you damage the other party, the ceasefire stops
-- Town alliance: Drop a coin on a town member. If they agree they need to drop a coin on you too.
+- Alliances: Drop a coin on a player. If they agree they need to drop a coin on you too.
     - They can now access all of your stuff and radar is shared
+    - Alliances do not get cancelled automatically when damage is taken
     - To cancel an alliance, drop coal on them or their member
 - Leave a town: Drop coal on the market. Note that their turrets will target you immediately.
 
