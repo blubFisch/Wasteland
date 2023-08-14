@@ -73,6 +73,24 @@ local function on_gui_click(event)
     end
 end
 
+local function get_recipients(currentMode, sender)
+    if currentMode == CHAT_MODES.GLOBAL then
+        return game.connected_players
+    elseif currentMode == CHAT_MODES.TEAM then
+        return sender.force.connected_players
+    elseif currentMode == CHAT_MODES.ALLIANCE then
+        local recipients = {}
+        for _, force in pairs(game.forces) do
+            if force == sender.force or force.get_friend(sender.force) then
+                for _, player in pairs(force.connected_players) do
+                    table.insert(recipients, player)
+                end
+            end
+        end
+        return recipients
+    end
+end
+
 local function on_console_chat(event)
     if not event.message or not event.player_index then return end
 
@@ -80,30 +98,16 @@ local function on_console_chat(event)
     local button = sender.gui.screen['global_chat_toggle']
     if not button then return end
 
-    local message = sender.name .. ' ' .. sender.tag .. ': ' .. event.message
-    local currentMode = global.chat_modes[sender.index]
+    local currentMode = global.chat_modes[sender.index] or CHAT_MODES.GLOBAL
+    local prefix_color = BUTTON_PROPERTIES[currentMode][3]
+    local color_string = string.format("#%02X%02X%02X", prefix_color.r*255, prefix_color.g*255, prefix_color.b*255)
+    local mode_prefixes = { [CHAT_MODES.GLOBAL] = 'Global', [CHAT_MODES.TEAM] = 'Team', [CHAT_MODES.ALLIANCE] = 'Alliance' }
+    local prefix = '[color=' .. color_string .. ']' .. mode_prefixes[currentMode] .. '[/color]'
+    local recipients = get_recipients(currentMode, sender)
 
-    -- Note:
-    -- The engine already displays messages to
-    -- 1. the sending player
-    -- 2. the team of the sending player
-
-    if currentMode == CHAT_MODES.GLOBAL then
-        for _, force in pairs(game.forces) do
-            if force ~= sender.force then
-                for _, player in pairs(force.players) do
-                    player.print(message, sender.chat_color)
-                end
-            end
-        end
-    elseif currentMode == CHAT_MODES.ALLIANCE then
-        for _, force in pairs(game.forces) do
-            if force.get_friend(sender.force) and force ~= sender.force then
-                for _, player in pairs(force.players) do
-                    player.print(message, sender.chat_color)
-                end
-            end
-        end
+    local message = prefix .. ' ' .. sender.name .. ' ' .. sender.tag .. ': ' .. event.message
+    for _, player in pairs(recipients) do
+        player.print(message, sender.chat_color)
     end
 end
 
