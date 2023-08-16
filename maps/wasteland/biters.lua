@@ -69,7 +69,7 @@ local function get_commmands(target, group)
 end
 
 local function swarm_eligible_town(town_center)
-    return #market.force.connected_players > 0
+    return #town_center.market.force.connected_players > 0
             and town_center.evolution.biters > 0.2
             and game.tick - town_center.last_swarm >= 20 * 60 * 60
             and not PvPTownShield.town_is_afk(town_center.market.force)
