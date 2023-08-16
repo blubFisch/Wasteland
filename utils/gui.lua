@@ -595,8 +595,6 @@ end
 local function draw_main_frame(player)
     local tabs = main_gui_tabs
 
-    Public.clear_all_active_frames(player)
-
     if Public.get_main_frame(player) then
         Public.get_main_frame(player).destroy()
     end
