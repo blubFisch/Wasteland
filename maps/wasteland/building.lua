@@ -426,6 +426,8 @@ local disabled_for_outlander_deconstruction = {
 }
 
 local function on_marked_for_deconstruction(event)
+    if not event.player_index then return end
+
     local player = game.get_player(event.player_index)
     if TeamBasics.is_outlander_force(player.force)
             and (disabled_for_outlander_deconstruction[event.entity.name] or event.entity.type == 'tree') then
