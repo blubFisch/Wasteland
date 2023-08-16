@@ -34,10 +34,12 @@ local info_adv =
 - Cease fire: Drop a fish on one of them or their town center (works for outlanders too). If they agree they need to drop a fish on you too.
     - Cease fire means your weapons (turrets, bots, ..) won't target them automatically. You still can't access the other's bases.
     - If you damage the other party, the ceasefire stops
+    - All cease fire declarations are private (other players won't know)
 - Alliances: Drop a coin on a player. If they agree they need to drop a coin on you too.
     - They can now access all of your stuff and radar is shared
     - Alliances do not get cancelled automatically when damage is taken
     - To cancel an alliance, drop coal on them or their member
+    - All alliance declarations are public
 - Leave a town: Drop coal on the market. Note that their turrets will target you immediately.
 
 [font=heading-1]Leagues and PvP Shields[/font]
