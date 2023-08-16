@@ -91,13 +91,11 @@ local function update_score()
     local score_to_win = 100
 
     local outlander_online = 0
-    local outlander_total = 0
     for _, player in pairs(game.players) do
         if TeamBasics.is_outlander_force(player.force) then
             if player.connected then
                 outlander_online = outlander_online + 1
             end
-            outlander_total = outlander_total + 1
         end
     end
 
@@ -199,7 +197,7 @@ local function update_score()
             local label =
             ranking_table.add {
                 type = 'label',
-                caption = 'Outlanders' .. ' (' .. outlander_online .. '/' .. outlander_total .. ')'
+                caption = 'Outlanders' .. ' (' .. outlander_online .. ')'
             }
             label.style.font_color = {170, 170, 170}
             ranking_table.add { type = 'label', caption = '-'}
