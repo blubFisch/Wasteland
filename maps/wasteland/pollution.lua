@@ -57,7 +57,8 @@ function Public.market_scent()
     end
     for _, town_center in pairs(town_centers) do
         local market = town_center.market
-        if market ~= nil and market.valid and not PvPTownShield.town_is_afk(town_center.market.force) then
+        if market ~= nil and market.valid
+                and #market.force.connected_players > 0 and not PvPTownShield.town_is_afk(town_center.market.force) then
             local pollution = pollution_index['market']
             local amount = math_random(pollution.min, pollution.max)
             local evolution = town_center.evolution.biters
