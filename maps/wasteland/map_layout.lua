@@ -417,7 +417,7 @@ local function on_chunk_charted(event)
         end
 
         local uranium_patch_location = this.uranium_patch_location
-        if math.abs(position.x - math.floor(uranium_patch_location.x / 32)) <= 1 and math.abs(position.y - math.floor(uranium_patch_location.y / 32)) <= 1 then
+        if position.x == math.floor(uranium_patch_location.x / 32) and position.y == math.floor(uranium_patch_location.y / 32) then
             -- Add a chart tag at the uranium patch location
             force.add_chart_tag(surface, {icon = {type = 'item', name = 'uranium-ore'}, position = uranium_patch_location, text = "Deep Uranium"})
         end
