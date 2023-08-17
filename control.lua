@@ -3,6 +3,7 @@ _LIFECYCLE = _STAGE.control -- Control stage
 _DEBUG = false
 _DUMP_ENV = false
 
+require 'modules.anti_blueprint_spam'
 require 'utils.server'
 require 'utils.server_commands'
 require 'utils.command_handler'
