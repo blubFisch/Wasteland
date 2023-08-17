@@ -3,12 +3,6 @@ local Public = {}
 local GameSettings = require 'game_settings'
 
 local button_id = "wl_game_mode"
-Public.mode = GameSettings.game_mode
-Public.mode_names = {
-    "Short",    -- Target: 10 hours game
-    "Medium",   -- Target: 2 days game
-    "Long"      -- Target: 7 days game
-}
 
 function Public.add_mode_button(player)
     if player.gui.top[button_id] then
@@ -16,7 +10,7 @@ function Public.add_mode_button(player)
     end
     local button = player.gui.top.add {
         type = 'sprite-button',
-        caption = 'Game Mode: ' .. Public.mode_names[Public.mode],
+        caption = 'Game Mode: ' .. GameSettings.mode_name,
         name = button_id
     }
     button.tooltip = "Changes game duration, research cost and research score"
