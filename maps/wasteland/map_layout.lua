@@ -406,6 +406,12 @@ local function on_chunk_generated(event)
     move_away_biteys(surface, event.area)
 end
 
+local function add_chart_tag_if_none(force, surface, position, icon, text)
+    if #force.find_chart_tags(surface, {{position.x - 0.1, position.y - 0.1}, {position.x + 0.1, position.y + 0.1}}) == 0 then
+        force.add_chart_tag(surface, {icon = {type = 'item', name = icon}, position = position, text = text})
+    end
+end
+
 local function on_chunk_charted(event)
     local force = event.force
     local surface = game.surfaces[event.surface_index]
@@ -413,13 +419,12 @@ local function on_chunk_charted(event)
     if force.valid then
         local position = event.position
         if position.x == 0 and position.y == 0 then
-            force.add_chart_tag(surface, {icon = {type = 'item', name = 'coin'}, position = position, text = "Treasure"})
+            add_chart_tag_if_none(force, surface, position, 'coin', "Treasure")
         end
 
         local uranium_patch_location = this.uranium_patch_location
         if position.x == math.floor(uranium_patch_location.x / 32) and position.y == math.floor(uranium_patch_location.y / 32) then
-            -- Add a chart tag at the uranium patch location
-            force.add_chart_tag(surface, {icon = {type = 'item', name = 'uranium-ore'}, position = uranium_patch_location, text = "Deep Uranium"})
+            add_chart_tag_if_none(force, surface, uranium_patch_location, 'uranium-ore', "Deep Uranium")
         end
     end
 end
