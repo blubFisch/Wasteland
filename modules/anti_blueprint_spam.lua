@@ -36,11 +36,14 @@ local _restriction_time = (settings.global["ASBZO_restriction_time"] and setting
 
 
 ---@param player LuaPlayer
+---@return boolean
 M.remove_build_restriction = function(player)
 	local player_index = player.index
 	local is_restricted = restricted_players[player_index]
 	players_restiction_time[player_index] = nil
-	if not is_restricted then return end
+	if not is_restricted then return false end
+	local ghost_player_rate = ghost_players_rate[player_index]
+	if ghost_player_rate and ghost_player_rate >= _ghost_rate_limit then return false end
 
 	restricted_players[player_index] = nil
 
@@ -48,7 +51,7 @@ M.remove_build_restriction = function(player)
 	local permission_group = player.permission_group
 	for _, _player in pairs(permission_group.players) do
 		if not _player.valid then goto continue end
-		if restricted_players[_player.index] then return end
+		if restricted_players[_player.index] then return true end
 	    ::continue::
 	end
 
@@ -62,15 +65,18 @@ M.remove_build_restriction = function(player)
 		player.print(message, GREEN_TEXT)
 	    ::continue::
 	end
+
+	return true
 end
 local _remove_build_restriction = M.remove_build_restriction
 
 
 ---@param player LuaPlayer
+---@return boolean
 M.add_build_restriction = function(player)
 	local player_index = player.index
 	local is_restricted = restricted_players[player_index]
-	if is_restricted then return end
+	if is_restricted then return false end
 
 	restricted_players[player_index] = true
 	players_restiction_time[player_index] = _restriction_time
@@ -96,6 +102,8 @@ M.add_build_restriction = function(player)
 	else
 		player.print(message, RED_TEXT)
 	end
+
+	return true
 end
 
 
@@ -136,7 +144,7 @@ M.check_players_data = function()
 		time = time - 1
 		if time > 0 then
 			players_restiction_time[player_index] = time
-		else
+		elseif ghost_players_rate[player_index] == nil then
 			local player = game.get_player(player_index)
 			if not (player and player.valid) then goto continue end
 			_remove_build_restriction(player)
@@ -180,10 +188,11 @@ M.on_built_entity = function(event)
 	if ghost_player_rate < _ghost_rate_limit then return end
 	entity.destroy()
 
-	if ghost_player_rate == _ghost_rate_limit then
+	if ghost_player_rate == _ghost_rate_limit then -- should be safe
 		M.add_build_restriction(player)
 	end
 end
+
 
 ---@param event on_runtime_mod_setting_changed
 M.on_runtime_mod_setting_changed = function(event)
