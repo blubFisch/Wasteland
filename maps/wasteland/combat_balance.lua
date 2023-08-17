@@ -148,18 +148,18 @@ local function update_uis()
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force
         for _, player in pairs(force.connected_players) do
-            player.gui.top[button_id].caption = "Damage: " .. Public.format_dmg_modifier(force)
+            player.gui.top[button_id].caption = "Damage: " .. Public.format_dmg_modifier(Public.dmg_modifier(force))
         end
     end
 end
 
-function Public.format_dmg_modifier(force)
-    return string.format('%.0f%%', 100 * Public.dmg_modifier_for_force(force))
+function Public.format_dmg_modifier(modifier)
+    return string.format('%.0f%%', 100 * modifier)
 end
 
-function Public.dmg_modifier_for_force(force)
+function Public.dmg_modifier(force)
     if TeamBasics.is_town_force(force) then
-        return 1 / #force.connected_players
+        return math.min(1 / #force.connected_players + 0.2, 1)
     else
         return 1
     end
@@ -230,7 +230,7 @@ function Public.on_entity_damaged(event)
             or not event.cause or force_damage_modifier_excluded[event.cause.name] then
         force_modifier = 1
     else
-        force_modifier = Public.dmg_modifier_for_force(cause_force)
+        force_modifier = Public.dmg_modifier(cause_force)
     end
 
     local would_be_killed = entity.health == 0
