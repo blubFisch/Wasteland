@@ -1,6 +1,5 @@
 local Public = {}
 
-local table_size = table.size
 local math_floor = math.floor
 local math_sqrt = math.sqrt
 local math_max = math.max
@@ -122,9 +121,9 @@ local function town_shields_researched(force)
     return force.technologies["automation"].researched
 end
 
-function Public.town_is_afk(force)
+function Public.town_is_afk(town_center)
     local this = ScenarioTable.get_table()
-    return this.pvp_shield_mark_afk[force.name] == true
+    return this.pvp_shield_mark_afk[town_center.market.force.name] == true
 end
 
 local function update_pvp_shields()
@@ -138,7 +137,7 @@ local function update_pvp_shields()
         local shield = this.pvp_shields[force.name]
         local shields_researched = town_shields_researched(force)
         local town_league = Public.get_town_league(town_center)
-        local town_offline_or_afk = table_size(force.connected_players) == 0 or this.pvp_shield_mark_afk[force.name]
+        local town_offline_or_afk = #force.connected_players == 0 or this.pvp_shield_mark_afk[force.name]
         local abandoned = false
         local high_score_no_shield = town_league >= 4  -- Note: referenced in info.lua
 
@@ -160,8 +159,9 @@ local function update_pvp_shields()
                     -- nil means waiting for players to go offline
                     -- -1 it is not meant to renew until players join again
                     if not Public.enemy_players_near_town(town_center, Public.get_town_control_range(town_center)) then
-                        if this.pvp_shield_offline_eligible_since[force.index] == game.tick then
-                            game.print("The offline/afk PvP Shield of " .. town_center.town_name .. " is activating now." ..
+                        if this.pvp_shield_offline_eligible_since[force.index] == game.tick and not Public.town_is_afk(town_center) then
+                            -- Show this to remind other players of this feature
+                            game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now." ..
                                     " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time), Utils.scenario_color)
                         end
                         PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,
