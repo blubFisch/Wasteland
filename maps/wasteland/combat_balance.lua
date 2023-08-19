@@ -165,6 +165,14 @@ function Public.dmg_modifier(force)
     end
 end
 
+local non_bulldozable_entities = {
+    ['car'] = true,
+    ['tank'] = true,
+    ['locomotive'] = true,
+    ['cargo-wagon'] = true,
+    ['fluid-wagon'] = true,
+}
+
 -- Extra modifiers based on player numbers
 function Public.on_entity_damaged(event)
     local entity = event.entity
@@ -193,6 +201,7 @@ function Public.on_entity_damaged(event)
                 and not Building.near_outlander_town(cause_force, position, entity.surface, min_clear_distance)
                 and not PvPTownShield.enemy_players_nearby(position, entity.surface, cause_force, min_clear_distance)
                 and not TeamBasics.is_friendly_towards(cause_force, entity.force)
+                and not non_bulldozable_entities[entity.type]
                 and entity.force ~= game.forces.enemy
         then
             entity.surface.create_entity(
