@@ -221,12 +221,6 @@ M.validate_global_data = function()
 	validate_players_data(restricted_players)
 	validate_players_data(ghost_players_rate)
 	validate_players_data(players_restiction_time)
-
-	for _, player in pairs(players) do
-		if not player.valid then goto continue return end
-		M.init_player(player.index)
-		::continue::
-	end
 end
 
 
