@@ -54,7 +54,7 @@ commands.add_command(
         'Kills the player',
         function(cmd)
             local this = ScenarioTable.get_table()
-            local player = game.player
+            local player = game.players[cmd.player_index]
 
             if not player or not player.valid then
                 return

@@ -28,7 +28,7 @@ local brain = {
         'Need an admin? Message in our discord at ' .. discord_url_styled
     },
     [3] = {
-        'Stuck? Need to respawn? Type /suicide into chat'
+        'Stuck? Need to respawn? Type /suicide into chat. Also need a new spawn position? Use /new-spawn'
     }
 }
 

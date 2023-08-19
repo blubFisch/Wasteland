@@ -68,7 +68,7 @@ local info_adv =
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
     Accidentally overfished? No problem, you can drop them back in
 - Use /rename-town NEWNAME (chat command) to rename your town
-- If you get stuck or trapped, use the /suicide chat command to respawn
+- If you get stuck or trapped, use the /suicide chat command to respawn. Use /new-spawn to set up a new spawn point
 - It is not possible to build near other towns turrets, town centers or PvP shields
     except logistics entities (inserters, belts, boxes, rails) that can be used to steal items from other bases and can be built anywhere except near turrets
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research

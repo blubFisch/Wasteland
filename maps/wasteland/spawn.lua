@@ -11,6 +11,7 @@ local math_floor = math.floor
 local ScenarioTable = require 'maps.wasteland.table'
 local Building = require 'maps.wasteland.building'
 local MapLayout = require 'maps.wasteland.map_layout'
+local Utils = require 'maps.wasteland.utils'
 
 local function force_load(position, surface, radius)
     --log("is_chunk_generated = " .. tostring(surface.is_chunk_generated(position)))
@@ -141,6 +142,7 @@ function Public.set_new_spawn_point(player, surface)
     local force_name = force.name
     local position = find_valid_spawn_point(force_name, surface)
     this.spawn_point[player.index] = position
+
     --log("player " .. player.name .. " assigned new spawn point at {" .. position.x .. "," .. position.y .. "}")
     return position
 end
@@ -150,7 +152,7 @@ function Public.get_spawn_point(player, surface)
     local this = ScenarioTable.get_table()
     local position = this.spawn_point[player.index]
     -- if there is a spawn point and less than three strikes
-    if position ~= nil and this.strikes[player.name] < 3 then
+    if position ~= nil and this.strikes[player.name] < 2 then
         -- check that the spawn point is not blocked
         if surface.can_place_entity({name = 'character', position = position}) then
             --log("player " .. player.name .. "using existing spawn point at {" .. position.x .. "," .. position.y .. "}")
@@ -163,5 +165,20 @@ function Public.get_spawn_point(player, surface)
     -- otherwise get a new spawn point
     return Public.set_new_spawn_point(player, surface)
 end
+
+commands.add_command(
+        'new-spawn',
+        'Set up a new spawn point for the next spawn',
+        function(cmd)
+            local player = game.players[cmd.player_index]
+
+            if not player or not player.valid then
+                return
+            end
+
+            Public.set_new_spawn_point(player, player.surface)
+            player.print("New spawn is set up and will be used when you die", Utils.scenario_color)
+        end
+)
 
 return Public

@@ -17,7 +17,7 @@ local map_pos_frame_id = 'towny_map_position'
 local evo_frame_id = 'towny_evo_display'
 
 -- how long in ticks between spawn and death will be considered spawn kill (10 seconds)
-local max_ticks_between_spawns = 60 * 10
+local max_ticks_between_spawns = 60 * 30
 
 function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
