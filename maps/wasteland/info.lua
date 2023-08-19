@@ -5,6 +5,7 @@ local GameSettings = require 'game_settings'
 local changelog =
     [[[font=heading-1]Aug 2023 updates[/font]
  - Higher damage modifier for multi-player towns (2 player=70% damage each)
+ - Stronger build protections near town centers
  - Uranium ore is now a strategic resource: It is hard to find and expensive to buy in the market
  - Outlanders now have their own fractions, allowing them to ally with towns without joining (drop a fish on them)
  - Outlanders can build turrets, walls and simple production chains. Note: They lose ownership on disconnect!

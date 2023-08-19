@@ -5,10 +5,12 @@ local table_insert = table.insert
 local ScenarioTable = require 'maps.wasteland.table'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local MapLayout = require 'maps.wasteland.map_layout'
 
 local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turret"}
 local default_protected_radius = 30
 local turret_protected_radius = 42
+local base_town_protected_size = (MapLayout.league_balance_shield_size - 1) / 2
 
 local ghost_time_after_destruction = 168 * 60 * 60 * 60 -- Note: After unlocking construction bots tech. This might not be stable after engine changes
 local ghost_age_to_prevent_building = 60 * 60
@@ -108,15 +110,6 @@ function Public.in_range(pos1, pos2, radius)
 end
 
 function Public.in_area(position, area_center, area_radius)
-    if position == nil then
-        return false
-    end
-    if area_center == nil then
-        return false
-    end
-    if area_radius < 1 then
-        return true
-    end
     if position.x >= area_center.x - area_radius and position.x <= area_center.x + area_radius then
         if position.y >= area_center.y - area_radius and position.y <= area_center.y + area_radius then
             return true
@@ -145,7 +138,7 @@ function Public.near_another_town(my_force_name, position, surface, radius, radi
     for _, town_center in pairs(this.town_centers) do
         local market_force_name = town_center.market.force.name
         if my_force_name ~= market_force_name then
-            if Public.in_range(position, town_center.market.position, radius_center) then
+            if Public.in_area(position, town_center.market.position, radius_center) then
                 return true, NEAR_TOWN_CENTER
             end
             table_insert(enemy_force_names, market_force_name)
@@ -275,7 +268,7 @@ local function process_built_entities(event)
         local prevent = false
         local reason
 
-        prevent, reason = Public.near_another_town(force_name, position, surface, radius, radius + 30, prevented_by_ghosts)
+        prevent, reason = Public.near_another_town(force_name, position, surface, radius, radius + base_town_protected_size, prevented_by_ghosts)
 
         if not prevent and PvPShield.protected_by_shields(surface, position, force, radius) then
             prevent = true
