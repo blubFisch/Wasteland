@@ -2,8 +2,9 @@ local Public = {}
 
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
+local Utils = require 'maps.wasteland.utils'
 
-local button_id = "towny_research_balance"
+local button_id = "wasteland_research_balance"
 
 function Public.add_balance_ui(player)
     if player.gui.top[button_id] then
@@ -24,10 +25,6 @@ function Public.add_balance_ui(player)
     button.style.left_padding = 4
     button.style.right_padding = 4
     button.style.bottom_padding = 2
-end
-
-function Public.player_changes_town_status(player, in_town)
-    player.gui.top[button_id].visible = in_town
 end
 
 function Public.format_town_modifier(modifier)
@@ -61,12 +58,21 @@ local function update_modifiers()
     for _, town_center in pairs(this.town_centers) do
         if not town_center.research_balance then
             town_center.research_balance = {}
+            town_center.research_balance.previous_modifier = 1
         end
         town_center.research_balance.current_modifier = calculate_modifier_for_town(town_center)
 
         -- Update UIs of all town players
         for _, player in pairs(town_center.market.force.connected_players) do
             player.gui.top[button_id].caption = "Research cost: " .. Public.format_town_modifier(town_center.research_balance.current_modifier)
+        end
+
+        -- Notify about the change
+        if math.abs(town_center.research_balance.current_modifier / town_center.research_balance.previous_modifier - 1) > 0.2 then
+            town_center.market.force.print("Your research cost is now "
+                    .. Public.format_town_modifier(town_center.research_balance.current_modifier)
+                    .. " (previously " .. Public.format_town_modifier(town_center.research_balance.previous_modifier) .. ")", Utils.scenario_color)
+            town_center.research_balance.previous_modifier = town_center.research_balance.current_modifier
         end
     end
 end
@@ -90,7 +96,13 @@ local function update_research_progress()
     end
 end
 
+
+function Public.player_changes_town_status(player, in_town)
+    update_modifiers()
+    player.gui.top[button_id].visible = in_town
+end
+
 Event.add(defines.events.on_tick, update_research_progress)
-Event.on_nth_tick(60, update_modifiers)
+Event.on_nth_tick(61, update_modifiers)
 
 return Public

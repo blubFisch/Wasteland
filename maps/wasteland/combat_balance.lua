@@ -1,10 +1,11 @@
+local Public = {}
+
 local ScenarioTable = require 'maps.wasteland.table'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local Building = require 'maps.wasteland.building'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
+local Utils = require 'maps.wasteland.utils'
 
-
-local Public = {}
 
 local player_ammo_damage_starting_modifiers = {
     --['artillery-shell'] = -0.75,
@@ -110,7 +111,7 @@ local function research_finished(event)
     end
 end
 
-local button_id = "towny_damage_balance"
+local button_id = "wasteland_damage_balance"
 
 local force_damage_modifier_excluded = {
     ['laser-turret'] = true,
@@ -139,31 +140,48 @@ function Public.add_balance_ui(player)
     button.style.bottom_padding = 2
 end
 
-function Public.player_changes_town_status(player, in_town)
-    player.gui.top[button_id].visible = in_town
-end
-
-local function update_uis()
-    local this = ScenarioTable.get_table()
-    for _, town_center in pairs(this.town_centers) do
-        local force = town_center.market.force
-        for _, player in pairs(force.connected_players) do
-            player.gui.top[button_id].caption = "Damage: " .. Public.format_dmg_modifier(Public.dmg_modifier(force))
-        end
-    end
-end
-
-function Public.format_dmg_modifier(modifier)
+local function format_dmg_modifier(modifier)
     return string.format('%.0f%%', 100 * modifier)
 end
 
-function Public.dmg_modifier(force)
+local function calculate_modifier_for_town(town_center)
+    local force = town_center.market.force
     if TeamBasics.is_town_force(force) then
         return math.min(1 / #force.connected_players + 0.2, 1)
     else
         return 1
     end
 end
+
+local function update_modifiers()
+    local this = ScenarioTable.get_table()
+    for _, town_center in pairs(this.town_centers) do
+        if not town_center.combat_balance then
+            town_center.combat_balance = {}
+            town_center.combat_balance.previous_modifier = 1
+        end
+        town_center.combat_balance.current_modifier = calculate_modifier_for_town(town_center)
+
+        -- Update UIs of all town players
+        for _, player in pairs(town_center.market.force.connected_players) do
+            player.gui.top[button_id].caption = "Damage: " .. format_dmg_modifier(town_center.combat_balance.current_modifier)
+        end
+
+        -- Notify about the change
+        if town_center.combat_balance.current_modifier ~= town_center.combat_balance.previous_modifier then
+            town_center.market.force.print("Your town member's attack damage is now "
+                    .. format_dmg_modifier(town_center.combat_balance.current_modifier)
+                    .. " (previously " .. format_dmg_modifier(town_center.combat_balance.previous_modifier) .. ")", Utils.scenario_color)
+            town_center.combat_balance.previous_modifier = town_center.combat_balance.current_modifier
+        end
+    end
+end
+
+function Public.player_changes_town_status(player, in_town)
+    update_modifiers()
+    player.gui.top[button_id].visible = in_town
+end
+
 
 local non_bulldozable_entities = {
     ['car'] = true,
@@ -239,7 +257,7 @@ function Public.on_entity_damaged(event)
             or not event.cause or force_damage_modifier_excluded[event.cause.name] then
         force_modifier = 1
     else
-        force_modifier = Public.dmg_modifier(cause_force)
+        force_modifier = global.tokens.maps_wasteland_table.town_centers[cause_force.name].combat_balance.current_modifier
     end
 
     local would_be_killed = entity.health == 0
@@ -272,6 +290,6 @@ end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_research_finished, research_finished)
-Event.on_nth_tick(60, update_uis)
+Event.on_nth_tick(63, update_modifiers)
 
 return Public

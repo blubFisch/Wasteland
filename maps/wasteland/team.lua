@@ -167,7 +167,6 @@ function Public.add_player_to_town(player, town_center)
 
     ResearchBalance.player_changes_town_status(player, true)
     CombatBalance.player_changes_town_status(player, true)
-    force.print("Note: Your town's research and damage modifiers have been updated", Utils.scenario_color)
 end
 
 -- given to player upon respawn
