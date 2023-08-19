@@ -257,7 +257,13 @@ function Public.on_entity_damaged(event)
             or not event.cause or force_damage_modifier_excluded[event.cause.name] then
         force_modifier = 1
     else
-        force_modifier = global.tokens.maps_wasteland_table.town_centers[cause_force.name].combat_balance.current_modifier
+        local town_center = global.tokens.maps_wasteland_table.town_centers[cause_force.name]
+        if town_center then
+            force_modifier = town_center.combat_balance.current_modifier
+        else
+            force_modifier = 1
+        end
+
     end
 
     local would_be_killed = entity.health == 0
