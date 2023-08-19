@@ -79,6 +79,8 @@ local function research_finished(event)
     local r = event.research
     local p_force = r.force
 
+    p_force.recipes["slowdown-capsule"].enabled = false -- Note: Disabled because the effect is too strong & can't modify it
+
     for _, e in ipairs(r.effects) do
         local t = e.type
 
