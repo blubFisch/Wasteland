@@ -19,7 +19,7 @@ local function tutorials_tick()
 
             if tut.show_after_tick and game.tick > tut.show_after_tick then
                 this.tutorials[player.index].step = 1
-                player.set_goal_description("Welcome to harsh survival!\n\nFound a town by building your white chest or keep roaming as a lawless outlander.")
+                player.set_goal_description("Welcome to the Wasteland!\n\nFound a town by building your white chest or keep roaming as a lawless outlander.")
                 tut.show_after_tick = nil
             end
 
