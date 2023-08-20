@@ -16,8 +16,7 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 local map_pos_frame_id = 'towny_map_position'
 local evo_frame_id = 'towny_evo_display'
 
--- how long in ticks between spawn and death will be considered spawn kill (10 seconds)
-local max_ticks_between_spawns = 60 * 30
+local spawn_kill_time = 60 * 30
 
 function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
@@ -225,7 +224,7 @@ local function on_player_died(event)
     end
 
     local ticks_elapsed = game.tick - this.last_respawn[player.name]
-    if ticks_elapsed < max_ticks_between_spawns then
+    if ticks_elapsed < spawn_kill_time then
         this.strikes[player.name] = this.strikes[player.name] + 1
     else
         this.strikes[player.name] = 0
