@@ -213,7 +213,6 @@ local function update_pvp_shields()
 
         local protect_time_after_nearby = 3 * 60 * 60
         if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby and game.tick - town_center.last_higher_league_nearby > protect_time_after_nearby then
-            force.print("Your town's Balancing PvP Shield has been deactivated as there are no more higher league players nearby.", Utils.scenario_color)
             PvPShield.remove_shield(shield)
         end
 
@@ -311,7 +310,7 @@ local function all_players_near_center(town_center)
     for _, player in pairs(force.connected_players) do
         local pp = player.position
         local mp = market.position
-        if math.sqrt((pp.x - mp.x) ^ 2 +  (pp.y - mp.y) ^ 2) > 5 then
+        if math.sqrt((pp.x - mp.x) ^ 2 +  (pp.y - mp.y) ^ 2) > 10 then
             return false
         end
     end
