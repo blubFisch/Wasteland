@@ -15,15 +15,16 @@ Public.central_ores_town_nobuild = 350
 Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
-Public.league_balance_shield_size = 121
+Public.league_balance_shield_size = 131
+Public.higher_league_activation_range = Public.league_balance_shield_size + 50
 
-Public.radius_between_towns = Public.league_balance_shield_size + 60 + 2 + 40
+Public.radius_between_towns = Public.higher_league_activation_range + 2 + 40
 
 Public.map_size = {2048, 2048}
 Public.uranium_patch_nobuild = 180
 
 function Public.reveal_strategic_resources(force)
-    -- We do this to even the battlefield with players who just check out the map in SP
+    -- We do this to even the battle field with players who just check out the map in SP
 
     local this = global.tokens.maps_wasteland_table
     local surface = game.surfaces.nauvis
