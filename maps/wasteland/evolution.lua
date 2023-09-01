@@ -9,27 +9,23 @@ local Score = require 'maps.wasteland.score'
 local biters = {
     [1] = 'small-biter',
     [2] = 'medium-biter',
-    [3] = 'big-biter',
-    [4] = 'behemoth-biter'
+    [3] = 'big-biter'
 }
 
 local spitters = {
     [1] = 'small-spitter',
     [2] = 'medium-spitter',
-    [3] = 'big-spitter',
-    [4] = 'behemoth-spitter'
+    [3] = 'big-spitter'
 }
 
 local worms = {
     [1] = 'small-worm-turret',
     [2] = 'medium-worm-turret',
-    [3] = 'big-worm-turret',
-    [4] = 'behemoth-worm-turret'
+    [3] = 'big-worm-turret'
 }
 
 -- evolution max distance in tiles
 local max_evolution_distance = 500
-local max_pollution_behemoth = 256
 local max_pollution_big = 64
 local max_pollution_medium = 16
 -- max_factor < 1.0 means technology sum of weights will be greater than 1.0
@@ -238,17 +234,8 @@ end
 max_weight = max_weight * max_factor
 
 local function get_unit_size(evolution)
-    -- returns a value 1-4 that represents the unit size
+    -- returns a value 1-3 that represents the unit size
 
-    -- basically evo values of:  0%      10%     20%     30%     40%     50%     60%     70%     80%     90%     100%
-    --                           -----------------------------------------------------------------------------------
-    -- small unit chances are    100%    60%     40%     30%     20%     15%     7.5%    0%      0%      0%      0%
-    -- medium unit chances are   0%      40%     40%     30%     20%     15%     7.5%    12.5%   25%     0%      0%
-    -- big unit chances are      0%      0%      20%     40%     60%     60%     75%     75%     50%     50%     0%
-    -- behemoth unit chances are 0%      0%      0%      0%      0%      10%     10%     12.5%   25%     50%     100%
-    -- and curve accordingly in between evo values
-
-    -- magic stuff happens here
     -- 0%
     if (evolution < 0.1) then
         return 1
@@ -310,7 +297,7 @@ local function get_unit_size(evolution)
             end
             return 3
         end
-        return 4
+        return 3
     end
     -- 60%
     if (evolution >= 0.60 and evolution < 0.70) then
@@ -325,7 +312,7 @@ local function get_unit_size(evolution)
             end
             return 3
         end
-        return 4
+        return 3
     end
     -- 70%
     if (evolution >= 0.70 and evolution < 0.80) then
@@ -337,7 +324,7 @@ local function get_unit_size(evolution)
                 return 3
             end
         end
-        return 4
+        return 3
     end
     -- 80%
     if (evolution >= 0.80 and evolution < 0.90) then
@@ -349,7 +336,7 @@ local function get_unit_size(evolution)
                 return 3
             end
         end
-        return 4
+        return 3
     end
     -- 90%
     if (evolution >= 0.90 and evolution < 1) then
@@ -357,11 +344,11 @@ local function get_unit_size(evolution)
         if r < 0.5 then
             return 3
         end
-        return 4
+        return 3
     end
     -- 100%
     if (evolution >= 1.0) then
-        return 4
+        return 3
     end
 end
 
@@ -514,17 +501,11 @@ local function set_biter_type(entity)
     end
     local surface = entity.surface
     local pollution = surface.get_pollution(position)
-    local behemoth = math_floor(pollution / max_pollution_behemoth)
-    local big = math_floor((pollution - (behemoth * max_pollution_behemoth)) / max_pollution_big)
-    local medium = math_floor((pollution - (behemoth * max_pollution_behemoth) - (big * max_pollution_big)) / max_pollution_medium)
-    local small = pollution - (behemoth * max_pollution_behemoth) - (big * max_pollution_big) - (medium * max_pollution_medium) + 1
+    local big = math_floor(pollution / max_pollution_big)
+    local medium = math_floor((pollution - (big * max_pollution_big)) / max_pollution_medium)
+    local small = pollution - (big * max_pollution_big) - (medium * max_pollution_medium) + 1
 
     if entity.valid then
-        for _ = 1, behemoth do
-            local e = surface.create_entity({name = biters[4], position = get_nearby_location(position, surface, 5, biters[4])})
-            e.copy_settings(entity)
-            e.ai_settings.allow_try_return_to_spawner = true
-        end
         for _ = 1, big do
             local e = surface.create_entity({name = biters[3], position = get_nearby_location(position, surface, 5, biters[3])})
             e.copy_settings(entity)
@@ -559,17 +540,11 @@ local function set_spitter_type(entity)
     end
     local surface = entity.surface
     local pollution = surface.get_pollution(position)
-    local behemoth = math_floor(pollution / max_pollution_behemoth)
-    local big = math_floor((pollution - (behemoth * max_pollution_behemoth)) / max_pollution_big)
-    local medium = math_floor((pollution - (behemoth * max_pollution_behemoth) - (big * max_pollution_big)) / max_pollution_medium)
-    local small = pollution - (behemoth * max_pollution_behemoth) - (big * max_pollution_big) - (medium * max_pollution_medium) + 1
+    local big = math_floor(pollution / max_pollution_big)
+    local medium = math_floor((pollution - (big * max_pollution_big)) / max_pollution_medium)
+    local small = pollution - (big * max_pollution_big) - (medium * max_pollution_medium) + 1
 
     if entity.valid then
-        for _ = 1, behemoth do
-            local e = surface.create_entity({name = spitters[4], position = get_nearby_location(position, surface, 5, spitters[4])})
-            e.copy_settings(entity)
-            e.ai_settings.allow_try_return_to_spawner = true
-        end
         for _ = 1, big do
             local e = surface.create_entity({name = spitters[3], position = get_nearby_location(position, surface, 5, spitters[3])})
             e.copy_settings(entity)
