@@ -559,6 +559,8 @@ end
 
 local function disable_high_weapon_research(force)
     -- Limit the difference between small/big towns so that new towns have a chance
+    -- and prevent pvp encounters that last less than 1s
+
     force.technologies['uranium-ammo'].enabled = false
     force.technologies['power-armor-mk2'].enabled = false
 
@@ -573,6 +575,7 @@ local function disable_high_weapon_research(force)
     force.technologies['stronger-explosives-6'].enabled = false
     force.technologies['stronger-explosives-7'].enabled = false
 
+    force.technologies['follower-robot-count-5'].enabled = false
     force.technologies['follower-robot-count-6'].enabled = false
     force.technologies['follower-robot-count-7'].enabled = false
 
@@ -590,7 +593,7 @@ local function disable_tips_and_tricks(permission_group)
 end
 
 local function set_initial_combat_bot_slots(force)
-    force.maximum_following_robot_count = 5
+    force.maximum_following_robot_count = 6
 end
 
 local function set_default_tech(force)
