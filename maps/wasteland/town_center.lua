@@ -216,6 +216,8 @@ local function draw_town_spawn(player_name)
             local e = surface.create_entity({name = 'iron-chest', position = p, force = player_name})
             local inventory = e.get_inventory(defines.inventory.chest)
             inventory.insert(item_stack)
+        else
+            log("ERROR: could not find starter chest position")
         end
     end
 
