@@ -19,11 +19,13 @@ local Evolution = require 'maps.wasteland.evolution'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local GameMode = require 'maps.wasteland.game_mode'
 
 
 local town_radius = 20
 
-local ore_amount = 1200
+local starter_ore_amounts = { 0.25, 0.5, 1.0 }
+local starter_ore_amount = 1200 * starter_ore_amounts[GameMode.mode]
 
 local colors = {}
 local c1 = 250
@@ -163,7 +165,7 @@ local function draw_ore_patches(surface, position, ore_types, resource_vectors)
                 local p = {position.x + vector[1], position.y + vector[2]}
                 p = surface.find_non_colliding_position(ore_type, p, 64, 1)
                 if p then
-                    surface.create_entity({name = ore_type, position = p, amount = ore_amount})
+                    surface.create_entity({name = ore_type, position = p, amount = starter_ore_amount })
                 end
             end
         end
