@@ -15,7 +15,7 @@ Public.central_ores_town_nobuild = 350
 Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
-Public.league_balance_shield_size = 131
+Public.league_balance_shield_size = 141
 Public.higher_league_activation_range = Public.league_balance_shield_size + 50
 
 Public.radius_between_towns = Public.higher_league_activation_range + 2 + 40
