@@ -3,16 +3,13 @@ local Public = {}
 local GameSettings = require 'game_settings'
 
 local changelog =
-    [[[font=heading-1]Aug 2023 updates[/font]
+    [[[font=heading-1]Sept 2023 updates[/font]
+ - Bigger protected town size
+ - Uranium is no longer available in the market
  - Higher damage modifier for multi-player towns (2 player=70% damage each)
- - Stronger build protections near town centers
- - Uranium ore is now a strategic resource: It is hard to find and expensive to buy in the market
  - Outlanders now have their own fractions, allowing them to ally with towns without joining (drop a fish on them)
- - Outlanders can build turrets, walls and simple production chains. Note: They lose ownership on disconnect!
  - Offline shields now only work before league 4
- - Offline towns with offline shields are now 100% safe, including biters
  - Added a button to build as neutral (bots will ignore+other players can access)
- - League shield now also protects towns offline towns
  - Power poles can no longer be used to block enemy buildings - now only turrets block buildings]]
 
 local info =
@@ -46,7 +43,7 @@ local info_adv =
 
 [font=heading-1]Leagues and PvP Shields[/font]
 - A system to give a chance to players who join later and to protect while offline
-- PvP shields prevent players from entering, building and damaging
+- PvP shields prevent players and biters from entering, building and damaging
 - League shield protects your town from players of a higher league and cover the outer blue tile square of your town
     - League score limits: 15 score or tank=L2, 35 score=L3, 60 score=L4
 - Offline PvP shields deploy automatically once all players of a town leave the game
@@ -54,7 +51,6 @@ local info_adv =
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
     - This shield is available before League 4
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
-- Biters can't penetrate your shield
 
 [font=heading-1]Advanced tips and tricks[/font]
 - To join our discord, open wasteland-discord.fun in your web browser
