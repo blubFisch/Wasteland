@@ -110,9 +110,13 @@ function Public.in_range(pos1, pos2, radius)
 end
 
 function Public.in_area(position, area_center, area_radius)
-    if position.x >= area_center.x - area_radius and position.x <= area_center.x + area_radius then
-        if position.y >= area_center.y - area_radius and position.y <= area_center.y + area_radius then
-            return true
+    local dist_east = position.x - (area_center.x + area_radius)
+    local dist_west = (area_center.x - area_radius) - position.x
+    if dist_east < 0 and dist_west < 0 then
+        local dist_north = (area_center.y - area_radius) - position.y
+        local dist_south = position.y - (area_center.y + area_radius)
+        if dist_south < 0 and dist_north < 0 then
+            return true, -math.max(dist_east, dist_west, dist_north, dist_south)
         end
     end
     return false
@@ -138,8 +142,9 @@ function Public.near_another_town(my_force_name, position, surface, radius, radi
     for _, town_center in pairs(this.town_centers) do
         local market_force_name = town_center.market.force.name
         if my_force_name ~= market_force_name then
-            if Public.in_area(position, town_center.market.position, radius_center) then
-                return true, NEAR_TOWN_CENTER
+            local in_area, distance = Public.in_area(position, town_center.market.position, radius_center)
+            if in_area then
+                return true, NEAR_TOWN_CENTER, distance
             end
             table_insert(enemy_force_names, market_force_name)
         end

@@ -18,19 +18,6 @@ Public.offline_shield_size = 41
 local league_shield_radius = (MapLayout.league_balance_shield_size - 1) / 2
 local league_shield_vectors = Utils.make_border_vectors(league_shield_radius)
 
-function Public.in_extended_control_range(position)
-    local this = ScenarioTable.get_table()
-    for _, town_center in pairs(this.town_centers) do
-        local town_position = town_center.market.position
-
-        local distance = math_floor(math_sqrt((position.x - town_position.x) ^ 2 + (position.y - town_position.y) ^ 2))
-        if distance < Public.get_town_control_range(town_center) * 1.5 + MapLayout.league_balance_shield_size / 2 then   -- Account for growing control range
-            return true
-        end
-    end
-    return false
-end
-
 function Public.get_town_control_range(town_center)
     return 70 + town_center.evolution.worms * 80
 end

@@ -288,12 +288,19 @@ local function is_valid_location(force_name, surface, position)
         return false
     end
 
-    if Building.near_another_town(force_name, position, surface, MapLayout.radius_between_towns) or PvPTownShield.in_extended_control_range(position) then
+    local too_close, _, distance = Building.near_another_town(force_name, position, surface, MapLayout.radius_between_towns)
+
+    if too_close then
+        local text = 'Town location is too close to others!'
+        if distance then
+            text = text .. ' (' .. math.ceil(distance) .. ' tiles)'
+        end
+
         surface.create_entity(
             {
                 name = 'flying-text',
                 position = position,
-                text = 'Town location is too close to others!',
+                text = text,
                 color = {r = 0.77, g = 0.0, b = 0.0}
             }
         )
@@ -331,11 +338,11 @@ end
 
 function Public.in_any_town(position)
     local this = ScenarioTable.get_table()
-    local town_centers = this.town_centers
-    for _, town_center in pairs(town_centers) do
+    for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
         if market ~= nil then
-            if Building.in_area(position, market.position, town_radius) == true then
+            local in_area, _ = Building.in_area(position, market.position, town_radius)
+            if in_area then
                 return true
             end
         end
