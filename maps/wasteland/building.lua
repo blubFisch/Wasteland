@@ -411,7 +411,7 @@ local function on_pre_build(event)
     if surface.count_entities_filtered({position=p, name='entity-ghost'}) > 0
             and Public.near_another_town(player.force.name, p, surface, default_protected_radius) then
         player.clear_cursor()
-        build_error_notification(surface, p, "Can't override enemy blueprint", player)
+        build_error_notification(surface, p, "Can't override enemy blueprint near town or turret", player)
     end
 end
 
