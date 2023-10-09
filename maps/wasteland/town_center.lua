@@ -178,24 +178,21 @@ local function draw_town_spawn(player_name)
     local position = market.position
     local surface = market.surface
 
-    -- create walls
+    -- create walls and gates
     for _, vector in pairs(gate_vectors_horizontal) do
         local p = {position.x + vector[1], position.y + vector[2]}
         surface.create_entity({name = 'gate', position = p, force = player_name, direction = 2})
-        surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
     end
     for _, vector in pairs(gate_vectors_vertical) do
         local p = {position.x + vector[1], position.y + vector[2]}
         surface.create_entity({name = 'gate', position = p, force = player_name, direction = 0})
-        surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
     end
-
     for _, vector in pairs(town_wall_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
         surface.create_entity({name = 'stone-wall', position = p, force = player_name})
     end
 
-    PvPTownShield.draw_all_shield_markers(surface, position, town_wall_vectors)
+    PvPTownShield.draw_all_shield_markers(surface, position)
 
     -- ore patches
     local ores_in = {'coal'}

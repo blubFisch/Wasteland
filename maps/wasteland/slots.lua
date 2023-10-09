@@ -1,11 +1,8 @@
 require 'utils.table'
 
 local ScenarioTable = require 'maps.wasteland.table'
-local CommonFunctions = require 'utils.common'
 local TeamBasics = require 'maps.wasteland.team_basics'
 
-
-local center_limited_types = { 'assembling-machine', 'furnace', 'lab'}
 
 local function process_slots(actor, event)
     local entity = event.created_entity
@@ -20,9 +17,7 @@ local function process_slots(actor, event)
         return
     end
 
-    if not (entity.name == 'laser-turret' or (table.array_contains(center_limited_types, entity.type)
-            and CommonFunctions.point_in_bounding_box(entity.position, town_center.center_box))
-    ) then
+    if entity.name ~= 'laser-turret' then
         return
     end
 
@@ -30,32 +25,21 @@ local function process_slots(actor, event)
 
     if not TeamBasics.is_town_force(force) then
         surface.create_entity(
-            {
-                name = 'flying-text',
-                position = entity.position,
-                text = 'You are not acclimated to this technology!',
-                color = {r = 0.77, g = 0.0, b = 0.0}
-            }
+                {
+                    name = 'flying-text',
+                    position = entity.position,
+                    text = 'You are not acclimated to this technology!',
+                    color = {r = 0.77, g = 0.0, b = 0.0}
+                }
         )
         actor.insert({name = 'laser-turret', count = 1})
         entity.destroy()
         return
     end
 
-    local slots
-    local locations
-    local disallowed_info_text
-    if entity.name == 'laser-turret' then
-        slots = town_center.upgrades.laser_turret.slots
-        locations = town_center.upgrades.laser_turret.locations + 1
-        disallowed_info_text = "You do not have enough slots! Buy more at the market"
-    elseif table.array_contains(center_limited_types, entity.type) then
-        slots = 5
-        locations = surface.count_entities_filtered({ force = force, type = center_limited_types, area=town_center.center_box})
-        disallowed_info_text = "Too many production machines in town center, build outside!"
-    else
-        assert(false, "Unhandled case")
-    end
+    local slots = town_center.upgrades.laser_turret.slots
+    local locations = town_center.upgrades.laser_turret.locations + 1
+    local disallowed_info_text = "You do not have enough slots! Buy more at the market"
 
     if locations > slots then
         surface.create_entity(
@@ -79,17 +63,15 @@ local function process_slots(actor, event)
         return
     end
 
-    if entity.name == 'laser-turret' then
-        local key = script.register_on_entity_destroyed(entity)
-        this.laser_turrets[key] = force.index
-        town_center.upgrades.laser_turret.locations = locations
-    end
+    local key = script.register_on_entity_destroyed(entity)
+    this.laser_turrets[key] = force.index
+    town_center.upgrades.laser_turret.locations = locations
 
     surface.create_entity(
         {
             name = 'flying-text',
             position = entity.position,
-            text = 'Using ' .. locations .. '/' .. slots .. ' ' .. (entity.name == 'laser-turret' and "laser" or "center production") ..' slots',
+            text = 'Using ' .. locations .. '/' .. slots .. ' laser slots',
             color = {r = 1.0, g = 1.0, b = 1.0}
         }
     )

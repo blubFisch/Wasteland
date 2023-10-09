@@ -44,15 +44,25 @@ local function remove_drawn_borders(shield)
     end
 end
 
+local center_limited_types = {'assembling-machine', 'furnace', 'lab', 'roboport'}
+local function control_machines_inside(surface, box, active)
+    for _, e in pairs(surface.find_entities_filtered({type = center_limited_types, area=box})) do
+        if e.valid then
+            e.active = active
+        end
+    end
+end
+
+local function resize_shield(shield, scaled_size)
+    local center = shield.center
+    return {left_top = { x = center.x - scaled_size / 2, y = center.y - scaled_size / 2},
+            right_bottom = { x = center.x + scaled_size / 2, y = center.y + scaled_size / 2}}
+end
+
 local function scale_size_by_lifetime(shield)
     local time_scale = math.min(1, (game.tick - shield.lifetime_start) / shield.time_to_full_size_ticks)
     local scaled_size = time_scale * shield.max_size
-
-    local center = shield.center
-    local box = {left_top = { x = center.x - scaled_size / 2, y = center.y - scaled_size / 2},
-                 right_bottom = { x = center.x + scaled_size / 2, y = center.y + scaled_size / 2}}
-    shield.box = box
-    shield.size = scaled_size
+    shield.box, shield.size = resize_shield(shield, scaled_size)
 end
 
 function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, shield_type)
@@ -68,6 +78,7 @@ end
 function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
+    control_machines_inside(shield.surface, resize_shield(shield, shield.max_size), true)
 
     this.pvp_shields[shield.force.name] = nil
     shield.force.print("Your PvP Shield has expired", {r = 1, g = 0, b = 0})
@@ -107,6 +118,7 @@ local function update_shield_lifetime()
                     Public.push_enemies_out(player)
                 end
             end
+            control_machines_inside(shield.surface, shield.box, false)
         else
             Public.remove_shield(shield)
         end
@@ -208,10 +220,10 @@ local function scan_protect_shield_area()
     -- Handle edge case damage situations
 
     local this = ScenarioTable.get_table()
-    local idx = 0
+    local limit_idx = 0
     local update_limit = 10
     for _, shield in pairs(this.pvp_shields) do
-        if game.tick % update_limit == idx % update_limit then  -- Keep runtime low
+        if game.tick % update_limit == limit_idx % update_limit then  -- Keep runtime low
 
             -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
             local tank_box = enlarge_bounding_box(shield.box, 3)
@@ -227,7 +239,7 @@ local function scan_protect_shield_area()
                 e.die()
             end
         end
-        idx = idx + 1
+        limit_idx = limit_idx + 1
     end
 end
 

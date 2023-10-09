@@ -4,12 +4,9 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-1]Sept 2023 updates[/font]
- - Bigger protected town size
- - Uranium is no longer available in the market
+ - When offline/afk, towns get frozen completely (withing the blue square) - until league 4
  - Higher damage modifier for multi-player towns (2 player=70% damage each)
- - Outlanders now have their own fractions, allowing them to ally with towns without joining (drop a fish on them)
  - Offline shields now only work before league 4
- - Added a button to build as neutral (bots will ignore+other players can access)
  - Power poles can no longer be used to block enemy buildings - now only turrets block buildings]]
 
 local info =
@@ -42,14 +39,15 @@ local info_adv =
 - Leave a town: Drop coal on the market. Note that their turrets will target you immediately.
 
 [font=heading-1]Leagues and PvP Shields[/font]
-- A system to give a chance to players who join later and to protect while offline
+- A system to give a chance to players who join later and to protect player's towns while offline
 - PvP shields prevent players and biters from entering, building and damaging
 - League shield protects your town from players of a higher league and cover the outer blue tile square of your town
     - League score limits: 15 score or tank=L2, 35 score=L3, 60 score=L4
 - Offline PvP shields deploy automatically once all players of a town leave the game
-    - The size is same as your initial town wall, marked by the inner blue tile square
+    - The size is marked by the blue square around towns
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
     - This shield is available before League 4
+    - Shields also stop all production machines, labs and roboports
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
 
 [font=heading-1]Advanced tips and tricks[/font]

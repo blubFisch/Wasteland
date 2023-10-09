@@ -13,7 +13,7 @@ local MapLayout = require 'maps.wasteland.map_layout'
 local TeamBasics = require 'maps.wasteland.team_basics'
 
 
-Public.offline_shield_size = 41
+Public.offline_shield_size = (MapLayout.league_balance_shield_size - 1)
 
 local league_shield_radius = (MapLayout.league_balance_shield_size - 1) / 2
 local league_shield_vectors = Utils.make_border_vectors(league_shield_radius)
@@ -286,12 +286,7 @@ function Public.remove_all_shield_markers(surface, position)
     end
 end
 
-function Public.draw_all_shield_markers(surface, position, town_wall_vectors)
-    for _, vector in pairs(town_wall_vectors) do
-        local p = {position.x + vector[1], position.y + vector[2]}
-        surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
-    end
-
+function Public.draw_all_shield_markers(surface, position)
     for _, vector in pairs(league_shield_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
         if not surface.get_tile(p).collides_with("water-tile") then
