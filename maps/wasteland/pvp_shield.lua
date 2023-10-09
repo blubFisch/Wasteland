@@ -44,11 +44,23 @@ local function remove_drawn_borders(shield)
     end
 end
 
-local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport'}
-local function control_machines_inside(surface, box, active)
+local function visualise_entity_deactivated(entity)
+    entity.surface.create_entity({
+        name = 'flying-text',
+        position = entity.position,
+        text = "Inactive inside shield",
+        color = {r = 1, g = 0.0, b = 0.0}
+    })
+end
+
+local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'mining-drill'}
+local function control_buildings_inside(surface, box, active)
     for _, e in pairs(surface.find_entities_filtered({ type = shield_inactive_types, area=box})) do
-        if e.valid then
+        if e.valid and not e.active == active then
             e.active = active
+            if not active then
+                visualise_entity_deactivated(e)
+            end
         end
     end
 end
@@ -78,7 +90,9 @@ end
 function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
-    control_machines_inside(shield.surface, resize_shield(shield, shield.max_size), true)
+    if shield.shield_type ~= Public.SHIELD_TYPE.LEAGUE_BALANCE then
+        control_buildings_inside(shield.surface, resize_shield(shield, shield.max_size), true)
+    end
 
     this.pvp_shields[shield.force.name] = nil
     shield.force.print("Your PvP Shield has expired", {r = 1, g = 0, b = 0})
@@ -113,12 +127,15 @@ local function update_shield_lifetime()
                 scale_size_by_lifetime(shield)
                 draw_borders(shield)
 
-                -- Push everyone out as we grow (even if they're just standing)
+                -- Push players out as shield grows
                 for _, player in pairs(game.connected_players) do
                     Public.push_enemies_out(player)
                 end
 
-                control_machines_inside(shield.surface, shield.box, false)
+                -- Deactivate buildings as shield grows
+                if shield.shield_type ~= Public.SHIELD_TYPE.LEAGUE_BALANCE then
+                    control_buildings_inside(shield.surface, shield.box, false)
+                end
             end
         else
             Public.remove_shield(shield)
@@ -253,14 +270,11 @@ local function on_built_entity(event)
 
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
-            entity.active = false
-            game.get_player(event.player_index).create_local_flying_text({
-                position = entity.position,
-                text = "Building inactive inside shield",
-                color = {r = 1, g = 0.0, b = 0.0},
-                time_to_live = 160
-            })
+        if shield.shield_type ~= Public.SHIELD_TYPE.LEAGUE_BALANCE then
+            if CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
+                entity.active = false
+                visualise_entity_deactivated(entity)
+            end
         end
     end
 end
