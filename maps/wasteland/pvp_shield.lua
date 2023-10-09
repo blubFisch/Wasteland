@@ -65,10 +65,10 @@ local function scale_size_by_lifetime(shield)
     shield.box = resize_shield(shield, shield.size)
 end
 
-function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, shield_type)
+function Public.add_shield(surface, force, center, max_size, expiry_time, time_to_full_size_ticks, shield_type)
     local this = ScenarioTable.get_table()
 
-    local shield = {surface = surface, force = force, center = center, max_size = max_size, max_lifetime_ticks = lifetime_ticks,
+    local shield = {surface = surface, force = force, center = center, max_size = max_size, expiry_time = expiry_time,
                   time_to_full_size_ticks = time_to_full_size_ticks, lifetime_start = game.tick, shield_type = shield_type}
 
     scale_size_by_lifetime(shield)
@@ -85,8 +85,8 @@ function Public.remove_shield(shield)
 end
 
 function Public.remaining_lifetime(shield)
-    if shield.max_lifetime_ticks then
-        return shield.max_lifetime_ticks - (game.tick - shield.lifetime_start)
+    if shield.expiry_time then
+        return shield.expiry_time - game.tick
     else
         return nil
     end
@@ -107,7 +107,7 @@ end
 local function update_shield_lifetime()
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if shield.max_lifetime_ticks == nil or Public.remaining_lifetime(shield) > 0 then
+        if shield.expiry_time == nil or Public.remaining_lifetime(shield) > 0 then
             if shield.size < shield.max_size then
                 remove_drawn_borders(shield)
                 scale_size_by_lifetime(shield)
