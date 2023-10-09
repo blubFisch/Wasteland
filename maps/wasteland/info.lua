@@ -3,7 +3,7 @@ local Public = {}
 local GameSettings = require 'game_settings'
 
 local changelog =
-    [[[font=heading-1]Sept 2023 updates[/font]
+    [[[font=heading-1]Oct 2023 updates[/font]
  - When offline/afk, towns get frozen completely (withing the blue square) - until league 4
  - Higher damage modifier for multi-player towns (2 player=70% damage each)
  - Offline shields now only work before league 4

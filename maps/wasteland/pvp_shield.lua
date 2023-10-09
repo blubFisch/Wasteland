@@ -44,9 +44,9 @@ local function remove_drawn_borders(shield)
     end
 end
 
-local center_limited_types = {'assembling-machine', 'furnace', 'lab', 'roboport'}
+local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport'}
 local function control_machines_inside(surface, box, active)
-    for _, e in pairs(surface.find_entities_filtered({type = center_limited_types, area=box})) do
+    for _, e in pairs(surface.find_entities_filtered({ type = shield_inactive_types, area=box})) do
         if e.valid then
             e.active = active
         end
@@ -117,8 +117,9 @@ local function update_shield_lifetime()
                 for _, player in pairs(game.connected_players) do
                     Public.push_enemies_out(player)
                 end
+
+                control_machines_inside(shield.surface, shield.box, false)
             end
-            control_machines_inside(shield.surface, shield.box, false)
         else
             Public.remove_shield(shield)
         end
@@ -233,7 +234,7 @@ local function scan_protect_shield_area()
                 end
             end
 
-            -- Protect against big biters that are lured in/glitched in
+            -- Remove nearby biters
             local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
             for _, e in pairs(shield.surface.find_entities_filtered({ type = "unit", area = biters_box, force = "enemy"})) do
                 e.die()
@@ -243,8 +244,30 @@ local function scan_protect_shield_area()
     end
 end
 
+local function on_built_entity(event)
+    local entity = event.created_entity
+
+    if not table.array_contains(shield_inactive_types, entity.type) then
+        return
+    end
+
+    local this = ScenarioTable.get_table()
+    for _, shield in pairs(this.pvp_shields) do
+        if CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
+            entity.active = false
+            game.get_player(event.player_index).create_local_flying_text({
+                position = entity.position,
+                text = "Building inactive inside shield",
+                color = {r = 1, g = 0.0, b = 0.0},
+                time_to_live = 160
+            })
+        end
+    end
+end
+
 Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(3, update_shield_lifetime)
 Event.add(defines.events.on_tick, scan_protect_shield_area)
+Event.add(defines.events.on_built_entity, on_built_entity)
 
 return Public
