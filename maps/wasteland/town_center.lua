@@ -499,6 +499,8 @@ local function found_town(event)
     local market_pos = town_center.market.position
     town_center.center_box = {left_top = {x = market_pos.x - town_radius, y = market_pos.y - town_radius},
                               right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
+    town_center.pvp_shield_mgmt = {}
+    town_center.marked_afk = false
 
     town_center.town_caption =
         rendering.draw_text {

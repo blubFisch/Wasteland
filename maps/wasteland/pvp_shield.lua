@@ -61,8 +61,8 @@ end
 
 local function scale_size_by_lifetime(shield)
     local time_scale = math.min(1, (game.tick - shield.lifetime_start) / shield.time_to_full_size_ticks)
-    local scaled_size = time_scale * shield.max_size
-    shield.box, shield.size = resize_shield(shield, scaled_size)
+    shield.size = time_scale * shield.max_size
+    shield.box = resize_shield(shield, shield.size)
 end
 
 function Public.add_shield(surface, force, center, max_size, lifetime_ticks, time_to_full_size_ticks, shield_type)

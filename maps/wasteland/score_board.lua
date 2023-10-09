@@ -160,7 +160,7 @@ local function update_score()
                 end
 
                 local label_extra = ""
-                if PvPTownShield.town_is_afk(town_center) then
+                if town_center.marked_afk then
                     label_extra = " (AFK)"
                 end
 

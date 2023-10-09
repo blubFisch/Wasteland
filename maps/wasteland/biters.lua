@@ -11,7 +11,6 @@ local table_shuffle = table.shuffle_table
 local Event = require 'utils.event'
 local Global = require 'utils.global'
 local BiterHealthBooster = require 'modules.biter_health_booster_v2'
-local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 
 local tick_schedule = {}
 Global.register(
@@ -72,7 +71,7 @@ local function swarm_eligible_town(town_center)
     return #town_center.market.force.connected_players > 0
             and town_center.evolution.biters > 0.2
             and game.tick - town_center.last_swarm >= 20 * 60 * 60
-            and not PvPTownShield.town_is_afk(town_center)
+            and not town_center.marked_afk
 end
 
 local function roll_market()

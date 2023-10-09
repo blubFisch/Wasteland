@@ -108,11 +108,6 @@ local function town_shields_researched(force)
     return force.technologies["automation"].researched
 end
 
-function Public.town_is_afk(town_center)
-    local this = ScenarioTable.get_table()
-    return this.pvp_shields_mark_afk[town_center.market.force.name] == true
-end
-
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_duration_ticks = 24 * 60 * 60 * 60
@@ -124,7 +119,7 @@ local function update_pvp_shields()
         local shield = this.pvp_shields[force.name]
         local shields_researched = town_shields_researched(force)
         local town_league = Public.get_town_league(town_center)
-        local town_offline_or_afk = #force.connected_players == 0 or this.pvp_shields_mark_afk[force.name]
+        local town_offline_or_afk = #force.connected_players == 0 or town_center.marked_afk
         local abandoned = false
         local high_league_no_shield = town_league >= 4
 
@@ -135,32 +130,35 @@ local function update_pvp_shields()
 
         if town_offline_or_afk then     -- Offline shields
             if shields_researched and not high_league_no_shield then
-                if this.pvp_shields_offline_eligible_since[force.index] == nil then
-                    this.pvp_shields_offline_eligible_since[force.index] = game.tick
+                local is_init_now = false
+                if town_center.pvp_shield_mgmt.offline_shield_eligible_until == nil then
+                    is_init_now = true
+                    town_center.pvp_shield_mgmt.offline_shield_eligible_until = game.tick + offline_shield_duration_ticks
                 end
-                local remaining_offline_shield_time = offline_shield_duration_ticks - (game.tick - this.pvp_shields_offline_eligible_since[force.index])
+                local remaining_offline_shield_time = town_center.pvp_shield_mgmt.offline_shield_eligible_until - game.tick
                 abandoned = remaining_offline_shield_time <= 0
 
                 -- Town can get a offline shield?
                 -- Treat the OFFLINE_POST shield as a temporary shield to be replaced with a "proper" one
                 if (not shield or (shield and shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE_POST)) and not abandoned then
-                    if not Public.enemy_players_near_town(town_center, Public.get_town_control_range(town_center)) or this.pvp_shields_reactivate_immediately[force.index] then
-                        if this.pvp_shields_offline_eligible_since[force.index] == game.tick and not Public.town_is_afk(town_center) then
+                    if not Public.enemy_players_near_town(town_center, Public.get_town_control_range(town_center)) then
+                        if is_init_now and not town_center.marked_afk then
                             -- Show this to remind other players of this feature
                             game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now." ..
                                     " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time), Utils.scenario_color)
                         end
-                        if shield then
-                            PvPShield.remove_shield(shield)
+                        if not shield then
+                            PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,
+                                    remaining_offline_shield_time, 0.5 * 60 * 60, PvPShield.SHIELD_TYPE.OFFLINE)
+                        else
+                            shield.shield_type = PvPShield.SHIELD_TYPE.OFFLINE
+                            shield.remaining_lifetime = remaining_offline_shield_time
                         end
-                        PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,
-                                remaining_offline_shield_time, 0.5 * 60 * 60, PvPShield.SHIELD_TYPE.OFFLINE)
                     end
                 end
             end
         else    -- Online
-            this.pvp_shields_offline_eligible_since[force.index] = nil
-            this.pvp_shields_reactivate_immediately[force.index] = false
+            town_center.pvp_shield_mgmt.offline_shield_eligible_until = nil
 
             -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
             if shield and shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
@@ -173,12 +171,12 @@ local function update_pvp_shields()
             end
 
             -- Show hint
-            if not this.pvp_shields_displayed_offline_hint[force.name] and shields_researched then
+            if not town_center.pvp_shield_mgmt.displayed_offline_hint and shields_researched then
                 force.print("Your town is now advanced enough to deploy PvP shields."
                         .. " Once all of your town members leave, your town will be protected from enemy players"
                         .. " for up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
                         .. " However, biters will always be able to attack your town! See Help for more details.", Utils.scenario_color)
-                this.pvp_shields_displayed_offline_hint[force.name] = true
+                town_center.pvp_shield_mgmt.displayed_offline_hint = true
             end
         end
 
@@ -210,7 +208,7 @@ local function update_pvp_shields()
         if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby and game.tick - town_center.last_higher_league_nearby > protect_time_after_nearby then
             PvPShield.remove_shield(shield)
             shield = nil
-            this.pvp_shields_reactivate_immediately[force.index] = true
+            -- TODO:replace
         end
 
         -- Construct shield info text
@@ -319,7 +317,7 @@ function Public.request_afk_shield(town_center, player)
     if all_players_near_center(town_center) then
         if not Public.enemy_players_near_town(town_center, town_control_range) then
             if town_shields_researched(force) then
-                this.pvp_shields_mark_afk[force.name] = true
+                town_center.marked_afk = true
                 local shield = this.pvp_shields[force.name]
                 if shield then
                     PvPShield.remove_shield(shield)
@@ -343,30 +341,29 @@ local function update_afk_shields()
 
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force
-        if this.pvp_shields_mark_afk[force.name] then
+        if town_center.marked_afk then
             local players_online = #force.connected_players > 0
             if players_online and not all_players_near_center(town_center) then
-                this.pvp_shields_mark_afk[force.name] = false
+                town_center.marked_afk = false
                 force.print("AFK mode has ended because players moved", Utils.scenario_color)
                 local shield = this.pvp_shields[force.name]
                 if shield then
                     PvPShield.remove_shield(shield)
                 end
             elseif not players_online then
-                this.pvp_shields_mark_afk[force.name] = false
+                town_center.marked_afk = false
             end
         end
     end
 end
 
-function Public.init_town(town_center)
-    town_center.pvp_shield_mgmt = {}
+function Public.init_town()
     update_pvp_shields()
 end
 
-Event.on_nth_tick(30, update_pvp_shields_display)
-Event.on_nth_tick(30, update_pvp_shields)
-Event.on_nth_tick(30, update_leagues)
+Event.on_nth_tick(31, update_pvp_shields_display)
+Event.on_nth_tick(31, update_pvp_shields)
+Event.on_nth_tick(31, update_leagues)
 Event.on_nth_tick(13, update_afk_shields)
 
 return Public
