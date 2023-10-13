@@ -53,7 +53,7 @@ local function visualise_entity_deactivated(entity)
     })
 end
 
-local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'mining-drill'}
+local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'mining-drill', 'gun-turret', 'laser-turret', 'flamethrower-turret'}
 local function control_buildings_inside(surface, box, active)
     for _, e in pairs(surface.find_entities_filtered({ type = shield_inactive_types, area=box})) do
         if e.valid and not e.active == active then
