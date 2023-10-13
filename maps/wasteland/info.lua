@@ -47,7 +47,7 @@ local info_adv =
     - The size is marked by the blue square around towns
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
     - This shield is available before League 4
-    - Shields also stop all production buildings, labs and roboports
+    - Shields also stop all production buildings, labs, roboports and turrets
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
 
 [font=heading-1]Advanced tips and tricks[/font]
