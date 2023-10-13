@@ -168,8 +168,8 @@ local function set_offers(town_center)
     table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'coal', count = 4}})
     table_insert(market_items, {price = {{'coal', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 4}}, offer = {type = 'give-item', item = 'uranium-ore', count = 1}})
-    table_insert(market_items, {price = {{'uranium-ore', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{'coin', 6}}, offer = {type = 'give-item', item = 'uranium-ore', count = 1}})
+    table_insert(market_items, {price = {{'uranium-ore', 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     -- composition of crude-oil-barrel = 1 barrel + 50 crude oil = 5 iron ore + 5 coal ore (liquefaction)
     table_insert(market_items, {price = {{'coin', 4}}, offer = {type = 'give-item', item = 'crude-oil-barrel', count = 1}})
