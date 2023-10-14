@@ -231,8 +231,8 @@ local function on_player_mined_entity(event)
         return
     end
     ore_vein(event)
-    if this.tutorials[player.index] then
-        this.tutorials[player.index].mined_rock = true
+    if this.tutorials[player.name] then
+        this.tutorials[player.name].mined_rock = true
     end
 end
 
