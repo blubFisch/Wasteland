@@ -53,7 +53,7 @@ local function visualise_entity_deactivated(entity)
     })
 end
 
-local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'gun-turret', 'laser-turret', 'flamethrower-turret'}
+local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'ammo-turret', 'electric-turret', 'fluid-turret', 'radar', 'beacon'}
 local function control_buildings_inside(surface, box, active)
     for _, e in pairs(surface.find_entities_filtered({ type = shield_inactive_types, area=box})) do
         if e.valid and not e.active == active then
@@ -283,5 +283,6 @@ Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(3, update_shield_lifetime)
 Event.add(defines.events.on_tick, scan_protect_shield_area)
 Event.add(defines.events.on_built_entity, on_built_entity)
+Event.add(defines.events.on_robot_built_entity, on_built_entity)
 
 return Public
