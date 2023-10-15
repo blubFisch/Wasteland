@@ -4,7 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-1]Oct 2023 updates[/font]
- - When offline/afk, towns get frozen completely (withing the blue square) - until league 4
+ - When offline/afk, town's production and turrets now get frozen (withing the blue square), until league 4
  - Higher damage modifier for multi-player towns (2 player=70% damage each)
  - Offline shields now only work before league 4
  - Power poles can no longer be used to block enemy buildings - now only turrets block buildings]]
@@ -47,7 +47,7 @@ local info_adv =
     - The size is marked by the blue square around towns
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
     - This shield is available before League 4
-    - Shields also stop all production buildings, labs, roboports and turrets
+    - Shields also stop all production buildings, labs, roboports, turrets and others (enable AFK mode to test it)
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
 
 [font=heading-1]Advanced tips and tricks[/font]
