@@ -4,22 +4,22 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 local Team = require 'maps.wasteland.team'
 
 local messages = {
-    ['small-biter'] = {' was nibbled to death', ' should not have played with the biters', ' is biter food'},
-    ['medium-biter'] = {' lost their leg to a hungry biter', ' is biter food', ' was a tasty biter treat'},
-    ['big-biter'] = {' had their head chomped off', ' is biter food', ' was a tasty biter treat'},
-    ['behemoth-biter'] = {' was devoured by a behemoth biter', ' was crushed by a behemoth biter', ' is biter food'},
-    ['small-spitter'] = {' melted away by acid spit!', " couldn't dodge the spit in time"},
-    ['medium-spitter'] = {' melted away by acid spit!', " couldn't dodge the spit in time"},
-    ['big-spitter'] = {' melted away by acid spit!', " couldn't dodge the spit in time", ' got blasted away by a spitter'},
-    ['behemoth-spitter'] = {' melted away by acid spit!', " couldn't dodge the spit in time", ' got blasted away by a spitter'},
-    ['small-worm-turret'] = {' melted away by acid spit!', " couldn't dodge the spit in time"},
-    ['medium-worm-turret'] = {' melted away by acid spit!', " couldn't dodge the spit in time", ' got blasted away by a medium worm turret'},
-    ['big-worm-turret'] = {' melted away by acid spit!', " couldn't dodge the spit in time", ' got blasted away by a big worm turret'},
-    ['gun-turret'] = {' was mowed down by a gun turret'},
-    ['laser-turret'] = {' was fatally enlightened by a laser turret'},
-    ['flamethrower-turret'] = {' was barbecued by a flamer turret'},
-    ['cargo-wagon'] = {' was flattened', ' was crushed'},
-    ['locomotive'] = {' was flattened', ' was crushed'}
+    ['small-biter'] = {'was nibbled to death', 'should not have played with the biters', 'is biter food'},
+    ['medium-biter'] = {'lost their leg to a hungry biter', 'is biter food', 'was a tasty biter treat'},
+    ['big-biter'] = {'had their head chomped off', 'is biter food', 'was a tasty biter treat'},
+    ['behemoth-biter'] = {'was devoured by a behemoth biter', 'was crushed by a behemoth biter', 'is biter food'},
+    ['small-spitter'] = {'melted away by acid spit!', 'couldn\'t dodge the spit in time'},
+    ['medium-spitter'] = {'melted away by acid spit!', 'couldn\'t dodge the spit in time'},
+    ['big-spitter'] = {'melted away by acid spit!', 'couldn\'t dodge the spit in time', 'got blasted away by a spitter'},
+    ['behemoth-spitter'] = {'melted away by acid spit!', 'couldn\'t dodge the spit in time', 'got blasted away by a spitter'},
+    ['small-worm-turret'] = {'melted away by acid spit!', 'couldn\'t dodge the spit in time'},
+    ['medium-worm-turret'] = {'melted away by acid spit!', 'couldn\'t dodge the spit in time', 'got blasted away by a medium worm turret'},
+    ['big-worm-turret'] = {'melted away by acid spit!', 'couldn\'t dodge the spit in time', 'got blasted away by a big worm turret'},
+    ['gun-turret'] = {'was mowed down by a gun turret'},
+    ['laser-turret'] = {'was fatally enlightened by a laser turret'},
+    ['flamethrower-turret'] = {'was barbecued by a flamer turret'},
+    ['cargo-wagon'] = {'was flattened by a train', 'was crushed'},
+    ['locomotive'] = {'was flattened by a train', 'was crushed'}
 }
 
 local function display_player_name(player)
@@ -46,7 +46,7 @@ local function on_player_died(event)
             if TeamBasics.is_town_force(cause.force) then
                 extension = " of " .. Team.force_display_name(cause.force)
             end
-            game.print(player_display .. messages[cause.name][math.random(1, #messages[cause.name])] .. extension, message_color)
+            game.print(player_display .. " " .. messages[cause.name][math.random(1, #messages[cause.name])] .. extension, message_color)
             return
         end
 
