@@ -212,7 +212,7 @@ local function update_pvp_shields()
         if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby and game.tick - town_center.last_higher_league_nearby > protect_time_after_nearby then
             if town_offline_or_afk then -- change to an offline shield
                 shield.shield_type = PvPShield.SHIELD_TYPE.OFFLINE
-                shield.expiry_time = game.tick + town_center.pvp_shield_mgmt.offline_shield_eligible_until
+                shield.expiry_time = town_center.pvp_shield_mgmt.offline_shield_eligible_until
             else
                 PvPShield.remove_shield(shield)
                 shield = nil
