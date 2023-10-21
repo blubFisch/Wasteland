@@ -144,7 +144,7 @@ local function on_player_mined_entity(event)
         local m2 = 1.7 + (amount_bonus * 1.7)
         local r1 = math.ceil(entity_loot_amounts[scrap] * m1)
         local r2 = math.ceil(entity_loot_amounts[scrap] * m2)
-        amount = math.random(r1, r2) * (player.force.mining_drill_productivity_bonus + 1)
+        amount = math.ceil(math.random(r1, r2) * (player.force.mining_drill_productivity_bonus + 1))
     end
     local inserted_count = player.insert({name = scrap, count = amount})
 
