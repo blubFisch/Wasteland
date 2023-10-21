@@ -128,13 +128,14 @@ local function on_player_mined_entity(event)
         return
     end
 
+    local player = game.players[event.player_index]
+
     -- scrap entities drop loot
     event.buffer.clear()
 
     local scrap = scrap_raffle[math.random(1, size_of_scrap_raffle)]
 
-    local scrap_amount_modifier = 4
-    local amount_bonus = scrap_amount_modifier + (game.forces.player.mining_drill_productivity_bonus * 2)
+    local amount_bonus = 5
     local amount
     if entity_loot_amounts[scrap] <= 0 then
         amount = math.abs(entity_loot_amounts[scrap])
@@ -143,10 +144,8 @@ local function on_player_mined_entity(event)
         local m2 = 1.7 + (amount_bonus * 1.7)
         local r1 = math.ceil(entity_loot_amounts[scrap] * m1)
         local r2 = math.ceil(entity_loot_amounts[scrap] * m2)
-        amount = math.random(r1, r2)
+        amount = math.random(r1, r2) * (player.force.mining_drill_productivity_bonus + 1)
     end
-
-    local player = game.players[event.player_index]
     local inserted_count = player.insert({name = scrap, count = amount})
 
     if inserted_count ~= amount then
