@@ -264,7 +264,7 @@ end
 local function on_built_entity(event)
     local entity = event.created_entity
 
-    if not table.array_contains(shield_inactive_types, entity.type) then
+    if not entity.valid or not table.array_contains(shield_inactive_types, entity.type) then
         return
     end
 
