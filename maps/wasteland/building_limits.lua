@@ -107,7 +107,6 @@ local function process_slots(actor, event)
         town_center.labs = labs + 1
         local key = script.register_on_entity_destroyed(entity)
         this.labs[key] = force.index
-        game.print(force.index)
 
         surface.create_entity(
                 {
