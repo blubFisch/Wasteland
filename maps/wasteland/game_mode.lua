@@ -6,7 +6,7 @@ local button_id = "wl_game_mode"
 Public.mode = GameSettings.game_mode
 Public.mode_names = {
     "Short",    -- Target: 10 hours game
-    "Medium",   -- Target: 2 days game
+    "Normal",   -- Target: 2 days game
     "Long"      -- Target: 7 days game
 }
 
