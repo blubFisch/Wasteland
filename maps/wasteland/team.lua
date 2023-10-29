@@ -557,6 +557,13 @@ local function disable_cluster_grenades(force)
     force.recipes['cluster-grenade'].enabled = false
 end
 
+local function disable_high_lab_speed_research(force)
+    -- Prevent researching extremely fast from stockpiled science
+    force.technologies['research-speed-4'].enabled = false
+    force.technologies['research-speed-5'].enabled = false
+    force.technologies['research-speed-6'].enabled = false
+end
+
 local function disable_high_weapon_research(force)
     -- Limit the difference between small/big towns so that new towns have a chance
     -- and prevent pvp encounters that last less than 1s
@@ -637,6 +644,7 @@ function Public.create_town_force(player)
     disable_artillery(force, permission_group)
     disable_spidertron(force, permission_group)
     disable_high_weapon_research(force)
+    disable_high_lab_speed_research(force)
     disable_rockets(force)
     disable_nukes(force)
     disable_cluster_grenades(force)

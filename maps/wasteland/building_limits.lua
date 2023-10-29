@@ -71,7 +71,25 @@ local function process_slots(actor, event)
                 }
         )
     elseif entity.name == 'lab' then
-        local slots_max = 8
+        -- Prevent researching extremely fast from stockpiled science
+        local nearby_beacons = surface.find_entities_filtered({area = {{entity.position.x - 4, entity.position.y - 4},
+                                                                       {entity.position.x + 4, entity.position.y + 4}},
+                                                               name = 'beacon'})
+        if #nearby_beacons > 0 then
+            surface.create_entity(
+                    {
+                        name = 'flying-text',
+                        position = entity.position,
+                        text = "Beacons can't affect labs!",
+                        color = {r = 0.77, g = 0.0, b = 0.0}
+                    }
+            )
+            actor.insert({name = 'lab', count = 1})
+            entity.destroy()
+            return
+        end
+
+        local slots_max = 10
         local labs = town_center.labs or 0
         if labs >= slots_max then
             surface.create_entity(
@@ -100,7 +118,10 @@ local function process_slots(actor, event)
                 }
         )
     elseif entity.name == 'beacon' then
-        local nearby_entities = surface.find_entities_filtered({area = {{entity.position.x - 3, entity.position.y - 3}, {entity.position.x + 3, entity.position.y + 3}}, name = 'lab'})
+        -- Prevent researching extremely fast from stockpiled science
+        local nearby_entities = surface.find_entities_filtered({area = {{entity.position.x - 4, entity.position.y - 4},
+                                                                        {entity.position.x + 4, entity.position.y + 4}},
+                                                                name = 'lab'})
         if #nearby_entities > 0 then
             surface.create_entity(
                     {
