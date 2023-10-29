@@ -3,7 +3,8 @@ local Public = {}
 local GameSettings = require 'game_settings'
 
 local changelog =
-    [[[font=heading-1]Oct 2023 updates[/font]
+    [[[font=heading-1]Nov 2023 updates[/font]
+ - Limit research speed to nerf the strategy of stockpiling science
  - When offline/afk, town's production and turrets now get frozen (withing the blue square), until league 4
  - Higher damage modifier for multi-player towns (2 player=70% damage each)
  - Offline shields now only work before league 4

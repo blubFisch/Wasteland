@@ -43,6 +43,7 @@ function Public.reset_table()
     this.town_evo_warned = {}
     this.treasure_hint = {}
     this.laser_turrets = {}
+    this.labs = {}
     this.uranium_patch_location = nil
 end
 

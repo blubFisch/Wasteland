@@ -369,7 +369,7 @@ function Public.init_town()
     update_pvp_shields()
 end
 
-Event.on_nth_tick(31, update_pvp_shields_display)
+Event.on_nth_tick(31, update_pvp_shields_display)   -- Tiny time offset to even out load
 Event.on_nth_tick(31, update_pvp_shields)
 Event.on_nth_tick(31, update_leagues)
 Event.on_nth_tick(13, update_afk_shields)
