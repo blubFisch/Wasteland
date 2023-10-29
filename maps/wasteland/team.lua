@@ -357,12 +357,13 @@ local function set_cease_fire(player, entity)
 
     requesting_force.set_cease_fire(target_force, true)
 
+    local pm_tag = "[Private message] "
     if target_force.get_cease_fire(requesting_force) then
-        requesting_force.print("You have agreed on a mutual cease-fire with " .. Public.force_display_name(target_force), Utils.scenario_color)
-        target_force.print(Public.force_display_name(requesting_force) .. " has agreed on a mutual cease-fire with you", Utils.scenario_color)
+        requesting_force.print(pm_tag .. "You have agreed on a mutual cease-fire with " .. Public.force_display_name(target_force), Utils.scenario_color)
+        target_force.print(pm_tag ..  Public.force_display_name(requesting_force) .. " has agreed on a mutual cease-fire with you", Utils.scenario_color)
     else
-        requesting_force.print("You have set a one-sided cease-fire with " .. Public.force_display_name(target_force), Utils.scenario_color)
-        target_force.print(Public.force_display_name(requesting_force) .. " has set one-sided cease-fire with you", Utils.scenario_color)
+        requesting_force.print(pm_tag .. "You have set a one-sided cease-fire with " .. Public.force_display_name(target_force), Utils.scenario_color)
+        target_force.print(pm_tag .. Public.force_display_name(requesting_force) .. " has set one-sided cease-fire with you", Utils.scenario_color)
     end
 end
 
