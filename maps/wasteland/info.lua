@@ -4,6 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-1]Nov 2023 updates[/font]
+ - Tanks can not be bought anymore in scrap markets
  - Limit research speed to nerf the strategy of stockpiling science
  - When offline/afk, town's production and turrets now get frozen (withing the blue square), until league 4
  - Higher damage modifier for multi-player towns (2 player=70% damage each)
