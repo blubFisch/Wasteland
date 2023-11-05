@@ -3,6 +3,8 @@ _LIFECYCLE = _STAGE.control -- Control stage
 _DEBUG = false
 _DUMP_ENV = false
 
+
+local GuiTemplater = require 'zk-lib/lualibs/control_stage/GuiTemplater'
 require 'modules.anti_blueprint_spam'
 require 'utils.server'
 require 'utils.server_commands'
@@ -58,5 +60,9 @@ function require(path)
     return loaded[path] or error('Can only require files at runtime that have been required in the control stage.', 2)
 end
 
+
 local Event = require 'utils.event'
-Event.add(defines.events.on_player_created, on_player_created)
+-- Event.add(defines.events.on_player_created, on_player_created)
+-- for id, f in pairs(GuiTemplater.events) do
+--     Event.add(id, f)
+-- end
