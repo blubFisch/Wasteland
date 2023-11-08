@@ -62,7 +62,7 @@ end
 
 
 local Event = require 'utils.event'
--- Event.add(defines.events.on_player_created, on_player_created)
+Event.add(defines.events.on_player_created, on_player_created)
 -- for id, f in pairs(GuiTemplater.events) do
 --     Event.add(id, f)
 -- end
