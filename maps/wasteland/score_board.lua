@@ -85,7 +85,14 @@ local function init_score_board(player)
     local flow, frame, top_flow = GuiTemplater.create_hollow_screen_window(player, "wasteland_leaderboard_frame", 'Town leaderboard')
     top_flow.children[#top_flow.children].name = button_id
     this.score_gui_frame[player_index] = flow
-    frame.visible = false
+    local offset_y = -200 - (33 * table_size(this.town_centers) * player.display_scale)
+    new_location = GuiTemplater.get_location_by_percentage_with_offset(
+        player, 0, 0.5,
+        nil, offset_y, -- x (left), y (top) offsets
+        nil, 100       --  min x (left), y (top)
+    )
+    new_location.x = 20
+    frame.location = new_location
 end
 
 local function format_score(score)
