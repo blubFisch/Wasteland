@@ -10,6 +10,7 @@ local Team = require 'maps.wasteland.team'
 local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local GuiTemplater = require 'zk-lib/lualibs/control_stage/GuiTemplater'
 
 
 local button_id = 'towny-score-button'
@@ -59,27 +60,39 @@ function Public.add_score_button(player)
 end
 
 local function on_gui_click(event)
-    if not event.element.valid or event.element.name ~= button_id then
+    local element = event.element
+    if not element.valid or element.name ~= button_id then
         return
     end
-    local player = game.players[event.player_index]
+
+    local player = game.get_player(event.player_index)
     local this = ScenarioTable.get_table()
     local saved_frame = this.score_gui_frame[player.index]
-    saved_frame.visible = not saved_frame.visible
+    if saved_frame.parent.visible then
+        saved_frame.clear()
+    end
+    saved_frame.parent.visible = not saved_frame.parent.visible
 end
 
 local function init_score_board(player)
     local this = ScenarioTable.get_table()
-    local saved_frame = this.score_gui_frame[player.index]
+    local player_index = player.index
+    local saved_frame = this.score_gui_frame[player_index]
     if saved_frame and saved_frame.valid then
         return
     end
 
-    local flow = mod_gui.get_frame_flow(player)
-    local frame = flow.add {type = 'frame', style = mod_gui.frame_style, caption = 'Town leaderboard', direction = 'vertical'}
-    frame.style.vertically_stretchable = false
-    this.score_gui_frame[player.index] = frame
-    frame.visible = false
+    local flow, frame, top_flow = GuiTemplater.create_hollow_screen_window(player, "wasteland_leaderboard_frame", 'Town leaderboard')
+    top_flow.children[#top_flow.children].name = button_id
+    this.score_gui_frame[player_index] = flow
+    local offset_y = -200 - (33 * table_size(this.town_centers) * player.display_scale)
+    new_location = GuiTemplater.get_location_by_percentage_with_offset(
+        player, 0, 0.5,
+        nil, offset_y, -- x (left), y (top) offsets
+        nil, 100       --  min x (left), y (top)
+    )
+    new_location.x = 20
+    frame.location = new_location
 end
 
 local function format_score(score)
