@@ -882,6 +882,14 @@ local function kill_force(force_name, cause)
         message = town_name .. ' has fallen to the biters!'
     end
 
+    local town_count = 0
+    for _, _ in pairs(this.town_centers) do
+        town_count = town_count + 1
+    end
+    if town_count == 0 then
+        game.reset_time_played()
+    end
+
     log("kill_force: " .. message)
     Server.to_discord_embed(message)
     game.print('>> ' .. message, Utils.scenario_color)
