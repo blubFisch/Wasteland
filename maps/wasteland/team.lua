@@ -583,6 +583,7 @@ local function disable_high_weapon_research(force)
     force.technologies['stronger-explosives-6'].enabled = false
     force.technologies['stronger-explosives-7'].enabled = false
 
+    force.technologies['follower-robot-count-4'].enabled = false
     force.technologies['follower-robot-count-5'].enabled = false
     force.technologies['follower-robot-count-6'].enabled = false
     force.technologies['follower-robot-count-7'].enabled = false
