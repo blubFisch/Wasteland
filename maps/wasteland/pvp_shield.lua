@@ -45,21 +45,34 @@ local function remove_drawn_borders(shield)
 end
 
 local function visualise_entity_deactivated(entity)
-    entity.surface.create_entity({
-        name = 'flying-text',
-        position = entity.position,
-        text = "Inactive inside shield",
-        color = {r = 1, g = 0.0, b = 0.0}
-    })
+    local this = ScenarioTable.get_table()
+
+    local entity_label = rendering.draw_text{
+        text = "Inactive",
+        surface = entity.surface,
+        target = entity,
+        target_offset = {0, -1},
+        color = {r = 1, g = 0.0, b = 0.0},
+        alignment = "center",
+        scale = 1.0
+    }
+    this.entity_labels[entity.unit_number] = entity_label
 end
 
 local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'ammo-turret', 'electric-turret', 'fluid-turret', 'radar', 'beacon'}
 local function control_buildings_inside(surface, box, active)
+    local this = ScenarioTable.get_table()
     for _, e in pairs(surface.find_entities_filtered({ type = shield_inactive_types, area=box})) do
         if e.valid and not e.active == active then
             e.active = active
             if not active then
                 visualise_entity_deactivated(e)
+            else
+                local entity_label = this.entity_labels[e.unit_number]
+                if entity_label and rendering.is_valid(entity_label) then
+                    rendering.destroy(entity_label)
+                    this.entity_labels[e.unit_number] = nil
+                end
             end
         end
     end

@@ -45,6 +45,7 @@ function Public.reset_table()
     this.laser_turrets = {}
     this.labs = {}
     this.uranium_patch_location = nil
+    this.entity_labels = {}
 end
 
 function Public.get_table()
