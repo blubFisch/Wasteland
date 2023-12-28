@@ -174,7 +174,7 @@ function Public.near_another_town(my_force_name, position, surface, radius, radi
     return false
 end
 
-function Public.in_restricted_zone(surface, position)
+function Public.is_out_of_map(surface, position)
     if surface.name ~= 'nauvis' then
         return false
     end
@@ -197,7 +197,7 @@ local function prevent_entity_in_restricted_zone(event)
     local surface = entity.surface
     local position = entity.position
     local error = false
-    if Public.in_restricted_zone(surface, position) then
+    if Public.is_out_of_map(surface, position) then
         error = true
         entity.destroy()
         local item = event.item
@@ -208,7 +208,7 @@ local function prevent_entity_in_restricted_zone(event)
     if error == true then
         local player
         if player_index then player = game.players[player_index] end
-        build_error_notification(surface, position, 'Can not build in restricted zone!', player)
+        build_error_notification(surface, position, 'Can not build out of map!', player)
     end
 end
 
@@ -224,7 +224,7 @@ local function prevent_landfill_in_restricted_zone(event)
     for _, t in pairs(event.tiles) do
         local old_tile = t.old_tile
         position = t.position
-        if Public.in_restricted_zone(surface, position) then
+        if Public.is_out_of_map(surface, position) then
             fail = true
             surface.set_tiles({{name = old_tile.name, position = position}}, true)
             refund_item(event, event.item.name)
@@ -233,7 +233,7 @@ local function prevent_landfill_in_restricted_zone(event)
     if fail == true then
         local player
         if player_index ~= nil then player = game.players[player_index] end
-        build_error_notification(surface, position, 'Can not build in restricted zone!', player)
+        build_error_notification(surface, position, 'Can not build out of map!', player)
     end
     return fail
 end

@@ -24,6 +24,11 @@ Public.radius_between_towns = Public.higher_league_activation_range + 2 + 40
 Public.map_size = {2048, 2048}
 Public.uranium_patch_nobuild = 180
 
+function Public.town_too_close_to_map_end(position)
+    return Public.map_size[1] / 2 - math_abs(position.x) < Public.league_balance_shield_size / 2
+            or Public.map_size[2] / 2 - math_abs(position.y) < Public.league_balance_shield_size / 2
+end
+
 function Public.reveal_strategic_resources(force)
     -- We do this to even the battle field with players who just check out the map in SP
 

@@ -258,19 +258,16 @@ local function is_valid_location(force_name, surface, position)
         return false
     end
 
-    for _, vector in pairs(town_wall_vectors) do
-        local p = {x = math_floor(position.x + vector[1]), y = math_floor(position.y + vector[2])}
-        if Building.in_restricted_zone(surface, p) then
-            surface.create_entity(
-                {
-                    name = 'flying-text',
-                    position = position,
-                    text = 'Can not build in restricted zone!',
-                    color = {r = 0.77, g = 0.0, b = 0.0}
-                }
-            )
-            return false
-        end
+    if MapLayout.town_too_close_to_map_end(position) then
+        surface.create_entity(
+            {
+                name = 'flying-text',
+                position = position,
+                text = 'Too close to map edge!',
+                color = {r = 0.77, g = 0.0, b = 0.0}
+            }
+        )
+        return false
     end
 
     if table_size(this.town_centers) > 64 - 4 - Team.max_player_slots then
