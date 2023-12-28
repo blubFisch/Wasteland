@@ -2,6 +2,7 @@ local table_insert = table.insert
 local math_random = math.random
 local math_floor = math.floor
 local math_abs = math.abs
+local math_sqrt = math.sqrt
 
 local Public = {}
 
@@ -389,16 +390,39 @@ local function on_chunk_generated(event)
 
     -- deep uranium patch
     local uranium_patch_radius = 3
-    local uranium_amount = 50000
+    local uranium_amount = 100000
     local uranium_patch_location = this.uranium_patch_location
     if math.abs(chunk_position.x - math.floor(uranium_patch_location.x / 32)) <= 1 and math.abs(chunk_position.y - math.floor(uranium_patch_location.y / 32)) <= 1 then
         for x = 0, 31, 1 do
             for y = 0, 31, 1 do
                 position = {x = left_top_x + x, y = left_top_y + y}
-                local distance_to_uranium_patch_center = math.sqrt((position.x - uranium_patch_location.x)^2 + (position.y - uranium_patch_location.y)^2)
+                local distance_to_uranium_patch_center = math_sqrt((position.x - uranium_patch_location.x)^2 + (position.y - uranium_patch_location.y)^2)
                 if distance_to_uranium_patch_center <= uranium_patch_radius then
                     surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
                     surface.create_entity({name = 'uranium-ore', position = position, amount = uranium_amount})
+                end
+            end
+        end
+    end
+
+    -- random mixed patches, mostly to show beginners that there's ores on the map
+    if math_random(1,10) > 9 then
+        local ores = {'iron-ore', 'copper-ore', 'stone', 'coal'}
+        local amount = 500
+        local max_radius = 8
+        local offset_x = math_random(max_radius, 32-max_radius)
+        local offset_y = math_random(max_radius, 32-max_radius)
+
+        for x = -max_radius, max_radius, 1 do
+            for y = -max_radius, max_radius, 1 do
+                position = { x = left_top_x + x + offset_x, y = left_top_y + y + offset_y}
+                local distance_to_center = math_abs(math_sqrt(x^2 + y^2))
+                if distance_to_center < max_radius then
+                    noise = get_noise('wasteland', position, seed)
+                    local ore_type = ores[math_random(1, 4)]
+                    if surface.can_place_entity({name = ore_type, position = position}) then
+                        surface.create_entity({name = ore_type, position = position, amount = amount})
+                    end
                 end
             end
         end
