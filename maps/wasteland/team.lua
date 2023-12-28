@@ -27,17 +27,12 @@ local destroy_wall_types = {
 
 local destroy_military_types = {
     ['ammo-turret'] = true,
-    ['artillery-turret'] = true,
-    ['artillery-wagon'] = true,
     ['electric-turret'] = true,
     ['fluid-turret'] = true,
-    ['lab'] = true,
+    ['artillery-turret'] = true,
+    ['artillery-wagon'] = true,
     ['land-mine'] = true,
-    ['logistic-robot'] = true,
-    ['radar'] = true,
-    ['reactor'] = true,
-    ['roboport'] = true,
-    ['rocket-silo'] = true
+    ['radar'] = true
 }
 
 local destroy_robot_types = {
@@ -46,10 +41,11 @@ local destroy_robot_types = {
     ['logistic-robot'] = true
 }
 
-local storage_types = {
+local dont_destroy_types = {
     ['container'] = true,
     ['logistic-container'] = true,
-    ['storage-tank'] = true
+    ['storage-tank'] = true,
+    ['reactor'] = true
 }
 
 local outlander_force_disabled_recipes = {
@@ -804,15 +800,16 @@ local function kill_force(force_name, cause)
     end
     for _, e in pairs(surface.find_entities_filtered({force = force_name})) do
         if e.valid then
-            if destroy_military_types[e.type] == true then
+            game.print(e.type)
+            if destroy_military_types[e.type] then
                 surface.create_entity({name = 'big-artillery-explosion', position = position})
                 e.die()
-            elseif destroy_robot_types[e.type] == true then
+            elseif destroy_robot_types[e.type] then
                 surface.create_entity({name = 'explosion', position = position})
                 e.die()
-            elseif destroy_wall_types[e.type] == true then
+            elseif destroy_wall_types[e.type] then
                 e.die()
-            elseif storage_types[e.type] ~= true then   -- spare chests
+            elseif not dont_destroy_types[e.type] then
                 local random = math_random()
                 if random > 0.5 or e.health == nil then
                     e.die()
