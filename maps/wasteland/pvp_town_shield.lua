@@ -162,8 +162,8 @@ local function update_pvp_shields()
 
             -- Leave offline shield online for a short time for the town's players "warm up" and also to understand it better
             if shield and shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE then
-                local delay_mins = 3
-                force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minutes."
+                local delay_mins = 1
+                force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minute."
                         .. " After everyone in your town leaves, you will get a new shield for "
                         .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
                 shield.shield_type = PvPShield.SHIELD_TYPE.OFFLINE_POST
