@@ -365,6 +365,11 @@ local function update_afk_shields()
     end
 end
 
+function Public.player_left(player)
+    game.print("XDB: LEFT " .. player.name)
+    update_pvp_shields()    -- prevent shields from activating when the last player of the server logs out next to them?
+end
+
 function Public.init_town()
     update_pvp_shields()
 end
