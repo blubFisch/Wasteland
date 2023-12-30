@@ -19,7 +19,8 @@ local league_shield_radius = (MapLayout.league_balance_shield_size - 1) / 2
 local league_shield_vectors = Utils.make_border_vectors(league_shield_radius)
 
 function Public.get_town_control_range(town_center)
-    return 100 + town_center.evolution.worms * 60
+    return math.min(130 + town_center.evolution.worms * 130,
+            MapLayout.radius_between_towns - MapLayout.league_balance_shield_size / 2 - 5)  -- don't overlap with other towns
 end
 
 function Public.get_town_league(town_center)
