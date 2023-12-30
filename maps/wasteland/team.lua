@@ -800,7 +800,6 @@ local function kill_force(force_name, cause)
     end
     for _, e in pairs(surface.find_entities_filtered({force = force_name})) do
         if e.valid then
-            game.print(e.type)
             if destroy_military_types[e.type] then
                 surface.create_entity({name = 'big-artillery-explosion', position = position})
                 e.die()

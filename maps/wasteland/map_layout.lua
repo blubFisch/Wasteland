@@ -19,7 +19,7 @@ Public.central_oil_radius_outer = 25
 Public.league_balance_shield_size = 141
 Public.higher_league_activation_range = Public.league_balance_shield_size + 50
 
-Public.radius_between_towns = Public.higher_league_activation_range + 2 + 40
+Public.radius_between_towns = Public.higher_league_activation_range + 2 + 80    -- plus some buffer for less weird shield dyanmics
 
 Public.map_size = {2048, 2048}
 Public.uranium_patch_nobuild = 180

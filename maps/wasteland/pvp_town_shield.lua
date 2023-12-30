@@ -245,35 +245,13 @@ local function update_pvp_shields()
     end
 end
 
-local function init_league_label(player)
-    local this = ScenarioTable.get_table()
-
-    local league_label = rendering.draw_text{
-        text = "[League]",
-        surface = player.surface,
-        target = player.character,
-        target_offset = {0, 0},
-        color = {r = 1, g = 1, b = 1},
-        alignment = "center",
-        scale = 1.0
-    }
-    this.league_labels[player.index] = league_label
-end
-
 local function update_leagues()
     if game.tick == 0 then return end
 
     local this = ScenarioTable.get_table()
     for _, player in pairs(game.connected_players) do
         if player.character then
-            local league_label = this.league_labels[player.index]
-            if not league_label or not rendering.is_valid(league_label) then
-                init_league_label(player)
-            end
-
             local league = Public.get_player_league(player)
-
-            rendering.set_text(this.league_labels[player.index], "League " .. league)
 
             if this.previous_leagues[player.index] ~= nil and league ~= this.previous_leagues[player.index] then
                 player.print("You are now in League " .. league, Utils.scenario_color)
