@@ -366,8 +366,7 @@ local function update_afk_shields()
     end
 end
 
-function Public.player_left(player)
-    game.print("XDB: LEFT " .. player.name)
+local function on_player_left_game(player)
     update_pvp_shields()    -- prevent shields from activating when the last player of the server logs out next to them?
 end
 
@@ -379,5 +378,6 @@ Event.on_nth_tick(31, update_pvp_shields_display)   -- Tiny time offset to even 
 Event.on_nth_tick(31, update_pvp_shields)
 Event.on_nth_tick(31, update_leagues)
 Event.on_nth_tick(13, update_afk_shields)
+Event.add(defines.events.on_player_left_game, on_player_left_game)
 
 return Public

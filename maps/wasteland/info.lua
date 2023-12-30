@@ -4,6 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-1]Nov 2023 updates[/font]
+ - Bugfixes for some exploits
  - Tanks can not be bought anymore in scrap markets
  - Limit research speed to nerf the strategy of stockpiling science
  - When offline/afk, town's production and turrets now get frozen (withing the blue square), until league 4
