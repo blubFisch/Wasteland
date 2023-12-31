@@ -243,7 +243,7 @@ function Public.clear_old_chunks()
     end
 end
 
-Event.on_nth_tick(1, Public.clear_old_chunks)
+Event.on_nth_tick(67, Public.clear_old_chunks)
 --Event.add(defines.events.on_tick, on_tick)
 
 return Public
