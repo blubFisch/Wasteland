@@ -226,7 +226,7 @@ function Public.clear_old_chunks()
     --game.print("XDB clear_old_chunks")
     local surface = game.surfaces.nauvis
     local chunk = surface.get_random_chunk()
-    local check_empty_radius = 150
+    local check_empty_radius = 100
     --game.print("XDB selected " .. chunk.x .. " " .. chunk.y)
 
     if math_abs(chunk.x * 32) < MapLayout.map_size[1]/2 and math_abs(chunk.y * 32) < MapLayout.map_size[2]/2 then
