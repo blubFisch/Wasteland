@@ -303,9 +303,14 @@ local function process_built_entities(event)
     local players_prefs = global.tokens.utils_gui_bottom_frame.players[player_index]
     if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
         and not allowed_entities_keep_force[name] then
-        entity.force = game.forces['neutral']
-        surface.create_entity({name = 'flying-text', position = position,
-                               text = "Neutral (setting)", color = {r = 0, g = 1, b = 0}})
+        if entity.type ~= "entity-ghost" then
+            entity.force = game.forces['neutral']
+            surface.create_entity({name = 'flying-text', position = position,
+                                   text = "Neutral (setting)", color = {r = 0, g = 1, b = 0}})
+        else
+            surface.create_entity({name = 'flying-text', position = position,
+                                   text = "Blueprint not neutral (Setting)", color = {r = 0, g = 1, b = 1}})
+        end
     end
 
     -- Prevent power poles of different forces from connecting to each other
