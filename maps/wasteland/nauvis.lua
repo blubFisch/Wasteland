@@ -220,7 +220,7 @@ function Public.clear_nuke_schedule()
     this.nuke_tick_schedule = {}
 end
 
-local dont_clear_around_types = {'container', 'logistic-container', 'storage-tank', 'straight-rail', 'curved-rail'}
+local never_clear_around_types = { 'container', 'logistic-container', 'storage-tank', 'straight-rail', 'curved-rail'}
 
 function Public.clear_old_chunks()
     --game.print("XDB clear_old_chunks")
@@ -229,12 +229,13 @@ function Public.clear_old_chunks()
     local check_empty_radius = 100
     --game.print("XDB selected " .. chunk.x .. " " .. chunk.y)
 
+    -- Only clear main area of the map
     if math_abs(chunk.x * 32) < MapLayout.map_size[1]/2 and math_abs(chunk.y * 32) < MapLayout.map_size[2]/2 then
         local chunk_center = {(chunk.x)*32+16, (chunk.y)*32+16}
         if surface.count_entities_filtered{position=chunk_center, radius=check_empty_radius,
                                            force={"neutral", "enemy"}, limit=1, invert=true} == 0 and
-                surface.count_entities_filtered{position=chunk_center, radius=check_empty_radius,
-                                                force={"neutral"}, type=dont_clear_around_types, limit=1} == 0
+                surface.count_entities_filtered{ position=chunk_center, radius=check_empty_radius,
+                                                 force={"neutral"}, type= never_clear_around_types, limit=1} == 0
         then
             surface.delete_chunk({chunk.x,chunk.y})
             surface.request_to_generate_chunks(chunk_center, 1) -- Ensure biters spawn
