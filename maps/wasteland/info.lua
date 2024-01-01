@@ -4,6 +4,8 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-1]Nov 2023 updates[/font]
+ - Map has random mixed ore patches
+ - Map regenerates after some time
  - Bugfixes for some exploits
  - Tanks can not be bought anymore in scrap markets
  - Limit research speed to nerf the strategy of stockpiling science
