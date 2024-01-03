@@ -25,7 +25,7 @@ local function discharge_accumulators(surface, position, force, power_needs)
                     accu.energy = accu.energy - 1000000
                     power_needs = power_needs - 1000000 * bonus_factor
                 else
-                    power_drained = power_drained + power_needs
+                    power_drained = power_drained + power_needs * bonus_factor
                     accu.energy = accu.energy - power_needs
                 end
             elseif power_needs <= 0 then
