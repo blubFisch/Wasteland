@@ -2,6 +2,7 @@
 --charge your armor equipment from nearby accumulators!
 local Event = require 'utils.event'
 local SpamProtection = require 'utils.spam_protection'
+local bonus_factor = 5
 
 local function draw_charging_gui()
     for _, player in pairs(game.connected_players) do
@@ -13,27 +14,28 @@ local function draw_charging_gui()
     end
 end
 
-local function discharge_accumulators(surface, position, force, power_needs)
+local function discharge_accumulators(surface, position, force, energy_needs)
     local accumulators = surface.find_entities_filtered {name = 'accumulator', force = force, position = position, radius = 13}
-    local power_drained = 0
-    local bonus_factor = 5
+    local energy_provided = 0
+
     for _, accu in pairs(accumulators) do
         if accu.valid then
-            if accu.energy > 2000000 and power_needs > 0 then
-                if power_needs >= 1000000 * bonus_factor then
-                    power_drained = power_drained + 1000000 * bonus_factor
+            if accu.energy > 2000000 and energy_needs > 0 then
+                local max_energy_gain = 1000000 * bonus_factor
+                if energy_needs >= max_energy_gain then
+                    energy_provided = energy_provided + max_energy_gain
                     accu.energy = accu.energy - 1000000
-                    power_needs = power_needs - 1000000 * bonus_factor
+                    energy_needs = energy_needs - max_energy_gain
                 else
-                    power_drained = power_drained + power_needs * bonus_factor
-                    accu.energy = accu.energy - power_needs
+                    energy_provided = energy_provided + energy_needs * bonus_factor
+                    accu.energy = accu.energy - energy_needs
                 end
-            elseif power_needs <= 0 then
+            elseif energy_needs <= 0 then
                 break
             end
         end
     end
-    return power_drained
+    return energy_provided
 end
 
 local function info_floaty(player, text, color)
