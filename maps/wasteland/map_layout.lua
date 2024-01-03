@@ -371,7 +371,7 @@ local function on_chunk_generated(event)
     if chunk_position.x >= -2 and chunk_position.x <= 2 and chunk_position.y >= -2 and chunk_position.y <=2 then
         local ores = {'iron-ore', 'copper-ore', 'stone', 'coal'}
         local amount = 50000
-        local oil_amount = 500000
+        local oil_amount = 1000000
 
         for x = 0, 31, 1 do
             for y = 0, 31, 1 do
