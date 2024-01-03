@@ -16,13 +16,14 @@ end
 local function discharge_accumulators(surface, position, force, power_needs)
     local accumulators = surface.find_entities_filtered {name = 'accumulator', force = force, position = position, radius = 13}
     local power_drained = 0
+    local bonus_factor = 5
     for _, accu in pairs(accumulators) do
         if accu.valid then
-            if accu.energy > 3000000 and power_needs > 0 then
-                if power_needs >= 2000000 then
-                    power_drained = power_drained + 2000000
-                    accu.energy = accu.energy - 2000000
-                    power_needs = power_needs - 2000000
+            if accu.energy > 2000000 and power_needs > 0 then
+                if power_needs >= 1000000 * bonus_factor then
+                    power_drained = power_drained + 1000000 * bonus_factor
+                    accu.energy = accu.energy - 1000000
+                    power_needs = power_needs - 1000000 * bonus_factor
                 else
                     power_drained = power_drained + power_needs
                     accu.energy = accu.energy - power_needs
