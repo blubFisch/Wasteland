@@ -29,9 +29,10 @@ local max_evolution_distance = 500
 local max_pollution_big = 64
 local max_pollution_medium = 16
 -- max_factor < 1.0 means technology sum of weights will be greater than 1.0
-local max_factor = 0.8
+-- Note: Includes also for disabled but weight configured technologies
+local max_factor = 0.75
 
--- technology weights
+-- Tech weights mostly weighted according to offensive military power to balance towns def/off
 local technology_weights = {
     ['advanced-electronics'] = 1,
     ['advanced-electronics-2'] = 1,
@@ -64,7 +65,7 @@ local technology_weights = {
     ['coal-liquefaction'] = 1,
     ['concrete'] = 1,
     ['construction-robotics'] = 1,
-    ['defender'] = 5,
+    ['defender'] = 20,
     ['destroyer'] = 5,
     ['discharge-defense-equipment'] = 5,
     ['distractor'] = 5,
