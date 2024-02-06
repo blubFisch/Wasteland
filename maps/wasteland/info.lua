@@ -3,16 +3,10 @@ local Public = {}
 local GameSettings = require 'game_settings'
 
 local changelog =
-    [[[font=heading-1]Nov 2023 updates[/font]
+    [[[font=heading-1]Feb 2024 updates[/font]
+ - Turrets now shoot empty tanks used to block bots in offline attacks
  - Map has random mixed ore patches
- - Map regenerates after some time
- - Bugfixes for some exploits
- - Tanks can not be bought anymore in scrap markets
- - Limit research speed to nerf the strategy of stockpiling science
- - When offline/afk, town's production and turrets now get frozen (withing the blue square), until league 4
- - Higher damage modifier for multi-player towns (2 player=70% damage each)
- - Offline shields now only work before league 4
- - Power poles can no longer be used to block enemy buildings - now only turrets block buildings]]
+ - Map regenerates after some time]]
 
 local info =
     [[[font=heading-1]Welcome to the wasteland[/font]
