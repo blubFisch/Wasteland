@@ -4,7 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-1]Feb 2024 updates[/font]
- - Laser turrets now shoot empty tanks used to block bots in offline attacks
+ - Laser turrets now shoot empty vehicles used to block bots in offline attacks
  - Map has random mixed ore patches
  - Map regenerates after some time]]
 
@@ -68,7 +68,7 @@ local info_adv =
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
 - Biter waves with boss units (the ones with health bar) will attack advanced towns while their players are online
 - Played this for the 100th time? Try /skip-tutorial
-- Laser turrets shoot empty tanks which can be used to block bots in offline attacks]]
+- Laser turrets shoot empty vehicles which can be used to block bots in offline attacks]]
 
 function Public.toggle_button(player)
     if player.gui.top['towny_map_intro_button'] then
