@@ -763,6 +763,14 @@ function Public.reset_all_forces()
     game.forces['player'].reset()
 end
 
+local function display_player_name(player)
+    if player.tag ~= '' then
+        return player.name .. " " .. player.tag
+    else
+        return player.name
+    end
+end
+
 local function kill_force(force_name, cause)
     local this = ScenarioTable.get_table()
     local force = game.forces[force_name]
@@ -773,7 +781,6 @@ local function kill_force(force_name, cause)
     local market = town_center.market
     local position = market.position
     local surface = market.surface
-    local balance = town_center.coin_balance
     local town_name = town_center.town_name
     surface.create_entity({name = 'big-artillery-explosion', position = position})
 
@@ -835,48 +842,45 @@ local function kill_force(force_name, cause)
     this.town_centers[force_name] = nil
     delete_chart_tag_for_all_forces(market)
 
-    -- reward the killer
+    -- place the loot coins from town center
+    local loot_balance = town_center.coin_balance
+    if loot_balance > 0 then
+        local chest = surface.create_entity({name = 'steel-chest', position = position, force = 'neutral'})
+        chest.insert({name = 'coin', count = loot_balance })
+    end
+
     local message
     if is_suicide then
         message = town_name .. ' has given up'
     elseif cause == nil or not cause.valid or cause.force == nil then
         message = town_name .. ' has fallen!'
-    elseif not TeamBasics.is_town_force(cause.force) then
-        local items = {name = 'coin', count = balance}
-        town_center.coin_balance = 0
-        if balance > 0 then
-            if cause.can_insert(items) then
-                cause.insert(items)
-            else
-                local chest = surface.create_entity({name = 'steel-chest', position = position, force = 'neutral'})
-                chest.insert(items)
+    else
+        local player_name_printable
+        if cause.type == 'car' or cause.type == 'tank' then
+            local driver = cause.get_driver()
+            if driver and driver.player then
+                player_name_printable = display_player_name(driver.player)
             end
+        elseif cause.name == 'character' then
+            player_name_printable = display_player_name(cause.player)
         end
-        if cause.name == 'character' then
-            message = town_name .. ' has fallen to ' .. cause.player.name .. '!'
-        elseif not TeamBasics.is_town_force(cause.force) then
-            message = town_name .. ' has fallen to outlanders!'
-        else
-            message = town_name .. ' has fallen!'
-        end
-    elseif cause.force.name ~= 'enemy' then
-        if this.town_centers[cause.force.name] ~= nil then
+
+        if TeamBasics.is_town_force(cause.force) then
             local killer_town_center = this.town_centers[cause.force.name]
-            if balance > 0 then
-                killer_town_center.coin_balance = killer_town_center.coin_balance + balance
-                cause.force.print(balance .. " coins have been transferred to your town", Utils.scenario_color)
-            end
-            if cause.name == 'character' then
-                message = town_name .. ' has fallen to ' .. cause.player.name .. ' from '  .. killer_town_center.town_name .. '!'
+            if player_name_printable then
+                message = town_name .. ' has fallen to ' .. player_name_printable .. ' from '  .. killer_town_center.town_name .. '!'
             else
                 message = town_name .. ' has fallen to ' .. killer_town_center.town_name .. '!'
             end
+        elseif cause.force.name ~= 'enemy' then
+            if player_name_printable then
+                message = town_name .. ' has fallen to ' ..player_name_printable .. '!'
+            else
+                message = town_name .. ' has fallen!'
+            end
         else
-            message = town_name .. ' has fallen!'
-            log("cause.force.name=" .. cause.force.name)
+            message = town_name .. ' has fallen to the biters!'
         end
-    else
-        message = town_name .. ' has fallen to the biters!'
     end
 
     local town_count = 0
