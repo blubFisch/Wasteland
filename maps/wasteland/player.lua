@@ -224,7 +224,7 @@ local function on_player_died(event)
     end
 
     local ticks_elapsed = game.tick - this.last_respawn[player.name]
-    if ticks_elapsed < spawn_kill_time then
+    if ticks_elapsed < spawn_kill_time and not TeamBasics.is_town_force(player.force) then
         this.strikes[player.name] = this.strikes[player.name] + 1
     else
         this.strikes[player.name] = 0
