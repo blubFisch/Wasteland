@@ -86,7 +86,7 @@ local function init_score_board(player)
     top_flow.children[#top_flow.children].name = button_id
     this.score_gui_frame[player_index] = flow
     local offset_y = -200 - (33 * table_size(this.town_centers) * player.display_scale)
-    new_location = GuiTemplater.get_location_by_percentage_with_offset(
+    local new_location = GuiTemplater.get_location_by_percentage_with_offset(
         player, 0, 0.5,
         nil, offset_y, -- x (left), y (top) offsets
         nil, 100       --  min x (left), y (top)

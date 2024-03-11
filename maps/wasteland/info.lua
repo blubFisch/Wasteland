@@ -3,14 +3,14 @@ local Public = {}
 local GameSettings = require 'game_settings'
 
 local changelog =
-    [[[font=heading-1]Feb 2024 updates[/font]
+    [[[font=heading-2]Feb 2024 updates[/font]
  - Laser turrets now shoot empty vehicles used to block bots in offline attacks
  - Map has random mixed ore patches
  - Map regenerates after some time]]
 
 local info =
-    [[[font=heading-1]Welcome to the wasteland[/font]
-Build a town that can survive against biters and other players!
+    [[[font=heading-1]Welcome to the Wasteland![/font]
+Can you build a town that survives against biters and other players?
 
 
 ]] .. changelog

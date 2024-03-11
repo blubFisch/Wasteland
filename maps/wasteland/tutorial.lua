@@ -7,7 +7,7 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 
 function Public.register_for_tutorial(player)
     local this = ScenarioTable.get_table()
-    this.tutorials[player.name] = {show_after_tick = game.tick + 60 * 10}
+    this.tutorials[player.name] = {show_after_tick = game.tick + 60 * 20}
 end
 
 local function tutorials_tick()
@@ -19,9 +19,7 @@ local function tutorials_tick()
 
             if tut.show_after_tick and game.tick > tut.show_after_tick then
                 this.tutorials[player.name].step = 1
-                player.set_goal_description("Welcome to the Wasteland!\n\n"
-                .. "Found a town by building your white chest or keep roaming as a lawless outlander.\n\n"
-                .. "Ore patches will spawn nearby")
+                player.set_goal_description("Found a town by building your white chest\nor keep roaming as a lawless outlander")
                 tut.show_after_tick = nil
             end
 
