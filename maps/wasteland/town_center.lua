@@ -621,6 +621,11 @@ local function rename_town(cmd)
         player.print('Must specify new town name!', Color.fail)
         return
     end
+    if string.len(name) > 25 then
+        player.print('Name too long', Color.fail)
+        return
+    end
+
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[force.name]
     local old_name = town_center.town_name
