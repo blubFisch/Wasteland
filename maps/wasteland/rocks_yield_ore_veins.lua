@@ -19,9 +19,7 @@ local size_raffle = {
     {'tiny', 10, 20}
 }
 
-local function spawn_new_rock(event)
-    local surface = event.entity.surface
-    local position = event.entity.position
+local function spawn_new_rock(surface)
     local this = ScenarioTable.get_table()
     local force_names = {}
     local counter = 0
@@ -43,9 +41,9 @@ local function spawn_new_rock(event)
         if y_positive == 2 then
             pos_y = pos_y * -1
         end
-        position = {x = pos_x, y = pos_y}
+        local position = {x = pos_x, y = pos_y}
         --position = {x = 338, y = -18} for debugging
-        rock_type = utils_table.get_random_dictionary_entry(valid_entities, true)
+        local rock_type = utils_table.get_random_dictionary_entry(valid_entities, true)
         if surface.can_place_entity({name = rock_type, position = position, force = 'neutral'}) then
             if surface.count_entities_filtered({ position = position, radius = 5.0, force = force_names})<= 0  then
                 surface.create_entity({name = rock_type, position = position})
@@ -130,9 +128,8 @@ local function draw_chain(surface, count, ore, ore_entities, ore_positions)
     end
 end
 
-local function ore_vein(event)
+local function spawn_ore_vein(surface, position, player)
     local this = ScenarioTable.get_table()
-    local surface = event.entity.surface
     local size = size_raffle[math_random(1, #size_raffle)]
     local ore = this.rocks_yield_ore_veins.raffle[math_random(1, #this.rocks_yield_ore_veins.raffle)]
     local icon
@@ -142,36 +139,36 @@ local function ore_vein(event)
         icon = ' '
     end
 
-    local player = game.players[event.player_index]
-    for _, p in pairs(game.connected_players) do
-        if p.index == player.index then
-            p.print(
-                {
-                    'rocks_yield_ore_veins.player_print',
-                    {'rocks_yield_ore_veins_colors.' .. ore},
-                    {'rocks_yield_ore_veins.' .. size[1]},
-                    {'rocks_yield_ore_veins.' .. ore},
-                    icon
-                },
-                {r = 0.80, g = 0.80, b = 0.80}
-            )
-        else
-            if p.force == player.force then
+    if player then
+        for _, p in pairs(game.connected_players) do
+            if p.index == player.index then
                 p.print(
-                    {
-                        'rocks_yield_ore_veins.game_print',
-                        '[color=' .. player.chat_color.r .. ',' .. player.chat_color.g .. ',' .. player.chat_color.b .. ']' .. player.name .. '[/color]',
-                        {'rocks_yield_ore_veins.' .. size[1]},
-                        {'rocks_yield_ore_veins.' .. ore},
-                        icon
-                    },
-                    {r = 0.80, g = 0.80, b = 0.80}
+                        {
+                            'rocks_yield_ore_veins.player_print',
+                            {'rocks_yield_ore_veins_colors.' .. ore},
+                            {'rocks_yield_ore_veins.' .. size[1]},
+                            {'rocks_yield_ore_veins.' .. ore},
+                            icon
+                        },
+                        {r = 0.80, g = 0.80, b = 0.80}
                 )
+            else
+                if p.force == player.force then
+                    p.print(
+                            {
+                                'rocks_yield_ore_veins.game_print',
+                                '[color=' .. player.chat_color.r .. ',' .. player.chat_color.g .. ',' .. player.chat_color.b .. ']' .. player.name .. '[/color]',
+                                {'rocks_yield_ore_veins.' .. size[1]},
+                                {'rocks_yield_ore_veins.' .. ore},
+                                icon
+                            },
+                            {r = 0.80, g = 0.80, b = 0.80}
+                    )
+                end
             end
         end
     end
 
-    local position = event.entity.position
     local ore_entities = {{ore = {name = ore, position = {x = position.x, y = position.y}}, amount = get_amount()}}
     if ore == 'mixed' then
         ore_entities = {
@@ -185,7 +182,7 @@ local function ore_vein(event)
         }
     end
 
-    local ore_positions = {[event.entity.position.x .. '_' .. event.entity.position.y] = true}
+    local ore_positions = {[position.x .. '_' .. position.y] = true}
     local count = math_random(size[2], size[3])
 
     for _ = 1, 128, 1 do
@@ -213,36 +210,59 @@ local function ore_vein(event)
     end
 end
 
-local function on_player_mined_entity(event)
-    local this = ScenarioTable.get_table()
-    if not this.rocks_yield_ore_veins then
-        return
+local function pre_checks(entity)
+    if not entity.valid then
+        return false
+    end
+    if not valid_entities[entity.name] then
+        return false
+    end
+    return true
+end
+
+local function get_player_from_cause(cause)
+    if cause.name == 'character' then
+        return cause.player
+    elseif cause.type == 'car' then
+        local driver = cause.get_driver()
+        if driver then
+            return driver.player
+        end
     end
 
-    local player = game.players[event.player_index]
-    if not event.entity.valid then
-        return
+    return nil
+end
+
+local function process_rock(entity, player)
+    local surface = entity.surface
+    local position = entity.position
+    local this = ScenarioTable.get_table()
+    if math_random(1, this.rocks_yield_ore_veins.chance) == 1 or this.testing_mode then
+        spawn_ore_vein(surface, position, player)
+
+        if player and this.tutorials[player.name] then
+            this.tutorials[player.name].mined_rock = true
+        end
     end
-    if not valid_entities[event.entity.name] then
-        return
-    end
-    spawn_new_rock(event)
-    if math_random(1, this.rocks_yield_ore_veins.chance) ~= 1 and not this.testing_mode then
-        return
-    end
-    ore_vein(event)
-    if this.tutorials[player.name] then
-        this.tutorials[player.name].mined_rock = true
+    spawn_new_rock(surface)
+end
+
+local function on_player_mined_entity(event)
+    if pre_checks(event.entity) then
+        process_rock(event.entity, game.get_player(event.player_index))
     end
 end
 
+local function on_robot_mined_entity(event)
+    if pre_checks(event.entity) then
+        process_rock(event.entity, nil)
+    end
+end
 
 local function on_entity_died(event)
-
-    if not valid_entities[event.entity.name] then
-        return
+    if pre_checks(event.entity) then
+        process_rock(event.entity, get_player_from_cause(event.cause))
     end
-    spawn_new_rock(event)
 end
 
 local function on_init()
@@ -256,5 +276,6 @@ end
 
 local Event = require 'utils.event'
 Event.on_init(on_init)
+Event.add(defines.events.on_robot_mined_entity, on_robot_mined_entity)
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)
 Event.add(defines.events.on_entity_died, on_entity_died)

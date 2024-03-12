@@ -3,7 +3,8 @@ local Public = {}
 local GameSettings = require 'game_settings'
 
 local changelog =
-    [[[font=heading-2]Feb 2024 updates[/font]
+    [[[font=heading-2]Mar 2024 updates[/font]
+ - Bugfixes
  - Laser turrets now shoot empty vehicles used to block bots in offline attacks
  - Map has random mixed ore patches
  - Map regenerates after some time]]
@@ -52,7 +53,7 @@ local info_adv =
 [font=heading-1]Advanced tips and tricks[/font]
 - To join our discord, open wasteland-discord.fun in your web browser
 - It's best to found new towns far from existing towns, as biters advance based on the tech of nearby towns
-- Need more ores? Hand mine a few big rocks to find ore patches under them!
+- Need more ores? Mine or destroy big rocks to find ore patches under them!
 - Need more oil? Kill biter worms - some of them will leave you an oil patch
 - The town market is the heart of your town. If it is destroyed, you lose everything.
     Protect it well and increase its health by purchasing upgrades.
