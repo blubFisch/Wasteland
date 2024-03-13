@@ -461,9 +461,8 @@ end
 
 function Public.update_town_chart_tags()
     local this = ScenarioTable.get_table()
-    local town_centers = this.town_centers
     local forces = game.forces
-    for _, town_center in pairs(town_centers) do
+    for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
         for _, force in pairs(forces) do
             if force.is_chunk_visible(market.surface, town_center.chunk_position) then

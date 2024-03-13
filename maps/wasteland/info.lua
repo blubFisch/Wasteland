@@ -4,6 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-2]Mar 2024 updates[/font]
+ - Spawn biters by dropping coins on nests :-)
  - Bugfixes
  - Laser turrets now shoot empty vehicles used to block bots in offline attacks
  - Map has random mixed ore patches
@@ -69,6 +70,7 @@ local info_adv =
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
 - Biter waves with boss units (the ones with health bar) will attack advanced towns while their players are online
 - Played this for the 100th time? Try /skip-tutorial
+- Spawn biters by dropping coins on nests. They will attack the closest town
 - Laser turrets shoot empty vehicles which can be used to block bots in offline attacks]]
 
 function Public.toggle_button(player)

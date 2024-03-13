@@ -248,6 +248,99 @@ function Public.swarm(town_center, radius)
     table_insert(this.swarms, {group = unit_group, timeout = game.tick + 36000})
 end
 
+local cost_per_biter_config = {
+    [1] = 1,
+    [2] = 3,
+    [3] = 10
+}
+
+local function on_player_dropped_item(event)
+    local player = game.players[event.player_index]
+    local dropped_item = event.entity
+
+    if dropped_item.stack.name == "coin" then
+        local surface = player.surface
+        local coin_position = dropped_item.position
+        local this = ScenarioTable.get_table()
+
+        -- Find closest spawner
+        local spawners = surface.find_entities_filtered{type = "unit-spawner", position = coin_position, radius = 10}
+        if #spawners == 0 then return end
+        table.sort(spawners, function(a, b)
+            return ((a.position.x - coin_position.x)^2 + (a.position.y - coin_position.y)^2) < ((b.position.x - coin_position.x)^2 + (b.position.y - coin_position.y)^2)
+        end)
+        local closest_spawner = spawners[1]
+
+        -- Rate limit check for the closest spawner
+        local current_time = game.tick
+        local last_spawn_time = this.last_spawn_time_per_spawner[closest_spawner.unit_number] or 0
+        if current_time - last_spawn_time < 20 then
+            return
+        end
+
+        local unit_size = math.min(Evolution.get_unit_size(coin_position), 3)
+        local cost_per_biter = cost_per_biter_config[unit_size]
+        local total_coins = 0
+
+        -- Count coins from dropped items
+        local coin_stacks = surface.find_entities_filtered{type = "item-entity", position = coin_position, radius = 10, name = "item-on-ground"}
+        for _, coin_stack in pairs(coin_stacks) do
+            if coin_stack.stack.name == "coin" then
+                total_coins = total_coins + coin_stack.stack.count
+            end
+        end
+
+        -- Check if there are enough coins to cover the cost
+        if total_coins >= cost_per_biter then
+            local coins_to_use = cost_per_biter
+
+            -- Deduct coins from dropped items first
+            for _, coin_stack in ipairs(coin_stacks) do
+                if coin_stack.stack.name == "coin" then
+                    if coin_stack.stack.count <= coins_to_use then
+                        coins_to_use = coins_to_use - coin_stack.stack.count
+                        coin_stack.destroy()
+                    else
+                        coin_stack.stack.count = coin_stack.stack.count - coins_to_use
+                        coins_to_use = 0
+                        break
+                    end
+                end
+            end
+
+            -- Proceed with spawn if coins were deducted successfully
+            if coins_to_use == 0 then
+                this.last_spawn_time_per_spawner[closest_spawner.unit_number] = current_time
+                local unit_type_id = math.random(0,1)
+                local unit_name = unit_type_id == 1 and Evolution.get_biter_by_size(unit_size) or Evolution.get_spitter_by_size(unit_size)
+                local biter_position = surface.find_non_colliding_position(unit_name, coin_position, 32, 2)
+                if biter_position then
+                    local biter = surface.create_entity{name = unit_name, position = biter_position}
+
+                    -- Find the closest town center to the coin drop
+                    local closest_town_center
+                    local closest_distance = math.huge
+                    for _, town_center in pairs(this.town_centers) do
+                        local distance = (coin_position.x - town_center.market.position.x)^2 + (coin_position.y - town_center.market.position.y)^2
+                        if distance < closest_distance then
+                            closest_distance = distance
+                            closest_town_center = town_center
+                        end
+                    end
+
+                    if closest_town_center then
+                        biter.set_command({
+                            type = defines.command.attack,
+                            target = closest_town_center.market,
+                            distraction = defines.distraction.by_damage
+                        })
+                    end
+                end
+            end
+        end
+    end
+end
+
 local function on_unit_group_finished_gathering(event)
     local unit_group = event.group
     local position = unit_group.position
@@ -292,5 +385,7 @@ end
 Event.on_init(on_init)
 Event.add(defines.events.on_tick, on_tick)
 Event.add(defines.events.on_unit_group_finished_gathering, on_unit_group_finished_gathering)
+Event.add(defines.events.on_player_dropped_item, on_player_dropped_item)
+
 
 return Public
