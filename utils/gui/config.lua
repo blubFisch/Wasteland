@@ -1,4 +1,3 @@
-local Antigrief = require 'utils.antigrief'
 local Event = require 'utils.event'
 local Color = require 'utils.color_presets'
 local SessionData = require 'utils.datastore.session_data'
@@ -105,16 +104,9 @@ end
 
 local function trust_connected_players()
     local trust = SessionData.get_trusted_table()
-    local AG = Antigrief.get()
     local players = game.connected_players
-    if not AG.enabled then
-        for _, p in pairs(players) do
-            trust[p.name] = true
-        end
-    else
-        for _, p in pairs(players) do
-            trust[p.name] = false
-        end
+    for _, p in pairs(players) do
+        trust[p.name] = true
     end
 end
 
@@ -258,14 +250,6 @@ local poll_function = {
 
 local antigrief_functions = {
     ['disable_antigrief'] = function(event)
-        local AG = Antigrief.get()
-        if event.element.switch_state == 'left' then
-            AG.enabled = true
-            get_actor(event, '[Antigrief]', 'has enabled the antigrief function.', true)
-        else
-            AG.enabled = false
-            get_actor(event, '[Antigrief]', 'has disabled the antigrief function.', true)
-        end
         trust_connected_players()
     end
 }
@@ -436,7 +420,6 @@ local function build_config_gui(data)
     local player = data.player
     local frame = data.frame
 
-    local AG = Antigrief.get()
     local switch_state
     local label
 
@@ -597,9 +580,6 @@ local function build_config_gui(data)
         label.style.font_color = Color.yellow
 
         switch_state = 'right'
-        if AG.enabled then
-            switch_state = 'left'
-        end
         add_switch(scroll_pane, switch_state, 'disable_antigrief', 'Antigrief', 'Toggle antigrief function.')
         scroll_pane.add({type = 'line'})
 

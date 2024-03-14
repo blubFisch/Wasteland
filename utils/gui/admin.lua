@@ -1,9 +1,6 @@
---antigrief things made by mewmew
-
 local Event = require 'utils.event'
 local Jailed = require 'utils.datastore.jail_data'
 local Gui = require 'utils.gui'
-local AntiGrief = require 'utils.antigrief'
 local SpamProtection = require 'utils.spam_protection'
 local Token = require 'utils.token'
 
@@ -235,21 +232,10 @@ end
 
 local function draw_events(data)
     local frame = data.frame
-    local antigrief = data.antigrief
     local search_text = data.search_text or nil
     local history = frame['admin_history_select'].items[frame['admin_history_select'].selected_index]
 
-    local history_index = {
-        ['Capsule History'] = antigrief.capsule_history,
-        ['Message History'] = antigrief.message_history,
-        ['Friendly Fire History'] = antigrief.friendly_fire_history,
-        ['Mining History'] = antigrief.mining_history,
-        ['Mining Override History'] = antigrief.whitelist_mining_history,
-        ['Landfill History'] = antigrief.landfill_history,
-        ['Corpse Looting History'] = antigrief.corpse_history,
-        ['Cancel Crafting History'] = antigrief.cancel_crafting_history,
-        ['Deconstruct History'] = antigrief.deconstruct_history
-    }
+    local history_index = {}
 
     local scroll_pane
     if frame.datalog then
@@ -330,7 +316,6 @@ local function text_changed(event)
         return
     end
 
-    local antigrief = AntiGrief.get()
     local player = game.get_player(event.player_index)
 
     local frame = Gui.get_player_active_frame(player)
@@ -348,7 +333,6 @@ local function text_changed(event)
 
     local data = {
         frame = frame,
-        antigrief = antigrief,
         search_text = element.text
     }
 
@@ -358,11 +342,6 @@ end
 local function create_admin_panel(data)
     local player = data.player
     local frame = data.frame
-    local antigrief = AntiGrief.get()
-    if not antigrief then
-        return
-    end
-
     frame.clear()
 
     local player_names = {}
@@ -489,33 +468,6 @@ local function create_admin_panel(data)
     bottomLine.style.bottom_margin = 8
 
     local histories = {}
-    if antigrief.capsule_history then
-        table.insert(histories, 'Capsule History')
-    end
-    if antigrief.message_history then
-        table.insert(histories, 'Message History')
-    end
-    if antigrief.friendly_fire_history then
-        table.insert(histories, 'Friendly Fire History')
-    end
-    if antigrief.mining_history then
-        table.insert(histories, 'Mining History')
-    end
-    if antigrief.whitelist_mining_history then
-        table.insert(histories, 'Mining Override History')
-    end
-    if antigrief.landfill_history then
-        table.insert(histories, 'Landfill History')
-    end
-    if antigrief.corpse_history then
-        table.insert(histories, 'Corpse Looting History')
-    end
-    if antigrief.cancel_crafting_history then
-        table.insert(histories, 'Cancel Crafting History')
-    end
-    if antigrief.deconstruct_history then
-        table.insert(histories, 'Deconstruct History')
-    end
 
     if #histories == 0 then
         return
@@ -542,8 +494,7 @@ local function create_admin_panel(data)
     drop_down_2.style.left_padding = 12
 
     local datas = {
-        frame = frame,
-        antigrief = antigrief
+        frame = frame
     }
 
     draw_events(datas)

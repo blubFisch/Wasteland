@@ -3,8 +3,7 @@ _LIFECYCLE = _STAGE.control -- Control stage
 _DEBUG = false
 _DUMP_ENV = false
 
-
-local GuiTemplater = require 'zk-lib/lualibs/control_stage/GuiTemplater'
+require 'zk-lib/lualibs/control_stage/GuiTemplater'
 require 'modules.anti_blueprint_spam'
 require 'utils.server'
 require 'utils.server_commands'
@@ -12,19 +11,8 @@ require 'utils.command_handler'
 require 'utils.utils'
 require 'utils.pause_game'
 require 'utils.table'
-require 'utils.datastore.server_ups_data'
-require 'utils.datastore.current_time_data'
-require 'utils.datastore.color_data'
-require 'utils.datastore.session_data'
-require 'utils.datastore.jail_data'
-require 'utils.datastore.quickbar_data'
-require 'utils.datastore.message_on_join_data'
-require 'utils.datastore.player_tag_data'
-require 'utils.datastore.supporters'
-require 'utils.datastore.banhandler'
 require 'utils.chatbot'
 require 'utils.commands'
-require 'utils.antigrief'
 require 'utils.debug.command'
 require 'modules.corpse_markers'
 require 'modules.floaty_chat'
@@ -63,6 +51,3 @@ end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_player_created, on_player_created)
--- for id, f in pairs(GuiTemplater.events) do
---     Event.add(id, f)
--- end

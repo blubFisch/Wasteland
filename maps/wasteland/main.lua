@@ -37,7 +37,6 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local Gui = require 'utils.gui'
 local Color = require 'utils.color_presets'
 local Where = require 'utils.commands.where'
-local AntiGrief = require 'utils.antigrief'
 local CombatBalance = require 'maps.wasteland.combat_balance'
 local FluidsAreExplosive = require 'maps.wasteland.fluids_are_explosive'
 
@@ -49,10 +48,6 @@ local function on_init()
     BottomFrame.reset()
     BottomFrame.activate_custom_buttons(true)
     Where.module_disabled(true)
-
-    -- Disable AntiGrief as it has too many side effects and is not so useful for this mode
-    local AG = AntiGrief.get()
-    AG.enabled = false
 
     game.enemy_has_vision_on_land_mines = false
     game.draw_resource_selection = true
