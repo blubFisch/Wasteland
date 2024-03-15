@@ -12,6 +12,7 @@ local CombatBalance = require 'maps.wasteland.combat_balance'
 local Evolution = require 'maps.wasteland.evolution'
 local GameMode = require 'maps.wasteland.game_mode'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local Utils = require 'maps.wasteland.utils'
 
 local map_pos_frame_id = 'towny_map_position'
 local evo_frame_id = 'towny_evo_display'
@@ -219,13 +220,13 @@ end
 local function on_player_died(event)
     local this = ScenarioTable.get()
     local player = game.players[event.player_index]
-    if this.strikes[player.name] == nil then
-        this.strikes[player.name] = 0
-    end
 
     local ticks_elapsed = game.tick - this.last_respawn[player.name]
-    if ticks_elapsed < spawn_kill_time and not TeamBasics.is_town_force(player.force) then
+    if ticks_elapsed < spawn_kill_time then
         this.strikes[player.name] = this.strikes[player.name] + 1
+        if this.strikes[player.name] >= 3 and TeamBasics.is_town_force(player.force) then
+            player.print("You have been spawn killed multiple times. Use the chat command /suicide-town to kill your town", Utils.scenario_color)
+        end
     else
         this.strikes[player.name] = 0
     end

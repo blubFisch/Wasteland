@@ -653,6 +653,32 @@ commands.add_command(
     end
 )
 
+commands.add_command(
+        'suicide-town',
+        'Kill your own town instantly',
+        function(cmd)
+            local player = game.players[cmd.player_index]
+
+            if not player or not player.valid then
+                return
+            end
+
+            local this = ScenarioTable.get_table()
+            local min_strikes_needed = 3
+            if TeamBasics.is_town_force(player.force) then
+                if this.strikes[player.name] >= min_strikes_needed then
+                    local town_center = this.town_centers[player.force.name]
+                    game.print(player.name .. " has triggered a town suicide on " ..  town_center.town_name, Utils.scenario_color)
+                    town_center.market.die(player.force)
+                else
+                    player.print("You can use this command after you have been spawnkilled " .. min_strikes_needed .. " times", Utils.scenario_color)
+                end
+            else
+                player.print("You are not member of a town", Utils.scenario_color)
+            end
+        end
+)
+
 Event.add(defines.events.on_built_entity, found_town)
 Event.add(defines.events.on_robot_built_entity, found_town)
 Event.add(defines.events.on_player_repaired_entity, on_player_repaired_entity)

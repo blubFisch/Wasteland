@@ -156,6 +156,7 @@ function Public.add_player_to_town(player, town_center)
     end
 
     this.spawn_point[player.index] = force.get_spawn_position(surface)
+    this.strikes[player.name] = 0
     game.permissions.get_group(force.name).add_player(player)
     player.tag = ''
 
@@ -770,10 +771,10 @@ local function display_player_name(player)
     end
 end
 
-local function kill_force(force_name, cause)
+local function kill_force(killed_force, cause_force, cause_entity)
     local this = ScenarioTable.get_table()
-    local force = game.forces[force_name]
-    local town_center = this.town_centers[force_name]
+    local killed_force_name = killed_force.name
+    local town_center = this.town_centers[killed_force_name]
     if not town_center then
         return
     end
@@ -783,9 +784,9 @@ local function kill_force(force_name, cause)
     local town_name = town_center.town_name
     surface.create_entity({name = 'big-artillery-explosion', position = position})
 
-    local is_suicide = cause and force_name == cause.force.name
+    local is_suicide = cause_force and killed_force == cause_force
 
-    for _, player in pairs(force.players) do
+    for _, player in pairs(killed_force.players) do
         this.spawn_point[player.index] = nil
         this.cooldowns_town_placement[player.index] = game.tick + 3600 * 5
         this.buffs[player.index] = {}
@@ -796,15 +797,15 @@ local function kill_force(force_name, cause)
             if is_suicide then
                 this.killer_name[player.index] = 'suicide'
             else
-                if cause and cause.force then
-                    this.killer_name[player.index] = Public.force_display_name(cause.force)
+                if cause_entity and cause_entity.force then
+                    this.killer_name[player.index] = Public.force_display_name(cause_force)
                 end
             end
             this.requests[player.index] = 'kill-character'
         end
         Public.set_player_to_outlander(player)
     end
-    for _, e in pairs(surface.find_entities_filtered({force = force_name})) do
+    for _, e in pairs(surface.find_entities_filtered({force = killed_force})) do
         if e.valid then
             if destroy_military_types[e.type] then
                 surface.create_entity({name = 'big-artillery-explosion', position = position})
@@ -833,12 +834,12 @@ local function kill_force(force_name, cause)
 
     PvPTownShield.remove_all_shield_markers(surface, position)
 
-    if this.pvp_shields[force_name] then
-        PvPShield.remove_shield(this.pvp_shields[force_name])
+    if this.pvp_shields[killed_force_name] then
+        PvPShield.remove_shield(this.pvp_shields[killed_force_name])
     end
 
-    game.merge_forces(force_name, 'neutral')
-    this.town_centers[force_name] = nil
+    game.merge_forces(killed_force, 'neutral')
+    this.town_centers[killed_force_name] = nil
     delete_chart_tag_for_all_forces(market)
 
     -- place the loot coins from town center
@@ -851,27 +852,27 @@ local function kill_force(force_name, cause)
     local message
     if is_suicide then
         message = town_name .. ' has given up'
-    elseif cause == nil or not cause.valid or cause.force == nil then
+    elseif cause_entity == nil or not cause_entity.valid or cause_entity.force == nil then
         message = town_name .. ' has fallen!'
     else
         local player_name_printable
-        if cause.type == 'car' or cause.type == 'tank' then
-            local driver = cause.get_driver()
+        if cause_entity.type == 'car' or cause_entity.type == 'tank' then
+            local driver = cause_entity.get_driver()
             if driver and driver.player then
                 player_name_printable = display_player_name(driver.player)
             end
-        elseif cause.name == 'character' then
-            player_name_printable = display_player_name(cause.player)
+        elseif cause_entity.name == 'character' then
+            player_name_printable = display_player_name(cause_entity.player)
         end
 
-        if TeamBasics.is_town_force(cause.force) then
-            local killer_town_center = this.town_centers[cause.force.name]
+        if TeamBasics.is_town_force(cause_entity.force) then
+            local killer_town_center = this.town_centers[cause_entity.force.name]
             if player_name_printable then
                 message = town_name .. ' has fallen to ' .. player_name_printable .. ' from '  .. killer_town_center.town_name .. '!'
             else
                 message = town_name .. ' has fallen to ' .. killer_town_center.town_name .. '!'
             end
-        elseif cause.force.name ~= 'enemy' then
+        elseif cause_entity.force.name ~= 'enemy' then
             if player_name_printable then
                 message = town_name .. ' has fallen to ' ..player_name_printable .. '!'
             else
@@ -946,9 +947,8 @@ end
 
 local function on_entity_died(event)
     local entity = event.entity
-    local cause = event.cause
     if entity and entity.valid and entity.name == 'market' then
-        kill_force(entity.force.name, cause)
+        kill_force(entity.force, event.force, event.cause)
     end
 end
 

@@ -12,6 +12,7 @@ local ScenarioTable = require 'maps.wasteland.table'
 local Building = require 'maps.wasteland.building'
 local MapLayout = require 'maps.wasteland.map_layout'
 local Utils = require 'maps.wasteland.utils'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 local function force_load(position, surface, radius)
     --log("is_chunk_generated = " .. tostring(surface.is_chunk_generated(position)))
@@ -151,19 +152,19 @@ end
 function Public.get_spawn_point(player, surface)
     local this = ScenarioTable.get_table()
     local position = this.spawn_point[player.index]
-    -- if there is a spawn point and less than three strikes
-    if position ~= nil and this.strikes[player.name] < 2 then
-        -- check that the spawn point is not blocked
+
+    if position ~= nil and this.strikes[player.name] < 3 then
         if surface.can_place_entity({name = 'character', position = position}) then
-            --log("player " .. player.name .. "using existing spawn point at {" .. position.x .. "," .. position.y .. "}")
+            --log("player " .. player.name .. " using existing spawn point at {" .. position.x .. "," .. position.y .. "}")
             return position
         else
             position = surface.find_non_colliding_position('character', position, 0, 0.25)
             return position
         end
+    elseif not TeamBasics.is_town_force(player.force) then
+        player.print("Setting new spawn point after spawn kills", Utils.scenario_color)
+        return Public.set_new_spawn_point(player, surface)
     end
-    -- otherwise get a new spawn point
-    return Public.set_new_spawn_point(player, surface)
 end
 
 commands.add_command(
