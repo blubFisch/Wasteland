@@ -40,7 +40,7 @@ local info_adv =
 - Leave a town: Drop coal on the market. Note that their turrets will target you immediately.
 
 [font=heading-1]Leagues and PvP Shields[/font]
-- A system to give a chance to players who join later and to protect player's towns while offline
+- PVP Shields protect player's towns while offline and balance players who join later
 - PvP shields prevent players and biters from entering, building and damaging
 - League shield protects your town from players of a higher league and cover the outer blue tile square of your town
     - League score limits: 15 score or tank=L2, 35 score=L3, 60 score=L4
@@ -49,6 +49,7 @@ local info_adv =
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
     - This shield is available before League 4
     - Shields also stop all production buildings, labs, roboports, turrets and others (enable AFK mode to test it)
+    - If no players are in a town for more than 24h (ingame time), the town is "Abandoned" and loses its PvP protection
 - Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
 
 [font=heading-1]Advanced tips and tricks[/font]

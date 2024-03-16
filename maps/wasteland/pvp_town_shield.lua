@@ -111,7 +111,7 @@ end
 
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
-    local offline_shield_duration_ticks = 24 * 60 * 60 * 60
+    local offline_shield_max_duration_ticks = 24 * 60 * 60 * 60
     local league_shield_activation_range = MapLayout.higher_league_activation_range
 
     for _, town_center in pairs(this.town_centers) do
@@ -134,7 +134,7 @@ local function update_pvp_shields()
                 local is_init_now = false
                 if town_center.pvp_shield_mgmt.offline_shield_eligible_until == nil then
                     is_init_now = true
-                    town_center.pvp_shield_mgmt.offline_shield_eligible_until = game.tick + offline_shield_duration_ticks
+                    town_center.pvp_shield_mgmt.offline_shield_eligible_until = game.tick + offline_shield_max_duration_ticks
                 end
                 local remaining_offline_shield_time = town_center.pvp_shield_mgmt.offline_shield_eligible_until - game.tick
                 abandoned = remaining_offline_shield_time <= 0
@@ -166,7 +166,7 @@ local function update_pvp_shields()
                 local delay_mins = 1
                 force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minute."
                         .. " After everyone in your town leaves, you will get a new shield for "
-                        .. PvPShield.format_lifetime_str(offline_shield_duration_ticks), Utils.scenario_color)
+                        .. PvPShield.format_lifetime_str(offline_shield_max_duration_ticks), Utils.scenario_color)
                 shield.shield_type = PvPShield.SHIELD_TYPE.OFFLINE_POST
                 shield.expiry_time = game.tick + delay_mins * 60 * 60
             end
@@ -175,7 +175,7 @@ local function update_pvp_shields()
             if not town_center.pvp_shield_mgmt.displayed_offline_hint and shields_researched then
                 force.print("Your town is now advanced enough to deploy PvP shields."
                         .. " Once all of your town members leave, your town will be protected from enemy players"
-                        .. " for up to " .. PvPShield.format_lifetime_str(offline_shield_duration_ticks) .. "."
+                        .. " for up to " .. PvPShield.format_lifetime_str(offline_shield_max_duration_ticks) .. "."
                         .. " However, biters will always be able to attack your town! See Help for more details.", Utils.scenario_color)
                 town_center.pvp_shield_mgmt.displayed_offline_hint = true
             end
@@ -242,6 +242,7 @@ local function update_pvp_shields()
             end
         end
         town_center.pvp_shield_mgmt.shield_info = shield_info
+        town_center.pvp_shield_mgmt.is_abandoned = abandoned
     end
 end
 

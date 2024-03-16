@@ -176,6 +176,9 @@ local function update_score()
                 if town_center.marked_afk then
                     label_extra = " (AFK)"
                 end
+                if town_center.pvp_shield_mgmt.is_abandoned then
+                    label_extra = " [color=red](Abandoned)[/color]"
+                end
 
                 local label =
                 ranking_table.add {
