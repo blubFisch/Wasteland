@@ -99,6 +99,28 @@ local function format_score(score)
     return string.format('%.1f', math.floor(score * 10) / 10)
 end
 
+local function format_town_with_player_names(town_center)
+    local player_names = ""
+    local player_in_town_name = false
+    for _, player in pairs(town_center.market.force.players) do
+        if not string.find(town_center.town_name, player.name) then
+            if player_names ~= "" then
+                player_names = player_names .. ","
+            end
+            player_names = player_names .. player.name
+        else
+            player_in_town_name = true
+        end
+    end
+    if player_names ~= "" then
+        if player_in_town_name then
+            player_names = "+" .. player_names
+        end
+        player_names = " (" .. player_names .. ")"
+    end
+    return town_center.town_name .. player_names
+end
+
 local function update_score()
     local this = ScenarioTable.get_table()
     local score_to_win = 100
@@ -149,10 +171,12 @@ local function update_score()
                     if town_total_scores[town_center] >= score_to_win and this.winner == nil then
                         local winner_force = town_center.market.force
                         this.winner = town_center.town_name
-                        game.print(town_center.town_name .. " has won the game! Server will be reset by an admin soon.", Utils.scenario_color)
+                        local town_with_player_names = format_town_with_player_names(town_center)
+
+                        game.print(town_with_player_names .. " has won the game! Their town now has artillery. The server will be reset by an admin soon.", Utils.scenario_color)
                         Team.enable_artillery(winner_force, game.permissions.get_group((winner_force.name)))
                         winner_force.technologies["artillery"].researched = true
-                        log("WINNER_STORE=\"" .. town_center.town_name .. "\"")
+                        log("WINNER_STORE=\"" .. town_with_player_names .. "\"")
                     end
                 end
             end

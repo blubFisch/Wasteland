@@ -87,12 +87,14 @@ function Public.toggle_button(player)
     b.style.left_padding = 1
     b.style.right_padding = 1
     b.style.bottom_padding = 1
+end
 
+function Public.add_last_winner_button(player)
     local b2 = player.gui.top.add({ type = 'sprite-button', caption = "Last round winner: " .. GameSettings.last_winner_name,
                                     name = 'towny_map_last_winner'})
     b2.style.font_color = { r = 1, g = 0.7, b = 0.1}
     b2.style.minimal_height = 38
-    b2.style.minimal_width = 320
+    b2.style.minimal_width = 480
     b2.style.top_padding = 1
     b2.style.left_padding = 1
     b2.style.right_padding = 1
