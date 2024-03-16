@@ -717,8 +717,9 @@ end
 
 function Public.player_left(player)
     if not TeamBasics.is_town_force(player.force) then
-        game.merge_forces(player.force, 'neutral')  -- All of their buildings become common property
-        player.force = 'player'
+        local prev_force = player.force
+        player.force = 'player' -- Note: Reassign the player first to avoid a race where merge_forces doesn't delete the force. TODO: validate
+        game.merge_forces(prev_force, 'neutral')  -- All of their buildings become common property
     end
 end
 
