@@ -274,7 +274,7 @@ local function on_player_dropped_item(event)
         -- Rate limit check for the closest spawner
         local current_time = game.tick
         local last_spawn_time = this.last_spawn_time_per_spawner[closest_spawner.unit_number] or 0
-        if current_time - last_spawn_time < 20 then
+        if current_time - last_spawn_time < 10 then
             return
         end
 
