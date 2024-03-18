@@ -4,9 +4,8 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-2]Mar 2024 updates[/font]
+ - When a town is offline, it gains a rest bonus, which is applied to player damage output and research cost
  - Spawn biters by dropping coins on nests :-)
- - Bugfixes
- - Laser turrets now shoot empty vehicles used to block bots in offline attacks
  - Map has random mixed ore patches
  - Map regenerates after some time]]
 
@@ -58,6 +57,7 @@ local info_adv =
 - It's best to found new towns far from existing towns, as biters advance based on the tech of nearby towns
 - Need more ores? Mine or destroy big rocks to find ore patches under them!
 - Need more oil? Kill biter worms - some of them will leave you an oil patch
+- When your town is offline, it gains a rest bonus, which is applied to player damage output and research cost
 - The town market is the heart of your town. If it is destroyed, you lose everything.
     Protect it well and increase its health by purchasing upgrades.
 - It's possible to automate trading with the town center! How cool is that?!! Try it out.

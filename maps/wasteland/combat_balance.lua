@@ -145,11 +145,12 @@ end
 local function format_dmg_modifier(modifier)
     return string.format('%.0f%%', 100 * modifier)
 end
+Public.format_dmg_modifier = format_dmg_modifier
 
 local function calculate_modifier_for_town(town_center)
     local force = town_center.market.force
     if TeamBasics.is_town_force(force) then
-        return math.min(1 / #force.connected_players + 0.2, 1)
+        return math.min(1 / #force.connected_players + 0.2, 1) + town_center.rested_modifier / 2
     else
         return 1
     end
@@ -170,8 +171,8 @@ local function update_modifiers()
         end
 
         -- Notify about the change
-        if town_center.combat_balance.current_modifier ~= town_center.combat_balance.previous_modifier then
-            town_center.market.force.print("Your town member's attack damage is now "
+        if math.abs(town_center.combat_balance.current_modifier - town_center.combat_balance.previous_modifier) >= 0.1 then
+            town_center.market.force.print("Your town members attack damage is now "
                     .. format_dmg_modifier(town_center.combat_balance.current_modifier)
                     .. " (previously " .. format_dmg_modifier(town_center.combat_balance.previous_modifier) .. ")", Utils.scenario_color)
             town_center.combat_balance.previous_modifier = town_center.combat_balance.current_modifier
@@ -199,11 +200,16 @@ function Public.on_entity_damaged(event)
     if not entity.valid then
         return
     end
+    local cause_force = event.force
+    if cause_force == game.forces.enemy then
+        return
+    end
+    local event_cause = event.cause
 
     -- Extra debug info
     --local cause_name = "n/a"
-    --if event.cause then
-    --    cause_name = event.cause.name
+    --if event_cause then
+    --    cause_name = event_cause.name
     --end
     --game.print("DMG_XDB entity " .. entity.name .. " damage_type " .. event.damage_type.name .. " cause " .. cause_name
     --        .. " original_damage_amount " .. event.original_damage_amount .. " final_damage_amount " .. event.final_damage_amount
@@ -213,9 +219,8 @@ function Public.on_entity_damaged(event)
     local vehicle_modifier = 1
 
     -- Bulldozer mode
-    if event.damage_type.name == "explosion" and event.cause then
+    if event.damage_type.name == "explosion" and event_cause then
         local min_clear_distance = 30
-        local cause_force = event.cause.force
         local position = entity.position
         if not Building.near_another_town(cause_force.name, position, entity.surface, min_clear_distance)
                 and not Building.near_outlander_town(cause_force, position, entity.surface, min_clear_distance)
@@ -241,7 +246,7 @@ function Public.on_entity_damaged(event)
     if (entity.name == "tank" or entity.name == "car") and (event.damage_type.name == "physical" or event.damage_type.name == "fire") then
         is_vehicle_damage = true
         vehicle_modifier = 0.3
-        if event.cause and (event.cause.name == "tank" or event.cause.name == "car") then
+        if event_cause and (event_cause.name == "tank" or event_cause.name == "car") then
             -- Boost player vs player tank battles
             vehicle_modifier = vehicle_modifier * 3
         end
@@ -254,18 +259,28 @@ function Public.on_entity_damaged(event)
     -- Force modifier compensates for unbalanced teams
     -- This evens it out so that 2 shots from a 2 player team do same damage as 1 shot from a 1 player team
     -- Need to consider damage after damage resistances
-    local cause_force = event.force
-    if cause_force == game.forces.enemy or entity.force == game.forces.enemy or entity.force == game.forces.neutral
-            or not event.cause or force_damage_modifier_excluded[event.cause.name] then
+    if not event_cause or force_damage_modifier_excluded[event_cause.name] then
         force_modifier = 1
     else
         local town_center = global.tokens.maps_wasteland_table.town_centers[cause_force.name]
         if town_center then
             force_modifier = town_center.combat_balance.current_modifier
+
+            -- UX
+            local last_shown = global.tokens.maps_wasteland_table.last_damage_multiplier_shown[cause_force.index]
+            if (not last_shown or game.tick - last_shown > 60 * 60) and event_cause
+                    and entity.force ~= game.forces.neutral and entity.force ~= game.forces.enemy then
+                entity.surface.create_entity({
+                    name = 'flying-text',
+                    position = event_cause.position,
+                    text = 'Damage: '.. format_dmg_modifier(force_modifier),
+                    color = {r =1, g = 1, b = 1}
+                })
+                global.tokens.maps_wasteland_table.last_damage_multiplier_shown[cause_force.index] = game.tick
+            end
         else
             force_modifier = 1
         end
-
     end
 
     local would_be_killed = entity.health == 0

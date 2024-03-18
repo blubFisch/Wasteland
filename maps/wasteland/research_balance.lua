@@ -49,8 +49,9 @@ local function calculate_modifier_for_town(town_center)
         end
     end
     local player_modifier = math.max(active_player_count, 1) ^ -0.5
+    local rested_modifier = 0.5 * town_center.rested_modifier
 
-    return player_modifier * research_modifier
+    return player_modifier * research_modifier + rested_modifier
 end
 
 local function update_modifiers()

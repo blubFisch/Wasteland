@@ -11,6 +11,8 @@ local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local GuiTemplater = require 'zk-lib/lualibs/control_stage/GuiTemplater'
+local CombatBalance = require 'maps.wasteland.combat_balance'
+local TownCenter = require 'maps.wasteland.town_center'
 
 
 local button_id = 'towny-score-button'
@@ -211,6 +213,8 @@ local function update_score()
                 }
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
+                label.tooltip = "Town rest bonus: " .. TownCenter.format_rest_modifier(town_center.rested_modifier)
+                        .."\nDamage: " .. CombatBalance.format_dmg_modifier(town_center.combat_balance.current_modifier)
 
                 local league = ranking_table.add { type = 'label', caption = PvPTownShield.get_town_league(town_center)}
                 ranking_table.style.column_alignments[3] = 'right'

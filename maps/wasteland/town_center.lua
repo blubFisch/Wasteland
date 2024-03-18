@@ -5,6 +5,8 @@ local table_insert = table.insert
 local math_floor = math.floor
 local table_shuffle = table.shuffle_table
 local table_size = table.size
+local math_max = math.max
+local math_min = math.min
 
 local Event = require 'utils.event'
 local Server = require 'utils.server'
@@ -498,6 +500,9 @@ local function found_town(event)
                               right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
     town_center.pvp_shield_mgmt = {}
     town_center.marked_afk = false
+    town_center.last_online = game.tick
+    town_center.rested_modifier = 0
+    town_center.previous_rested_modifier = 0
 
     town_center.town_caption =
         rendering.draw_text {
@@ -678,6 +683,43 @@ commands.add_command(
             end
         end
 )
+
+local function format_rest_modifier(modifier)
+    return string.format('+%.0f%%', 100 * modifier)
+end
+Public.format_rest_modifier = format_rest_modifier
+
+local town_rest_min_period_ticks = 60 * 2
+local town_rest_loop_time = 60
+local town_rest_up_per_hour = 1 / 20
+local town_rest_down_per_hour = 1 / 4
+local town_rest_up_per_loop = town_rest_loop_time * town_rest_up_per_hour / (60 * 60 * 60)
+local town_rest_down_per_loop = town_rest_loop_time * town_rest_down_per_hour / (60 * 60 * 60)
+
+local function update_town_rest()
+    local this = ScenarioTable.get_table()
+    for _, town_center in pairs(this.town_centers) do
+        local town_force = town_center.market.force
+        if #town_force.connected_players > 0 then
+            town_center.rested_modifier = math_max(town_center.rested_modifier - town_rest_down_per_loop, 0)
+            town_center.last_online = game.tick
+            if math.abs(town_center.rested_modifier - town_center.previous_rested_modifier) >= 0.2
+                    or (town_center.rested_modifier == 0 and town_center.previous_rested_modifier > 0) then
+                town_force.print("Your town rest bonus is now " .. format_rest_modifier(town_center.rested_modifier)
+                    .. ". Town rest boost increases player damage and lowers research cost."
+                    .. " You collect town rest bonus while you are offline.", Utils.scenario_color)
+                town_center.previous_rested_modifier = town_center.rested_modifier
+            end
+        else    -- offline
+            if game.tick - town_center.last_online > town_rest_min_period_ticks then   -- discourage going online quickly to check town
+                town_center.rested_modifier = math_min(town_center.rested_modifier + town_rest_up_per_loop, 1)
+            end
+        end
+        --game.print("XDB town rest: " ..  town_center.rested_modifier)
+    end
+end
+
+Event.on_nth_tick(town_rest_loop_time, update_town_rest)
 
 Event.add(defines.events.on_built_entity, found_town)
 Event.add(defines.events.on_robot_built_entity, found_town)
