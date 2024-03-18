@@ -277,7 +277,8 @@ local function landfill_under(entity)
     local surface = entity.surface
     for _, v in pairs(vectors) do
         local position = {entity.position.x + v[1], entity.position.y + v[2]}
-        if not surface.get_tile(position).collides_with('resource-layer') then
+        local tile = surface.get_tile(position)
+        if tile.name ~= "blue-refined-concrete" and not tile.collides_with('resource-layer') then
             surface.set_tiles({{name = 'landfill', position = position}}, true)
         end
     end
