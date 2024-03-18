@@ -44,6 +44,7 @@ local info_adv =
 - PvP shields prevent players and biters from entering, building and damaging
 - League shield protects your town from players of a higher league and cover the outer blue tile square of your town
     - League score limits: 15 score or tank=L2, 35 score=L3, 60 score=L4
+    - To see how town scores are calculated, hover the mouse over a town's score in the leaderboard
 - Offline PvP shields deploy automatically once all players of a town leave the game
     - The size is marked by the blue square around towns
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
