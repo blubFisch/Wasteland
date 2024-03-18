@@ -107,7 +107,7 @@ local function format_town_with_player_names(town_center)
     for _, player in pairs(town_center.market.force.players) do
         if not string.find(town_center.town_name, player.name) then
             if player_names ~= "" then
-                player_names = player_names .. ","
+                player_names = player_names .. ", "
             end
             player_names = player_names .. player.name
         else
