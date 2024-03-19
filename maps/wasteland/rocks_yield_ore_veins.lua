@@ -12,10 +12,15 @@ local valid_entities = {
 }
 
 local size_raffle = {
-    {'huge', 80, 100},
-    {'big', 50, 70},
-    {'small', 30, 40}
+    -- Name, weight, size_min, size_max
+    {'small', 100, 30, 40},
+    {'big', 80, 50, 80},
+    {'huge', 20, 150, 200}
 }
+local size_raffle_chance_sum = 0
+for _, s in pairs(size_raffle) do
+    size_raffle_chance_sum = size_raffle_chance_sum + s[2]
+end
 
 local function spawn_new_rock(surface)
     local this = ScenarioTable.get_table()
@@ -128,7 +133,15 @@ end
 
 local function spawn_ore_vein(surface, position, player)
     local this = ScenarioTable.get_table()
-    local size = size_raffle[math_random(1, #size_raffle)]
+    local size
+    local selection = math_random(0, size_raffle_chance_sum)
+    for _, s in pairs(size_raffle) do
+        selection = selection - s[2]
+        if selection <= 0 then
+            size = s
+            break
+        end
+    end
     local ore = this.rocks_yield_ore_veins.raffle[math_random(1, #this.rocks_yield_ore_veins.raffle)]
     local icon
     if game.entity_prototypes[ore] then
@@ -181,10 +194,10 @@ local function spawn_ore_vein(surface, position, player)
     end
 
     local ore_positions = {[position.x .. '_' .. position.y] = true}
-    local count = math_random(size[2], size[3])
+    local count = math_random(size[3], size[4])
 
     for _ = 1, 128, 1 do
-        local c = math_random(math_floor(size[2] * 0.5) + 1, size[2])
+        local c = math_random(math_floor(size[3] * 0.5) + 1, size[3])
         if count < c then
             c = count
         end
