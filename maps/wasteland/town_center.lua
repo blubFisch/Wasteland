@@ -689,9 +689,10 @@ local function format_rest_modifier(modifier)
 end
 Public.format_rest_modifier = format_rest_modifier
 
-local town_rest_min_period_ticks = 60 * 2
+local town_rest_min_period_hours = 2
+local town_rest_min_period_ticks = town_rest_min_period_hours * 60 * 60 * 60
 local town_rest_loop_time = 60
-local town_rest_up_per_hour = 1 / 20
+local town_rest_up_per_hour = 1 / (20 - town_rest_min_period_hours)
 local town_rest_down_per_hour = 1 / 4
 local town_rest_up_per_loop = town_rest_loop_time * town_rest_up_per_hour / (60 * 60 * 60)
 local town_rest_down_per_loop = town_rest_loop_time * town_rest_down_per_hour / (60 * 60 * 60)
