@@ -321,9 +321,9 @@ local function on_player_dropped_item(event)
                     local closest_town_center
                     local closest_distance = math.huge
                     for _, town_center in pairs(this.town_centers) do
-                        local distance = (coin_position.x - town_center.market.position.x)^2 + (coin_position.y - town_center.market.position.y)^2
-                        if distance < 300 and distance < closest_distance then
-                            closest_distance = distance
+                        local distance_squared = (coin_position.x - town_center.market.position.x)^2 + (coin_position.y - town_center.market.position.y)^2
+                        if distance_squared < 300^2 and distance_squared < closest_distance then
+                            closest_distance = distance_squared
                             closest_town_center = town_center
                         end
                     end
