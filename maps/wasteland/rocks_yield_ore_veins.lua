@@ -12,11 +12,9 @@ local valid_entities = {
 }
 
 local size_raffle = {
-    {'giant', 90, 130},
     {'huge', 80, 100},
     {'big', 50, 70},
-    {'small', 30, 40},
-    {'tiny', 10, 20}
+    {'small', 30, 40}
 }
 
 local function spawn_new_rock(surface)
