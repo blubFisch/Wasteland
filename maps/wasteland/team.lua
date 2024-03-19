@@ -151,9 +151,8 @@ function Public.add_player_to_town(player, town_center)
 
     if TeamBasics.is_outlander_force(player.force) then
         game.merge_forces(player.force, market.force)
-    else
-        player.force = market.force
     end
+    player.force = market.force -- This should happen in same tick as merge_forces is delayed
 
     this.spawn_point[player.index] = force.get_spawn_position(surface)
     this.strikes[player.name] = 0
