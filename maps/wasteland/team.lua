@@ -712,6 +712,11 @@ function Public.player_joined(player)
         end
         player.force = create_outlander_force(player)
     end
+
+    local this = ScenarioTable.get_table()
+    if this.winner then
+        player.print(this.winner .. " has won the game! The server will be reset by an admin soon.", Utils.scenario_color)
+    end
 end
 
 function Public.player_left(player)
