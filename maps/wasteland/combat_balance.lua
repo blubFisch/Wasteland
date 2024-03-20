@@ -150,7 +150,7 @@ Public.format_dmg_modifier = format_dmg_modifier
 local function calculate_modifier_for_town(town_center)
     local force = town_center.market.force
     if TeamBasics.is_town_force(force) then
-        return math.min(1 / #force.connected_players + 0.2, 1) + town_center.rested_modifier / 2
+        return math.min(1 / #force.connected_players + 0.2, 1) + town_center.town_rest.current_modifier / 2
     else
         return 1
     end

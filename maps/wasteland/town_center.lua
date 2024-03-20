@@ -7,6 +7,7 @@ local table_shuffle = table.shuffle_table
 local table_size = table.size
 local math_max = math.max
 local math_min = math.min
+local math_abs = math.abs
 
 local Event = require 'utils.event'
 local Server = require 'utils.server'
@@ -500,9 +501,11 @@ local function found_town(event)
                               right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
     town_center.pvp_shield_mgmt = {}
     town_center.marked_afk = false
-    town_center.last_online = game.tick
-    town_center.rested_modifier = 0
-    town_center.previous_rested_modifier = 0
+    town_center.town_rest = {}
+    town_center.town_rest.last_online = game.tick
+    town_center.town_rest.current_modifier = 1
+    town_center.town_rest.previous_modifier = 0
+    town_center.town_rest.mining_prod_bonus = 0
 
     town_center.town_caption =
         rendering.draw_text {
@@ -684,39 +687,60 @@ commands.add_command(
         end
 )
 
-local function format_rest_modifier(modifier)
+local function format_boost_modifier(modifier)
     return string.format('+%.0f%%', 100 * modifier)
 end
+Public.format_boost_modifier = format_boost_modifier
+local format_rest_modifier = format_boost_modifier
 Public.format_rest_modifier = format_rest_modifier
 
 local town_rest_min_period_hours = 2
-local town_rest_min_period_ticks = town_rest_min_period_hours * 60 * 60 * 60
-local town_rest_loop_time = 60
 local town_rest_up_per_hour = 1 / (20 - town_rest_min_period_hours)
 local town_rest_down_per_hour = 1 / 4
+if false then   -- DEBUG
+    town_rest_min_period_hours = town_rest_min_period_hours / 60 / 10
+    town_rest_up_per_hour = town_rest_up_per_hour * 60 * 10
+    town_rest_down_per_hour = town_rest_down_per_hour * 60 * 10
+end
+local town_rest_min_period_ticks = town_rest_min_period_hours * 60 * 60 * 60
+local town_rest_loop_time = 60
 local town_rest_up_per_loop = town_rest_loop_time * town_rest_up_per_hour / (60 * 60 * 60)
 local town_rest_down_per_loop = town_rest_loop_time * town_rest_down_per_hour / (60 * 60 * 60)
+
+local function round(num)
+    return num >= 0 and math.floor(num + 0.5) or math.ceil(num - 0.5)
+end
 
 local function update_town_rest()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
         local town_force = town_center.market.force
         if #town_force.connected_players > 0 then
-            town_center.rested_modifier = math_max(town_center.rested_modifier - town_rest_down_per_loop, 0)
-            town_center.last_online = game.tick
-            if math.abs(town_center.rested_modifier - town_center.previous_rested_modifier) >= 0.2
-                    or (town_center.rested_modifier == 0 and town_center.previous_rested_modifier > 0) then
-                town_force.print("Your town rest bonus is now " .. format_rest_modifier(town_center.rested_modifier)
-                    .. ". Town rest boost increases player damage and lowers research cost."
+            town_center.town_rest.current_modifier = math_max(town_center.town_rest.current_modifier - town_rest_down_per_loop, 0)
+            town_center.town_rest.last_online = game.tick
+            if math_abs(town_center.town_rest.current_modifier - town_center.town_rest.previous_modifier) >= 0.2
+                    or (town_center.town_rest.current_modifier == 0 and town_center.town_rest.previous_modifier > 0) then
+                town_force.print("Your town rest bonus is now " .. format_rest_modifier(town_center.town_rest.current_modifier)
+                    .. ". Town rest boosts player damage and scrap/mining productivity. It also lowers research cost."
                     .. " You collect town rest bonus while you are offline.", Utils.scenario_color)
-                town_center.previous_rested_modifier = town_center.rested_modifier
+                town_center.town_rest.previous_modifier = town_center.town_rest.current_modifier
             end
         else    -- offline
-            if game.tick - town_center.last_online > town_rest_min_period_ticks then   -- discourage going online quickly to check town
-                town_center.rested_modifier = math_min(town_center.rested_modifier + town_rest_up_per_loop, 1)
+            if game.tick - town_center.town_rest.last_online > town_rest_min_period_ticks then   -- discourage going online quickly to check town
+                town_center.town_rest.current_modifier = math_min(town_center.town_rest.current_modifier + town_rest_up_per_loop, 1)
             end
         end
-        --game.print("XDB town rest: " ..  town_center.rested_modifier)
+        local target_prod_bonus = town_center.town_rest.current_modifier * 0.5
+        if math_abs(town_center.town_rest.mining_prod_bonus - target_prod_bonus) >= 0.01 then
+            local diff = target_prod_bonus - town_center.town_rest.mining_prod_bonus
+            local combined_bonus_precise = town_center.market.force.mining_drill_productivity_bonus + diff
+            local combined_bonus_rounded = round(100 * combined_bonus_precise) / 100
+            local rounding_error = combined_bonus_rounded - combined_bonus_precise
+            town_center.market.force.mining_drill_productivity_bonus = combined_bonus_rounded
+            town_center.town_rest.mining_prod_bonus = town_center.town_rest.mining_prod_bonus + diff + rounding_error
+        end
+
+        --game.print("XDB town rest: " ..  town_center.town_rest.current_modifier)
     end
 end
 

@@ -213,8 +213,8 @@ local function update_score()
                 }
                 label.style.font = 'default-semibold'
                 label.style.font_color = town_center.color
-                label.tooltip = "Town rest bonus: " .. TownCenter.format_rest_modifier(town_center.rested_modifier)
-                        .."\nDamage: " .. CombatBalance.format_dmg_modifier(town_center.combat_balance.current_modifier)
+                label.tooltip = "Town rest bonus: " .. TownCenter.format_rest_modifier(town_center.town_rest.current_modifier)
+                        .."\n - Mining+Scrap productivity: " .. TownCenter.format_boost_modifier(town_center.town_rest.mining_prod_bonus)
 
                 local league = ranking_table.add { type = 'label', caption = PvPTownShield.get_town_league(town_center)}
                 ranking_table.style.column_alignments[3] = 'right'
