@@ -786,6 +786,40 @@ local function kill_force(killed_force, cause_force, cause_entity)
 
     local is_suicide = cause_force and killed_force == cause_force
 
+    local kill_message
+    if is_suicide then
+        kill_message = town_name .. ' has given up'
+    elseif cause_entity == nil or not cause_entity.valid or cause_entity.force == nil then
+        kill_message = town_name .. ' has fallen!'
+    else
+        local player_name_printable
+        if cause_entity.type == 'car' or cause_entity.type == 'tank' then
+            local driver = cause_entity.get_driver()
+            if driver and driver.player then
+                player_name_printable = display_player_name(driver.player)
+            end
+        elseif cause_entity.name == 'character' then
+            player_name_printable = display_player_name(cause_entity.player)
+        end
+
+        if TeamBasics.is_town_force(cause_entity.force) then
+            local killer_town_center = this.town_centers[cause_entity.force.name]
+            if player_name_printable then
+                kill_message = town_name .. ' has fallen to ' .. player_name_printable .. ' from '  .. killer_town_center.town_name .. '!'
+            else
+                kill_message = town_name .. ' has fallen to ' .. killer_town_center.town_name .. '!'
+            end
+        elseif cause_entity.force.name ~= 'enemy' then
+            if player_name_printable then
+                kill_message = town_name .. ' has fallen to ' .. player_name_printable .. '!'
+            else
+                kill_message = town_name .. ' has fallen!'
+            end
+        else
+            kill_message = town_name .. ' has fallen to the biters!'
+        end
+    end
+
     for _, player in pairs(killed_force.players) do
         this.spawn_point[player.index] = nil
         this.cooldowns_town_placement[player.index] = game.tick + 3600 * 5
@@ -793,14 +827,7 @@ local function kill_force(killed_force, cause_force, cause_entity)
         if player.character then
             player.character.die()
         elseif not player.connected then
-            this.killer_name[player.index] = 'unknown'
-            if is_suicide then
-                this.killer_name[player.index] = 'suicide'
-            else
-                if cause_entity and cause_entity.force then
-                    this.killer_name[player.index] = Public.force_display_name(cause_force)
-                end
-            end
+            this.town_kill_message[player.index] = kill_message
             this.requests[player.index] = 'kill-character'
         end
         Public.set_player_to_outlander(player)
@@ -849,40 +876,6 @@ local function kill_force(killed_force, cause_force, cause_entity)
         chest.insert({name = 'coin', count = loot_balance })
     end
 
-    local message
-    if is_suicide then
-        message = town_name .. ' has given up'
-    elseif cause_entity == nil or not cause_entity.valid or cause_entity.force == nil then
-        message = town_name .. ' has fallen!'
-    else
-        local player_name_printable
-        if cause_entity.type == 'car' or cause_entity.type == 'tank' then
-            local driver = cause_entity.get_driver()
-            if driver and driver.player then
-                player_name_printable = display_player_name(driver.player)
-            end
-        elseif cause_entity.name == 'character' then
-            player_name_printable = display_player_name(cause_entity.player)
-        end
-
-        if TeamBasics.is_town_force(cause_entity.force) then
-            local killer_town_center = this.town_centers[cause_entity.force.name]
-            if player_name_printable then
-                message = town_name .. ' has fallen to ' .. player_name_printable .. ' from '  .. killer_town_center.town_name .. '!'
-            else
-                message = town_name .. ' has fallen to ' .. killer_town_center.town_name .. '!'
-            end
-        elseif cause_entity.force.name ~= 'enemy' then
-            if player_name_printable then
-                message = town_name .. ' has fallen to ' ..player_name_printable .. '!'
-            else
-                message = town_name .. ' has fallen!'
-            end
-        else
-            message = town_name .. ' has fallen to the biters!'
-        end
-    end
-
     local town_count = 0
     for _, _ in pairs(this.town_centers) do
         town_count = town_count + 1
@@ -891,9 +884,9 @@ local function kill_force(killed_force, cause_force, cause_entity)
         game.reset_time_played()
     end
 
-    log("kill_force: " .. message)
-    Server.to_discord_embed(message)
-    game.print('>> ' .. message, Utils.scenario_color)
+    log("kill_force: " .. kill_message)
+    Server.to_discord_embed(kill_message)
+    game.print('>> ' .. kill_message, Utils.scenario_color)
 end
 
 local function on_forces_merged()

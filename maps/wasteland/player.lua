@@ -84,11 +84,9 @@ function Public.requests(player)
                 i.clear()
             end
 
-            if this.killer_name[player.index] then
-                player.print("Your town has fallen to " .. this.killer_name[player.index] .. " since you last played!", {r = 1, g = 0, b = 0})
-                this.killer_name[player.index] = nil
-            else
-                player.print("Your town has fallen since you last played!", {r = 1, g = 0, b = 0})
+            if this.town_kill_message[player.index] then
+                player.print("Your town is no more: " .. this.town_kill_message[player.index], {r = 1, g = 0, b = 0})
+                this.town_kill_message[player.index] = nil
             end
 
             player.character.die()
