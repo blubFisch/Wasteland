@@ -57,7 +57,7 @@ local info_adv =
 - It's best to found new towns far from existing towns, as biters advance based on the tech of nearby towns
 - Need more ores? Mine or destroy big rocks to find ore patches under them!
 - Need more oil? Kill biter worms - some of them will leave you an oil patch
-- When your town is offline, it gains a rest bonus, which is applied to player damage output and research cost
+- When your town is offline, it gains a rest bonus, which is applied to player damage output, scrap/mining productivity and research cost
 - The town market is the heart of your town. If it is destroyed, you lose everything.
     Protect it well and increase its health by purchasing upgrades.
 - It's possible to automate trading with the town center! How cool is that?!! Try it out.
