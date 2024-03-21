@@ -59,7 +59,8 @@ local function visualise_entity_deactivated(entity)
     this.entity_labels[entity.unit_number] = entity_label
 end
 
-local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'ammo-turret', 'electric-turret', 'fluid-turret', 'radar', 'beacon'}
+local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'mining-drill',
+                                'ammo-turret', 'electric-turret', 'fluid-turret', 'radar', 'beacon'}
 local function control_buildings_inside(surface, box, active)
     local this = ScenarioTable.get_table()
     for _, e in pairs(surface.find_entities_filtered({ type = shield_inactive_types, area=box})) do
