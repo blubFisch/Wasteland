@@ -73,7 +73,7 @@ local info_adv =
 - Biter waves with boss units (the ones with health bar) will attack advanced towns while their players are online
 - Played this for the 100th time? Try /skip-tutorial
 - Spawn biters by dropping coins on nests. They will attack the closest town
-- Laser turrets shoot empty vehicles which can be used to block bots in offline attacks]]
+- Laser and gun turrets shoot empty vehicles which can be used to block bots in offline attacks]]
 
 function Public.toggle_button(player)
     if player.gui.top['towny_map_intro_button'] then
