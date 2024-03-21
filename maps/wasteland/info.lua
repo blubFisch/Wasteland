@@ -4,6 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-2]Mar 2024 updates[/font]
+ - Mining drills are now also deactivated by afk/offline shields
  - When a town is offline, it gains a rest bonus, which is applied to player damage output and research cost
  - Spawn biters by dropping coins on nests :-)
  - Map has random mixed ore patches
