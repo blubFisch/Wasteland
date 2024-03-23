@@ -864,7 +864,7 @@ local function kill_force(killed_force, cause_force, cause_entity)
         end
     end
 
-    PvPTownShield.remove_all_shield_markers(surface, position)
+    PvPTownShield.remove_shield_floor_markers(surface, position)
 
     if this.pvp_shields[killed_force_name] then
         PvPShield.remove_shield(this.pvp_shields[killed_force_name])

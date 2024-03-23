@@ -195,7 +195,7 @@ local function draw_town_spawn(player_name)
         surface.create_entity({name = 'stone-wall', position = p, force = player_name})
     end
 
-    PvPTownShield.draw_all_shield_markers(surface, position)
+    PvPTownShield.draw_shield_floor_markers(surface, position)
 
     -- ore patches
     local ores_in = {'coal'}

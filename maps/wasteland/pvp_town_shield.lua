@@ -15,8 +15,8 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 
 Public.offline_shield_size = (MapLayout.league_balance_shield_size - 1)
 
-local league_shield_radius = (MapLayout.league_balance_shield_size - 1) / 2
-local league_shield_vectors = Utils.make_border_vectors(league_shield_radius)
+local shield_radius = (MapLayout.league_balance_shield_size - 1) / 2
+local shield_vectors = Utils.make_border_vectors(shield_radius)
 
 function Public.get_town_control_range(town_center)
     return math.min(130 + town_center.evolution.worms * 130,
@@ -265,15 +265,18 @@ local function update_leagues()
     end
 end
 
-function Public.remove_all_shield_markers(surface, position)
-    local r = MapLayout.league_balance_shield_size
-    for _, e in pairs(surface.find_tiles_filtered({area = {{position.x - r, position.y - r}, {position.x + r, position.y + r}}, name = 'blue-refined-concrete'})) do
+local function get_shield_max_area(position)
+    return {{position.x - shield_radius, position.y -shield_radius}, {position.x + shield_radius, position.y + shield_radius}}
+end
+
+function Public.remove_shield_floor_markers(surface, position)
+    for _, e in pairs(surface.find_tiles_filtered({area = get_shield_max_area(position), name = 'blue-refined-concrete'})) do
         surface.set_tiles({{name = 'landfill', position = e.position}}, true)
     end
 end
 
-function Public.draw_all_shield_markers(surface, position)
-    for _, vector in pairs(league_shield_vectors) do
+function Public.draw_shield_floor_markers(surface, position)
+    for _, vector in pairs(shield_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
         if not surface.get_tile(p).collides_with("water-tile") then
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
@@ -305,22 +308,27 @@ function Public.request_afk_shield(town_center, player)
     if all_players_near_center(town_center) then
         if not Public.enemy_players_near_town(town_center, town_control_range) then
             if town_shields_researched(force) then
-                town_center.marked_afk = true
-                local shield = this.pvp_shields[force.name]
-                if shield then
-                    PvPShield.remove_shield(shield)
+                if surface.count_entities_filtered({ area = get_shield_max_area(market.position),
+                                                     type = "unit", force = game.forces.enemy, limit=1}) == 0 then
+                    town_center.marked_afk = true
+                    local shield = this.pvp_shields[force.name]
+                    if shield then
+                        PvPShield.remove_shield(shield)
+                    end
+                    surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
+                    force.print("You have enabled AFK mode", Utils.scenario_color)
+                    update_pvp_shields()
+                else
+                    player.print("Biters are within the town range, can't enter AFK mode", Utils.scenario_color_warning)
                 end
-                surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
-                force.print("You have enabled AFK mode", Utils.scenario_color)
-                update_pvp_shields()
             else
-                player.print("You need to research automation to enable shields", Utils.scenario_color)
+                player.print("You need to research automation to enable shields", Utils.scenario_color_warning)
             end
         else
-            player.print("Enemy players are too close, can't enter AFK mode", Utils.scenario_color)
+            player.print("Enemy players are too close, can't enter AFK mode", Utils.scenario_color_warning)
         end
     else
-        player.print("To activate AFK mode, all players need to gather near the town center", Utils.scenario_color)
+        player.print("To activate AFK mode, all players need to gather near the town center", Utils.scenario_color_warning)
     end
 end
 
