@@ -174,11 +174,17 @@ M.on_player_removed = function(event)
 end
 
 
+local ENTITY_TYPE_BLACKLIST = {
+	["entity-ghost"] = true,
+	["tile-ghost"]   = true
+}
+
 ---@param event on_built_entity
 M.on_built_entity = function(event)
 	local entity = event.created_entity
 	if not entity.valid then return end
-	if entity.type ~= "entity-ghost" and entity.type ~= "tile-ghost" then return end
+	if ENTITY_TYPE_BLACKLIST[entity.type] then return end
+
 	local player_index = event.player_index
 	local player = game.get_player(player_index)
 	if not (player and player.valid) then return end
