@@ -31,8 +31,8 @@ local RED_TEXT = {255, 0, 0}
 local GREEN_TEXT = {0, 255, 0}
 local _BUILD_ACTION = defines.input_action.build
 ---@type uint
-local _ghost_rate_limit = (settings.global["ASBZO_max_ghost_rate"] and settings.global["ASBZO_max_ghost_rate"].value) or 1000 --[[@as uint]]
-local _restriction_time = (settings.global["ASBZO_restriction_time"] and settings.global["ASBZO_restriction_time"].value) or 60 --[[@as uint]]
+local _ghost_rate_limit = (settings.global["ASBZO_max_ghost_rate"] and settings.global["ASBZO_max_ghost_rate"].value) or 2000 --[[@as uint]]
+local _restriction_time = (settings.global["ASBZO_restriction_time"] and settings.global["ASBZO_restriction_time"].value) or 10 --[[@as uint]]
 
 
 ---@param player LuaPlayer
@@ -144,7 +144,8 @@ M.check_players_data = function()
 		time = time - 1
 		if time > 0 then
 			players_restiction_time[player_index] = time
-		elseif ghost_players_rate[player_index] == nil then
+		else
+			ghost_players_rate[player_index] = nil	-- Note: Overrides other rate logic
 			local player = game.get_player(player_index)
 			if not (player and player.valid) then goto continue end
 			_remove_build_restriction(player)
@@ -177,7 +178,7 @@ end
 M.on_built_entity = function(event)
 	local entity = event.created_entity
 	if not entity.valid then return end
-	if entity.type ~= "entity-ghost" then return end
+	if entity.type ~= "entity-ghost" and entity.type ~= "tile-ghost" then return end
 	local player_index = event.player_index
 	local player = game.get_player(player_index)
 	if not (player and player.valid) then return end
