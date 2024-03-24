@@ -412,7 +412,7 @@ local function on_chunk_generated(event)
     end
 
     -- random mixed patches, mostly to show beginners that there's ores on the map
-    if math_random(1,40) == 1 then
+    if math_random(1,80) == 1 then
         local ores = {'iron-ore', 'copper-ore', 'stone', 'coal'}
         local amount = 500
         local max_radius = 8
