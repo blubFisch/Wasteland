@@ -6,35 +6,20 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 
 global.tracked_labs = global.tracked_labs or {}
 
-local function process_slots(actor, event)
+local function process_building_limit(actor, event)
     local entity = event.created_entity
     if not entity.valid then return end
 
     local force = actor.force
-    local surface = entity.surface
-
-    -- Outlanders can't build laser turrets
-    if (entity.name == 'laser-turret' or entity.name == 'lab' or entity.name == 'beacon')
-            and not TeamBasics.is_town_force(force) then
-        surface.create_entity(
-                {
-                    name = 'flying-text',
-                    position = entity.position,
-                    text = "Can't build this as outlander!",
-                    color = {r = 0.77, g = 0.0, b = 0.0}
-                }
-        )
-        actor.insert({name = entity.name, count = 1})
-        entity.destroy()
+    if not TeamBasics.is_town_force(force) then
         return
     end
 
     local this = ScenarioTable.get_table()
+    local surface = entity.surface
     local town_center = this.town_centers[force.name]
-    if not town_center then return end
 
     if entity.name == 'laser-turret' then
-
         local slots = town_center.upgrades.laser_turret.slots
         local locations = town_center.upgrades.laser_turret.locations + 1
         local disallowed_info_text = "You do not have enough slots! Buy more at the market"
@@ -142,11 +127,11 @@ local function process_slots(actor, event)
 end
 
 local function on_player_built_entity(event)
-    process_slots(game.get_player(event.player_index), event)
+    process_building_limit(game.get_player(event.player_index), event)
 end
 
 local function on_robot_built_entity(event)
-    process_slots(event.robot, event)
+    process_building_limit(event.robot, event)
 end
 
 local function labs_cant_have_speed_modules()
