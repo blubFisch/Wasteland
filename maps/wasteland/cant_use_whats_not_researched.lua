@@ -73,7 +73,6 @@ local function process_armor(player)
     local equip = grid.equipment
     for _, piece in pairs(equip) do
         if piece.valid then
-            game.print(piece.name)
             if not global.force_available_recipe_cache[player_force_name][piece.name] and not allowed_for_all[piece.name] then
                 armor_inventory.clear() -- Note this doesn't refund the armor, but doesn't matter much at this point
                 player.print("Technology not available for your armor", Utils.scenario_color_warning)
