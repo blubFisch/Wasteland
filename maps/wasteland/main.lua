@@ -21,7 +21,7 @@ require 'maps.wasteland.map_layout'
 require 'maps.wasteland.evolution'
 require 'maps.wasteland.custom_death_messages'
 require 'maps.wasteland.pvp_guardian'
-require 'maps.wasteland.cant_build_whats_not_researched'
+require 'maps.wasteland.cant_use_whats_not_researched'
 
 local Event = require 'utils.event'
 local Autostash = require 'modules.autostash'
