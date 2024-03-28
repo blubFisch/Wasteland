@@ -4,6 +4,8 @@ local ScenarioTable = require 'maps.wasteland.table'
 local TeamBasics = require 'maps.wasteland.team_basics'
 
 
+global.tracked_labs = global.tracked_labs or {}
+
 local function process_slots(actor, event)
     local entity = event.created_entity
     if not entity.valid then return end
@@ -12,7 +14,8 @@ local function process_slots(actor, event)
     local surface = entity.surface
 
     -- Outlanders can't build laser turrets
-    if entity.name == 'laser-turret' and not TeamBasics.is_town_force(force) then
+    if (entity.name == 'laser-turret' or entity.name == 'lab' or entity.name == 'beacon')
+            and not TeamBasics.is_town_force(force) then
         surface.create_entity(
                 {
                     name = 'flying-text',
@@ -71,6 +74,8 @@ local function process_slots(actor, event)
                 }
         )
     elseif entity.name == 'lab' then
+        table.insert(global.tracked_labs, entity)
+
         -- Prevent researching extremely fast from stockpiled science
         local nearby_beacons = surface.find_entities_filtered({area = {{entity.position.x - 4, entity.position.y - 4},
                                                                        {entity.position.x + 4, entity.position.y + 4}},
@@ -136,15 +141,40 @@ local function process_slots(actor, event)
     end
 end
 
-
-
-
 local function on_player_built_entity(event)
     process_slots(game.get_player(event.player_index), event)
 end
 
 local function on_robot_built_entity(event)
     process_slots(event.robot, event)
+end
+
+local function labs_cant_have_speed_modules()
+    for i = #global.tracked_labs, 1, -1 do
+        local lab = global.tracked_labs[i]
+        if lab.valid then
+            local inventory = lab.get_module_inventory()
+            if not inventory.is_empty() then
+                for ii = #inventory, 1, -1 do
+                    if inventory[ii].valid_for_read then
+                        if string.find(inventory[ii].name,"speed") then
+                            inventory[ii].count = 0
+                            lab.surface.create_entity(
+                                {
+                                    name = 'flying-text',
+                                    position = lab.position,
+                                    text = "Labs can't have speed modules!",
+                                    color = {r = 0.77, g = 0.0, b = 0.0}
+                                }
+                            )
+                        end
+                    end
+                end
+            end
+        else
+            table.remove(global.tracked_labs, i)
+        end
+    end
 end
 
 local function on_entity_destroyed(event)
@@ -176,3 +206,4 @@ local Event = require 'utils.event'
 Event.add(defines.events.on_built_entity, on_player_built_entity)
 Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
 Event.add(defines.events.on_entity_destroyed, on_entity_destroyed)
+Event.on_nth_tick(18, labs_cant_have_speed_modules)
