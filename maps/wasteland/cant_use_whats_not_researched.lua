@@ -6,10 +6,10 @@ global.force_available_recipe_cache = global.force_available_recipe_cache or {}
 local function update_recipes(force)
     global.force_available_recipe_cache[force.name] = {}
 
-    for _, rx in pairs(force.recipes) do
-        if rx.enabled then
-            for _, ef in pairs(rx.products) do
-                global.force_available_recipe_cache[force.name][ef.name] = true
+    for _, rec in pairs(force.recipes) do
+        if rec.enabled then
+            for _, prod in pairs(rec.products) do
+                global.force_available_recipe_cache[force.name][prod.name] = true
             end
         end
     end
