@@ -40,7 +40,7 @@ local upgrade_functions = {
         local market = town_center.market
         local force = market.force
         local surface = market.surface
-        if town_center.upgrades.mining_prod + 1 > 10 then
+        if town_center.upgrades.mining_prod + 1 > 7 then
             return false
         end
         town_center.upgrades.mining_prod = town_center.upgrades.mining_prod + 1
@@ -126,7 +126,7 @@ local function set_offers(town_center)
     else
         special_offers[2] = {{}, 'Maximum Backpack upgrades reached!'}
     end
-    if town_center.upgrades.mining_prod + 1 <= 10 then
+    if town_center.upgrades.mining_prod + 1 <= 7 then
         special_offers[3] = {{{'coin', (town_center.upgrades.mining_prod + 1) ^ 2 * 400}}, 'Upgrade Mining Productivity +10% (Drills, Pumps, Scrap)'}
     else
         special_offers[3] = {{}, 'Maximum Productivity upgrades reached!'}
