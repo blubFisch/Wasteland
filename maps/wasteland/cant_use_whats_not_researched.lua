@@ -61,6 +61,14 @@ local function force_unequip_armor(player, armor_inventory, armor)
     player.print("Technology not available for your armor or one of its modules", Utils.scenario_color_warning)
 end
 
+local function is_recipe_available(force, recipe_name)
+    if not global.force_available_recipe_cache[force.name] then
+        update_recipes(force)
+    end
+
+    return global.force_available_recipe_cache[force.name][recipe_name] or allowed_for_all[recipe_name]
+end
+
 -- Prevent exploits of players using higher league items via tricks like suiciding own town
 local function process_armor(player)
     local armor_inventory = player.get_inventory(defines.inventory.character_armor)
@@ -73,12 +81,7 @@ local function process_armor(player)
         return
     end
 
-    local player_force_name = player.force.name
-    if not global.force_available_recipe_cache[player_force_name] then
-        update_recipes(player.force)
-    end
-
-    if not global.force_available_recipe_cache[player_force_name][armor.name] and not allowed_for_all[armor.name] then
+    if not is_recipe_available(player.force, armor.name) then
         force_unequip_armor(player, armor_inventory, armor)
     end
 
@@ -89,7 +92,7 @@ local function process_armor(player)
     local equip = grid.equipment
     for _, piece in pairs(equip) do
         if piece.valid then
-            if not global.force_available_recipe_cache[player_force_name][piece.name] and not allowed_for_all[piece.name] then
+            if not is_recipe_available(player.force, piece.name) then
                 force_unequip_armor(player, armor_inventory, armor)
             end
         end
@@ -109,15 +112,8 @@ local function process_building_limit(actor, event)
     local entity = event.created_entity
     if not entity.valid then return end
 
-    local force = actor.force
-    local force_name = force.name
-
-    if not global.force_available_recipe_cache[force_name] then
-        update_recipes(force)
-    end
-
-    if not global.force_available_recipe_cache[force_name][entity.name] and not allowed_for_all[entity.name]
-            and not (allowed_for_towns[entity.name] and TeamBasics.is_town_force(force)) then
+    if not is_recipe_available(actor.force, entity.name)
+            and not (allowed_for_towns[entity.name] and TeamBasics.is_town_force(actor.force)) then
         error_floaty(entity.surface, entity.position)
         local entity_to_refund = entity.name
         entity.destroy()
@@ -133,6 +129,18 @@ local function on_robot_built_entity(event)
     process_building_limit(event.robot, event)
 end
 
+local function on_entity_settings_pasted(event)
+    local player = game.get_player(event.player_index)
+    local destination = event.destination
+    if not (destination and destination.valid) then return end
+    if destination.type == "assembling-machine" then
+        local recipe = destination.get_recipe()
+        if recipe and not is_recipe_available(player.force, recipe.name) then
+            player.print("Recipe not available for your force.", Utils.scenario_color_warning)
+            destination.set_recipe(nil)
+        end
+    end
+end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_research_finished, research_finished)
@@ -140,3 +148,4 @@ Event.add(defines.events.on_built_entity, on_player_built_entity)
 Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
 Event.add(defines.events.on_player_armor_inventory_changed, on_player_armor_inventory_changed)
 Event.add(defines.events.on_player_placed_equipment, on_player_placed_equipment)
+Event.add(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
