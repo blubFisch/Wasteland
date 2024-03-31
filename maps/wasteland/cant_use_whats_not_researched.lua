@@ -54,11 +54,10 @@ local function force_unequip_armor(player, armor_inventory, armor)
     local player_inventory = player.get_main_inventory()
     if player_inventory.can_insert(armor_stack) then
         player_inventory.insert(armor_stack)
-        armor_inventory.remove(armor_stack)
     else
         player.surface.spill_item_stack(player.position, armor_stack, true, player.force, false)
-        armor_inventory.remove(armor_stack)
     end
+    armor_inventory.remove(armor_stack)
     player.print("Technology not available for your armor or one of its modules", Utils.scenario_color_warning)
 end
 
