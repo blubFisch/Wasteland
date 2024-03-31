@@ -29,6 +29,11 @@ local allowed_for_all = {
     ['battery-equipment'] = true,
     ['personal-roboport-equipment'] = true,
     ['night-vision-equipment'] = true,
+    ['curved-rail'] = true,
+    ['straight-rail'] = true,
+    ['loader'] = true,
+    ['fast-loader'] = true,
+    ['express-loader'] = true
 }
 
 local allowed_for_towns = {
@@ -104,8 +109,9 @@ local function process_building_limit(actor, event)
     if not global.force_available_recipe_cache[force_name][entity.name] and not allowed_for_all[entity.name]
             and not (allowed_for_towns[entity.name] and TeamBasics.is_town_force(force)) then
         error_floaty(entity.surface, entity.position)
-        actor.insert({name = entity.name, count = 1})
+        local entity_to_refund = entity.name
         entity.destroy()
+        actor.insert({name = entity_to_refund, count = 1})
     end
 end
 
