@@ -29,6 +29,11 @@ local allowed_for_all = {
     ['battery-equipment'] = true,
     ['personal-roboport-equipment'] = true,
     ['night-vision-equipment'] = true,
+    ['curved-rail'] = true,
+    ['straight-rail'] = true,
+    ['loader'] = true,
+    ['fast-loader'] = true,
+    ['express-loader'] = true
 }
 
 local allowed_for_towns = {
@@ -44,7 +49,19 @@ local function error_floaty(surface, position)
     })
 end
 
--- Prevent exploits of players in lower leagues gaining access to high league items
+local function force_unequip_armor(player, armor_inventory, armor)
+    local armor_stack = armor_inventory.find_item_stack(armor.name)
+    local player_inventory = player.get_main_inventory()
+    if player_inventory.can_insert(armor_stack) then
+        player_inventory.insert(armor_stack)
+    else
+        player.surface.spill_item_stack(player.position, armor_stack, true, player.force, false)
+    end
+    armor_inventory.remove(armor_stack)
+    player.print("Technology not available for your armor or one of its modules", Utils.scenario_color_warning)
+end
+
+-- Prevent exploits of players using higher league items via tricks like suiciding own town
 local function process_armor(player)
     local armor_inventory = player.get_inventory(defines.inventory.character_armor)
     if not armor_inventory.valid then
@@ -62,8 +79,7 @@ local function process_armor(player)
     end
 
     if not global.force_available_recipe_cache[player_force_name][armor.name] and not allowed_for_all[armor.name] then
-        armor_inventory.clear() -- Note this doesn't refund the armor, but doesn't matter much at this point
-        player.print("Technology not available for your armor", Utils.scenario_color_warning)
+        force_unequip_armor(player, armor_inventory, armor)
     end
 
     local grid = armor.grid
@@ -74,8 +90,7 @@ local function process_armor(player)
     for _, piece in pairs(equip) do
         if piece.valid then
             if not global.force_available_recipe_cache[player_force_name][piece.name] and not allowed_for_all[piece.name] then
-                armor_inventory.clear() -- Note this doesn't refund the armor, but doesn't matter much at this point
-                player.print("Technology not available for your armor", Utils.scenario_color_warning)
+                force_unequip_armor(player, armor_inventory, armor)
             end
         end
     end
@@ -89,7 +104,7 @@ local function on_player_armor_inventory_changed(event)
     process_armor(game.get_player(event.player_index))
 end
 
--- Prevent exploits of players in lower leagues gaining access to high league buildings
+-- Prevent exploits of players using higher league buildings via tricks like suiciding own town
 local function process_building_limit(actor, event)
     local entity = event.created_entity
     if not entity.valid then return end
@@ -104,8 +119,9 @@ local function process_building_limit(actor, event)
     if not global.force_available_recipe_cache[force_name][entity.name] and not allowed_for_all[entity.name]
             and not (allowed_for_towns[entity.name] and TeamBasics.is_town_force(force)) then
         error_floaty(entity.surface, entity.position)
-        actor.insert({name = entity.name, count = 1})
+        local entity_to_refund = entity.name
         entity.destroy()
+        actor.insert({name = entity_to_refund, count = 1})
     end
 end
 
