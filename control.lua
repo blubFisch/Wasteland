@@ -5,6 +5,9 @@ _DUMP_ENV = false
 
 require 'zk-lib/lualibs/control_stage/GuiTemplater'
 require 'modules.anti_blueprint_spam'
+__modules = {}
+__modules.train_protection = require 'modules.train_protection'
+
 require 'utils.server'
 require 'utils.server_commands'
 require 'utils.command_handler'
@@ -50,4 +53,7 @@ end
 
 
 local Event = require 'utils.event'
+for id, f in pairs(__modules.train_protection.events) do
+    Event.add(id, f)
+end
 Event.add(defines.events.on_player_created, on_player_created)
