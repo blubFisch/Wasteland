@@ -32,6 +32,9 @@ local allowed_for_all = {
     ['personal-roboport-equipment'] = true,
     ['night-vision-equipment'] = true,
 
+    -- Scrap items
+    ['logistic-chest-requester'] = true,
+
     -- Rails items and entities are different, so just skip them
     ['curved-rail'] = true,
     ['straight-rail'] = true,
