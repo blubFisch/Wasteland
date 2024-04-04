@@ -21,8 +21,9 @@ end
 
 local allowed_for_all = {
     ['entity-ghost'] = true,
-    ['gate'] = true,
-    -- Spaceship market entries
+    ['gate'] = true,    -- Part of the starter town
+
+    -- Spaceship market items
     ['car'] = true,
     ['heavy-armor'] = true,
     ['modular-armor'] = true,
@@ -30,8 +31,12 @@ local allowed_for_all = {
     ['battery-equipment'] = true,
     ['personal-roboport-equipment'] = true,
     ['night-vision-equipment'] = true,
+
+    -- Rails items and entities are different, so just skip them
     ['curved-rail'] = true,
     ['straight-rail'] = true,
+
+    -- Town market items
     ['loader'] = true,
     ['fast-loader'] = true,
     ['express-loader'] = true
