@@ -855,6 +855,9 @@ local function kill_force(killed_force, cause_force, cause_entity)
                     e.health = e.health * math_random()
                 end
             end
+            if e.valid and e.type == "assembling-machine" and e.get_recipe() then
+                e.set_recipe(nil)   -- Stop exploits of players gaining access to higher league recipes
+            end
         end
     end
     local r = 30
