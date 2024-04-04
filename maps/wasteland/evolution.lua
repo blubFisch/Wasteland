@@ -471,18 +471,6 @@ local function get_relative_worm_evolution(position)
     return relative_evolution
 end
 
-function Public.get_biter_by_size(size)
-    return biters[size]
-end
-
-function Public.get_spitter_by_size(size)
-    return spitters[size]
-end
-
-function Public.get_unit_size(position)
-    return get_unit_size(get_relative_biter_evolution(position, false))
-end
-
 function Public.get_evolution(position, estimate_extra_range)
     return get_relative_biter_evolution(position, estimate_extra_range)
 end

@@ -45,7 +45,6 @@ function Public.reset_table()
     this.labs = {}
     this.uranium_patch_location = nil
     this.entity_labels = {}
-    this.last_spawn_time_per_spawner = {}
     this.last_damage_multiplier_shown = {}
 end
 
