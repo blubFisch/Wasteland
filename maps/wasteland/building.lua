@@ -413,7 +413,7 @@ local function on_pre_build(event)
 
     -- Prevent deleting other players ghosts to breach their defenses
     local player = game.players[event.player_index]
-    if surface.count_entities_filtered({position=p, name='entity-ghost'}) > 0
+    if surface.count_entities_filtered({position=p, radius=3, name='entity-ghost'}) > 0 -- some radius to account for bigger entities being placed
             and Public.near_another_town(player.force.name, p, surface, default_protected_radius) then
         player.clear_cursor()
         build_error_notification(surface, p, "Can't override enemy blueprint near town or turret", player)
