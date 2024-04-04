@@ -20,6 +20,7 @@ local function research_finished(event)
 end
 
 local allowed_for_all = {
+    ['entity-ghost'] = true,
     ['gate'] = true,
     -- Spaceship market entries
     ['car'] = true,
