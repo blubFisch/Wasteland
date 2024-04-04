@@ -123,7 +123,9 @@ local function process_building_limit(actor, event)
 end
 
 local function on_player_built_entity(event)
-    process_building_limit(game.get_player(event.player_index), event)
+    local player = game.get_player(event.player_index)
+    if player.controller_type == defines.controllers.editor then return end
+    process_building_limit(player, event)
 end
 
 local function on_robot_built_entity(event)
@@ -143,6 +145,15 @@ local function on_entity_settings_pasted(event)
     end
 end
 
+local function on_player_driving_changed_state(event)
+    local player = game.get_player(event.player_index)
+    if player and player.valid and player.vehicle and not is_recipe_available(player.force, player.vehicle.name) then
+        error_floaty(player.vehicle.surface, player.vehicle.position)
+        player.driving = false
+    end
+end
+
+
 local Event = require 'utils.event'
 Event.add(defines.events.on_research_finished, research_finished)
 Event.add(defines.events.on_built_entity, on_player_built_entity)
@@ -150,3 +161,4 @@ Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
 Event.add(defines.events.on_player_armor_inventory_changed, on_player_armor_inventory_changed)
 Event.add(defines.events.on_player_placed_equipment, on_player_placed_equipment)
 Event.add(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
+Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
