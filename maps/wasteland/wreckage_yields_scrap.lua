@@ -102,6 +102,7 @@ local entity_loot_amounts = {
     ["uranium-fuel-cell"] = 3,
     --["used-up-uranium-fuel-cell"] = 1,
     ['water-barrel'] = 3,
+    ['cliff-explosives'] = -2,
     ['logistic-chest-requester'] = -1,
     ['military-science-pack'] = 4,
     ['chemical-science-pack'] = 4,
