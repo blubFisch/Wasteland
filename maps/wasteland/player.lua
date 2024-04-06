@@ -190,11 +190,6 @@ local function on_player_joined_game(event)
     Public.requests(player)
 end
 
-local function on_player_left_game(event)
-    local player = game.players[event.player_index]
-    Team.player_left(player)
-end
-
 local function on_player_respawned(event)
     local this = ScenarioTable.get()
     local player = game.players[event.player_index]
@@ -236,7 +231,6 @@ Event.on_nth_tick(60, update_player_evo_displays)
 Event.on_nth_tick(60, hint_treasure)
 
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
-Event.add(defines.events.on_player_left_game, on_player_left_game)
 Event.add(defines.events.on_player_respawned, on_player_respawned)
 Event.add(defines.events.on_player_died, on_player_died)
 

@@ -708,7 +708,8 @@ function Public.player_joined(player)
 
     if player.force.name == 'player' then
         if player.online_time > 0 then
-            player.print("Welcome back, outlander! After you left, your buildings have become neutral and your map and diplomacy has reset", Utils.scenario_color)
+            player.print("Welcome back, outlander! You've left the server for some time, " ..
+                "so your buildings have become neutral and your map and diplomacy has reset", Utils.scenario_color)
         end
         player.force = create_outlander_force(player)
     end
@@ -719,11 +720,27 @@ function Public.player_joined(player)
     end
 end
 
-function Public.player_left(player)
-    if not TeamBasics.is_town_force(player.force) then
-        local prev_force = player.force
-        player.force = 'player' -- Note: Reassign the player first to avoid a race where merge_forces doesn't delete the force. TODO: validate
-        game.merge_forces(prev_force, 'neutral')  -- All of their buildings become common property
+-- Keep the number of forces low to avoid hitting the engine limit
+local function delete_old_outlander_forces()
+    local current_tick = game.tick
+    local cleanup_after_age = 3600 * 60
+
+    for _, force in pairs(game.forces) do
+        if TeamBasics.is_outlander_force(force) then
+            local all_players_offline = true
+            for _, player in pairs(force.players) do
+                if current_tick - player.last_online < cleanup_after_age then
+                    all_players_offline = false
+                    break
+                end
+            end
+            if all_players_offline then
+                for _, player in pairs(force.players) do
+                    player.force = 'player'
+                end
+                game.merge_forces(force, "neutral")  -- All of their buildings become common property
+            end
+        end
     end
 end
 
@@ -981,4 +998,5 @@ Event.add(defines.events.on_entity_died, on_entity_died)
 Event.add(defines.events.on_console_command, on_console_command)
 Event.add(defines.events.on_console_chat, on_console_chat)
 Event.add(defines.events.on_forces_merged, on_forces_merged)
+Event.on_nth_tick(3600, delete_old_outlander_forces)
 return Public
