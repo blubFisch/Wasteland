@@ -21,6 +21,7 @@ end
 
 local allowed_for_all = {
     ['entity-ghost'] = true,
+    ['tile-ghost'] = true,
     ['gate'] = true,    -- Part of the starter town
 
     -- Spaceship market items
