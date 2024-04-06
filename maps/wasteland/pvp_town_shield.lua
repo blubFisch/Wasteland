@@ -316,7 +316,7 @@ function Public.request_afk_shield(town_center, player)
                         PvPShield.remove_shield(shield)
                     end
                     surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
-                    force.print("You have enabled AFK mode", Utils.scenario_color)
+                    force.print("You have enabled AFK mode. Move away from the town center to end it.", Utils.scenario_color)
                     update_pvp_shields()
                 else
                     player.print("Biters are within the town range, can't enter AFK mode", Utils.scenario_color_warning)
