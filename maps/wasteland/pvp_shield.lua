@@ -127,8 +127,10 @@ function Public.format_lifetime_str(lifetime_ticks)
         return string.format('%.0fh', lifetime_ticks / 60 / 60 / 60)
     elseif lifetime_ticks > 60 * 60 * 60 then
         return string.format('%.1fh', lifetime_ticks / 60 / 60 / 60)
-    else
+    elseif lifetime_ticks > 60 * 60 then
         return string.format('%.0f mins', math.ceil(lifetime_ticks / 60 / 60))
+    else
+        return string.format('%.0f sec', math.ceil(lifetime_ticks / 60))
     end
 end
 

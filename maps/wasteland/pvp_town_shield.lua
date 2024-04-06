@@ -171,6 +171,15 @@ local function update_pvp_shields()
                 shield.expiry_time = game.tick + delay_mins * 60 * 60
             end
 
+            if shield and shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE_POST then
+                local remaining_shield_time = shield.expiry_time - game.tick
+                if not shield.last_hint or game.tick - shield.last_hint >= 60 * 10 then
+                    shield.last_hint = game.tick
+                    force.print("Time to shield deactivation: "
+                            .. PvPShield.format_lifetime_str(remaining_shield_time), Utils.scenario_color)
+                end
+            end
+
             -- Show hint
             if not town_center.pvp_shield_mgmt.displayed_offline_hint and shields_researched then
                 force.print("Your town is now advanced enough to deploy PvP shields."
