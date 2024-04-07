@@ -460,6 +460,12 @@ local function on_chunk_charted(event)
     end
 end
 
+function Public.force_gen_chunk(position, surface, radius)
+    if not surface.is_chunk_generated(position) then
+        surface.request_to_generate_chunks(position, radius)
+        surface.force_generate_chunk_requests()
+    end
+end
 
 local Event = require 'utils.event'
 Event.on_init(on_init)

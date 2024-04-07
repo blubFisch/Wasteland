@@ -14,13 +14,6 @@ local MapLayout = require 'maps.wasteland.map_layout'
 local Utils = require 'maps.wasteland.utils'
 local TeamBasics = require 'maps.wasteland.team_basics'
 
-local function force_load(position, surface, radius)
-    --log("is_chunk_generated = " .. tostring(surface.is_chunk_generated(position)))
-    surface.request_to_generate_chunks(position, radius)
-    --log("force load position = {" .. position.x .. "," .. position.y .. "}")
-    surface.force_generate_chunk_requests()
-end
-
 -- gets an area (might not be even amount)
 local function get_area(position, w, h)
     local x1 = math_floor(w / 2)
@@ -30,29 +23,11 @@ local function get_area(position, w, h)
     return {{position.x - x1, position.y - y1}, {position.x + x2, position.y + y2}}
 end
 
--- is the position already used
-local function in_use(position)
-    local this = ScenarioTable.get_table()
-    local result = false
-    for _, v in pairs(this.spawn_point) do
-        if v == position then
-            result = true
-        end
-    end
-    --log("in_use = " .. tostring(result))
-    return result
-end
-
 -- is the position empty
 local function is_empty(position, surface)
     local chunk_position = {}
     chunk_position.x = math_floor(position.x / 32)
     chunk_position.y = math_floor(position.y / 32)
-    if not surface.is_chunk_generated(chunk_position) then
-        -- force load the chunk
-        surface.request_to_generate_chunks(position, 0)
-        surface.force_generate_chunk_requests()
-    end
     local entity_radius = 3
     local tile_radius = 2
     local entities = surface.find_entities_filtered({position = position, radius = entity_radius})
@@ -113,16 +88,13 @@ local function find_valid_spawn_point(force_name, surface)
             local y = math_floor(initial_position.y + math_sin(t) * radius)
             local variation_position = { x = x, y = y}
             --log("testing {" .. variation_position.x .. "," .. variation_position.y .. "}")
-            force_load(initial_position, surface, 1)
-            if not in_use(variation_position) then
-                local distance_center = math.sqrt(variation_position.x ^ 2 + variation_position.y ^ 2)
-                if distance_center > MapLayout.central_ores_town_nobuild + 50 then
-                    if not Building.near_another_town(force_name, variation_position, surface, 40, min_distance_to_town_center) then
-                    --    or PvPTownShield.in_extended_control_range(variation_position) then
-                        if is_empty(variation_position, surface) then
-                            --log("found valid spawn point at {" .. variation_position.x .. "," .. variation_position.y .. "}")
-                            return variation_position
-                        end
+            local distance_center = math.sqrt(variation_position.x ^ 2 + variation_position.y ^ 2)
+            if distance_center > MapLayout.central_ores_town_nobuild + 50 then
+                if not Building.near_another_town(force_name, variation_position, surface, 40, min_distance_to_town_center) then
+                    MapLayout.force_gen_chunk(initial_position, surface, 1)
+                    if is_empty(variation_position, surface) then
+                        --log("found valid spawn point at {" .. variation_position.x .. "," .. variation_position.y .. "}")
+                        return variation_position
                     end
                 end
             end

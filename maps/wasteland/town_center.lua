@@ -8,6 +8,9 @@ local table_size = table.size
 local math_max = math.max
 local math_min = math.min
 local math_abs = math.abs
+local math_rad = math.rad
+local math_sin = math.sin
+local math_cos = math.cos
 
 local Event = require 'utils.event'
 local Server = require 'utils.server'
@@ -387,7 +390,7 @@ local function found_town(event)
     local is_valid, reason = is_valid_location(player.force.name, surface, position)
     if not is_valid then
         player.insert({name = 'linked-chest', count = 1})
-        Utils.build_error_notification(player, surface, position, reason, player)
+        Utils.build_error_notification(player, surface, position, reason .. " Type /good-spot in chat to get a nearby good location", player)
         return
     end
 
@@ -687,8 +690,58 @@ local function update_town_rest()
     end
 end
 
-Event.on_nth_tick(town_rest_loop_time, update_town_rest)
+local function find_good_town_build_position(initial_position, force, surface)
+    local tries = 0
+    local radius = 20
+    local angle
+    local force_name = force.name
+    while tries < 100 do
+        for _ = 1, 8 do
+            -- position on the circle radius
+            angle = math_random(0, 360)
+            local t = math_rad(angle)
+            local x = math_floor(initial_position.x + math_cos(t) * radius)
+            local y = math_floor(initial_position.y + math_sin(t) * radius)
+            local variation_position = { x = x, y = y}
+            --log("testing {" .. variation_position.x .. "," .. variation_position.y .. "}")
 
+            MapLayout.force_gen_chunk(variation_position, surface, 1)
+            if is_valid_location(force_name, surface, variation_position) then
+                if Evolution.get_evolution(variation_position, true) < 0.1 then
+                    return variation_position
+                end
+            end
+        end
+        -- near a town, increment the radius and select another angle
+        radius = radius + math_random(1, 30)
+        tries = tries + 1
+    end
+
+    log("ERROR: found no good spot for a town")
+    return false
+end
+
+commands.add_command(
+        'good-spot',
+        'Reveals a good location to build a town',
+        function(cmd)
+            local player = game.players[cmd.player_index]
+
+            if not player or not player.valid then
+                return
+            end
+
+            log("USAGE_ANALYTICS: player " .. player.name .. " used good-spot")
+            local pos = find_good_town_build_position(player.position, player.force, player.surface)
+            if pos then
+                player.print("A good position for a town is here: [gps=" .. pos.x .. "," .. pos.y .. "]", Utils.scenario_color)
+            else
+                player.print("Could not find a good spot", Utils.scenario_color_warning)
+            end
+        end
+)
+
+Event.on_nth_tick(town_rest_loop_time, update_town_rest)
 Event.add(defines.events.on_built_entity, found_town)
 Event.add(defines.events.on_robot_built_entity, found_town)
 Event.add(defines.events.on_player_repaired_entity, on_player_repaired_entity)
