@@ -19,20 +19,14 @@ local function process_building_limit(actor, event)
     local surface = entity.surface
     local town_center = this.town_centers[force.name]
 
-    if entity.name == 'laser-turret' then
-        local slots = town_center.upgrades.laser_turret.slots
-        local locations = town_center.upgrades.laser_turret.locations + 1
-        local disallowed_info_text = "You do not have enough slots! Buy more at the market"
-
-        if locations > slots then
-            surface.create_entity(
-                    {
-                        name = 'flying-text',
-                        position = entity.position,
-                        text = disallowed_info_text,
-                        color = {r = 0.77, g = 0.0, b = 0.0}
-                    }
-            )
+    if entity.type == 'electric-turret' then
+        if surface.count_entities_filtered({position = entity.position, type = 'electric-turret', radius = 11, limit = 2}) == 2 then
+            surface.create_entity({
+                name = 'flying-text',
+                position = entity.position,
+                text = "Can't build this type of turret too close",
+                color = {r = 0.77, g = 0.0, b = 0.0}
+            })
 
             local inventory
             if event.player_index then
@@ -45,19 +39,6 @@ local function process_building_limit(actor, event)
             entity.destroy()
             return
         end
-
-        local key = script.register_on_entity_destroyed(entity)
-        this.laser_turrets[key] = force.index
-        town_center.upgrades.laser_turret.locations = locations
-
-        surface.create_entity(
-                {
-                    name = 'flying-text',
-                    position = entity.position,
-                    text = 'Using ' .. locations .. '/' .. slots .. ' laser slots',
-                    color = {r = 1.0, g = 1.0, b = 1.0}
-                }
-        )
     elseif entity.name == 'lab' then
         table.insert(global.tracked_labs, entity)
 
@@ -165,16 +146,6 @@ end
 local function on_entity_destroyed(event)
     local key = event.registration_number
     local this = ScenarioTable.get_table()
-    if this.laser_turrets[key] then
-        local index = this.laser_turrets[key]
-        local force = game.forces[index]
-        if force ~= nil then
-            local town_center = this.town_centers[force.name]
-            if town_center ~= nil then
-                town_center.upgrades.laser_turret.locations = town_center.upgrades.laser_turret.locations - 1
-            end
-        end
-    end
     if this.labs[key] then
         local index = this.labs[key]
         local force = game.forces[index]

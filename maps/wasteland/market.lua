@@ -74,16 +74,8 @@ local upgrade_functions = {
         surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
         return true
     end,
-    -- Laser Turret Slot
-    [6] = function(town_center, player)
-        local market = town_center.market
-        local surface = market.surface
-        town_center.upgrades.laser_turret.slots = town_center.upgrades.laser_turret.slots + 1
-        surface.play_sound({path = 'utility/new_objective', position = player.position, volume_modifier = 1})
-        return true
-    end,
     -- Set Spawn Point
-    [7] = function(town_center, player)
+    [6] = function(town_center, player)
         local this = global.tokens.maps_wasteland_table
         local market = town_center.market
         local force = market.force
@@ -94,7 +86,7 @@ local upgrade_functions = {
         return false
     end,
     -- Pause-mode PvP Shield
-    [8] = function(town_center, player)
+    [7] = function(town_center, player)
         PvPTownShield.request_afk_shield(town_center, player)
         return false
     end
@@ -141,11 +133,10 @@ local function set_offers(town_center)
     else
         special_offers[5] = {{}, 'Maximum Crafting Speed upgrades reached!'}
     end
-    local laser_turret = 'Laser Turret Slot [#' .. tostring(town_center.upgrades.laser_turret.slots + 1) .. ']'
-    special_offers[6] = {{{'coin', (town_center.upgrades.laser_turret.slots * 400)}}, laser_turret}
     local spawn_point = 'Set Spawn Point'
-    special_offers[7] = {{}, spawn_point}
-    special_offers[8] = {{}, 'AFK Mode (PvP Shield, No boss attacks, No market pollution)'}
+    special_offers[6] = {{}, spawn_point}
+    special_offers[7] = {{}, 'AFK Mode (PvP Shield, No boss attacks, No market pollution)'}
+
     for _, v in pairs(special_offers) do
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})
     end

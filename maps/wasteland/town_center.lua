@@ -486,16 +486,12 @@ local function found_town(event)
     town_center.upgrades.mining_prod = 0
     town_center.upgrades.mining_speed = 0
     town_center.upgrades.crafting_speed = 0
-    town_center.upgrades.laser_turret = {}
-    town_center.upgrades.laser_turret.slots = 8
-    town_center.upgrades.laser_turret.locations = 0
     town_center.evolution = {}
     town_center.evolution.biters = 0
     town_center.evolution.spitters = 0
     town_center.evolution.worms = 0
     town_center.creation_tick = game.tick
     town_center.last_swarm = 0
-    town_center.laser_turrets = {}
     local market_pos = town_center.market.position
     town_center.center_box = {left_top = {x = market_pos.x - town_radius, y = market_pos.y - town_radius},
                               right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
