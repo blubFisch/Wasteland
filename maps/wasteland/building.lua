@@ -10,7 +10,7 @@ local MapLayout = require 'maps.wasteland.map_layout'
 local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turret"}
 local default_protected_radius = 30
 local turret_protected_radius = 42
-local base_town_protected_size = (MapLayout.league_balance_shield_size - 1) / 2
+local base_town_protected_size = (MapLayout.league_balance_shield_size - 1) / 2 + turret_protected_radius
 
 local ghost_time_after_destruction = 168 * 60 * 60 * 60 -- Note: After unlocking construction bots tech. This might not be stable after engine changes
 local ghost_age_to_prevent_building = 60 * 60
@@ -23,7 +23,7 @@ local NEAR_TOWN_SHIELD = 4
 local REASON_TEXTS = {
     [NEAR_TOWN_CENTER] = "town center",
     [NEAR_TOWN_TURRET] = "turret",
-    [NEAR_TOWN_TURRET_GHOST] = "recently destroyed turret blueprint",
+    [NEAR_TOWN_TURRET_GHOST] = "recently destroyed turret blueprint (max " .. ghost_age_to_prevent_building .. " min)",
     [NEAR_TOWN_SHIELD] = "PvP shield"
 }
 
@@ -270,17 +270,17 @@ local function process_built_entities(event)
             prevented_by_ghosts = true
         end
 
-        local prevent = false
+        local in_protected_zone = false
         local reason
 
-        prevent, reason = Public.near_another_town(force_name, position, surface, radius, radius + base_town_protected_size, prevented_by_ghosts)
+        in_protected_zone, reason = Public.near_another_town(force_name, position, surface, radius, radius + base_town_protected_size, prevented_by_ghosts)
 
-        if not prevent and PvPShield.protected_by_shields(surface, position, force, radius) then
-            prevent = true
+        if not in_protected_zone and PvPShield.protected_by_shields(surface, position, force, radius) then
+            in_protected_zone = true
             reason = NEAR_TOWN_SHIELD
         end
 
-        if prevent then
+        if in_protected_zone then
             -- Logistics are okay to place wherever you can access (=outside of shield)
             if allowed_entities_neutral[name] and not (PvPShield.protected_by_shields(surface, position, force, 0)
                     or Public.near_another_town(force_name, position, surface, 10, 0)) then
