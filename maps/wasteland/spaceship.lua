@@ -50,7 +50,7 @@ local upgrade_functions = {
     [2] = function(player)
         local this = ScenarioTable.get_table()
         local surface = player.surface
-        if player.character.character_mining_speed_modifier + 0.1 > 1 then
+        if player.character.character_mining_speed_modifier + 0.1 > 0.6 then
             return false
         end
         player.character.character_mining_speed_modifier = player.character.character_mining_speed_modifier + 0.1
@@ -125,18 +125,18 @@ local function set_offers(market, player)
     local special_offers = {}
     if not TeamBasics.is_town_force(player.force) then
         if player.character.character_inventory_slots_bonus + 5 <= 50 then
-            special_offers[1] = {{{'coin', (player.character.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
+            special_offers[1] = {{{'coin', (player.character.character_inventory_slots_bonus / 5 + 1) * 50}}, 'Upgrade Backpack +5 Slot'}
         else
             special_offers[1] = {{}, 'Maximum Backpack upgrades reached!'}
         end
-        if player.character.character_mining_speed_modifier + 0.1 <= 1 then
-            special_offers[2] = {{{'coin', (player.character.character_mining_speed_modifier * 10 + 1) * 250}}, 'Upgrade Mining Speed +10%'}
+        if player.character.character_mining_speed_modifier + 0.1 <= 0.6 then
+            special_offers[2] = {{{'coin', (player.character.character_mining_speed_modifier * 10 + 1) * 100}}, 'Upgrade Mining Speed +10%'}
         else
             special_offers[2] = {{}, 'Maximum Mining Speed upgrades reached!'}
         end
 
         if player.character.character_crafting_speed_modifier + 0.1 <= 1 then
-            special_offers[3] = {{{'coin', (player.character.character_crafting_speed_modifier * 10 + 1) * 400}}, 'Upgrade Crafting Speed +10%'}
+            special_offers[3] = {{{'coin', (player.character.character_crafting_speed_modifier * 10 + 1) * 100}}, 'Upgrade Crafting Speed +10%'}
         else
             special_offers[3] = {{}, 'Maximum Crafting Speed upgrades reached!'}
         end
