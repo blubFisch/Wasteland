@@ -2,6 +2,7 @@ require 'utils.table'
 
 local ScenarioTable = require 'maps.wasteland.table'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local Utils = require 'maps.wasteland.utils'
 
 
 global.tracked_labs = global.tracked_labs or {}
@@ -21,23 +22,20 @@ local function process_building_limit(actor, event)
 
     if entity.type == 'electric-turret' then
         if surface.count_entities_filtered({position = entity.position, type = 'electric-turret', radius = 11, limit = 2}) == 2 then
-            surface.create_entity({
-                name = 'flying-text',
-                position = entity.position,
-                text = "Can't build this type of turret too close",
-                color = {r = 0.77, g = 0.0, b = 0.0}
-            })
-
+            local position = entity.position
             local inventory
+            local msg_entity
             if event.player_index then
                 inventory = actor
+                msg_entity = actor
             else
                 inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
+                msg_entity = actor.force
             end
             inventory.insert({name = entity.name, count = 1})
-
             entity.destroy()
-            return
+
+            Utils.build_error_notification(force, surface, position, "Too close to other turrets of this type!", event.player_index and actor or nil)
         end
     elseif entity.name == 'lab' then
         table.insert(global.tracked_labs, entity)

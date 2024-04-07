@@ -250,39 +250,15 @@ end
 local function is_valid_location(force_name, surface, position)
     local this = ScenarioTable.get_table()
     if not surface.can_place_entity({name = 'market', position = position}) then
-        surface.create_entity(
-            {
-                name = 'flying-text',
-                position = position,
-                text = 'Position is obstructed - no room for market!',
-                color = {r = 0.77, g = 0.0, b = 0.0}
-            }
-        )
-        return false
+        return false, 'Position is obstructed - no room for market!'
     end
 
     if MapLayout.town_too_close_to_map_end(position) then
-        surface.create_entity(
-            {
-                name = 'flying-text',
-                position = position,
-                text = 'Too close to map edge!',
-                color = {r = 0.77, g = 0.0, b = 0.0}
-            }
-        )
-        return false
+        return false, 'Too close to map edge!'
     end
 
     if table_size(this.town_centers) > 64 - 4 - Team.max_player_slots then
-        surface.create_entity(
-            {
-                name = 'flying-text',
-                position = position,
-                text = 'Too many towns on the map!',
-                color = {r = 0.77, g = 0.0, b = 0.0}
-            }
-        )
-        return false
+        return false, 'Too many towns on the map!'
     end
 
     local too_close, _, distance = Building.near_another_town(force_name, position, surface, MapLayout.radius_between_towns)
@@ -292,42 +268,17 @@ local function is_valid_location(force_name, surface, position)
         if distance then
             text = text .. ' (' .. math.ceil(distance) .. ' tiles)'
         end
-
-        surface.create_entity(
-            {
-                name = 'flying-text',
-                position = position,
-                text = text,
-                color = {r = 0.77, g = 0.0, b = 0.0}
-            }
-        )
-        return false
+        return false, text
     end
 
     local distance_center = math.sqrt(position.x ^ 2 + position.y ^ 2)
     if distance_center < MapLayout.central_ores_town_nobuild then
-        surface.create_entity(
-                {
-                    name = 'flying-text',
-                    position = position,
-                    text = string.format("%.0f", MapLayout.central_ores_town_nobuild - distance_center) .. ' tiles too close to the treasure!',
-                    color = {r = 0.77, g = 0.0, b = 0.0}
-                }
-        )
-        return false
+        return false, string.format("%.0f", MapLayout.central_ores_town_nobuild - distance_center) .. ' tiles too close to the treasure!'
     end
 
     local distance_uranium = math.sqrt((this.uranium_patch_location.x - position.x) ^ 2 + (this.uranium_patch_location.y - position.y) ^ 2)
     if distance_uranium < MapLayout.uranium_patch_nobuild then
-        surface.create_entity(
-                {
-                    name = 'flying-text',
-                    position = position,
-                    text = string.format("%.0f", MapLayout.uranium_patch_nobuild - distance_uranium) .. ' tiles too close to the deep uranium patch!',
-                    color = {r = 0.77, g = 0.0, b = 0.0}
-                }
-        )
-        return false
+        return false, string.format("%.0f", MapLayout.uranium_patch_nobuild - distance_uranium) .. ' tiles too close to the deep uranium patch!'
     end
 
     return true
@@ -425,22 +376,18 @@ local function found_town(event)
     -- is town placement on cooldown?
     if this.cooldowns_town_placement[player.index] then
         if game.tick < this.cooldowns_town_placement[player.index] then
-            surface.create_entity(
-                {
-                    name = 'flying-text',
-                    position = position,
-                    text = 'Town founding is on cooldown for ' .. math.ceil((this.cooldowns_town_placement[player.index] - game.tick) / 3600) .. ' minutes.',
-                    color = {r = 0.77, g = 0.0, b = 0.0}
-                }
-            )
+            Utils.build_error_notification(player, surface, position, 'Town founding is on cooldown for '
+                    .. math.ceil((this.cooldowns_town_placement[player.index] - game.tick) / 3600) .. ' minutes.', player)
             player.insert({name = 'linked-chest', count = 1})
             return
         end
     end
 
     -- is it a valid location to place a town?
-    if not is_valid_location(player.force.name, surface, position) then
+    local is_valid, reason = is_valid_location(player.force.name, surface, position)
+    if not is_valid then
         player.insert({name = 'linked-chest', count = 1})
+        Utils.build_error_notification(player, surface, position, reason, player)
         return
     end
 

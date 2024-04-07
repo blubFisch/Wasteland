@@ -6,6 +6,7 @@ local ScenarioTable = require 'maps.wasteland.table'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local MapLayout = require 'maps.wasteland.map_layout'
+local Utils = require 'maps.wasteland.utils'
 
 local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turret"}
 local default_protected_radius = 30
@@ -83,20 +84,6 @@ local function refund_item(event, item_name)
         local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
         inventory.insert({name = item_name, count = 1})
         return
-    end
-end
-
-local function build_error_notification(surface, position, msg, player_sound)
-    surface.create_entity(
-        {
-            name = 'flying-text',
-            position = position,
-            text = msg,
-            color = {r = 0.77, g = 0.0, b = 0.0}
-        }
-    )
-    if player_sound then
-        player_sound.play_sound({path = 'utility/cannot_build', position = player_sound.position, volume_modifier = 0.75})
     end
 end
 
@@ -208,7 +195,7 @@ local function prevent_entity_in_restricted_zone(event)
     if error == true then
         local player
         if player_index then player = game.players[player_index] end
-        build_error_notification(surface, position, 'Can not build out of map!', player)
+        Utils.build_error_notification(player, surface, position, 'Can not build out of map!', player)
     end
 end
 
@@ -233,7 +220,7 @@ local function prevent_landfill_in_restricted_zone(event)
     if fail == true then
         local player
         if player_index ~= nil then player = game.players[player_index] end
-        build_error_notification(surface, position, 'Can not build out of map!', player)
+        Utils.build_error_notification(player, surface, position, 'Can not build out of map!', player)
     end
     return fail
 end
@@ -290,7 +277,7 @@ local function process_built_entities(event)
             else
                 -- Prevent building
                 entity.destroy()
-                build_error_notification(surface, position, "Can't build near " .. REASON_TEXTS[reason], player)
+                Utils.build_error_notification(player or force, surface, position, "Can't build near " .. REASON_TEXTS[reason], player)
                 if name ~= 'entity-ghost' then
                     refund_item(event, event.stack.name)
                 end
@@ -318,7 +305,7 @@ local function process_built_entities(event)
         for _, other_pole in pairs(entity.neighbours["copper"]) do
             if other_pole.force ~= force then
                 entity.disconnect_neighbour(other_pole)
-                build_error_notification(surface, position, "Can't connect to other town", player)
+                Utils.build_error_notification(player or force, surface, position, "Can't connect to other town", player)
             end
         end
     end
@@ -363,7 +350,7 @@ local function prevent_tiles_near_towns(event)
     if fail == true then
         local player
         if player_index ~= nil then player = game.players[player_index] end
-        build_error_notification(surface, position, "Can't build near town!", player)
+        Utils.build_error_notification(player or force, surface, position, "Can't build near town!", player)
     end
     return fail
 end
@@ -416,7 +403,7 @@ local function on_pre_build(event)
     if surface.count_entities_filtered({position=p, radius=3, name='entity-ghost'}) > 0 -- some radius to account for bigger entities being placed
             and Public.near_another_town(player.force.name, p, surface, default_protected_radius) then
         player.clear_cursor()
-        build_error_notification(surface, p, "Can't override enemy blueprint near town or turret", player)
+        Utils.build_error_notification(player, surface, p, "Can't override enemy blueprint near town or turret", player)
     end
 end
 
