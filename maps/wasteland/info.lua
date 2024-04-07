@@ -5,6 +5,7 @@ local GameSettings = require 'game_settings'
 local changelog =
     [[[font=heading-2]Apr 2024 updates[/font]
  - Shield related bugfixes
+ - Short Rounds have no yellow/purple science + smaller towns
  - Laser min distance instead of buyable slots
  - Removed feature to spawn biters by dropping coins on nests - too hard to balance
  - Fix exploit: Can't use stuff that you don't have researched

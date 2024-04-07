@@ -264,7 +264,7 @@ local function is_valid_location(force_name, surface, position)
         return false, 'Too many towns on the map!'
     end
 
-    local too_close, _, distance = Building.near_another_town(force_name, position, surface, MapLayout.radius_between_towns)
+    local too_close, _, distance = Building.near_another_town(force_name, position, surface, MapLayout.min_distance_between_towns)
 
     if too_close then
         local text = 'Town location is too close to others!'

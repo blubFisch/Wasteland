@@ -29,20 +29,40 @@ function Public.add_mode_button(player)
     button.style.bottom_padding = 2
 end
 
+local function disable_techs(force, starting_from_list, inputs_to_disable)
+    local targets = {}
+    for _, name in ipairs(starting_from_list) do
+        targets[name] = true
+    end
+
+    local function is_prerequisite_or_input(tech)
+        if targets[tech.name] then return true end
+        for _, ingredient in pairs(tech.research_unit_ingredients) do
+            if inputs_to_disable[ingredient.name] then return true end
+        end
+        if tech.prerequisites then
+            for prerequisite_name, _ in pairs(tech.prerequisites) do
+                if targets[prerequisite_name] or is_prerequisite_or_input(force.technologies[prerequisite_name]) then
+                    return true
+                end
+            end
+        end
+        return false
+    end
+
+    for _, tech in pairs(force.technologies) do
+        if is_prerequisite_or_input(tech) then
+            tech.enabled = false
+        end
+    end
+end
+
 function Public.disable_game_mode_techs(force)
     if Public.mode == 1 then
-        force.technologies['production-science-pack'].enabled = false
-        force.technologies['nuclear-fuel-reprocessing'].enabled = false
-        force.technologies['effect-transmission'].enabled = false
-        force.technologies['automation-3'].enabled = false
-        force.technologies['logistics-3'].enabled = false
-        force.technologies['coal-liquefaction'].enabled = false
-        force.technologies['kovarex-enrichment-process'].enabled = false
-        force.technologies['rocket-silo'].enabled = false
-        force.technologies['space-science-pack'].enabled = false
-        force.technologies['worker-robots-speed-5'].enabled = false
-        force.technologies['worker-robots-storage-2'].enabled = false
-        force.technologies['braking-force-3'].enabled = false
+        disable_techs(force, {'production-science-pack', 'utility-science-pack'}, {
+            ["production-science-pack"] = true,
+            ["utility-science-pack"] = true,
+        })
     end
 end
 
