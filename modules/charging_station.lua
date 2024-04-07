@@ -39,7 +39,7 @@ local function discharge_accumulators(surface, position, force, energy_needs)
 end
 
 local function info_floaty(player, text, color)
-    player.create_local_flying_text({
+    player.surface.create_entity({
         name = 'flying-text',
         position = player.position,
         text = text,
