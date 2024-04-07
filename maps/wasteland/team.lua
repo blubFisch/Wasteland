@@ -13,6 +13,7 @@ local ResearchBalance = require 'maps.wasteland.research_balance'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local MapLayout = require 'maps.wasteland.map_layout'
+local GameMode = require 'maps.wasteland.game_mode'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
@@ -640,6 +641,7 @@ function Public.create_town_force(player)
     set_full_blueprint_functions(permission_group, true)
     disable_artillery(force, permission_group)
     disable_spidertron(force, permission_group)
+    GameMode.disable_game_mode_techs(force)
     disable_high_weapon_research(force)
     disable_high_lab_speed_research(force)
     disable_rockets(force)

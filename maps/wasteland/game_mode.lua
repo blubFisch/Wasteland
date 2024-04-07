@@ -29,4 +29,21 @@ function Public.add_mode_button(player)
     button.style.bottom_padding = 2
 end
 
+function Public.disable_game_mode_techs(force)
+    if Public.mode == 1 then
+        force.technologies['production-science-pack'].enabled = false
+        force.technologies['nuclear-fuel-reprocessing'].enabled = false
+        force.technologies['effect-transmission'].enabled = false
+        force.technologies['automation-3'].enabled = false
+        force.technologies['logistics-3'].enabled = false
+        force.technologies['coal-liquefaction'].enabled = false
+        force.technologies['kovarex-enrichment-process'].enabled = false
+        force.technologies['rocket-silo'].enabled = false
+        force.technologies['space-science-pack'].enabled = false
+        force.technologies['worker-robots-speed-5'].enabled = false
+        force.technologies['worker-robots-storage-2'].enabled = false
+        force.technologies['braking-force-3'].enabled = false
+    end
+end
+
 return Public

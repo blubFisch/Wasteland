@@ -1,7 +1,5 @@
 local Public = {}
 
-local mod_gui = require('mod-gui')
-
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
@@ -11,12 +9,9 @@ local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local GuiTemplater = require 'zk-lib/lualibs/control_stage/GuiTemplater'
-local CombatBalance = require 'maps.wasteland.combat_balance'
 local TownCenter = require 'maps.wasteland.town_center'
 
-
 local button_id = 'towny-score-button'
-
 
 local function spairs(t, order)
     local keys = {}
