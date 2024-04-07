@@ -4,6 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-2]Mar 2024 updates[/font]
+ - Shield related bugfixes
  - Removed feature to spawn biters by dropping coins on nests - too hard to balance
  - Fix exploit: Can't use stuff that you don't have researched
  - Labs can't have speed modules anymore to prevent some exploits

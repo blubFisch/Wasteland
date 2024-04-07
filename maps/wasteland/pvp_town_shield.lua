@@ -152,7 +152,7 @@ local function update_pvp_shields()
                             PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,
                                     game.tick + remaining_offline_shield_time, 0.5 * 60 * 60, PvPShield.SHIELD_TYPE.OFFLINE)
                         else
-                            shield.shield_type = PvPShield.SHIELD_TYPE.OFFLINE
+                            PvPShield.swap_shield_type(shield, PvPShield.SHIELD_TYPE.OFFLINE)
                             shield.expiry_time = game.tick + remaining_offline_shield_time
                         end
                     end
@@ -167,10 +167,11 @@ local function update_pvp_shields()
                 force.print("Welcome back. Your offline protection will expire in " .. delay_mins .. " minute."
                         .. " After everyone in your town leaves, you will get a new shield for "
                         .. PvPShield.format_lifetime_str(offline_shield_max_duration_ticks), Utils.scenario_color)
-                shield.shield_type = PvPShield.SHIELD_TYPE.OFFLINE_POST
+                PvPShield.swap_shield_type(shield, PvPShield.SHIELD_TYPE.OFFLINE_POST)
                 shield.expiry_time = game.tick + delay_mins * 60 * 60
             end
 
+            -- Visual countdown
             if shield and shield.shield_type == PvPShield.SHIELD_TYPE.OFFLINE_POST then
                 local remaining_shield_time = shield.expiry_time - game.tick
                 if not shield.last_hint or game.tick - shield.last_hint >= 60 * 10 then
@@ -197,16 +198,18 @@ local function update_pvp_shields()
                 if not shield or (shield and shield.shield_type ~= PvPShield.SHIELD_TYPE.LEAGUE_BALANCE) then
                     force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
                     if not shield then
-                        PvPShield.add_shield(market.surface, market.force, market.position, MapLayout.league_balance_shield_size, nil, 13 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
+                        PvPShield.add_shield(market.surface, market.force, market.position,
+                                MapLayout.league_balance_shield_size, nil, 13 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
                     else
-                        shield.shield_type = PvPShield.SHIELD_TYPE.LEAGUE_BALANCE
+                        PvPShield.swap_shield_type(shield, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
                         shield.expiry_time = nil
                     end
                     update_pvp_shields_display()
                 end
             else
                 if town_center.last_higher_league_nearby_hint == nil or game.tick - town_center.last_higher_league_nearby_hint > 60 * 60 then
-                    force.print("There are enemy players of a higher league, but your town can't deploy a shield without automation research", Utils.scenario_color_warning)
+                    force.print("There are enemy players of a higher league, " ..
+                            "but your town can't deploy a shield without automation research", Utils.scenario_color_warning)
                     town_center.last_higher_league_nearby_hint = game.tick
                 end
             end
@@ -221,7 +224,7 @@ local function update_pvp_shields()
         local protect_time_after_nearby = 3 * 60 * 60
         if shield and shield.shield_type == PvPShield.SHIELD_TYPE.LEAGUE_BALANCE and not higher_league_nearby and game.tick - town_center.last_higher_league_nearby > protect_time_after_nearby then
             if town_offline_or_afk then -- change to an offline shield
-                shield.shield_type = PvPShield.SHIELD_TYPE.OFFLINE
+                PvPShield.swap_shield_type(shield, PvPShield.SHIELD_TYPE.OFFLINE)
                 shield.expiry_time = town_center.pvp_shield_mgmt.offline_shield_eligible_until
             else
                 PvPShield.remove_shield(shield)

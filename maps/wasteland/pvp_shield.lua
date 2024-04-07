@@ -101,12 +101,22 @@ function Public.add_shield(surface, force, center, max_size, expiry_time, time_t
     this.pvp_shields[force.name] = shield
 end
 
+function Public.swap_shield_type(shield, new_type)
+    shield.shield_type = new_type
+
+    local machines_active
+    if new_type == Public.SHIELD_TYPE.LEAGUE_BALANCE then
+        machines_active = true
+    else
+        machines_active = false
+    end
+    control_buildings_inside(shield.surface, resize_shield(shield, shield.max_size), machines_active)
+end
+
 function Public.remove_shield(shield)
     local this = ScenarioTable.get_table()
     remove_drawn_borders(shield)
-    if shield.shield_type ~= Public.SHIELD_TYPE.LEAGUE_BALANCE then
-        control_buildings_inside(shield.surface, resize_shield(shield, shield.max_size), true)
-    end
+    control_buildings_inside(shield.surface, resize_shield(shield, shield.max_size), true)
 
     this.pvp_shields[shield.force.name] = nil
     shield.force.print("Your PvP Shield has expired", {r = 1, g = 0, b = 0})
