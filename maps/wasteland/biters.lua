@@ -294,7 +294,7 @@ global.last_chatter_time = global.last_chatter_time or {}
 local function biter_chatter()
     local current_tick = game.tick
     for _, player in pairs(game.connected_players) do
-        if TeamBasics.is_outlander_force(player.force) then
+        if TeamBasics.is_outlander_force(player.force) and game.forces.enemy.get_cease_fire(player.force) then
             if not global.last_chatter_time[player.index] or current_tick - global.last_chatter_time[player.index] >= 600 then
                 local position = player.position
                 local surface = player.surface
@@ -307,10 +307,10 @@ local function biter_chatter()
                     local messages = {
                         "Hey outlander, let's raid a town together!",
                         "I'm friendly towards you... for now.",
-                        "Do you come here often?",
                         "Nice gear, mind if I take a closer look?",
                         "Just passing by, don't mind me...",
                         "Ever wonder what we biters talk about?",
+                        "Outlanders like yourself and us biters should work together!",
                         "You look delicious, I mean... delightful!",
                         "Got any snacks? We ran out.",
                         "Don't mind the teeth, I'm actually quite friendly... to you",
@@ -323,7 +323,11 @@ local function biter_chatter()
                         "We're on a strict diet of iron and copper.",
                         "Careful where you step, we just had the place cleaned.",
                         "We're actually quite good at parties. Especially crashers.",
-                        "Our last encounter with a town member didn't go so well. For them."
+                        "Our last encounter with a town member didn't go so well. For them.",
+                        "I want to attack a town but my friends are shy",
+                        "Stay away, we are preparing a raid on a town",
+                        "We like you. Just don't hurt anyone of us",
+                        "I hate towns, they smell bad. But I like you."
                     }
                     local message = messages[math.random(#messages)]
                     surface.create_entity({
