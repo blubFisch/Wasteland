@@ -321,9 +321,9 @@ local function biter_chatter()
                         "We've been thinking of starting a town too. Got any tips?",
                         "Careful where you step, we just had the place cleaned.",
                         "Our last encounter with a town member didn't go so well. For them.",
-                        "I want to attack a town but my friends are shy",
-                        "Stay away, we are preparing a raid on a town",
-                        "We like you. Just don't hurt anyone of us",
+                        "I want to attack a town but my friends are shy.",
+                        "Stay away, we are preparing a raid on a town.",
+                        "We like you. Just don't hurt anyone of us.",
                         "I hate towns, they smell bad. But I like you."
                     }
                     local message = messages[math.random(#messages)]
