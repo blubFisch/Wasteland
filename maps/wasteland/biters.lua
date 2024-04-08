@@ -11,6 +11,7 @@ local table_shuffle = table.shuffle_table
 local Event = require 'utils.event'
 local Global = require 'utils.global'
 local BiterHealthBooster = require 'modules.biter_health_booster_v2'
+local TeamBasics = require 'maps.wasteland.team_basics'
 
 local tick_schedule = {}
 Global.register(
@@ -289,9 +290,58 @@ local on_init = function()
     BiterHealthBooster.check_on_entity_died(true)
 end
 
+global.last_chatter_time = global.last_chatter_time or {}
+local function biter_chatter()
+    local current_tick = game.tick
+    for _, player in pairs(game.connected_players) do
+        if TeamBasics.is_outlander_force(player.force) then
+            if not global.last_chatter_time[player.index] or current_tick - global.last_chatter_time[player.index] >= 600 then
+                local position = player.position
+                local surface = player.surface
+                local biters = surface.find_entities_filtered({
+                    type = "unit",
+                    area = {{position.x - 10, position.y - 10}, {position.x + 10, position.y + 10}},
+                    force = "enemy"
+                })
+                if #biters > 0 then
+                    local messages = {
+                        "Hey outlander, let's raid a town together!",
+                        "I'm friendly towards you... for now.",
+                        "Do you come here often?",
+                        "Nice gear, mind if I take a closer look?",
+                        "Just passing by, don't mind me...",
+                        "Ever wonder what we biters talk about?",
+                        "You look delicious, I mean... delightful!",
+                        "Got any snacks? We ran out.",
+                        "Don't mind the teeth, I'm actually quite friendly... to you",
+                        "If you see a big red button, do NOT press it.",
+                        "I swear, we were just about to leave.",
+                        "It's time to raid a town!",
+                        "I want to eat a construction bot.",
+                        "Is it hot out here, or is it just our breath?",
+                        "We've been thinking of starting a town too. Got any tips?",
+                        "We're on a strict diet of iron and copper.",
+                        "Careful where you step, we just had the place cleaned.",
+                        "We're actually quite good at parties. Especially crashers.",
+                        "Our last encounter with a town member didn't go so well. For them."
+                    }
+                    local message = messages[math.random(#messages)]
+                    surface.create_entity({
+                        name = "flying-text",
+                        position = biters[1].position, -- Only show one message per player to limit spam
+                        text = message,
+                        color = {r=1, g=0.5, b=0.25}
+                    })
+                    global.last_chatter_time[player.index] = current_tick
+                end
+            end
+        end
+    end
+end
+
 Event.on_init(on_init)
 Event.add(defines.events.on_tick, on_tick)
 Event.add(defines.events.on_unit_group_finished_gathering, on_unit_group_finished_gathering)
-
+Event.on_nth_tick(60, biter_chatter)
 
 return Public
