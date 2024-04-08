@@ -874,7 +874,6 @@ Gui.on_click(
             Gui.set_data(element, nil)
             return
         end
-        Gui.set_data(element, nil)
         Where.create_mini_camera_gui(player, target)
     end
 )

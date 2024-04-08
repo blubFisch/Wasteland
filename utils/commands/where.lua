@@ -1,10 +1,6 @@
--- simply use /where ::LuaPlayerName to locate them
-
-local Color = require 'utils.color_presets'
 local Event = require 'utils.event'
 local Global = require 'utils.global'
 local Gui = require 'utils.gui'
-local SpamProtection = require 'utils.spam_protection'
 
 local this = {
     players = {},
@@ -53,9 +49,6 @@ local function validate_player(player)
         return false
     end
     if not player.valid then
-        return false
-    end
-    if player.admin then
         return false
     end
     return true
@@ -119,37 +112,6 @@ local function create_mini_camera_gui(player, target)
     player_data.camera_frame = camera
 end
 
-commands.add_command(
-    'where',
-    'Locates a player',
-    function(cmd)
-        local player = game.player
-
-        if validate_player(player) then
-            if not cmd.parameter then
-                return
-            end
-
-            if this.module_disabled then
-                return
-            end
-
-            local target = game.get_player(cmd.parameter)
-
-            if validate_player(target) then
-                local player_data = create_player_data(player)
-                player_data.target = target
-                create_mini_camera_gui(player, target)
-            else
-                remove_player_data(player)
-                player.print('[Where] Please type a name of a player who is connected.', Color.warning)
-            end
-        else
-            return
-        end
-    end
-)
-
 local function on_nth_tick()
     for p, data in pairs(this.players) do
         if data and data.target and data.target.valid then
@@ -178,10 +140,6 @@ end
 Gui.on_click(
     locate_player_frame_name,
     function(event)
-        local is_spamming = SpamProtection.is_spamming(event.player, nil, 'Where Locate Player')
-        if is_spamming then
-            return
-        end
         remove_camera_frame(event.player)
     end
 )
@@ -189,10 +147,6 @@ Gui.on_click(
 Gui.on_click(
     player_frame_name,
     function(event)
-        local is_spamming = SpamProtection.is_spamming(event.player, nil, 'Where Player Frame')
-        if is_spamming then
-            return
-        end
         remove_camera_frame(event.player)
     end
 )
