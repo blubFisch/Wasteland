@@ -146,7 +146,7 @@ local function update_pvp_shields()
                         if is_init_now and not town_center.marked_afk then
                             -- Show this to remind other players of this feature
                             game.print("The offline PvP Shield of " .. town_center.town_name .. " is activating now." ..
-                                    " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time), Utils.scenario_color)
+                                    " It will last up to " .. PvPShield.format_lifetime_str(remaining_offline_shield_time) .. ".", Utils.scenario_color)
                         end
                         if not shield then
                             PvPShield.add_shield(market.surface, market.force, market.position, Public.offline_shield_size,

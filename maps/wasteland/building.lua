@@ -231,6 +231,10 @@ local function process_built_entities(event)
     if entity == nil or not entity.valid then
         return
     end
+    if entity.name == 'linked-chest' then
+        return  -- let town_center logic handle it
+    end
+
     local name = entity.name
     local surface = entity.surface
     local position = entity.position
