@@ -1,5 +1,6 @@
 local TeamBasics = require 'maps.wasteland.team_basics'
 local Utils = require 'maps.wasteland.utils'
+local ScenarioTable = require 'maps.wasteland.table'
 
 global.force_available_recipe_cache = global.force_available_recipe_cache or {}
 
@@ -156,6 +157,11 @@ end
 
 local function on_player_driving_changed_state(event)
     local player = game.get_player(event.player_index)
+    local this = ScenarioTable.get_table()
+    if this.testing_mode then
+        return
+    end
+
     if player and player.valid and player.vehicle and not is_recipe_available(player.force, player.vehicle.name) then
         error_floaty(player.vehicle.surface, player.vehicle.position)
         player.driving = false

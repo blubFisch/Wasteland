@@ -23,7 +23,25 @@ local player_ammo_damage_starting_modifiers = {
     --['rocket'] = -0.75,
     ['shotgun-shell'] = 0
 }
-local player_ammo_damage_modifiers = {
+
+local player_ammo_speed_starting_modifiers = {
+    --['artillery-shell'] = -0.75,
+    --['biological'] = -0.5,
+    ['bullet'] = 0,
+    ['cannon-shell'] = -0.4,
+    ['capsule'] = 0,
+    ['beam'] = -0.5,
+    ['laser'] = -0.7,
+    ['electric'] = -0.5,
+    ['flamethrower'] = 0,
+    ['grenade'] = -0.5,
+    ['landmine'] = -0.75,
+    --['melee'] = 2,
+    --['rocket'] = -0.75,
+    ['shotgun-shell'] = 0
+}
+
+local player_ammo_damage_upgrade_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
@@ -39,7 +57,7 @@ local player_ammo_damage_modifiers = {
     --['rocket'] = -0.5,
     ['shotgun-shell'] = 0
 }
-local player_gun_speed_modifiers = {
+local player_ammo_speed_upgrade_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
@@ -67,11 +85,11 @@ function Public.init_player_weapon_damage(force)
         force.set_ammo_damage_modifier(k, v)
     end
 
-    for k, v in pairs(player_gun_speed_modifiers) do
+    for k, v in pairs(player_ammo_speed_starting_modifiers) do
         force.set_gun_speed_modifier(k, v)
     end
 
-    force.set_turret_attack_modifier('laser-turret', 5)
+    force.set_turret_attack_modifier('laser-turret', 8)
 end
 
 -- After a research is finished and the game applied the modifier, we reduce modifiers to achieve the reduction
@@ -86,7 +104,7 @@ local function research_finished(event)
 
         if t == 'ammo-damage' then
             local category = e.ammo_category
-            local factor = player_ammo_damage_modifiers[category]
+            local factor = player_ammo_damage_upgrade_modifiers[category]
 
             if factor then
                 local current_m = p_force.get_ammo_damage_modifier(category)
@@ -103,7 +121,7 @@ local function research_finished(event)
         --    end
         elseif t == 'gun-speed' then
             local category = e.ammo_category
-            local factor = player_gun_speed_modifiers[category]
+            local factor = player_ammo_speed_upgrade_modifiers[category]
 
             if factor then
                 local current_m = p_force.get_gun_speed_modifier(category)
@@ -242,16 +260,23 @@ function Public.on_entity_damaged(event)
         end
     end
 
-    -- Reduce damage resistances of vehicles
-    if (entity.name == "tank" or entity.name == "car") and (event.damage_type.name == "physical" or event.damage_type.name == "fire") then
-        is_vehicle_damage = true
-        vehicle_modifier = 0.3
-        if event_cause and (event_cause.name == "tank" or event_cause.name == "car") then
-            -- Boost player vs player tank battles
-            vehicle_modifier = vehicle_modifier * 3
-        end
-        if event.damage_type.name == "fire" then
-            vehicle_modifier = vehicle_modifier * 1
+    -- Adjust damage resistances of tanks
+    if entity.name == "tank" then
+        local damage_type_name = event.damage_type.name
+        if (damage_type_name == "physical" or damage_type_name == "fire" or damage_type_name == "laser") then
+            is_vehicle_damage = true
+            if damage_type_name == "laser" then
+                vehicle_modifier = 5
+            else
+                vehicle_modifier = 0.5
+            end
+            if event_cause and (event_cause.name == "tank" or event_cause.name == "car") then
+                -- Boost player vs player vehicle battles
+                vehicle_modifier = vehicle_modifier * 3
+            end
+            --if event.damage_type.name == "fire" then
+            --    vehicle_modifier = vehicle_modifier * 1
+            --end
         end
     end
 

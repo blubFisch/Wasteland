@@ -26,7 +26,6 @@ function Public.initialize(player)
     local this = ScenarioTable.get()
     if (this.testing_mode == true) then
         player.cheat_mode = true
-        player.force.research_all_technologies()
         player.insert {name = 'coin', count = '9900'}
     end
 end

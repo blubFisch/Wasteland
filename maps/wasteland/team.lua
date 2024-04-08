@@ -661,7 +661,6 @@ function Public.create_town_force(player)
     if this.testing_mode then
         Public.set_biter_peace(force, true)
         force.enable_all_prototypes()
-        force.research_all_technologies()
     end
 
     return force
