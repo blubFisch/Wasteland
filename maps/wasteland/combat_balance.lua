@@ -268,7 +268,7 @@ function Public.on_entity_damaged(event)
             if damage_type_name == "laser" then
                 vehicle_modifier = 3
             else
-                vehicle_modifier = 0.5
+                vehicle_modifier = 0.3
             end
             if event_cause and (event_cause.name == "tank" or event_cause.name == "car") then
                 -- Boost player vs player vehicle battles
