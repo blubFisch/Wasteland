@@ -126,9 +126,6 @@ end
 
 function Public.validate_swarms()
     local this = ScenarioTable.get_table()
-    if this.testing_mode then
-        return
-    end
     for k, swarm in pairs(this.swarms) do
         if not is_swarm_valid(swarm) then
             table_remove(this.swarms, k)
@@ -138,9 +135,6 @@ end
 
 function Public.unit_groups_start_moving()
     local this = ScenarioTable.get_table()
-    if this.testing_mode then
-        return
-    end
     for _, swarm in pairs(this.swarms) do
         if swarm.group then
             if swarm.group.valid then
@@ -152,9 +146,6 @@ end
 
 function Public.swarm(town_center, radius)
     local this = ScenarioTable.get_table()
-    if this.testing_mode then
-        return
-    end
     local r = radius or 32
     local tc = town_center or roll_market()
     if not tc or r > 512 then

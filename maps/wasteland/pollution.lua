@@ -47,9 +47,6 @@ local pollution_index = {
 
 function Public.market_scent()
     local this = ScenarioTable.get_table()
-    if this.testing_mode then
-        return
-    end
     local town_centers = this.town_centers
     if town_centers == nil then
         return

@@ -24,7 +24,7 @@ function Public.initialize(player)
     Team.set_player_to_outlander(player)
     Team.give_player_items(player)
     local this = ScenarioTable.get()
-    if (this.testing_mode == true) then
+    if (this.testing_mode) then
         player.cheat_mode = true
         player.insert {name = 'coin', count = '9900'}
     end

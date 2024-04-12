@@ -658,11 +658,6 @@ function Public.create_town_force(player)
     CombatBalance.init_player_weapon_damage(force)
     MapLayout.reveal_strategic_resources(force)
 
-    if this.testing_mode then
-        Public.set_biter_peace(force, true)
-        force.enable_all_prototypes()
-    end
-
     return force
 end
 
@@ -689,10 +684,6 @@ local function create_outlander_force(player)
 
     CombatBalance.init_player_weapon_damage(force)
     MapLayout.reveal_strategic_resources(force)
-
-    if this.testing_mode then
-        force.enable_all_prototypes()
-    end
 
     return force
 end

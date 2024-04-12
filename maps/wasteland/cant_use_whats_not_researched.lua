@@ -160,6 +160,7 @@ local function on_player_driving_changed_state(event)
     local player = game.get_player(event.player_index)
     local this = ScenarioTable.get_table()
     if this.testing_mode then
+        game.print("Testing mode is on - skip check")
         return
     end
 
