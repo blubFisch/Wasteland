@@ -36,6 +36,7 @@ local allowed_for_all = {
 
     -- Scrap items
     ['logistic-chest-requester'] = true,
+    ['land-mine'] = true,
 
     -- Rails items and entities are different, so just skip them
     ['curved-rail'] = true,
