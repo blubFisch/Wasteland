@@ -136,6 +136,8 @@ function Public.get_spawn_point(player, surface)
     elseif not TeamBasics.is_town_force(player.force) then
         player.print("Setting new spawn point after spawn kills", Utils.scenario_color)
         return Public.set_new_spawn_point(player, surface)
+    else
+        return position
     end
 end
 
