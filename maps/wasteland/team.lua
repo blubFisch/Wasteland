@@ -561,7 +561,7 @@ local function disable_high_lab_speed_research(force)
     force.technologies['research-speed-6'].enabled = false
 end
 
-local function disable_high_weapon_research(force)
+local function disable_high_military_research(force)
     -- Limit the difference between small/big towns so that new towns have a chance
     -- and prevent pvp encounters that last less than 1s
 
@@ -587,6 +587,9 @@ local function disable_high_weapon_research(force)
     force.technologies['weapon-shooting-speed-6'].enabled = false
     force.technologies['physical-projectile-damage-6'].enabled = false
     force.technologies['physical-projectile-damage-7'].enabled = false
+
+    -- bot speed is used for repairing walls and player's tanks
+    force.technologies['worker-robots-speed-6'].enabled = false
 end
 
 local function disable_achievements(permission_group)
@@ -642,7 +645,7 @@ function Public.create_town_force(player)
     disable_artillery(force, permission_group)
     disable_spidertron(force, permission_group)
     GameMode.disable_game_mode_techs(force)
-    disable_high_weapon_research(force)
+    disable_high_military_research(force)
     disable_high_lab_speed_research(force)
     disable_rockets(force)
     disable_nukes(force)
