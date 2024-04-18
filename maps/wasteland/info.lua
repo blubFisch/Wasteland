@@ -4,6 +4,7 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-2]Apr 2024 updates[/font]
+ - Less cost increase for adding players to a town
  - Combat rebalancing for lasers, tanks, cars. Lasers are now better against tanks but weaker against biters
  - Shield related bugfixes
  - Short Rounds have no yellow/purple science + smaller towns

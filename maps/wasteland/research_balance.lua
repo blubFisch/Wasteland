@@ -33,7 +33,7 @@ end
 
 -- Relative speed modifier, 1=no change
 local function calculate_modifier_for_town(town_center)
-    local active_player_age_threshold = 4 * 60 * 60 * 60
+    local active_player_age_threshold = 2 * 60 * 60 * 60
 
     local this = ScenarioTable.get_table()
     local max_res = 0
@@ -48,7 +48,7 @@ local function calculate_modifier_for_town(town_center)
             active_player_count = active_player_count + 1
         end
     end
-    local player_modifier = math.max(active_player_count, 1) ^ -0.5
+    local player_modifier = math.max(active_player_count, 1) ^ -0.35
     local rested_modifier = 0.5 * town_center.town_rest.current_modifier
 
     return player_modifier * research_modifier + rested_modifier
