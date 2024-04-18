@@ -285,7 +285,7 @@ global.last_chatter_time = global.last_chatter_time or {}
 local function biter_chatter()
     local current_tick = game.tick
     for _, player in pairs(game.connected_players) do
-        if TeamBasics.is_outlander_force(player.force) and game.forces.enemy.get_cease_fire(player.force) then
+        if TeamBasics.is_outlander_force(player.force) and game.forces.enemy.get_cease_fire(player.force) and player.character then
             if not global.last_chatter_time[player.index] or current_tick - global.last_chatter_time[player.index] >= 600 then
                 local position = player.position
                 local surface = player.surface
