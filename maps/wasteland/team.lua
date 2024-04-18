@@ -568,8 +568,10 @@ local function disable_high_military_research(force)
     force.technologies['uranium-ammo'].enabled = false
     force.technologies['power-armor-mk2'].enabled = false
 
+    force.technologies['laser-shooting-speed-5'].enabled = false
     force.technologies['laser-shooting-speed-6'].enabled = false
     force.technologies['laser-shooting-speed-7'].enabled = false
+    force.technologies['laser-shooting-speed-5'].enabled = false
     force.technologies['energy-weapons-damage-6'].enabled = false
     force.technologies['energy-weapons-damage-7'].enabled = false
 
@@ -630,7 +632,6 @@ local function assign_outlander_permissions(force)
 end
 
 function Public.create_town_force(player)
-    local this = ScenarioTable.get_table()
     local force = game.create_force("t_" .. town_serial_no .. "_" .. player.name)
     town_serial_no = town_serial_no + 1
 

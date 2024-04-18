@@ -64,7 +64,7 @@ local player_ammo_speed_upgrade_modifiers = {
     ['cannon-shell'] = -0.35,
     ['capsule'] = -0.5,
     ['beam'] = -0.5,
-    ['laser'] = 0,
+    ['laser'] = -0.5,
     ['electric'] = -0.5,
     ['flamethrower'] = 0,
     ['grenade'] = -0.5,
@@ -266,7 +266,7 @@ function Public.on_entity_damaged(event)
         if (damage_type_name == "physical" or damage_type_name == "fire" or damage_type_name == "laser") then
             is_vehicle_damage = true
             if damage_type_name == "laser" then
-                vehicle_modifier = 3
+                vehicle_modifier = 1.5
             else
                 vehicle_modifier = 0.3
             end

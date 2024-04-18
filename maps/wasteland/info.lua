@@ -4,15 +4,10 @@ local GameSettings = require 'game_settings'
 
 local changelog =
     [[[font=heading-2]Apr 2024 updates[/font]
+ - Lasers rebalancing
  - Less cost increase for adding players to a town
- - Combat rebalancing for lasers, tanks, cars. Lasers are now better against tanks but weaker against biters
- - Shield related bugfixes
  - Short Rounds have no yellow/purple science + smaller towns
- - Laser min distance instead of buyable slots
- - Removed feature to spawn biters by dropping coins on nests - too hard to balance
- - Fix exploit: Can't use stuff that you don't have researched
- - Labs can't have speed modules anymore to prevent some exploits
- - Mining drills are now also deactivated by afk/offline shields
+ - Exploit fixes
  - When a town is offline, it gains a rest bonus, which is applied to player damage output and research cost]]
 
 local info =
