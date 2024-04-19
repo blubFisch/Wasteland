@@ -4,7 +4,7 @@ local GameMode = require 'maps.wasteland.game_mode'
 
 local age_score_factors = { 8.0, 0.8, 0.4 }
 local age_score_factor = age_score_factors[GameMode.mode]
-local research_evo_score_factors = { 200, 65, 65 }
+local research_evo_score_factors = { 170, 65, 65 }
 local research_evo_score_factor = research_evo_score_factors[GameMode.mode]
 
 function Public.score_increment_for_research(evo_increase)
