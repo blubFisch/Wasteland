@@ -266,7 +266,7 @@ function Public.on_entity_damaged(event)
         if (damage_type_name == "physical" or damage_type_name == "fire" or damage_type_name == "laser") then
             is_vehicle_damage = true
             if damage_type_name == "laser" then
-                vehicle_modifier = 1.5
+                vehicle_modifier = 2
             else
                 vehicle_modifier = 0.3
             end
