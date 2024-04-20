@@ -45,6 +45,7 @@ function Public.reset_table()
     this.uranium_patch_location = nil
     this.entity_labels = {}
     this.last_damage_multiplier_shown = {}
+    this.next_high_score_announcement = 0
 end
 
 function Public.get_table()

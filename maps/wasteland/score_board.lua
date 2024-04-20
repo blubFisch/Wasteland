@@ -160,10 +160,14 @@ local function update_score()
                 label.style.font = 'default-bold'
             end
 
+            local town_highest_score = 0
             local town_total_scores = {}
             for _, town_center in pairs(this.town_centers) do
                 if town_center ~= nil then
                     town_total_scores[town_center] = Score.total_score(town_center)
+                    if town_total_scores[town_center] > town_highest_score then
+                        town_highest_score = town_total_scores[town_center]
+                    end
 
                     if town_total_scores[town_center] >= score_to_win and this.winner == nil then
                         local winner_force = town_center.market.force
@@ -175,6 +179,24 @@ local function update_score()
                         winner_force.technologies["artillery"].researched = true
                         log("WINNER_STORE=\"" .. town_with_player_names .. "\"")
                     end
+                end
+            end
+
+            -- Announce high score towns
+            if this.next_high_score_announcement == 0 then  -- init
+                this.next_high_score_announcement = 70
+            end
+            if town_highest_score >= this.next_high_score_announcement then
+                game.print("A town has reached " .. format_score(town_highest_score) .. " score." ..
+                        " The game ends at 100 score", Utils.scenario_color)
+                if town_highest_score >= 70 then
+                    this.next_high_score_announcement = 80
+                end
+                if town_highest_score >= 80 then
+                    this.next_high_score_announcement = 90
+                end
+                if town_highest_score >= 90 then
+                    this.next_high_score_announcement = 95
                 end
             end
 
