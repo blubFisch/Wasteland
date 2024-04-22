@@ -198,6 +198,9 @@ local function update_score()
                 if town_highest_score >= 90 then
                     this.next_high_score_announcement = 95
                 end
+                if town_highest_score >= 95 then
+                    this.next_high_score_announcement = 9999 -- turning it off
+                end
             end
 
             local rank = 1
