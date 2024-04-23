@@ -892,9 +892,9 @@ local function kill_force(killed_force, cause_force, cause_entity)
 
     -- place the loot coins from town center
     local loot_balance = town_center.coin_balance
+    local loot_coins_chest = surface.create_entity({ name = 'steel-chest', position = position, force = 'neutral'})
     if loot_balance > 0 then
-        local chest = surface.create_entity({name = 'steel-chest', position = position, force = 'neutral'})
-        chest.insert({name = 'coin', count = loot_balance })
+        loot_coins_chest.insert({ name = 'coin', count = loot_balance })
     end
 
     local town_count = 0
