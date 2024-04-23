@@ -179,10 +179,10 @@ local function on_player_joined_game(event)
         init_position_frame(player)
         init_evo_frame(player)
         GameMode.add_mode_button(player)
+        Info.add_last_winner_button(player)
 
         Public.initialize(player)
         Public.spawn_initially(player)
-        Info.add_last_winner_button(player)
     end
     Team.player_joined(player)
     Public.load_buffs(player)

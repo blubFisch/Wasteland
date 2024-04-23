@@ -1,67 +1,17 @@
 local math_random = math.random
 local math_abs = math.abs
-local table_shuffle = table.shuffle_table
 
 local Event = require 'utils.event'
-local ScenarioTable = require 'maps.wasteland.table'
 local MapLayout = require 'maps.wasteland.map_layout'
 
 local Public = {}
 
---local Server = require 'utils.server'
 local map_width = 2560
 local map_height = 2560
 
 function Public.nuke(position)
     local surface = game.surfaces['nauvis']
     surface.create_entity({name = 'atomic-rocket', position = position, target = position, speed = 0.5})
-end
-
-function Public.armageddon()
-    local targets = {}
-    local offset = 1
-    local this = ScenarioTable.get_table()
-    for _, town_center in pairs(this.town_centers) do
-        local market = town_center.market
-        if market and market.valid then
-            for _ = 1, 5 do
-                local px = market.position.x + math_random(1, 256) - 128
-                local py = market.position.y + math_random(1, 256) - 128
-                targets[offset] = {x = px, y = py}
-                offset = offset + 1
-            end
-            targets[offset] = {x = market.position.x, y = market.position.y}
-            offset = offset + 1
-        end
-    end
-    for _, spaceship in pairs(this.spaceships) do
-        local market = spaceship.market
-        if market and market.valid then
-            for _ = 1, 5 do
-                local px = market.position.x + math_random(1, 256) - 128
-                local py = market.position.y + math_random(1, 256) - 128
-                targets[offset] = {x = px, y = py}
-                offset = offset + 1
-            end
-            targets[offset] = {x = market.position.x, y = market.position.y}
-            offset = offset + 1
-        end
-    end
-
-    table_shuffle(targets)
-
-    for i, pos in pairs(targets) do
-        local position = pos
-        local future = game.tick + i * 60
-        -- schedule to run this method again with a higher radius on next tick
-        if not this.nuke_tick_schedule[future] then
-            this.nuke_tick_schedule[future] = {}
-        end
-        this.nuke_tick_schedule[future][#this.nuke_tick_schedule[future] + 1] = {
-            callback = 'nuke',
-            params = {position}
-        }
-    end
 end
 
 local function get_seed()
@@ -193,31 +143,6 @@ function Public.initialize()
     surface.clear(true)
     surface.regenerate_entity({'rock-huge', 'rock-big', 'sand-rock-big'})
     surface.regenerate_decorative()
-    -- this will force generate the entire map
-    --Server.to_discord_embed('ScrapTownyFFA Map Regeneration in Progress')
-    --surface.request_to_generate_chunks({x=0,y=0},64)
-    --surface.force_generate_chunk_requests()
-    --Server.to_discord_embed('Regeneration Complete')
-end
-
-local function on_tick()
-    local this = ScenarioTable.get_table()
-    if not this.nuke_tick_schedule[game.tick] then
-        return
-    end
-    for _, token in pairs(this.nuke_tick_schedule[game.tick]) do
-        local callback = token.callback
-        local params = token.params
-        if callback == 'nuke' then
-            Public.nuke(params[1])
-        end
-    end
-    this.nuke_tick_schedule[game.tick] = nil
-end
-
-function Public.clear_nuke_schedule()
-    local this = ScenarioTable.get_table()
-    this.nuke_tick_schedule = {}
 end
 
 local never_clear_around_types = { 'container', 'logistic-container', 'storage-tank', 'straight-rail', 'curved-rail'}

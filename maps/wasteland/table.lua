@@ -14,7 +14,6 @@ Global.register(
 )
 
 function Public.reset_table()
-    this.rocket_launches = {}
     this.requests = {}
     this.town_kill_message = {}
     this.town_centers = {}
@@ -27,12 +26,9 @@ function Public.reset_table()
     this.spawn_point = {}
     this.winner = nil
     this.buffs = {}
-    this.nuke_tick_schedule = {}
     this.swarms = {}
-    this.explosion_schedule = {}
     this.fluid_explosion_schedule = {}
     this.mining = {}
-    this.mining_entity = {}
     this.mining_target = {}
     this.spaceships = {}
     this.pvp_shields = {}

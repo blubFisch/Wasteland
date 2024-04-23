@@ -666,7 +666,6 @@ function Public.create_town_force(player)
 end
 
 local function create_outlander_force(player)
-    local this = ScenarioTable.get_table()
     local force = game.create_force("o_" .. player.name)
 
     -- diplomacy

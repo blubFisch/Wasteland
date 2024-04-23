@@ -45,10 +45,11 @@ local function gen_uranium_location()
     return {x=east * (Public.map_size[1] / 2 - 50), y=top * (Public.map_size[2] / 2  - 50) }
 end
 
-local function on_init()
+local function init()
     local this = global.tokens.maps_wasteland_table
     this.uranium_patch_location = gen_uranium_location()
 end
+Public.init = init
 
 local scrap_entities = {
     -- simple entity with owner
@@ -469,7 +470,7 @@ function Public.force_gen_chunk(position, surface, radius)
 end
 
 local Event = require 'utils.event'
-Event.on_init(on_init)
+Event.on_init(init)
 Event.add(defines.events.on_chunk_generated, on_chunk_generated)
 Event.add(defines.events.on_chunk_charted, on_chunk_charted)
 Event.add(defines.events.on_player_mined_entity, on_player_mined_entity)
