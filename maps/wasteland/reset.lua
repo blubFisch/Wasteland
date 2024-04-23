@@ -1,3 +1,5 @@
+local Public = {}
+
 local Event = require 'utils.event'
 local Alert = require 'utils.alert'
 local ScenarioTable = require 'maps.wasteland.table'
@@ -6,10 +8,12 @@ local Team = require 'maps.wasteland.team'
 local Player = require 'maps.wasteland.player'
 local Color = require 'utils.color_presets'
 local MapLayout = require 'maps.wasteland.map_layout'
+local Info = require 'maps.wasteland.info'
 
 local function init_reset_sequence()
     global.game_end_sequence_start = game.tick + 1
 end
+Public.init_reset_sequence = init_reset_sequence
 
 local function reset_map()
     ScenarioTable.reset_table()
@@ -27,6 +31,7 @@ local function reset_map()
         Team.set_player_color(player)
         Player.spawn_initially(player)
         Player.load_buffs(player)
+        Info.update_last_winner_name(player)
     end
     Alert.alert_all_players(10, 'The world has been reset!', Color.white, 'restart_required', 1.0)
 end
@@ -35,12 +40,12 @@ local function on_tick()
     if global.game_end_sequence_start then
         local tick = game.tick
         if tick == global.game_end_sequence_start then
-            Alert.alert_all_players(10, 'The world is about to reset!', Color.white, 'warning-white', 1.0)
+            Alert.alert_all_players(60, 'The world is about to reset!', Color.white, 'warning-white', 1.0)
         end
-        if tick == global.game_end_sequence_start + 600 then
+        if tick == global.game_end_sequence_start + 60 * 60 then
             Team.reset_all_forces()
         end
-        if tick == global.game_end_sequence_start + 601 then
+        if tick == global.game_end_sequence_start + 60 * 60 + 1 then
             reset_map()
         end
     end
@@ -81,3 +86,5 @@ commands.add_command(
 )
 
 Event.add(defines.events.on_tick, on_tick)
+
+return Public

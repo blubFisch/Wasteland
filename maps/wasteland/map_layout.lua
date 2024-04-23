@@ -9,7 +9,6 @@ local Public = {}
 local get_noise = require 'utils.get_noise'
 local Scrap = require 'maps.wasteland.scrap'
 local Spaceship = require 'maps.wasteland.spaceship'
-local GameMode = require 'maps.wasteland.game_mode'
 
 
 Public.central_ores_radius = 15
@@ -18,7 +17,7 @@ Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
 local league_sizes_by_game_mode = {101, 141, 141}
-Public.league_balance_shield_size =  league_sizes_by_game_mode[GameMode.mode]
+Public.league_balance_shield_size =  league_sizes_by_game_mode[global.game_mode]
 Public.higher_league_activation_range = Public.league_balance_shield_size + 50
 Public.min_distance_between_towns = Public.higher_league_activation_range + 2 + 50    -- plus some buffer for players moving for activations
 

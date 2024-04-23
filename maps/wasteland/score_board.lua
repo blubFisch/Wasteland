@@ -4,7 +4,6 @@ local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local Utils = require 'maps.wasteland.utils'
-local Team = require 'maps.wasteland.team'
 local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local TeamBasics = require 'maps.wasteland.team_basics'
@@ -170,14 +169,14 @@ local function update_score()
                     end
 
                     if town_total_scores[town_center] >= score_to_win and this.winner == nil then
-                        local winner_force = town_center.market.force
                         this.winner = town_center.town_name
                         local town_with_player_names = format_town_with_player_names(town_center)
 
-                        game.print(town_with_player_names .. " has won the game! Their town now has artillery. The server will be reset by an admin soon.", Utils.scenario_color)
-                        Team.enable_artillery(winner_force, game.permissions.get_group((winner_force.name)))
-                        winner_force.technologies["artillery"].researched = true
+                        game.print(town_with_player_names .. " has won the game!", Utils.scenario_color)
+
+                        global.last_winner_name = town_with_player_names
                         log("WINNER_STORE=\"" .. town_with_player_names .. "\"")
+                        global.game_end_sequence_start = game.tick + 1
                     end
                 end
             end

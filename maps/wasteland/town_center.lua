@@ -25,13 +25,12 @@ local Evolution = require 'maps.wasteland.evolution'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
-local GameMode = require 'maps.wasteland.game_mode'
 
 
 local town_radius = 20
 
 local starter_ore_amounts = { 0.25, 0.5, 1.0 }
-local starter_ore_amount = 1200 * starter_ore_amounts[GameMode.mode]
+local starter_ore_amount = 1200 * starter_ore_amounts[global.game_mode]
 
 local colors = {}
 local c1 = 250

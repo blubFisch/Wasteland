@@ -1,7 +1,5 @@
 local Public = {}
 
-local GameSettings = require 'game_settings'
-
 local changelog =
     [[[font=heading-2]Apr 2024 updates[/font]
  - Lasers rebalancing
@@ -77,10 +75,10 @@ local info_adv =
 - Laser and gun turrets shoot empty vehicles which can be used to block bots in offline attacks]]
 
 function Public.toggle_button(player)
-    if player.gui.top['towny_map_intro_button'] then
+    if player.gui.top['wl_map_intro_button'] then
         return
     end
-    local b = player.gui.top.add({type = 'sprite-button', caption = 'Help', name = 'towny_map_intro_button'})
+    local b = player.gui.top.add({type = 'sprite-button', caption = 'Help', name = 'wl_map_intro_button'})
     b.style.font_color = {r = 0.5, g = 0.3, b = 0.99}
     b.style.font = 'heading-1'
     b.style.minimal_height = 38
@@ -91,16 +89,22 @@ function Public.toggle_button(player)
     b.style.bottom_padding = 1
 end
 
+
+function Public.update_last_winner_name(player)
+    player.gui.top['wl_map_last_winner'].caption = "Last round winner: " .. global.last_winner_name
+end
+
 function Public.add_last_winner_button(player)
-    local b2 = player.gui.top.add({ type = 'sprite-button', caption = "Last round winner: " .. GameSettings.last_winner_name,
-                                    name = 'towny_map_last_winner'})
-    b2.style.font_color = { r = 1, g = 0.7, b = 0.1}
-    b2.style.minimal_height = 38
-    b2.style.minimal_width = 480
-    b2.style.top_padding = 1
-    b2.style.left_padding = 1
-    b2.style.right_padding = 1
-    b2.style.bottom_padding = 1
+    local b = player.gui.top.add({ type = 'sprite-button', caption = "", name = 'wl_map_last_winner'})
+    b.style.font_color = { r = 1, g = 0.7, b = 0.1}
+    b.style.minimal_height = 38
+    b.style.minimal_width = 480
+    b.style.top_padding = 1
+    b.style.left_padding = 1
+    b.style.right_padding = 1
+    b.style.bottom_padding = 1
+
+    Public.update_last_winner_name(player)
 end
 
 function Public.show(player, info_type)
@@ -147,7 +151,7 @@ function Public.toggle(event)
     if not event.element.valid then
         return
     end
-    if event.element.name == 'towny_map_intro_button' then
+    if event.element.name == 'wl_map_intro_button' then
         local player = game.players[event.player_index]
         if player.gui.center['towny_map_intro_frame'] then
             player.gui.center['towny_map_intro_frame'].destroy()
