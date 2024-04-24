@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Apr 2024 updates[/font]
+ - Time score now only counts survival time without shield (=online or L4)
  - Lasers rebalancing
  - Less cost increase for adding players to a town
  - Short Rounds have no yellow/purple science + smaller towns

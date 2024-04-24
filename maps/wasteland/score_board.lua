@@ -3,7 +3,6 @@ local Public = {}
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
-local Utils = require 'maps.wasteland.utils'
 local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local TeamBasics = require 'maps.wasteland.team_basics'
@@ -91,35 +90,8 @@ local function init_score_board(player)
     frame.location = new_location
 end
 
-local function format_score(score)
-    return string.format('%.1f', math.floor(score * 10) / 10)
-end
-
-local function format_town_with_player_names(town_center)
-    local player_names = ""
-    local player_in_town_name = false
-    for _, player in pairs(town_center.market.force.players) do
-        if not string.find(town_center.town_name, player.name) then
-            if player_names ~= "" then
-                player_names = player_names .. ", "
-            end
-            player_names = player_names .. player.name
-        else
-            player_in_town_name = true
-        end
-    end
-    if player_names ~= "" then
-        if player_in_town_name then
-            player_names = "+" .. player_names
-        end
-        player_names = " (" .. player_names .. ")"
-    end
-    return town_center.town_name .. player_names
-end
-
 local function update_score()
     local this = ScenarioTable.get_table()
-    local score_to_win = 100
 
     local outlander_online = 0
     for _, player in pairs(game.players) do
@@ -144,7 +116,7 @@ local function update_score()
             subheader.style.horizontally_stretchable = true
             subheader.style.vertical_align = 'center'
 
-            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. score_to_win .. ' points to win!'
+            subheader.add {type = 'label', style = 'subheader_label', caption = {'', 'Reach ' .. Score.score_to_win .. ' points to win!'
             .. '                   Players online: ' .. #game.connected_players}}
 
             if not next(subheader.children) then
@@ -154,56 +126,17 @@ local function update_score()
             local ranking_table = inner_frame.add { type = 'table', column_count = 6, style = 'bordered_table'}
             ranking_table.style.margin = 4
 
-            for _, caption in pairs({'Rank', 'Town', 'League', 'Research', 'Age', 'Score'}) do
+            for _, caption in pairs({'Rank', 'Town', 'League', 'Research', 'Survival', 'Score'}) do
                 local label = ranking_table.add { type = 'label', caption = caption}
                 label.style.font = 'default-bold'
             end
 
-            local town_highest_score = 0
             local town_total_scores = {}
             for _, town_center in pairs(this.town_centers) do
-                if town_center ~= nil then
-                    town_total_scores[town_center] = Score.total_score(town_center)
-                    if town_total_scores[town_center] > town_highest_score then
-                        town_highest_score = town_total_scores[town_center]
-                    end
-
-                    if town_total_scores[town_center] >= score_to_win and this.winner == nil then
-                        this.winner = town_center.town_name
-                        local town_with_player_names = format_town_with_player_names(town_center)
-
-                        game.print(town_with_player_names .. " has won the game!", Utils.scenario_color)
-
-                        global.last_winner_name = town_with_player_names
-                        log("WINNER_STORE=\"" .. town_with_player_names .. "\"")
-                        global.game_end_sequence_start = game.tick + 1
-                    end
-                end
-            end
-
-            -- Announce high score towns
-            if this.next_high_score_announcement == 0 then  -- init
-                this.next_high_score_announcement = 70
-            end
-            if town_highest_score >= this.next_high_score_announcement then
-                game.print("A town has reached " .. format_score(town_highest_score) .. " score." ..
-                        " The game ends at 100 score", Utils.scenario_color)
-                if town_highest_score >= 70 then
-                    this.next_high_score_announcement = 80
-                end
-                if town_highest_score >= 80 then
-                    this.next_high_score_announcement = 90
-                end
-                if town_highest_score >= 90 then
-                    this.next_high_score_announcement = 95
-                end
-                if town_highest_score >= 95 then
-                    this.next_high_score_announcement = 9999 -- turning it off
-                end
+                town_total_scores[town_center] = Score.total_score(town_center)
             end
 
             local rank = 1
-
             for town_center, _ in spairs(
                     town_total_scores,
                     function(t, a, b)
@@ -239,17 +172,17 @@ local function update_score()
                 ranking_table.style.column_alignments[3] = 'right'
                 league.tooltip = town_center.pvp_shield_mgmt.shield_info
 
-                local res = ranking_table.add { type = 'label', caption = format_score(Score.research_score(town_center))}
+                local res = ranking_table.add { type = 'label', caption = Score.format_score(Score.research_score(town_center))}
                 ranking_table.style.column_alignments[4] = 'right'
-
                 res.tooltip = "Research cost: " .. ResearchBalance.format_town_modifier(town_center.research_balance.current_modifier)
-                ranking_table.add { type = 'label', caption = string.format('%.1fh', Score.age_h(town_center))}
+
+                ranking_table.add { type = 'label', caption = string.format('%.1fh', Score.survival_time_h(town_center))}
                 ranking_table.style.column_alignments[5] = 'right'
 
-                local total = ranking_table.add { type = 'label', caption = format_score(town_total_scores[town_center])}
+                local total = ranking_table.add { type = 'label', caption = Score.format_score(town_total_scores[town_center])}
                 ranking_table.style.column_alignments[6] = 'right'
-                total.tooltip = format_score(Score.research_score(town_center)) .. " (Research) + "
-                        .. format_score(Score.survival_score(town_center)) .. " (Age)"
+                total.tooltip = Score.format_score(Score.research_score(town_center)) .. " (Research) + "
+                        .. Score.format_score(Score.survival_score(town_center)) .. " (Survival time without shield)"
 
                 rank = rank + 1
             end
