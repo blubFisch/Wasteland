@@ -7,7 +7,7 @@ local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local Utils = require 'maps.wasteland.utils'
 
 
-local player_ammo_damage_starting_modifiers = {
+local ammo_damage_starting_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
@@ -23,25 +23,7 @@ local player_ammo_damage_starting_modifiers = {
     --['rocket'] = -0.75,
     ['shotgun-shell'] = 0
 }
-
-local player_ammo_speed_starting_modifiers = {
-    --['artillery-shell'] = -0.75,
-    --['biological'] = -0.5,
-    ['bullet'] = 0,
-    ['cannon-shell'] = -0.4,
-    ['capsule'] = 0,
-    ['beam'] = -0.5,
-    ['laser'] = -0.7,
-    ['electric'] = -0.5,
-    ['flamethrower'] = 0,
-    ['grenade'] = -0.5,
-    ['landmine'] = -0.75,
-    --['melee'] = 2,
-    --['rocket'] = -0.75,
-    ['shotgun-shell'] = 0
-}
-
-local player_ammo_damage_upgrade_modifiers = {
+local ammo_damage_upgrade_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
@@ -57,11 +39,28 @@ local player_ammo_damage_upgrade_modifiers = {
     --['rocket'] = -0.5,
     ['shotgun-shell'] = 0
 }
-local player_ammo_speed_upgrade_modifiers = {
+
+local ammo_speed_starting_modifiers = {
     --['artillery-shell'] = -0.75,
     --['biological'] = -0.5,
     ['bullet'] = 0,
-    ['cannon-shell'] = -0.35,
+    ['cannon-shell'] = -0.3,
+    ['capsule'] = 0,
+    ['beam'] = -0.5,
+    ['laser'] = -0.7,
+    ['electric'] = -0.5,
+    ['flamethrower'] = 0,
+    ['grenade'] = -0.5,
+    ['landmine'] = -0.75,
+    --['melee'] = 2,
+    --['rocket'] = -0.75,
+    ['shotgun-shell'] = 0
+}
+local ammo_speed_upgrade_modifiers = {
+    --['artillery-shell'] = -0.75,
+    --['biological'] = -0.5,
+    ['bullet'] = 0,
+    ['cannon-shell'] = -0.3,
     ['capsule'] = -0.5,
     ['beam'] = -0.5,
     ['laser'] = -0.5,
@@ -81,11 +80,11 @@ local player_ammo_speed_upgrade_modifiers = {
 --}
 
 function Public.init_player_weapon_damage(force)
-    for k, v in pairs(player_ammo_damage_starting_modifiers) do
+    for k, v in pairs(ammo_damage_starting_modifiers) do
         force.set_ammo_damage_modifier(k, v)
     end
 
-    for k, v in pairs(player_ammo_speed_starting_modifiers) do
+    for k, v in pairs(ammo_speed_starting_modifiers) do
         force.set_gun_speed_modifier(k, v)
     end
 
@@ -104,7 +103,7 @@ local function research_finished(event)
 
         if t == 'ammo-damage' then
             local category = e.ammo_category
-            local factor = player_ammo_damage_upgrade_modifiers[category]
+            local factor = ammo_damage_upgrade_modifiers[category]
 
             if factor then
                 local current_m = p_force.get_ammo_damage_modifier(category)
@@ -121,7 +120,7 @@ local function research_finished(event)
         --    end
         elseif t == 'gun-speed' then
             local category = e.ammo_category
-            local factor = player_ammo_speed_upgrade_modifiers[category]
+            local factor = ammo_speed_upgrade_modifiers[category]
 
             if factor then
                 local current_m = p_force.get_gun_speed_modifier(category)
@@ -267,16 +266,17 @@ function Public.on_entity_damaged(event)
             is_vehicle_damage = true
             if damage_type_name == "laser" then
                 vehicle_modifier = 2
+            elseif damage_type_name == "physical" and event.original_damage_amount > 80 then
+                -- Boost tank vs tank shell battles. Note: This involves guessing shell type based on damage
+                vehicle_modifier = vehicle_modifier * 2.1   -- Tweaked to 3 hits w/o upgrades, 2 hits with max upgrades (regular shells)
             else
                 vehicle_modifier = 0.3
             end
+
             if event_cause and (event_cause.name == "tank" or event_cause.name == "car") then
                 -- Boost player vs player vehicle battles
                 vehicle_modifier = vehicle_modifier * 3
             end
-            --if event.damage_type.name == "fire" then
-            --    vehicle_modifier = vehicle_modifier * 1
-            --end
         end
     end
 
