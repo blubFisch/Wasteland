@@ -12,7 +12,7 @@ local Spaceship = require 'maps.wasteland.spaceship'
 
 
 Public.central_ores_radius = 15
-Public.central_ores_town_nobuild = 350
+Public.central_ores_town_nobuild = 400
 Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
