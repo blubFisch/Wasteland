@@ -18,8 +18,8 @@ local messages = {
     ['gun-turret'] = {'was mowed down by a gun turret'},
     ['laser-turret'] = {'was fatally enlightened by a laser turret'},
     ['flamethrower-turret'] = {'was barbecued by a flamer turret'},
-    ['cargo-wagon'] = {'was flattened by a train', 'was crushed'},
-    ['locomotive'] = {'was flattened by a train', 'was crushed'}
+    ['cargo-wagon'] = {'was flattened by a train', 'was crushed by a train'},
+    ['locomotive'] = {'was flattened by a train', 'was crushed by a train'}
 }
 
 local function display_player_name(player)
