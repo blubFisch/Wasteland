@@ -130,8 +130,7 @@ function Public.get_spawn_point(player, surface)
             --log("player " .. player.name .. " using existing spawn point at {" .. position.x .. "," .. position.y .. "}")
             return position
         else
-            position = surface.find_non_colliding_position('character', position, 0, 0.25)
-            return position
+            return surface.find_non_colliding_position('character', position, 0, 0.25)
         end
     elseif not TeamBasics.is_town_force(player.force) then
         player.print("Setting new spawn point after spawn kills", Utils.scenario_color)

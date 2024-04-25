@@ -34,13 +34,12 @@ function Public.spawn_initially(player)
     local this = ScenarioTable.get()
     local surface = game.surfaces['nauvis']
     local spawn_point = Spawn.set_new_spawn_point(player, surface)
-    this.strikes[player.name] = 0
-
-    -- reset cooldown
-    this.cooldowns_town_placement[player.index] = 0
-    this.last_respawn[player.name] = 0
     local new_pos = surface.find_non_colliding_position('character', spawn_point, 50, 0.5)
     player.teleport(new_pos or spawn_point, surface)
+
+    this.strikes[player.name] = 0
+    this.cooldowns_town_placement[player.index] = 0
+    this.last_respawn[player.name] = 0
 end
 
 function Public.load_buffs(player)

@@ -16,16 +16,22 @@ local function init_reset_sequence()
 end
 Public.init_reset_sequence = init_reset_sequence
 
-local function reset_map()
+-- Reset is split into parts for performance
+local function reset_map_part_1()
     ScenarioTable.reset_table()
+    MapLayout.init()
     game.reset_time_played()
     game.reset_game_state()
     for _, player in pairs(game.players) do
         player.teleport({0, 0}, game.surfaces['limbo'])
     end
+end
 
-    MapLayout.init()
+local function reset_map_part_2()
     Nauvis.initialize()
+end
+
+local function reset_map_part_3()
     Team.initialize()
     for _, player in pairs(game.players) do
         Player.initialize(player)
@@ -42,13 +48,15 @@ local function on_tick()
         local tick = game.tick
         if tick == global.game_end_sequence_start then
             Alert.alert_all_players(60, 'The world is about to reset!', Color.white, 'warning-white', 1.0)
-        end
-        if tick == global.game_end_sequence_start + 60 * 60 then
+        elseif tick == global.game_end_sequence_start + 60 * 60 then
             game.print("The world will now reset. This can cause the game to hang for a while....", Utils.scenario_color)
             Team.reset_all_forces()
-        end
-        if tick == global.game_end_sequence_start + 60 * 60 + 1 then
-            reset_map()
+        elseif tick == global.game_end_sequence_start + 60 * 60 + 1 then
+            reset_map_part_1()
+        elseif tick == global.game_end_sequence_start + 60 * 60 + 31 then
+            reset_map_part_2()
+        elseif tick == global.game_end_sequence_start + 60 * 60 + 61 then
+            reset_map_part_3()
         end
     end
 end
