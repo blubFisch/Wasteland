@@ -9,6 +9,7 @@ local Player = require 'maps.wasteland.player'
 local Color = require 'utils.color_presets'
 local MapLayout = require 'maps.wasteland.map_layout'
 local Info = require 'maps.wasteland.info'
+local Utils = require 'maps.wasteland.utils'
 
 local function init_reset_sequence()
     global.game_end_sequence_start = game.tick + 1
@@ -43,6 +44,7 @@ local function on_tick()
             Alert.alert_all_players(60, 'The world is about to reset!', Color.white, 'warning-white', 1.0)
         end
         if tick == global.game_end_sequence_start + 60 * 60 then
+            game.print("The world will now reset. This can cause the game to hang for a while....", Utils.scenario_color)
             Team.reset_all_forces()
         end
         if tick == global.game_end_sequence_start + 60 * 60 + 1 then

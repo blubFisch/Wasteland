@@ -6,7 +6,6 @@ local changelog =
  - Fluid tanks are no longer explosive - this caused too much frustration for beginners
  - Tank shells are now very effective against other tanks with direct hits
  - Time score now only counts survival time without shield (=online or L4)
- - Lasers rebalancing
  - Less cost increase for adding players to a town
  - Short Rounds have no yellow/purple science + smaller towns
  - Exploit fixes
