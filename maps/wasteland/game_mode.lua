@@ -2,7 +2,7 @@ local Public = {}
 
 local button_id = "wl_game_mode"
 Public.mode_names = {
-    "Battle",       -- Target: 6 hours game
+    "War",          -- Target: 6 hours game
     "Survival",     -- Target: 2 days game
     "Survival Long" -- Target: 5 days game
 }
