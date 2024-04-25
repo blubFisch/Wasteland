@@ -139,7 +139,7 @@ local function on_player_mined_entity(event)
 
     local scrap = scrap_raffle[math.random(1, size_of_scrap_raffle)]
 
-    local amount_bonus = 5
+    local amount_bonus = 4
     local amount
     if entity_loot_amounts[scrap] <= 0 then
         amount = math.abs(entity_loot_amounts[scrap])
