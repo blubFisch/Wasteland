@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Apr 2024 updates[/font]
+ - Fluid tanks are no longer explosive - this caused too much frustration for beginners
  - Tank shells are now very effective against other tanks with direct hits
  - Time score now only counts survival time without shield (=online or L4)
  - Lasers rebalancing

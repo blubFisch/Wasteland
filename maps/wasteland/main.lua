@@ -41,7 +41,6 @@ local Gui = require 'utils.gui'
 local Color = require 'utils.color_presets'
 local Where = require 'utils.commands.where'
 local CombatBalance = require 'maps.wasteland.combat_balance'
-local FluidsAreExplosive = require 'maps.wasteland.fluids_are_explosive'
 
 
 local function on_init()
@@ -95,7 +94,6 @@ local function on_entity_damaged(event)
         CombatBalance.on_entity_damaged(event)
         Team.on_entity_damaged(event)
         Pollution.on_entity_damaged(event)
-        FluidsAreExplosive.on_entity_damaged(event)
     end
 end
 
