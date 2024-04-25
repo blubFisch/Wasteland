@@ -37,11 +37,12 @@ function Public.reset_table()
     this.suicides = {}
     this.town_evo_warned = {}
     this.treasure_hint = {}
-    this.labs = {}
+    this.labs_destroy_events = {}
     this.uranium_patch_location = nil
     this.entity_labels = {}
     this.last_damage_multiplier_shown = {}
     this.next_high_score_announcement = 0
+    this.laser_turrets_destroy_events = {}
 end
 
 function Public.get_table()

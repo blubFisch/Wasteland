@@ -441,6 +441,7 @@ local function found_town(event)
     town_center.evolution.worms = 0
     town_center.survival_time_ticks = 0
     town_center.last_swarm = 0
+    town_center.laser_turrets = 0
     local market_pos = town_center.market.position
     town_center.center_box = {left_top = {x = market_pos.x - town_radius, y = market_pos.y - town_radius},
                               right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
