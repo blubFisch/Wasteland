@@ -45,10 +45,9 @@ local function spawn_new_rock(surface)
             pos_y = pos_y * -1
         end
         local position = {x = pos_x, y = pos_y}
-        --position = {x = 338, y = -18} for debugging
         local rock_type = utils_table.get_random_dictionary_entry(valid_entities, true)
         if surface.can_place_entity({name = rock_type, position = position, force = 'neutral'}) then
-            if surface.count_entities_filtered({ position = position, radius = 5.0, force = force_names})<= 0  then
+            if surface.count_entities_filtered({ position = position, radius = 20, force = force_names, limit = 1}) == 0  then
                 surface.create_entity({name = rock_type, position = position})
                 break
             end
@@ -60,7 +59,7 @@ local function get_chances()
     local chances = {}
     table_insert(chances, {'iron-ore', 24})
     table_insert(chances, {'copper-ore', 18})
-    table_insert(chances, {'mixed', 12})
+    table_insert(chances, {'mixed', 16})
     table_insert(chances, {'coal', 14})
     table_insert(chances, {'stone', 12})
     table_insert(chances, {'uranium-ore', 8})
@@ -131,7 +130,7 @@ local function draw_chain(surface, count, ore, ore_entities, ore_positions)
     end
 end
 
-local function spawn_ore_vein(surface, position, player)
+local function spawn_ore_vein(surface, position, actor_is_player, actor)
     local this = ScenarioTable.get_table()
     local size
     local selection = math_random(0, size_raffle_chance_sum)
@@ -149,33 +148,31 @@ local function spawn_ore_vein(surface, position, player)
     else
         icon = ' '
     end
+    icon = icon .. " [gps=" .. position.x .. "," .. position.y .. "]"
 
-    if player then
-        for _, p in pairs(game.connected_players) do
-            if p.index == player.index then
-                p.print(
-                        {
-                            'rocks_yield_ore_veins.player_print',
-                            {'rocks_yield_ore_veins_colors.' .. ore},
-                            {'rocks_yield_ore_veins.' .. size[1]},
-                            {'rocks_yield_ore_veins.' .. ore},
-                            icon
-                        },
-                        {r = 0.80, g = 0.80, b = 0.80}
-                )
-            else
-                if p.force == player.force then
-                    p.print(
-                            {
-                                'rocks_yield_ore_veins.game_print',
-                                '[color=' .. player.chat_color.r .. ',' .. player.chat_color.g .. ',' .. player.chat_color.b .. ']' .. player.name .. '[/color]',
-                                {'rocks_yield_ore_veins.' .. size[1]},
-                                {'rocks_yield_ore_veins.' .. ore},
-                                icon
-                            },
-                            {r = 0.80, g = 0.80, b = 0.80}
-                    )
+    for _, p in pairs(game.connected_players) do
+        if actor_is_player and p.index == actor.index then
+            p.print({'rocks_yield_ore_veins.player_print',
+                    {'rocks_yield_ore_veins_colors.' .. ore},
+                    {'rocks_yield_ore_veins.' .. size[1]},
+                    {'rocks_yield_ore_veins.' .. ore},
+                    icon},
+                    {r = 0.80, g = 0.80, b = 0.80})
+        else
+            if p.force == actor.force then
+                local actor_text
+                if actor_is_player then
+                    actor_text = '[color=' .. actor.chat_color.r .. ',' .. actor.chat_color.g .. ',' .. actor.chat_color.b .. ']' .. actor.name .. '[/color]'
+                else
+                    actor_text = "A robot"
                 end
+                p.print({'rocks_yield_ore_veins.game_print',
+                         actor_text,
+                        {'rocks_yield_ore_veins.' .. size[1]},
+                        {'rocks_yield_ore_veins.' .. ore},
+                        icon
+                        },
+                        {r = 0.80, g = 0.80, b = 0.80})
             end
         end
     end
@@ -244,14 +241,14 @@ local function get_player_from_cause(cause)
     return nil
 end
 
-local function process_rock(entity, player)
+local function process_rock(entity, is_player, player)
     local surface = entity.surface
     local position = entity.position
     local this = ScenarioTable.get_table()
     if math_random(1, this.rocks_yield_ore_veins.chance) == 1 or this.testing_mode then
-        spawn_ore_vein(surface, position, player)
+        spawn_ore_vein(surface, position, is_player, player)
 
-        if player and this.tutorials[player.name] then
+        if is_player and this.tutorials[player.name] then
             this.tutorials[player.name].mined_rock = true
         end
     end
@@ -260,19 +257,19 @@ end
 
 local function on_player_mined_entity(event)
     if pre_checks(event.entity) then
-        process_rock(event.entity, game.get_player(event.player_index))
+        process_rock(event.entity, true, game.get_player(event.player_index))
     end
 end
 
 local function on_robot_mined_entity(event)
     if pre_checks(event.entity) then
-        process_rock(event.entity, nil)
+        process_rock(event.entity, false, event.robot)
     end
 end
 
 local function on_entity_died(event)
     if pre_checks(event.entity) then
-        process_rock(event.entity, get_player_from_cause(event.cause))
+        process_rock(event.entity, true, get_player_from_cause(event.cause))
     end
 end
 
