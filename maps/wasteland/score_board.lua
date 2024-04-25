@@ -181,8 +181,10 @@ local function update_score()
 
                 local total = ranking_table.add { type = 'label', caption = Score.format_score(town_total_scores[town_center])}
                 ranking_table.style.column_alignments[6] = 'right'
-                total.tooltip = Score.format_score(Score.research_score(town_center)) .. " (Research) + "
+                total.tooltip = "Total score: " .. Score.format_score(town_total_scores[town_center]) ..
+                        " = " .. Score.format_score(Score.research_score(town_center)) .. " (Research) + "
                         .. Score.format_score(Score.survival_score(town_center)) .. " (Survival time without shield)"
+                        .. "\n\n" .. Score.extra_info()
 
                 rank = rank + 1
             end

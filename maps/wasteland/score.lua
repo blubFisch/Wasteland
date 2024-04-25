@@ -10,13 +10,15 @@ local research_evo_score_factors = { 150, 65, 65 }
 local research_evo_score_factor = research_evo_score_factors[global.game_mode]
 local score_to_win = 100
 Public.score_to_win = score_to_win
+local max_research_score = 70
+local max_survival_time_score = 70
 
 function Public.score_increment_for_research(evo_increase)
     return evo_increase * research_evo_score_factor
 end
 
 function Public.research_score(town_center)
-    return math.min(town_center.evolution.worms * research_evo_score_factor, 70)
+    return math.min(town_center.evolution.worms * research_evo_score_factor, max_research_score)
 end
 
 function Public.survival_score(town_center)
@@ -32,13 +34,20 @@ function Public.total_score(town_center)
 end
 
 function Public.survival_score(town_center)
-    return math.min(Public.survival_time_h(town_center) * age_score_factor, 70)
+    return math.min(Public.survival_time_h(town_center) * age_score_factor, max_survival_time_score)
 end
 
 local function format_score(score)
     return string.format('%.1f', math.floor(score * 10) / 10)
 end
 Public.format_score = format_score
+
+function Public.extra_info()
+    return "Current game mode settings:"
+            .. "\n" .. "Score per hour from survival: " .. string.format('%.1f', age_score_factor)
+            .. "\n" .. "Max score from survival time: " .. max_survival_time_score
+            .. "\n" .. "Max score from research: " .. max_research_score
+end
 
 local function format_town_with_player_names(town_center)
     local player_names = ""
