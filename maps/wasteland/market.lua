@@ -7,7 +7,7 @@ local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 
 
 local _coin_stack = {name = 'coin', count = 1}
-local market_max_hp = 10000
+local market_max_hp = 5000
 
 local upgrade_functions = {
     -- Upgrade Town Center Health
@@ -109,7 +109,7 @@ local function set_offers(town_center)
     -- special offers
     local special_offers = {}
     if town_center.max_health < market_max_hp then
-        special_offers[1] = {{{'coin', town_center.max_health * 0.1}}, 'Upgrade Town Center Health'}
+        special_offers[1] = {{{'coin', town_center.max_health * 1}}, 'Upgrade Town Center Health'}
     else
         special_offers[1] = {{}, 'Maximum Health upgrades reached!'}
     end

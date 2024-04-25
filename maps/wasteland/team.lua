@@ -166,12 +166,7 @@ function Public.add_player_to_town(player, town_center)
     CombatBalance.player_changes_town_status(player, true)
 end
 
--- given to player upon respawn
-function Public.give_player_items(player)
-    if not player or not player.valid then
-        log('player nil or not valid!')
-        return
-    end
+function Public.set_player_starter_inventory(player)
     player.clear_items_inside()
     player.insert({name = 'raw-fish', count = 3})
     if not TeamBasics.is_town_force(player.force) then
@@ -887,9 +882,7 @@ local function kill_force(killed_force, cause_force, cause_entity)
     -- place the loot coins from town center
     local loot_balance = town_center.coin_balance
     local loot_coins_chest = surface.create_entity({ name = 'steel-chest', position = position, force = 'neutral'})
-    if loot_balance > 0 then
-        loot_coins_chest.insert({ name = 'coin', count = loot_balance })
-    end
+    loot_coins_chest.insert({ name = 'coin', count = loot_balance + 100 })
 
     local town_count = 0
     for _, _ in pairs(this.town_centers) do

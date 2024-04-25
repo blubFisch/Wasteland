@@ -22,7 +22,7 @@ local spawn_kill_time = 60 * 30
 function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
     Team.set_player_to_outlander(player)
-    Team.give_player_items(player)
+    Team.set_player_starter_inventory(player)
     local this = ScenarioTable.get()
     if (this.testing_mode) then
         player.cheat_mode = true
@@ -194,7 +194,7 @@ local function on_player_respawned(event)
     local player = game.players[event.player_index]
     local surface = player.surface
 
-    Team.give_player_items(player)
+    Team.set_player_starter_inventory(player)
 
     if TeamBasics.is_outlander_force(player.force) then
         Team.set_biter_peace(player.force, true)

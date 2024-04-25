@@ -395,14 +395,12 @@ local function found_town(event)
 
     if Evolution.get_evolution(position, true) >= 0.2 then
         if this.town_evo_warned[player.index] == nil or this.town_evo_warned[player.index] < game.tick - 60 * 10 then
-            surface.create_entity(
-                    {
-                        name = 'flying-text',
-                        position = position,
-                        text = 'Evolution is high on this position. Are you sure?',
-                        color = {r = 0.77, g = 0.0, b = 0.0}
-                    }
-            )
+            surface.create_entity({
+                name = 'flying-text',
+                position = position,
+                text = 'Evolution is high on this position. Are you sure?',
+                color = {r = 0.77, g = 0.0, b = 0.0}
+            })
             player.print("Hint: Towns nearby increase evolution. Check the evolution number at the top of the screen.", Utils.scenario_color)
 
             this.town_evo_warned[player.index] = game.tick
@@ -421,7 +419,7 @@ local function found_town(event)
     town_center.town_name = player.name .. "'s Town"
     town_center.market = surface.create_entity({name = 'market', position = position, force = force_name})
     town_center.chunk_position = {math.floor(town_center.market.position.x / 32), math.floor(town_center.market.position.y / 32)}
-    town_center.max_health = 100
+    town_center.max_health = 500
     town_center.coin_balance = 0
     town_center.prev_coin_balance = 0
     town_center.input_buffer = {}
