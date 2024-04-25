@@ -21,7 +21,7 @@ local function process_building_limit(actor, event)
     local town_center = this.town_centers[force.name]
 
     if entity.type == 'electric-turret' then
-        if surface.count_entities_filtered({position = entity.position, type = 'electric-turret', radius = 11, limit = 2}) == 2 then
+        if surface.count_entities_filtered({position = entity.position, type = 'electric-turret', radius = 9, limit = 2}) == 2 then
             local position = entity.position
             local inventory
             local msg_entity

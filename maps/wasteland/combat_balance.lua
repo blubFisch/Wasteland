@@ -88,7 +88,7 @@ function Public.init_player_weapon_damage(force)
         force.set_gun_speed_modifier(k, v)
     end
 
-    force.set_turret_attack_modifier('laser-turret', 8)
+    force.set_turret_attack_modifier('laser-turret', 6)
 end
 
 -- After a research is finished and the game applied the modifier, we reduce modifiers to achieve the reduction
