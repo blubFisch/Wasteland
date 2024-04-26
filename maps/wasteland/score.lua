@@ -30,7 +30,7 @@ function Public.survival_time_h(town_center)
 end
 
 function Public.total_score(town_center)
-    return Public.research_score(town_center) + Public.survival_score(town_center)
+    return Public.research_score(town_center) + Public.survival_score(town_center) + 100
 end
 
 function Public.survival_score(town_center)
@@ -98,7 +98,11 @@ local function update_score()
 
             global.last_winner_name = town_with_player_names
             log("WINNER_STORE=\"" .. town_with_player_names .. "\"")
-            global.game_end_sequence_start = game.tick + 600
+            if global.auto_reset_enabled then
+                global.game_end_sequence_start = game.tick + 600
+            else
+                game.print("Automatic map restart is disabled, please wait for an admin to start a new game", Utils.scenario_color)
+            end
         end
     end
 

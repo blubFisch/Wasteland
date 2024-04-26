@@ -703,6 +703,15 @@ function Public.player_joined(player)
         end
         player.force = create_outlander_force(player)
     end
+
+    local this = ScenarioTable.get_table()
+    if this.winner then
+        if global.auto_reset_enabled then
+            player.print("This game has ended and will reset shortly", Utils.scenario_color)
+        else
+            player.print("This game has ended, please wait for an admin to start a new game", Utils.scenario_color)
+        end
+    end
 end
 
 -- Keep the number of forces low to avoid hitting the engine limit
