@@ -30,7 +30,7 @@ function Public.survival_time_h(town_center)
 end
 
 function Public.total_score(town_center)
-    return Public.research_score(town_center) + Public.survival_score(town_center) + 100
+    return Public.research_score(town_center) + Public.survival_score(town_center)
 end
 
 function Public.survival_score(town_center)
