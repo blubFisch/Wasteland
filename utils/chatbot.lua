@@ -25,7 +25,7 @@ local discord_url_styled = "[color=red]" .. discord_url .. "[/color]"
 local brain = {
     [1] = {"Our Discord server is at >> " .. discord_url_styled .. " >> Enter that URL into your web browser to join"},
     [2] = {
-        'Need an admin? Message in our discord at ' .. discord_url_styled
+        'Need an admin? Message in our discord at ' .. discord_url_styled .. '. To kick a town member from your town, use /kick-town-member'
     },
     [3] = {
         'Stuck? Need to respawn? Type /suicide into chat. Also need a new spawn position? Use /new-spawn'
@@ -33,14 +33,17 @@ local brain = {
 }
 
 local links = {
-    ['admin'] = brain[2],
-    ['administrator'] = brain[2],
     ['discord'] = brain[1],
     ['dc'] = brain[1],
+    ['admin'] = brain[2],
+    ['administrator'] = brain[2],
     ['greifer'] = brain[2],
     ['grief'] = brain[2],
     ['griefer'] = brain[2],
     ['griefing'] = brain[2],
+    ['kick'] = brain[2],
+    ['banish'] = brain[2],
+    ['ban'] = brain[2],
     ['moderator'] = brain[2],
     ['troll'] = brain[2],
     ['stuck'] = brain[3],
