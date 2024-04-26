@@ -370,12 +370,9 @@ local function declare_war(player, item)
     local area = {{position.x - item_drop_radius, position.y - item_drop_radius}, {position.x + item_drop_radius, position.y + item_drop_radius}}
 
     local requesting_force = player.force
-    local target = surface.find_entities_filtered({type = {'character', 'market'}, area = area})[1]
+    local target = surface.find_entities_filtered({type = 'market', area = area})[1]
 
     if not target then
-        return
-    end
-    if target.name == "character" and target.player == player then
         return
     end
     local target_force = target.force
@@ -390,23 +387,7 @@ local function declare_war(player, item)
             game.print('>> ' .. player.name .. ' has abandoned ' .. town_center.town_name, Utils.scenario_color)
             this.requests[player.index] = nil
         else
-            player.print(">> The town's last player can't abandon the town.", Utils.scenario_color)
-        end
-        if player.name == target.force.name then
-            if target.type ~= 'character' then
-                return
-            end
-            local target_player = target.player
-            if not target_player then
-                return
-            end
-            if target_player.index == player.index then
-                return
-            end
-            Public.set_player_to_outlander(target_player)
-            local town_center = this.town_centers[requesting_force.name]
-            game.print('>> ' .. player.name .. ' has banished ' .. target_player.name .. ' from ' .. town_center.town_name, Utils.scenario_color)
-            this.requests[player.index] = nil
+            player.print(">> The town's last player can't abandon the town.", Utils.scenario_color_warning)
         end
         return
     end
@@ -983,6 +964,50 @@ function Public.initialize()
     setup_outlander_permissions()
     setup_enemy_force()
 end
+
+commands.add_command(
+        'kick-town-member',
+        'Removes a member from your town',
+        function(cmd)
+            local player = game.players[cmd.player_index]
+
+            if not player or not player.valid then
+                return
+            end
+
+            local param = cmd.parameter
+            if not param then
+                player.print('[ERROR] No player name provided', Utils.scenario_color_warning)
+                return
+            end
+            local target_player = game.players[param]
+            if not target_player then
+                player.print('[ERROR] No player with that name was found', Utils.scenario_color_warning)
+                return
+            end
+
+            if target_player == player then
+                player.print("Can't kick yourself, drop coal on town center instead", Utils.scenario_color_warning)
+                return
+            end
+
+            if not target_player.force == player.force then
+                player.print("Player is not in your town", Utils.scenario_color_warning)
+                return
+            end
+
+            if string.find(target_player.force.name, target_player.name) then
+                player.print("Can't kick the town founder", Utils.scenario_color_warning)
+                return
+            end
+
+            local this = ScenarioTable.get_table()
+            local town_center = this.town_centers[player.force.name]
+            game.print(player.name .. ' has banished ' .. target_player.name .. ' from ' .. town_center.town_name, Utils.scenario_color)
+            Public.set_player_to_outlander(target_player)
+            this.requests[player.index] = nil
+        end
+)
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_player_dropped_item, on_player_dropped_item)

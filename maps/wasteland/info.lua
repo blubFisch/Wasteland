@@ -39,6 +39,7 @@ local info_adv =
     - To cancel an alliance, drop coal on them or their member
     - Alliance declarations are public
 - Leave a town: Drop coal on the market. Note that their turrets will target you immediately.
+- Kick a town member: Use the chat command /kick-town-member PLAYER_NAME
 
 [font=heading-1]Leagues and PvP Shields[/font]
 - PVP Shields protect player's towns while offline and balance players who join later
