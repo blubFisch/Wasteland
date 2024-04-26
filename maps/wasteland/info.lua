@@ -24,20 +24,20 @@ local info_adv =
 
 
 [font=heading-1]Goal of the game[/font]
-- Build or join a town and survive as long as you can
-- Raid other towns. Defend your town. Reach 100 score on the leaderboard.
+- Build the strongest town and be the first to reach 100 score on the leaderboard
+- Build or join a town. Defend your town. Raid other towns.
 
 [font=heading-1]Town members, alliances and cease fire[/font]
 - Join town: Drop a coin on that outlander (with the Z key). To accept an invite, they also need to drop a coin on you.
 - Cease fire: Drop a fish on one of them or their town center (works for outlanders too). If they agree they need to drop a fish on you too.
     - Cease fire means your weapons (turrets, bots, ..) won't target them automatically. You still can't access the other's bases.
-    - If you damage the other party, the ceasefire stops
-    - All cease fire declarations are private (other players won't know)
+    - If you cause damage, the ceasefire is broken immediately
+    - Cease fire declarations are private (other players won't know)
 - Alliances: Drop a coin on a player. If they agree they need to drop a coin on you too.
     - They can now access all of your stuff and radar is shared
     - Alliances do not get cancelled automatically when damage is taken
     - To cancel an alliance, drop coal on them or their member
-    - All alliance declarations are public
+    - Alliance declarations are public
 - Leave a town: Drop coal on the market. Note that their turrets will target you immediately.
 
 [font=heading-1]Leagues and PvP Shields[/font]
