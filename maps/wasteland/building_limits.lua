@@ -43,7 +43,7 @@ local function process_building_limit(actor, event)
         local laser_count_is_limited = not force.technologies["laser-turret"].researched
 
         if laser_count_is_limited and turret_count >= starter_laser_slots then
-            undo_build(entity, event.player_index, actor, event.robot, force, surface, "Not enough laser slots. Research laser turret for unlimited lasers.!")
+            undo_build(entity, event.player_index, actor, event.robot, force, surface, "Not enough laser slots. Research laser turret for unlimited slots!")
             return
         end
 
