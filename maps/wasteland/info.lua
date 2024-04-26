@@ -73,7 +73,6 @@ local info_adv =
 - Research modifier: Towns with more members (online+recently offline) have more expensive research. Less advanced towns have cheaper research
 - Damage modifier: Members of towns with more online members cause reduced damage against other towns and players
 - Biter waves with boss units (the ones with health bar) will attack advanced towns while their players are online
-- Played this for the 100th time? Try /skip-tutorial
 - Spawn biters by dropping coins on nests. They will attack the closest town
 - Laser and gun turrets shoot empty vehicles which can be used to block bots in offline attacks]]
 
