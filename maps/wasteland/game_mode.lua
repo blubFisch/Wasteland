@@ -2,9 +2,9 @@ local Public = {}
 
 local button_id = "wl_game_mode"
 Public.mode_names = {
-    "War",          -- Target: 6 hours game
+    "Short War",          -- Target: 6 hours game
     "Survival",     -- Target: 2 days game
-    "Survival Long" -- Target: 5 days game
+    "Long Survival" -- Target: 5 days game
 }
 
 function Public.add_mode_button(player)
@@ -16,10 +16,10 @@ function Public.add_mode_button(player)
         caption = 'Game Mode: ' .. Public.mode_names[global.game_mode],
         name = button_id
     }
-    button.tooltip = "Changes game duration, research cost and research score"
+    button.tooltip = "Changes game duration, PvP shield sizes, available research, research cost and research score"
     button.style.font_color = {r = 1, g = 1, b = 1}
     button.style.minimal_height = 38
-    button.style.minimal_width = 150
+    button.style.minimal_width = 180
     button.style.top_padding = 2
     button.style.left_padding = 4
     button.style.right_padding = 4
