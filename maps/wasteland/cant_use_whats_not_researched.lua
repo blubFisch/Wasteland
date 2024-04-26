@@ -95,6 +95,7 @@ local function process_armor(player)
 
     if not is_recipe_available(player.force, armor.name) then
         force_unequip_armor(player, armor_inventory, armor)
+        return
     end
 
     local grid = armor.grid
