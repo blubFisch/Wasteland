@@ -35,12 +35,16 @@ local function turrets_shoot_empty_vehicles()
     for i = #global.tracked_vehicles, 1, -1 do
         local vehicle = global.tracked_vehicles[i]
         if vehicle.valid then
-            for _, electric_turret in pairs(surface.find_entities_filtered({type = 'electric-turret', position=vehicle.position, radius=24})) do
-                try_shoot_vehicle(electric_turret, vehicle)
+            for _, turret in pairs(surface.find_entities_filtered({ type = 'electric-turret', position=vehicle.position, radius=24})) do
+                if turret.valid then
+                    try_shoot_vehicle(turret, vehicle)
+                end
             end
             if vehicle.valid then   -- Might've been killed by the above turret
-                for _, ammo_turret in pairs(surface.find_entities_filtered({type = 'ammo-turret', position=vehicle.position, radius=18})) do
-                    try_shoot_vehicle(ammo_turret, vehicle)
+                for _, turret in pairs(surface.find_entities_filtered({type = 'ammo-turret', position=vehicle.position, radius=18})) do
+                    if turret.valid then
+                        try_shoot_vehicle(turret, vehicle)
+                    end
                 end
             end
         else

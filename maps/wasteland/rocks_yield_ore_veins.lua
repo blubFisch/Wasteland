@@ -241,15 +241,15 @@ local function get_player_from_cause(cause)
     return nil
 end
 
-local function process_rock(entity, is_player, player)
+local function process_rock(entity, is_player, actor)
     local surface = entity.surface
     local position = entity.position
     local this = ScenarioTable.get_table()
-    if math_random(1, this.rocks_yield_ore_veins.chance) == 1 or this.testing_mode then
-        spawn_ore_vein(surface, position, is_player, player)
+    if (math_random(1, this.rocks_yield_ore_veins.chance) == 1 or this.testing_mode) and actor then
+        spawn_ore_vein(surface, position, is_player, actor)
 
-        if is_player and this.tutorials[player.name] then
-            this.tutorials[player.name].mined_rock = true
+        if is_player and this.tutorials[actor.name] then
+            this.tutorials[actor.name].mined_rock = true
         end
     end
     spawn_new_rock(surface)
