@@ -63,14 +63,15 @@ end
 
 local function force_unequip_armor(player, armor_inventory, armor)
     local armor_stack = armor_inventory.find_item_stack(armor.name)
-    local player_inventory = player.get_main_inventory()
-    if player_inventory.can_insert(armor_stack) then
-        player_inventory.insert(armor_stack)
-    else
-        player.surface.spill_item_stack(player.position, armor_stack, true, player.force, false)
-    end
+    -- First drop on floor to prevent a condition where full inventory together with inv size change
+    --   leads to the armor being equippable again
+    local floor_stack = player.surface.spill_item_stack(player.position, armor_stack, false, player.force, false)[1]
     armor_inventory.remove(armor_stack)
-    player.print("Technology not available for your armor or one of its modules", Utils.scenario_color_warning)
+    local player_inventory = player.get_main_inventory()
+    if player_inventory.insert(floor_stack.stack) == 1 then
+        floor_stack.destroy()
+    end
+    player.print("Technology not available for your armor or one of its modules.", Utils.scenario_color_warning)
 end
 
 local function is_recipe_available(force, recipe_name)
