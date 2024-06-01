@@ -1,5 +1,6 @@
 local Public = {}
 
+local math_max = math.max
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
 local Utils = require 'maps.wasteland.utils'
@@ -71,6 +72,35 @@ local function format_town_with_player_names(town_center)
     return town_center.town_name .. player_names
 end
 
+function Public.get_town_league(town_center)
+    local score = Public.total_score(town_center)
+    local tank_researched = town_center.market.force.technologies['tank'].researched
+
+    if score >= 60 then return 4 end      -- Note: referenced in info.lua
+    if score >= 35 then return 3 end
+    if score >= 15 or tank_researched then return 2 end
+    return 1
+end
+
+function Public.get_player_league(player)
+    local this = ScenarioTable.get_table()
+    local town_center = this.town_centers[player.force.name]
+
+    local league
+    if player.character and player.character.vehicle and player.character.vehicle.name == "tank" then
+        league = 2
+    else
+        league = 1
+    end
+
+    if town_center then
+        local town_league = Public.get_town_league(town_center)
+        league = math_max(town_league, league)
+    end
+
+    return league
+end
+
 local score_update_loop_interval = 60
 local function update_score()
     local this = ScenarioTable.get_table()
@@ -81,7 +111,7 @@ local function update_score()
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
-        if not shield then
+        if not shield and (Public.get_town_league(town_center) < 4 or #force.connected_players == 0) then
             town_center.survival_time_ticks = town_center.survival_time_ticks + score_update_loop_interval
         end
 

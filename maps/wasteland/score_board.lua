@@ -2,7 +2,6 @@ local Public = {}
 
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
-local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local Score = require 'maps.wasteland.score'
 local ResearchBalance = require 'maps.wasteland.research_balance'
 local TeamBasics = require 'maps.wasteland.team_basics'
@@ -168,7 +167,7 @@ local function update_score()
                 label.tooltip = "Town rest bonus: " .. TownCenter.format_rest_modifier(town_center.town_rest.current_modifier)
                         .."\n - Mining+Scrap productivity: " .. TownCenter.format_boost_modifier(town_center.town_rest.mining_prod_bonus)
 
-                local league = ranking_table.add { type = 'label', caption = PvPTownShield.get_town_league(town_center)}
+                local league = ranking_table.add { type = 'label', caption = Score.get_town_league(town_center)}
                 ranking_table.style.column_alignments[3] = 'right'
                 league.tooltip = town_center.pvp_shield_mgmt.shield_info
 

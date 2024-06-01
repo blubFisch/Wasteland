@@ -2,12 +2,13 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Apr 2024 updates[/font]
+ - League 4 towns only get survival time score when offline
  - Laser turret distance adjustments + Before researching laser turret, can build max 8
  - Fluid tanks are no longer explosive - this caused too much frustration for beginners
  - Tank shells are now very effective against other tanks with direct hits
  - Time score now only counts survival time without shield (=online or L4)
  - Less cost increase for adding players to a town
- - Short Rounds have no yellow/purple science + smaller towns
+ - Battle mode (="Short) has no yellow/purple science + smaller towns
  - Exploit fixes
  - When a town is offline, it gains a rest bonus, which is applied to player damage output and research cost]]
 

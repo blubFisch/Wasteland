@@ -2,7 +2,6 @@ local Public = {}
 
 local math_floor = math.floor
 local math_sqrt = math.sqrt
-local math_max = math.max
 
 local Score = require 'maps.wasteland.score'
 local ScenarioTable = require 'maps.wasteland.table'
@@ -23,37 +22,6 @@ function Public.get_town_control_range(town_center)
             MapLayout.min_distance_between_towns - MapLayout.league_balance_shield_size / 2 - 5)  -- don't overlap with other towns
 end
 
-function Public.get_town_league(town_center)
-    local score = Score.total_score(town_center)
-    local tank_researched = town_center.market.force.technologies['tank'].researched
-
-    if score >= 60 then return 4 end      -- Note: referenced in info.lua
-    if score >= 35 then return 3 end
-    if score >= 15 or tank_researched then return 2 end
-    return 1
-end
-
-local function get_league_by_items(player)
-    if player.character and player.character.vehicle and player.character.vehicle.name == "tank" then
-        return 2
-    else
-        return 1
-    end
-end
-
-function Public.get_player_league(player)
-    local this = ScenarioTable.get_table()
-    local town_center = this.town_centers[player.force.name]
-
-    local league = get_league_by_items(player)
-    if town_center then
-        local town_league = Public.get_town_league(town_center)
-        league = math_max(town_league, league)
-    end
-
-    return league
-end
-
 function Public.enemy_players_near_town(town_center, max_distance, min_league)
     local market = town_center.market
     return Public.enemy_players_nearby(market.position, market.surface, market.force, max_distance, min_league)
@@ -64,7 +32,7 @@ function Public.enemy_players_nearby(position, surface, force, max_distance, min
         if player.surface == surface then
             local distance = math_floor(math_sqrt((player.position.x - position.x) ^ 2 + (player.position.y - position.y) ^ 2))
             if distance < max_distance and not TeamBasics.is_friendly_towards(player.force, force) then
-                if (not min_league or Public.get_player_league(player) > min_league) and (player.character or player.driving) then
+                if (not min_league or Score.get_player_league(player) > min_league) and (player.character or player.driving) then
                     return true
                 end
             end
@@ -119,7 +87,7 @@ local function update_pvp_shields()
         local force = market.force
         local shield = this.pvp_shields[force.name]
         local shields_researched = town_shields_researched(force)
-        local town_league = Public.get_town_league(town_center)
+        local town_league = Score.get_town_league(town_center)
         local town_offline_or_afk = #force.connected_players == 0 or town_center.marked_afk
         local abandoned = false
         local high_league_no_shield = town_league >= 4
@@ -264,12 +232,13 @@ local function update_leagues()
     local this = ScenarioTable.get_table()
     for _, player in pairs(game.connected_players) do
         if player.character then
-            local league = Public.get_player_league(player)
+            local league = Score.get_player_league(player)
 
             if this.previous_leagues[player.index] ~= nil and league ~= this.previous_leagues[player.index] then
                 player.print("You are now in League " .. league, Utils.scenario_color)
                 if league == 4 and this.previous_leagues[player.index] < 4 then
-                    player.print("From now on, your town can not deploy offline PvP shields anymore", Utils.scenario_color_warning)
+                    player.print(" --> Your town can not deploy offline PvP shields anymore", Utils.scenario_color_warning)
+                    player.print(" --> Your town only gets survival score while you are offline", Utils.scenario_color_warning)
                 end
             end
             this.previous_leagues[player.index] = league
