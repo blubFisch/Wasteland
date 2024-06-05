@@ -1,7 +1,7 @@
 local Public = {}
 
 local changelog =
-    [[[font=heading-2]Apr 2024 updates[/font]
+    [[[font=heading-2]Jun 2024 updates[/font]
  - League 4 towns only get survival time score when offline
  - Laser turret distance adjustments + Before researching laser turret, can build max 8
  - Fluid tanks are no longer explosive - this caused too much frustration for beginners
