@@ -25,6 +25,11 @@ local function reset_map_part_1()
     for _, player in pairs(game.players) do
         player.teleport({0, 0}, game.surfaces['limbo'])
     end
+    local n_forces = 0
+    for _, _ in pairs(game.forces) do
+        n_forces = n_forces + 1
+    end
+    log("XDB: n_forces=" .. n_forces .. " #forces=" .. #game.forces)
 end
 
 local function reset_map_part_2()
@@ -34,6 +39,12 @@ end
 local function reset_map_part_3()
     Team.initialize()
     for _, player in pairs(game.players) do
+        log("XDB: init " .. player.name)
+        local n_forces = 0
+        for _, _ in pairs(game.forces) do
+            n_forces = n_forces + 1
+        end
+        log("XDB: n_forces=" .. n_forces .. " #forces=" .. #game.forces)
         Player.initialize(player)
         Team.set_player_color(player)
         Player.spawn_initially(player)
