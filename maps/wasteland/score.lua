@@ -9,6 +9,8 @@ local age_score_factors = { 10.0, 2.4, 1.2 }
 local age_score_factor = age_score_factors[global.game_mode]
 local research_evo_score_factors = { 150, 65, 65 }
 local research_evo_score_factor = research_evo_score_factors[global.game_mode]
+local l4_score_only_offline_settings = { false, true, true }
+local l4_score_only_offline = l4_score_only_offline_settings[global.game_mode]
 local score_to_win = 100
 Public.score_to_win = score_to_win
 local max_research_score = 70
@@ -111,7 +113,7 @@ local function update_score()
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
-        if not shield and (Public.get_town_league(town_center) < 4 or #force.connected_players == 0) then
+        if not shield and (not l4_score_only_offline or Public.get_town_league(town_center) < 4 or #force.connected_players == 0) then
             town_center.survival_time_ticks = town_center.survival_time_ticks + score_update_loop_interval
         end
 
