@@ -15,6 +15,9 @@ local score_to_win = 100
 Public.score_to_win = score_to_win
 local max_research_score = 70
 local max_survival_time_score = 70
+local max_survival_time_score_lower_leagues = 40
+local l4_offline_min_period_hours = 2
+local l4_offline_min_period_ticks = l4_offline_min_period_hours * 60 * 60 * 60
 
 function Public.score_increment_for_research(evo_increase)
     return evo_increase * research_evo_score_factor
@@ -47,7 +50,8 @@ Public.format_score = format_score
 
 function Public.extra_info()
     return "Current game mode settings:"
-            .. "\n" .. "Score per hour from survival: " .. string.format('%.1f', age_score_factor)
+            .. "\n" .. "Score per hour from survival: " .. string.format('%.1f', age_score_factor) .. " (in L4, no score while online)"
+            .. "\n" .. "Max score from survival time below L4: " .. max_survival_time_score_lower_leagues
             .. "\n" .. "Max score from survival time: " .. max_survival_time_score
             .. "\n" .. "Max score from research: " .. max_research_score
 end
@@ -113,8 +117,12 @@ local function update_score()
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
-        if not shield and (not l4_score_only_offline or Public.get_town_league(town_center) < 4 or #force.connected_players == 0) then
-            town_center.survival_time_ticks = town_center.survival_time_ticks + score_update_loop_interval
+        if not shield and (not l4_score_only_offline or Public.get_town_league(town_center) < 4
+                or game.tick - town_center.town_rest.last_online > l4_offline_min_period_ticks) then    -- discourage going online quickly to check town
+            if Public.get_town_league(town_center) == 4 or -- limit time score below L4 to avoid storing time in lower leagues
+                    Public.survival_score(town_center) < max_survival_time_score_lower_leagues then
+                town_center.survival_time_ticks = town_center.survival_time_ticks + score_update_loop_interval
+            end
         end
 
         town_total_scores[town_center] = Public.total_score(town_center)
