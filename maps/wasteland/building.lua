@@ -24,7 +24,7 @@ local NEAR_TOWN_SHIELD = 4
 local REASON_TEXTS = {
     [NEAR_TOWN_CENTER] = "town center",
     [NEAR_TOWN_TURRET] = "turret",
-    [NEAR_TOWN_TURRET_GHOST] = "recently destroyed turret blueprint (max " .. ghost_age_to_prevent_building .. " min)",
+    [NEAR_TOWN_TURRET_GHOST] = "recently destroyed turret blueprint (max " .. ghost_age_to_prevent_building / 60 .. " sec)",
     [NEAR_TOWN_SHIELD] = "PvP shield"
 }
 
