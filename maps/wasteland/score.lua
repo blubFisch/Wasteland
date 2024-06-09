@@ -15,7 +15,7 @@ local score_to_win = 100
 Public.score_to_win = score_to_win
 local max_research_score = 60
 local max_survival_time_score = 60
-local max_survival_time_score_lower_leagues = 20
+local max_survival_time_score_lower_leagues = 30
 local l4_offline_min_period_hours = 2
 local l4_offline_min_period_ticks = l4_offline_min_period_hours * 60 * 60 * 60
 
@@ -119,7 +119,7 @@ local function update_score()
         local shield = this.pvp_shields[force.name]
         if not shield and (not l4_score_only_offline or Public.get_town_league(town_center) < 4
                 or game.tick - town_center.town_rest.last_online > l4_offline_min_period_ticks) then    -- discourage going online quickly to check town
-            if Public.get_town_league(town_center) == 4 or -- limit time score below L4 to avoid storing time in lower leagues
+            if not l4_score_only_offline or Public.get_town_league(town_center) == 4 or -- limit time score below L4 to avoid storing time in lower leagues
                     Public.survival_score(town_center) < max_survival_time_score_lower_leagues then
                 town_center.survival_time_ticks = town_center.survival_time_ticks + score_update_loop_interval
             end
