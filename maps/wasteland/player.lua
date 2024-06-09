@@ -39,7 +39,6 @@ function Public.spawn_initially(player)
 
     this.strikes[player.name] = 0
     this.cooldowns_town_placement[player.index] = 0
-    this.last_respawn[player.name] = 0
 end
 
 function Public.load_buffs(player)
@@ -213,14 +212,21 @@ local function on_player_died(event)
     local this = ScenarioTable.get()
     local player = game.players[event.player_index]
 
-    local ticks_elapsed = game.tick - this.last_respawn[player.name]
-    if ticks_elapsed < spawn_kill_time then
+    if this.last_respawn[player.name] and game.tick - this.last_respawn[player.name] < spawn_kill_time then
         this.strikes[player.name] = this.strikes[player.name] + 1
         if this.strikes[player.name] >= 3 and TeamBasics.is_town_force(player.force) then
             player.print("You have been spawn killed multiple times. Use the chat command /suicide-town to kill your town", Utils.scenario_color)
         end
     else
         this.strikes[player.name] = 0
+    end
+
+    local reckless_death_limit_mins = 5   -- Discourage reckless gameplay like suicide-running tanks into other players bases
+    if this.last_respawn[player.name] and game.tick - this.last_respawn[player.name] < reckless_death_limit_mins * 3600 then
+        player.print("You have already died within the last " .. reckless_death_limit_mins .. " minutes -> Higher spawn time", Utils.scenario_color)
+        player.ticks_to_respawn = 3600 * 5
+    else
+        player.ticks_to_respawn = 3600 * 1
     end
 end
 
