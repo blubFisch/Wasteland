@@ -181,6 +181,11 @@ local function on_player_joined_game(event)
 
         Public.initialize(player)
         Public.spawn_initially(player)
+    else
+        if player.force == game.forces.neutral then -- Existing player joins after map reset
+            Public.initialize(player)
+            Public.spawn_initially(player)
+        end
     end
     Team.player_joined(player)
     Public.load_buffs(player)
