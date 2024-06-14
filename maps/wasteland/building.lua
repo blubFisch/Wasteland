@@ -71,7 +71,8 @@ local allowed_entities_keep_force = {
 
 local ignore_neutral_build_feature = {
     ["entity-ghost"] = true,
-    ["roboport"] = true
+    ["roboport"] = true,
+    ["electric-pole"] = true
 }
 
 local function refund_item(event, item_name)
