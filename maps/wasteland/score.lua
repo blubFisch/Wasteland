@@ -111,6 +111,19 @@ local score_update_loop_interval = 60
 local function update_score()
     local this = ScenarioTable.get_table()
 
+    -- Update last online time including allies. Allied towns can be used to work around the offline safety concept
+    for _, town_center1 in pairs(this.town_centers) do
+        if #town_center1.market.force.connected_players > 0 then
+            town_center1.scoring_last_online = game.tick
+        end
+        for _, town_center2 in pairs(this.town_centers) do
+            local tc2_force = town_center2.market.force
+            if #tc2_force.connected_players > 0 and town_center1.market.force.get_friend(tc2_force) then    -- Single-sided friend check is enough (tc2 can see and defend tc1)
+                town_center1.scoring_last_online = game.tick
+            end
+        end
+    end
+
     local town_highest_score = 0
     local town_total_scores = {}
     for _, town_center in pairs(this.town_centers) do
@@ -118,7 +131,7 @@ local function update_score()
         local force = market.force
         local shield = this.pvp_shields[force.name]
         if not shield and (not l4_score_only_offline or Public.get_town_league(town_center) < 4
-                or game.tick - town_center.town_rest.last_online > l4_offline_min_period_ticks) then    -- discourage going online quickly to check town
+                or game.tick - town_center.scoring_last_online > l4_offline_min_period_ticks) then    -- discourage going online quickly to check town
             if not l4_score_only_offline or Public.get_town_league(town_center) == 4 or -- limit time score below L4 to avoid storing time in lower leagues
                     Public.survival_score(town_center) < max_survival_time_score_lower_leagues then
                 town_center.survival_time_ticks = town_center.survival_time_ticks + score_update_loop_interval

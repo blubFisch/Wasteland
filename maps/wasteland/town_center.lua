@@ -445,6 +445,7 @@ local function found_town(event)
                               right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
     town_center.pvp_shield_mgmt = {}
     town_center.marked_afk = false
+    town_center.scoring_last_online = game.tick
     town_center.town_rest = {}
     town_center.town_rest.last_online = game.tick
     town_center.town_rest.current_modifier = 0
