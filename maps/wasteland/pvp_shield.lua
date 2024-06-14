@@ -227,36 +227,51 @@ local function on_player_changed_position(event)
 end
 
 function Public.entity_is_protected(entity, cause_force)
-    if not (cause_force and cause_force.valid) then
-        return true
-    end
+    -- if not (cause_force and cause_force.valid) then
+    --     return true
+    -- end
+
+    local entity_surface = entity.surface
+    local pos = entity.position
+    local x = pos.x
+    local y = pos.y
 
     local this = ScenarioTable.get_table()
-    for _, shield in pairs(this.pvp_shields) do
-        if entity.surface == shield.surface and CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
-            if (entity.force == shield.force or entity.force.name == "neutral") and cause_force.name ~= "enemy" then
-                if not is_allowed_in_shield(shield, cause_force) then
-                    return true
+    if cause_force.index == 3 then -- is neutral
+        for _, shield in pairs(this.pvp_shields) do
+
+            if entity_surface == shield.surface then
+                local box = shield.box
+                local left_top = box.left_top
+                local right_bottom = box.right_bottom
+                if left_top.x <= x and right_bottom.x >= x and left_top.y <= y and right_bottom.y >= y then
+                    local shield_force = shield.force
+                    if not (shield_force == cause_force or shield_force.get_friend(cause_force) or shield_force.get_cease_fire(cause_force)) then
+                        return true
+                    end
+                end
+            end
+        end
+    else
+        local enttiy_force = entity.force
+        for _, shield in pairs(this.pvp_shields) do
+            if entity_surface == shield.surface then
+                local box = shield.box
+                local left_top = box.left_top
+                local right_bottom = box.right_bottom
+                if left_top.x <= x and right_bottom.x >= x and left_top.y <= y and right_bottom.y >= y then
+                    local shield_force = shield.force
+                    if enttiy_force == shield_force
+                        and not (shield_force == cause_force or shield_force.get_friend(cause_force) or shield_force.get_cease_fire(cause_force))
+                    then
+                        return true
+                    end
                 end
             end
         end
     end
+
     return false
-end
-
-function Public.protect_if_needed(event)
-    local entity = event.entity
-    if not entity.valid then
-        return false
-    end
-
-    if Public.entity_is_protected(entity, event.force) then
-        -- Undo all damage
-        entity.health = entity.health + event.final_damage_amount
-        return true
-    else
-        return false
-    end
 end
 
 local _unit_filter = {type = "unit", area = nil, force = "enemy"}

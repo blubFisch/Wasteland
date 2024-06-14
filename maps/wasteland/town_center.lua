@@ -553,7 +553,10 @@ local function on_entity_damaged(event)
     if not entity.valid then
         return
     end
-    if entity.name == 'market' and not PvPShield.entity_is_protected(entity, event.force) then
+
+    local force = event.force
+    -- force.index ~= 2 -- enemy's force
+    if entity.name == 'market' and ((force and force.valid) or not PvPShield.entity_is_protected(entity, force)) then
         Public.set_market_health(entity, event.final_damage_amount)
     end
 end
