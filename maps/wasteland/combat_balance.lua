@@ -237,25 +237,39 @@ function Public.on_entity_damaged(event)
 
     -- Bulldozer mode
     if event.damage_type.name == "explosion" and event_cause then
-        local min_clear_distance = 30
+        local inv = event_cause.get_main_inventory()
+        local grenade_name = "grenade"
         local position = entity.position
-        if not Building.near_another_town(cause_force.name, position, entity.surface, min_clear_distance)
-                and not Building.near_outlander_town(cause_force, position, entity.surface, min_clear_distance)
-                and not PvPTownShield.enemy_players_nearby(position, entity.surface, cause_force, min_clear_distance)
-                and not TeamBasics.is_friendly_towards(cause_force, entity.force)
-                and not non_bulldozable_entities[entity.type]
-                and entity.force ~= game.forces.enemy
-        then
-            entity.surface.create_entity(
-                {
+        local min_grenades_inv = 500
+
+        if inv and inv.get_item_count(grenade_name) > min_grenades_inv - 100 then   -- Bit less for cursor stack effects
+            local min_clear_distance = 30
+            if not Building.near_another_town(cause_force.name, position, entity.surface, min_clear_distance)
+                    and not Building.near_outlander_town(cause_force, position, entity.surface, min_clear_distance)
+                    and not PvPTownShield.enemy_players_nearby(position, entity.surface, cause_force, min_clear_distance)
+                    and not TeamBasics.is_friendly_towards(cause_force, entity.force)
+                    and not non_bulldozable_entities[entity.type]
+                    and entity.force ~= game.forces.enemy
+            then
+                entity.surface.create_entity({
                     name = 'flying-text',
                     position = position,
                     text = 'Bulldozed!',
                     color = {r = 0.8, g = 0.7, b = 0.0}
-                }
-            )
-            entity.health = 0
-            return
+                })
+                entity.health = 0
+                inv.remove({name = grenade_name, count = 1})
+                return
+            end
+        else
+            if Utils.rate_limit_check("bulldoze", event_cause, 60) then
+                entity.surface.create_entity({
+                    name = 'flying-text',
+                    position = position,
+                    text = 'Need ' .. min_grenades_inv .. ' grenades in inventory to bulldoze!',
+                    color = {r = 1.0, g = 1.0, b = 0.0}
+                })
+            end
         end
     end
 
