@@ -39,7 +39,8 @@ local destroy_military_types = {
 local destroy_robot_types = {
     ['combat-robot'] = true,
     ['construction-robot'] = true,
-    ['logistic-robot'] = true
+    ['logistic-robot'] = true,
+    ['roboport'] = true,    -- neutral roboports cause too much confusion
 }
 
 local dont_destroy_types = {

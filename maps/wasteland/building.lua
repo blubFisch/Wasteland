@@ -69,6 +69,11 @@ local allowed_entities_keep_force = {
     ['train-stop'] = true,  -- This needs to be here so automatic routes work
 }
 
+local ignore_neutral_build_feature = {
+    ["entity-ghost"] = true,
+    ["roboport"] = true
+}
+
 local function refund_item(event, item_name)
     if item_name == 'blueprint' then
         return
@@ -296,13 +301,13 @@ local function process_built_entities(event)
     local players_prefs = global.tokens.utils_gui_bottom_frame.players[player_index]
     if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
         and not allowed_entities_keep_force[name] then
-        if entity.type ~= "entity-ghost" then
+        if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then
             entity.force = game.forces['neutral']
             surface.create_entity({name = 'flying-text', position = position,
                                    text = "Neutral (setting)", color = {r = 0, g = 1, b = 0}})
         else
             surface.create_entity({name = 'flying-text', position = position,
-                                   text = "Blueprint not neutral (Setting)", color = {r = 0, g = 1, b = 1}})
+                                   text = "Can't build neutral (Setting)", color = {r = 0, g = 1, b = 1}})
         end
     end
 
