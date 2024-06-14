@@ -11,6 +11,7 @@ local research_evo_score_factors = { 150, 65, 65 }
 local research_evo_score_factor = research_evo_score_factors[global.game_mode]
 local l4_score_only_offline_settings = { false, true, true }
 local l4_score_only_offline = l4_score_only_offline_settings[global.game_mode]
+Public.l4_score_only_offline = l4_score_only_offline
 local score_to_win = 100
 Public.score_to_win = score_to_win
 local max_research_score = 60
@@ -49,8 +50,9 @@ end
 Public.format_score = format_score
 
 function Public.extra_info()
+    local l4_extra = l4_score_only_offline and " (in L4, no score while online in this game mode setting)" or ""
     return "Current game mode settings:"
-            .. "\n" .. "Score per hour from survival: " .. string.format('%.1f', age_score_factor) .. " (in L4, no score while online)"
+            .. "\n" .. "Score per hour from survival: " .. string.format('%.1f', age_score_factor) .. l4_extra
             .. "\n" .. "Max score from survival time below L4: " .. max_survival_time_score_lower_leagues
             .. "\n" .. "Max score from survival time: " .. max_survival_time_score
             .. "\n" .. "Max score from research: " .. max_research_score
