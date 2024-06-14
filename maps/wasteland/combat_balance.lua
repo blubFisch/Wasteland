@@ -45,7 +45,7 @@ local ammo_speed_starting_modifiers = {
     --['biological'] = -0.5,
     ['bullet'] = 0,
     ['cannon-shell'] = -0.3,
-    ['capsule'] = 0,
+    ['capsule'] = -0.5,
     ['beam'] = -0.5,
     ['laser'] = -0.7,
     ['electric'] = -0.5,
@@ -336,8 +336,19 @@ function Public.on_entity_damaged(event)
     --game.print("DMG_XDB entity.health(after) " .. entity.health)
 end
 
+local function on_player_used_capsule(event)
+    if event.item.name ~= 'raw-fish' then
+        return
+    end
+    local player = game.players[event.player_index]
+    if player.character.health < 250 then
+        player.character.health = player.character.health - 40  -- Reduce effect of fish
+    end
+end
+
 local Event = require 'utils.event'
 Event.add(defines.events.on_research_finished, research_finished)
+Event.add(defines.events.on_player_used_capsule, on_player_used_capsule)
 Event.on_nth_tick(63, update_modifiers)
 
 return Public
