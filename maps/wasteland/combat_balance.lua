@@ -358,6 +358,12 @@ local function on_player_used_capsule(event)
     if player.character.health < 250 then
         player.character.health = player.character.health - 40  -- Reduce effect of fish
     end
+    player.surface.create_entity({  -- Visualise this for other players
+        name = 'flying-text',
+        position = player.position,
+        text = '-1 [img=item/' .. 'raw-fish' .. ']',
+        color = {r = 0.98, g = 0.66, b = 0.22}
+    })
 end
 
 local Event = require 'utils.event'
