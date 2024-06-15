@@ -229,7 +229,7 @@ local function on_player_died(event)
     local reckless_death_limit_mins = 5   -- Discourage reckless gameplay like suicide-running tanks into other players bases
     if this.last_respawn[player.name] and game.tick - this.last_respawn[player.name] < reckless_death_limit_mins * 3600 then
         player.print("You have already died within the last " .. reckless_death_limit_mins .. " minutes -> Higher spawn time", Utils.scenario_color)
-        player.ticks_to_respawn = 5 * 30 * 60
+        player.ticks_to_respawn = 5 * 60 * 60
     else
         player.ticks_to_respawn = 30 * 60
     end
