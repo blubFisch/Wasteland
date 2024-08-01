@@ -34,9 +34,13 @@ end
 local function reset_map_part_3()
     Team.initialize()
     for _, player in pairs(game.players) do
-        Player.initialize(player)
+        if player.connected then
+            Player.initialize(player)
+            Player.spawn_initially(player)
+        else
+            player.force = game.forces.neutral  -- Mark them to be reinitialised on join
+        end
         Team.set_player_color(player)
-        Player.spawn_initially(player)
         Player.load_buffs(player)
         Info.update_last_winner_name(player)
     end

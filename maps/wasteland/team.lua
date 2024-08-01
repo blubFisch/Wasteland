@@ -39,7 +39,8 @@ local destroy_military_types = {
 local destroy_robot_types = {
     ['combat-robot'] = true,
     ['construction-robot'] = true,
-    ['logistic-robot'] = true
+    ['logistic-robot'] = true,
+    ['roboport'] = true,    -- neutral roboports cause too much confusion
 }
 
 local dont_destroy_types = {
@@ -685,6 +686,11 @@ function Public.player_joined(player)
         player.force = create_outlander_force(player)
     end
 
+    if player.surface.name == "limbo" then
+        log("XDB: emergency spawn for " .. player.name)
+        player.teleport({0, 0}, game.surfaces['nauvis'])
+    end
+
     local this = ScenarioTable.get_table()
     if this.winner then
         if global.auto_reset_enabled then
@@ -735,24 +741,11 @@ function Public.set_player_to_outlander(player)
     CombatBalance.player_changes_town_status(player, false)
 end
 
-local function reset_forces()
-    local players = game.players
-    local forces = game.forces
-    for i = 1, #players do
-        local player = players[i]
-        local force = forces[player.name]
-        if force then
-            game.merge_forces(force, 'player')
-        end
-    end
-end
-
 function Public.reset_all_forces()
     for _, force in pairs(game.forces) do
-        if force and force.valid then
-            if force.name ~= 'enemy' and force.name ~= 'player' and force.name ~= 'neutral' then
-                game.merge_forces(force.name, 'player')
-            end
+        if force.name ~= 'enemy' and force.name ~= 'player' and force.name ~= 'neutral' then
+            log("XDB: merge_force " .. force.name)
+            game.merge_forces(force.name, 'neutral')
         end
     end
     game.forces['enemy'].reset()
@@ -960,7 +953,6 @@ local function on_console_chat(event)
 end
 
 function Public.initialize()
-    reset_forces()
     setup_outlander_permissions()
     setup_enemy_force()
 end

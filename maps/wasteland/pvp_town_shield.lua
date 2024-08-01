@@ -238,7 +238,9 @@ local function update_leagues()
                 player.print("You are now in League " .. league, Utils.scenario_color)
                 if league == 4 and this.previous_leagues[player.index] < 4 then
                     player.print(" --> Your town can not deploy offline PvP shields anymore", Utils.scenario_color_warning)
-                    player.print(" --> Your town only gets survival score while you are offline", Utils.scenario_color_warning)
+                    if Score.l4_score_only_offline then
+                        player.print(" --> Your town only gets survival score while you are offline (Game mode setting)", Utils.scenario_color_warning)
+                    end
                 end
             end
             this.previous_leagues[player.index] = league

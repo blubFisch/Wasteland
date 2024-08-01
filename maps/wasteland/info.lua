@@ -2,14 +2,12 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Jun 2024 updates[/font]
- - In survival mode, league 4 towns only get survival time score when offline (only when offline for 2h or longer)
+ - Increase starter wall size slightly - prevents shooting the town center from outside
+ - In survival mode, league 4 towns only get survival time score when offline (only when offline for 2h or longer + including allied towns)
  - Laser turret distance adjustments + Before researching laser turret, can build max 8
  - Fluid tanks are no longer explosive - this caused too much frustration for beginners
  - Tank shells are now very effective against other tanks with direct hits
  - Time score now only counts survival time without shield (=online or L4)
- - Less cost increase for adding players to a town
- - Battle mode (="Short) has no yellow/purple science + smaller towns
- - Exploit fixes
  - When a town is offline, it gains a rest bonus, which is applied to player damage output and research cost]]
 
 local info =
@@ -48,7 +46,7 @@ local info_adv =
 - League shield protects your town from players of a higher league and cover the outer blue tile square of your town
 - League scores: L1: 15 score or tank. L2: 35 score. L3: 60 score
     - To see how town scores are calculated, hover the mouse over a town's score in the leaderboard
-- In League 4, towns don't get score for being online. Players must be offline for 2h for the score to resume
+- In League 4, towns don't get score for being online. Players must be offline for 2h for the score to resume (including allied players)
 - Offline PvP shields deploy automatically once all players of a town leave the game
     - The size is marked by the blue square around towns
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"

@@ -27,7 +27,7 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
 
 
-local town_radius = 20
+local town_radius = 22
 
 local starter_ore_amounts = { 0.25, 0.5, 1.0 }
 local starter_ore_amount = 1200 * starter_ore_amounts[global.game_mode]
@@ -90,7 +90,7 @@ end
 
 local resource_vectors_out = {}
 resource_vectors_out[1] = {}
-for x = 24, 30, 1 do
+for x = 25, 31, 1 do
     for y = 6, 17, 1 do
         table_insert(resource_vectors_out[1], {x, y})
     end
@@ -445,6 +445,7 @@ local function found_town(event)
                               right_bottom = {x = market_pos.x + town_radius, y = market_pos.y + town_radius}}
     town_center.pvp_shield_mgmt = {}
     town_center.marked_afk = false
+    town_center.scoring_last_online = game.tick
     town_center.town_rest = {}
     town_center.town_rest.last_online = game.tick
     town_center.town_rest.current_modifier = 0
