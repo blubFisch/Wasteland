@@ -486,24 +486,24 @@ local function set_full_blueprint_functions(permission_group, enabled)
 end
 
 function Public.enable_artillery(force, permission_group)
-    permission_group.set_allows_action(defines.input_action.use_artillery_remote, true)
+    -- permission_group.set_allows_action(defines.input_action.use_artillery_remote, true) -- TODO: recheck and fix!
     force.technologies['artillery'].enabled = true
     force.technologies['artillery-shell-range-1'].enabled = true
     force.technologies['artillery-shell-speed-1'].enabled = true
     force.recipes['artillery-turret'].enabled = false
     force.recipes['artillery-wagon'].enabled = false
-    force.recipes['artillery-targeting-remote'].enabled = false
+    -- force.recipes['artillery-targeting-remote'].enabled = false -- TODO: recheck and fix!
     force.recipes['artillery-shell'].enabled = false
 end
 
 local function disable_artillery(force, permission_group)
-    permission_group.set_allows_action(defines.input_action.use_artillery_remote, false)
+    -- permission_group.set_allows_action(defines.input_action.use_artillery_remote, false) -- TODO: recheck and fix!
     force.technologies['artillery'].enabled = false
     force.technologies['artillery-shell-range-1'].enabled = false
     force.technologies['artillery-shell-speed-1'].enabled = false
     force.recipes['artillery-turret'].enabled = false
     force.recipes['artillery-wagon'].enabled = false
-    force.recipes['artillery-targeting-remote'].enabled = false
+    -- force.recipes['artillery-targeting-remote'].enabled = false -- TODO: recheck and fix!
     force.recipes['artillery-shell'].enabled = false
 end
 
