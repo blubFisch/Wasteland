@@ -299,7 +299,7 @@ local function process_built_entities(event)
     end
 
     -- Feature to build neutral = all players can access + robots will ignore
-    local players_prefs = storage.tokens.utils_gui_bottom_frame.players[player_index]
+    local players_prefs = ScenarioTable.get().players[player_index]
     if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
         and not allowed_entities_keep_force[name] then
         if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then
