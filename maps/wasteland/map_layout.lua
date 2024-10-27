@@ -280,7 +280,7 @@ local function landfill_under(entity)
     for _, v in pairs(vectors) do
         local position = {entity.position.x + v[1], entity.position.y + v[2]}
         local tile = surface.get_tile(position)
-        if tile.name ~= "blue-refined-concrete" and not tile.collides_with('resource-layer') then
+        if tile.name ~= "blue-refined-concrete" and not tile.collides_with('resource') then
             surface.set_tiles({{name = 'landfill', position = position}}, true)
         end
     end
@@ -358,7 +358,7 @@ local function on_chunk_generated(event)
             position = {x = left_top_x + x, y = left_top_y + y}
             if math.sqrt(position.x^2 + position.y^2) > Public.central_oil_radius_outer + 10 then
                 if math_random(1, 3) > 1 then
-                    if not surface.get_tile(position).collides_with('resource-layer') then
+                    if not surface.get_tile(position).collides_with('resource') then
                         noise = get_noise('wasteland', position, seed)
                         if is_scrap_area(noise) then
                             surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
