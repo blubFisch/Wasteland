@@ -6,9 +6,9 @@ local utils_table = require 'utils.table'
 local ScenarioTable = require 'maps.wasteland.table'
 
 local valid_entities = {
-    ['rock-big'] = true,
+    ['big-rock'] = true,
     ['huge-rock'] = true,
-    ['sand-rock-big'] = true
+    ['sand-big-rock'] = true
 }
 
 local size_raffle = {

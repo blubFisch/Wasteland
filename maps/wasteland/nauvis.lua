@@ -45,8 +45,8 @@ function Public.initialize()
         entity = {
             settings = {
                 ['huge-rock'] = {frequency = 2, size = 1, richness = 1},
-                ['rock-big'] = {frequency = 2, size = 1, richness = 1},
-                ['sand-rock-big'] = {frequency = 2, size = 1, richness = 1}
+                ['big-rock'] = {frequency = 2, size = 1, richness = 1},
+                ['sand-big-rock'] = {frequency = 2, size = 1, richness = 1}
             }
         },
         decorative = {
@@ -141,7 +141,7 @@ function Public.initialize()
     surface.always_day = false
     surface.freeze_daytime = false
     surface.clear(true)
-    surface.regenerate_entity({'huge-rock', 'rock-big', 'sand-rock-big'})
+    surface.regenerate_entity({'huge-rock', 'big-rock', 'sand-big-rock'})
     surface.regenerate_decorative()
 end
 
