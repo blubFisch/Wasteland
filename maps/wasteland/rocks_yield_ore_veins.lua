@@ -7,7 +7,7 @@ local ScenarioTable = require 'maps.wasteland.table'
 
 local valid_entities = {
     ['rock-big'] = true,
-    ['rock-huge'] = true,
+    ['huge-rock'] = true,
     ['sand-rock-big'] = true
 }
 
