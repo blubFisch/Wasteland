@@ -423,7 +423,7 @@ local disabled_for_outlander_deconstruction = {
     ['fish'] = true,
     ['huge-rock'] = true,
     ['big-rock'] = true,
-    ['sand-big-rock'] = true,
+    ['big-sand-rock'] = true,
     ['cliff'] = true
 }
 
