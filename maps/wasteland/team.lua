@@ -576,7 +576,7 @@ local function disable_achievements(permission_group)
 end
 
 local function disable_tips_and_tricks(permission_group)
-    permission_group.set_allows_action(defines.input_action.open_tips_and_tricks_gui, false)
+    -- permission_group.set_allows_action(defines.input_action.open_tips_and_tricks_gui, false) -- TODO: recheck and fix
 end
 
 local function set_initial_combat_bot_slots(force)
