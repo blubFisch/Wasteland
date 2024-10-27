@@ -511,7 +511,7 @@ local function disable_spidertron(force, permission_group)
     permission_group.set_allows_action(defines.input_action.send_spidertron, false)
     force.technologies['spidertron'].enabled = false
     force.recipes['spidertron'].enabled = false
-    force.recipes['rts-tool'].enabled = false
+    -- force.recipes['rts-tool'].enabled = false -- TODO: recheck and fix
 end
 
 local function disable_rockets(force)
