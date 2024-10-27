@@ -35,8 +35,8 @@ local function is_empty(position, surface)
     if #entities > 0 then
         return false
     end
-    local tiles = surface.count_tiles_filtered({position = position, radius = tile_radius, collision_mask = 'water-tile'})
-    --log("water-tiles = " .. tiles)
+    local tiles = surface.count_tiles_filtered({position = position, radius = tile_radius, collision_mask = 'water_tile'})
+    --log("water_tiles = " .. tiles)
     if tiles > 0 then
         return false
     end

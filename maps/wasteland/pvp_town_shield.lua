@@ -261,7 +261,7 @@ end
 function Public.draw_shield_floor_markers(surface, position)
     for _, vector in pairs(shield_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        if not surface.get_tile(p).collides_with("water-tile") then
+        if not surface.get_tile(p).collides_with("water_tile") then
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
         end
     end
