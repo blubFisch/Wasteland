@@ -7,11 +7,8 @@ function Public.reset()
     if this.testing_mode then
         return
     end
-    for index = 1, table.size(game.forces), 1 do
-        local force = game.forces[index]
-        if force ~= nil then
-            force.clear_chart('nauvis')
-        end
+    for _, force in pairs(game.forces) do
+        force.clear_chart('nauvis')
     end
 end
 
