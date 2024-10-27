@@ -176,7 +176,7 @@ local function set_offers(town_center)
     table_insert(market_items, {price = {{'copper-cable', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'iron-gear-wheel', 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
     table_insert(market_items, {price = {{'iron-stick', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'empty-barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
+    table_insert(market_items, {price = {{'barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
 
     table_insert(market_items, {price = {{'linked-chest', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
