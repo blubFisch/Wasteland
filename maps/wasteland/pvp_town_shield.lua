@@ -283,7 +283,7 @@ end
 
 function Public.request_afk_shield(town_center, player)
     local market = town_center.market
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local force = market.force
     local surface = market.surface
     local town_control_range = Public.get_town_control_range(town_center)
@@ -316,7 +316,7 @@ function Public.request_afk_shield(town_center, player)
 end
 
 local function update_afk_shields()
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
 
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force

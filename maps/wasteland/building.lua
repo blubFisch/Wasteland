@@ -182,7 +182,7 @@ end
 
 local function prevent_entity_in_restricted_zone(event)
     local player_index = event.player_index or nil
-    local entity = event.created_entity
+    local entity = event.entity
     if entity == nil or not entity.valid then
         return
     end
@@ -233,7 +233,7 @@ end
 
 local function process_built_entities(event)
     local player_index = event.player_index or nil
-    local entity = event.created_entity
+    local entity = event.entity
     if entity == nil or not entity.valid then
         return
     end
@@ -299,7 +299,7 @@ local function process_built_entities(event)
     end
 
     -- Feature to build neutral = all players can access + robots will ignore
-    local players_prefs = global.tokens.utils_gui_bottom_frame.players[player_index]
+    local players_prefs = storage.tokens.utils_gui_bottom_frame.players[player_index]
     if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
         and not allowed_entities_keep_force[name] then
         if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then

@@ -45,14 +45,14 @@ local function on_player_created(event)
     player.gui.left.style = 'slot_table_spacing_vertical_flow'
 end
 
-local loaded = _G.package.loaded
-function require(path)
-    return loaded[path] or error('Can only require files at runtime that have been required in the control stage.', 2)
-end
-
-
 local Event = require 'utils.event'
 for id, f in pairs(__modules.train_protection.events) do
     Event.add(id, f)
 end
 Event.add(defines.events.on_player_created, on_player_created)
+
+
+local loaded = _G.package.loaded
+function require(path)
+    return loaded[path] or error('Can only require files at runtime that have been required in the control stage.', 2)
+end

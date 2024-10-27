@@ -511,7 +511,7 @@ local function disable_spidertron(force, permission_group)
     permission_group.set_allows_action(defines.input_action.send_spidertron, false)
     force.technologies['spidertron'].enabled = false
     force.recipes['spidertron'].enabled = false
-    force.recipes['spidertron-remote'].enabled = false
+    force.recipes['rts-tool'].enabled = false
 end
 
 local function disable_rockets(force)
@@ -669,7 +669,7 @@ local function create_outlander_force(player)
 end
 
 local function setup_enemy_force()
-    game.forces.enemy.evolution_factor = 1
+    game.forces.enemy.set_evolution_factor(1)
 end
 
 function Public.player_joined(player)
@@ -693,7 +693,7 @@ function Public.player_joined(player)
 
     local this = ScenarioTable.get_table()
     if this.winner then
-        if global.auto_reset_enabled then
+        if storage.auto_reset_enabled then
             player.print("This game has ended and will reset shortly", Utils.scenario_color)
         else
             player.print("This game has ended, please wait for an admin to start a new game", Utils.scenario_color)

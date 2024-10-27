@@ -94,7 +94,7 @@ end
 
 
 function Public.update_last_winner_name(player)
-    player.gui.top['wl_map_last_winner'].caption = "Last round winner: " .. global.last_winner_name
+    player.gui.top['wl_map_last_winner'].caption = "Last round winner: " .. storage.last_winner_name
 end
 
 function Public.add_last_winner_button(player)

@@ -30,7 +30,7 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 local town_radius = 22
 
 local starter_ore_amounts = { 0.25, 0.5, 1.0 }
-local starter_ore_amount = 1200 * starter_ore_amounts[global.game_mode]
+local starter_ore_amount = 1200 * starter_ore_amounts[storage.game_mode]
 
 local colors = {}
 local c1 = 250
@@ -332,7 +332,7 @@ function Public.update_coin_balance(force)
 end
 
 local function found_town(event)
-    local entity = event.created_entity
+    local entity = event.entity
     -- is a valid entity placed?
     if entity == nil or not entity.valid then
         return

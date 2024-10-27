@@ -21,39 +21,39 @@ local function on_gui_click(event)
         return
     end
 
-    if global.flashlight_enabled[player.name] == true then
+    if storage.flashlight_enabled[player.name] == true then
         player.character.disable_flashlight()
         player.print('Flashlight disabled.', message_color)
-        global.flashlight_enabled[player.name] = false
+        storage.flashlight_enabled[player.name] = false
         return
     end
 
-    if global.flashlight_enabled[player.name] == false then
+    if storage.flashlight_enabled[player.name] == false then
         player.character.enable_flashlight()
         player.print('Flashlight enabled.', message_color)
-        global.flashlight_enabled[player.name] = true
+        storage.flashlight_enabled[player.name] = true
         return
     end
 end
 
 local function on_player_respawned(event)
     local player = game.players[event.player_index]
-    if global.flashlight_enabled[player.name] == false then
+    if storage.flashlight_enabled[player.name] == false then
         player.character.disable_flashlight()
         return
     end
-    if global.flashlight_enabled[player.name] == true then
+    if storage.flashlight_enabled[player.name] == true then
         player.character.enable_flashlight()
         return
     end
 end
 
 local function on_player_joined_game(event)
-    if not global.flashlight_enabled then
-        global.flashlight_enabled = {}
+    if not storage.flashlight_enabled then
+        storage.flashlight_enabled = {}
     end
     local player = game.players[event.player_index]
-    global.flashlight_enabled[player.name] = true
+    storage.flashlight_enabled[player.name] = true
     if player.gui.top['flashlight_toggle'] then
         return
     end

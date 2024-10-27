@@ -29,9 +29,9 @@ Global.register(
 )
 
 local spaghett_entity_blacklist = {
-    ['logistic-chest-requester'] = true,
-    ['logistic-chest-buffer'] = true,
-    ['logistic-chest-active-provider'] = true
+    ['requester-chest'] = true,
+    ['buffer-chest'] = true,
+    ['active-provider-chest'] = true
 }
 
 local function get_actor(event, prefix, msg, admins_only)
@@ -51,11 +51,11 @@ local function spaghett_deny_building(event)
     if not spaghett.enabled then
         return
     end
-    local entity = event.created_entity
+    local entity = event.entity
     if not entity.valid then
         return
     end
-    if not spaghett_entity_blacklist[event.created_entity.name] then
+    if not spaghett_entity_blacklist[event.entity.name] then
         return
     end
 
@@ -66,7 +66,7 @@ local function spaghett_deny_building(event)
         inventory.insert({name = entity.name, count = 1})
     end
 
-    event.created_entity.surface.create_entity(
+    event.entity.surface.create_entity(
         {
             name = 'flying-text',
             position = entity.position,
@@ -173,9 +173,9 @@ local functions = {
     end,
     ['auto_hotbar_switch'] = function(event)
         if event.element.switch_state == 'left' then
-            global.auto_hotbar_enabled[event.player_index] = true
+            Global.auto_hotbar_enabled[event.player_index] = true
         else
-            global.auto_hotbar_enabled[event.player_index] = false
+            Global.auto_hotbar_enabled[event.player_index] = false
         end
     end,
     ['blueprint_toggle'] = function(event)
@@ -201,20 +201,20 @@ local functions = {
     end,
     ['bb_team_balancing_toggle'] = function(event)
         if event.element.switch_state == 'left' then
-            global.bb_settings.team_balancing = true
+            Global.bb_settings.team_balancing = true
             game.print('Team balancing has been enabled!')
         else
-            global.bb_settings.team_balancing = false
+            Global.bb_settings.team_balancing = false
             game.print('Team balancing has been disabled!')
         end
     end,
     ['bb_only_admins_vote'] = function(event)
         if event.element.switch_state == 'left' then
-            global.bb_settings.only_admins_vote = true
-            global.difficulty_player_votes = {}
+            Global.bb_settings.only_admins_vote = true
+            Global.difficulty_player_votes = {}
             game.print('Admin-only difficulty voting has been enabled!')
         else
-            global.bb_settings.only_admins_vote = false
+            Global.bb_settings.only_admins_vote = false
             game.print('Admin-only difficulty voting has been disabled!')
         end
     end,
@@ -457,9 +457,9 @@ local function build_config_gui(data)
 
     scroll_pane.add({type = 'line'})
 
-    if global.auto_hotbar_enabled then
+    if Global.auto_hotbar_enabled then
         switch_state = 'right'
-        if global.auto_hotbar_enabled[player.index] then
+        if Global.auto_hotbar_enabled[player.index] then
             switch_state = 'left'
         end
         add_switch(scroll_pane, switch_state, 'auto_hotbar_switch', 'AutoHotbar', 'Automatically fills your hotbar with placeable items.')
@@ -596,7 +596,7 @@ local function build_config_gui(data)
             scroll_pane.add({type = 'line'})
 
             local team_balancing_state = 'right'
-            if global.bb_settings.team_balancing then
+            if Global.bb_settings.team_balancing then
                 team_balancing_state = 'left'
             end
             local switch = add_switch(scroll_pane, team_balancing_state, 'bb_team_balancing_toggle', 'Team Balancing', 'Players can only join a team that has less or equal players than the opposing.')
@@ -607,7 +607,7 @@ local function build_config_gui(data)
             scroll_pane.add({type = 'line'})
 
             local only_admins_vote_state = 'right'
-            if global.bb_settings.only_admins_vote then
+            if Global.bb_settings.only_admins_vote then
                 only_admins_vote_state = 'left'
             end
             local only_admins_vote_switch = add_switch(scroll_pane, only_admins_vote_state, 'bb_only_admins_vote', 'Admin Vote', 'Only admins can vote for map difficulty. Clears all currently existing votes.')

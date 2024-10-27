@@ -1,6 +1,8 @@
 local table_insert = table.insert
 local table_remove = table.remove
 
+
+local ScenarioTable = require 'maps.wasteland.table'
 local TownCenter = require 'maps.wasteland.town_center'
 local Spaceship = require 'maps.wasteland.spaceship'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
@@ -76,7 +78,7 @@ local upgrade_functions = {
     end,
     -- Set Spawn Point
     [6] = function(town_center, player)
-        local this = global.tokens.maps_wasteland_table
+        local this = ScenarioTable.get()
         local market = town_center.market
         local force = market.force
         local surface = market.surface
@@ -193,7 +195,7 @@ local function set_offers(town_center)
 end
 
 local function refresh_offers(event)
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local player = game.get_player(event.player_index)
     local market = event.entity or event.market
     if not market then
@@ -228,7 +230,7 @@ local function refresh_offers(event)
 end
 
 local function offer_purchased(event)
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local player = game.get_player(event.player_index)
     local market = event.market
     local offer_index = event.offer_index
@@ -304,7 +306,7 @@ local function max_stack_size(entity)
 
     local entity_name = entity.name
     if (entity_name == 'stack-inserter' or entity_name == 'stack-filter-inserter') then
-        local capacity = entity.force.stack_inserter_capacity_bonus
+        local capacity = entity.force.bulk_inserter_capacity_bonus
         return 1 + capacity
     else
         local bonus = entity.force.inserter_stack_size_bonus
@@ -667,7 +669,7 @@ local long_market_filter = {
     name = _long_market_entities_targets, force = nil
 }
 local function on_tick(event)
-    local data = global.tokens.maps_wasteland_table
+    local data = ScenarioTable.get()
     if not data.town_centers then
         return
     end

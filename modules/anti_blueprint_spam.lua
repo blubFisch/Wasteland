@@ -181,7 +181,7 @@ local ENTITY_TYPE_BLACKLIST = {
 
 ---@param event on_built_entity
 M.on_built_entity = function(event)
-	local entity = event.created_entity
+	local entity = event.entity
 	if not entity.valid then return end
 	if ENTITY_TYPE_BLACKLIST[entity.type] then return end
 
@@ -232,7 +232,7 @@ end
 
 
 M.link_data = function()
-	mod_data = global.ASBZO
+	mod_data = storage.ASBZO
 	restricted_players = mod_data.restricted_players
 	ghost_players_rate = mod_data.ghost_players_rate
 	players_restiction_time = mod_data.players_restiction_time
@@ -240,8 +240,8 @@ end
 
 
 M.update_global_data = function()
-	global.ASBZO = global.ASBZO or {}
-	mod_data = global.ASBZO
+	storage.ASBZO = storage.ASBZO or {}
+	mod_data = storage.ASBZO
 	mod_data.restricted_players = mod_data.restricted_players or {}
 	mod_data.ghost_players_rate = mod_data.ghost_players_rate or {}
 	mod_data.players_restiction_time = mod_data.players_restiction_time or {}

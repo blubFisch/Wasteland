@@ -5,7 +5,7 @@ function Public.initialize()
     game.difficulty_settings.recipe_difficulty = defines.difficulty_settings.recipe_difficulty.normal
     game.difficulty_settings.technology_difficulty = defines.difficulty_settings.technology_difficulty.normal
     local tech_price_multipliers = { 0.2, 0.35, 0.75 }
-    game.difficulty_settings.technology_price_multiplier = tech_price_multipliers[global.game_mode]
+    game.difficulty_settings.technology_price_multiplier = tech_price_multipliers[storage.game_mode]
 
     -- pollution settings
     game.map_settings.pollution.enabled = true

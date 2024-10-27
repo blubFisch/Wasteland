@@ -6,6 +6,7 @@ local math_sqrt = math.sqrt
 
 local Public = {}
 
+local ScenarioTable = require 'maps.wasteland.table'
 local get_noise = require 'utils.get_noise'
 local Scrap = require 'maps.wasteland.scrap'
 local Spaceship = require 'maps.wasteland.spaceship'
@@ -17,7 +18,7 @@ Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
 local league_sizes_by_game_mode = {101, 141, 141}
-Public.league_balance_shield_size =  league_sizes_by_game_mode[global.game_mode]
+Public.league_balance_shield_size =  league_sizes_by_game_mode[storage.game_mode]
 Public.higher_league_activation_range = Public.league_balance_shield_size + 50
 Public.min_distance_between_towns = Public.higher_league_activation_range + 2 + 50    -- plus some buffer for players moving for activations
 
@@ -32,7 +33,7 @@ end
 function Public.reveal_strategic_resources(force)
     -- We do this to even the battle field with players who just check out the map in SP
 
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local surface = game.surfaces.nauvis
     force.chart(surface, {{-1, -1}, {1, 1}})
     force.chart(surface, {this.uranium_patch_location, this.uranium_patch_location})
@@ -45,7 +46,7 @@ local function gen_uranium_location()
 end
 
 local function init()
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     this.uranium_patch_location = gen_uranium_location()
 end
 Public.init = init
@@ -311,7 +312,7 @@ local function on_chunk_generated(event)
     if (surface.name ~= 'nauvis') then
         return
     end
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local seed = surface.map_gen_settings.seed
     local left_top_x = event.area.left_top.x
     local left_top_y = event.area.left_top.y
@@ -447,7 +448,7 @@ end
 local function on_chunk_charted(event)
     local force = event.force
     local surface = game.surfaces[event.surface_index]
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     if force.valid then
         local position = event.position
         if position.x == 0 and position.y == 0 then

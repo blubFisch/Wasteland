@@ -288,7 +288,7 @@ local function scan_protect_shield_area()
 end
 
 local function on_built_entity(event)
-    local entity = event.created_entity
+    local entity = event.entity
 
     if not entity.valid or not table.array_contains(shield_inactive_types, entity.type) then
         return

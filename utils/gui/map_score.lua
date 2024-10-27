@@ -8,7 +8,7 @@ local Public = {}
 
 local function get_sorted_score()
     local list = {}
-    for player_index, score_points in pairs(global.custom_highscore.score_list) do
+    for player_index, score_points in pairs(storage.custom_highscore.score_list) do
         table.insert(list, {name = game.players[player_index].name, points = score_points})
     end
     local list_size = #list
@@ -49,7 +49,7 @@ local function score_list(data)
     player_label.style.minimal_width = 160
     player_label.style.font = 'heading-2'
     player_label.style.padding = 3
-    local desc_label = t.add({type = 'label', caption = global.custom_highscore.description})
+    local desc_label = t.add({type = 'label', caption = storage.custom_highscore.description})
     desc_label.style.minimal_width = 160
     desc_label.style.font = 'heading-2'
     desc_label.style.padding = 3
@@ -71,16 +71,16 @@ end
 local score_list_token = Token.register(score_list)
 
 function Public.set_score_description(str)
-    global.custom_highscore.description = str
+    storage.custom_highscore.description = str
 end
 
 function Public.set_score(player, count)
-    local score_lists = global.custom_highscore.score_list
+    local score_lists = storage.custom_highscore.score_list
     score_lists[player.index] = count
 end
 
 function Public.get_score(player)
-    local score_lists = global.custom_highscore.score_list
+    local score_lists = storage.custom_highscore.score_list
     if not score_lists[player.index] then
         score_lists[player.index] = 0
     end
@@ -88,14 +88,14 @@ function Public.get_score(player)
 end
 
 function Public.reset_score()
-    global.custom_highscore = {
+    storage.custom_highscore = {
         description = 'Won rounds:',
         score_list = {}
     }
 end
 
 local function on_init()
-    global.custom_highscore = {
+    storage.custom_highscore = {
         description = 'Won rounds:',
         score_list = {}
     }

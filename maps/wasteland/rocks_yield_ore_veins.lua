@@ -143,7 +143,7 @@ local function spawn_ore_vein(surface, position, actor_is_player, actor)
     end
     local ore = this.rocks_yield_ore_veins.raffle[math_random(1, #this.rocks_yield_ore_veins.raffle)]
     local icon
-    if game.entity_prototypes[ore] then
+    if prototypes.entity[ore] then
         icon = '[img=entity/' .. ore .. ']'
     else
         icon = ' '

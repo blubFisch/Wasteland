@@ -50,7 +50,7 @@ local entity_loot_chance = {
     --{name = "used-up-uranium-fuel-cell", chance = 1},
     {name = 'water-barrel', chance = 10},
     {name = 'cliff-explosives', chance = 15},
-    {name = 'logistic-chest-requester', chance = 15},
+    {name = 'requester-chest', chance = 15},
     {name = 'military-science-pack', chance = 10},
     {name = 'chemical-science-pack', chance = 10},
     {name = 'coin', chance = 200}
@@ -104,7 +104,7 @@ local entity_loot_amounts = {
     --["used-up-uranium-fuel-cell"] = 1,
     ['water-barrel'] = 3,
     ['cliff-explosives'] = -1,
-    ['logistic-chest-requester'] = -1,
+    ['requester-chest'] = -1,
     ['military-science-pack'] = 4,
     ['chemical-science-pack'] = 4,
     ['coin'] = 10
@@ -119,6 +119,12 @@ end
 
 local size_of_scrap_raffle = #scrap_raffle
 
+
+local __stack = {name = "", count = 1}
+local __spill_item_stack_param = {
+    position = nil, stack = __stack,
+    enable_looted = true, allow_belts = true
+}
 local function on_player_mined_entity(event)
     local entity = event.entity
     if not entity.valid then
@@ -154,7 +160,10 @@ local function on_player_mined_entity(event)
 
     if inserted_count ~= amount then
         local amount_to_spill = amount - inserted_count
-        entity.surface.spill_item_stack(position, {name = scrap, count = amount_to_spill}, true)
+        __spill_item_stack_param.position = position
+        __stack.name = scrap
+        __stack.count = amount_to_spill
+        entity.surface.spill_item_stack(__spill_item_stack_param)
     end
 
     entity.surface.create_entity(

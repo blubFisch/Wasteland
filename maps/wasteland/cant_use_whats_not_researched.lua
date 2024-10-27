@@ -2,15 +2,15 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 local Utils = require 'maps.wasteland.utils'
 local ScenarioTable = require 'maps.wasteland.table'
 
-global.force_available_recipe_cache = global.force_available_recipe_cache or {}
+storage.force_available_recipe_cache = storage.force_available_recipe_cache or {}
 
 local function update_recipes(force)
-    global.force_available_recipe_cache[force.name] = {}
+    storage.force_available_recipe_cache[force.name] = {}
 
     for _, rec in pairs(force.recipes) do
         if rec.enabled then
             for _, prod in pairs(rec.products) do
-                global.force_available_recipe_cache[force.name][prod.name] = true
+                storage.force_available_recipe_cache[force.name][prod.name] = true
             end
         end
     end
@@ -35,7 +35,7 @@ local allowed_for_all = {
     ['night-vision-equipment'] = true,
 
     -- Scrap items
-    ['logistic-chest-requester'] = true,
+    ['requester-chest'] = true,
     ['land-mine'] = true,
 
     -- Rails items and entities are different, so just skip them
@@ -63,9 +63,15 @@ end
 
 local function force_unequip_armor(player, armor_inventory, armor)
     local armor_stack = armor_inventory.find_item_stack(armor.name)
+
+    local spill_item_stack_param = {
+        position = player.position, stack = armor_stack,
+        enable_looted = false, allow_belts = false,
+        force = player.force
+    }
     -- First drop on floor to prevent a condition where full inventory together with inv size change
     --   leads to the armor being equippable again
-    local floor_stack = player.surface.spill_item_stack(player.position, armor_stack, false, player.force, false)[1]
+    local floor_stack = player.surface.spill_item_stack(spill_item_stack_param)[1]
     armor_inventory.remove(armor_stack)
     local player_inventory = player.get_main_inventory()
     if player_inventory.insert(floor_stack.stack) == 1 then
@@ -75,11 +81,11 @@ local function force_unequip_armor(player, armor_inventory, armor)
 end
 
 local function is_recipe_available(force, recipe_name)
-    if not global.force_available_recipe_cache[force.name] then
+    if not storage.force_available_recipe_cache[force.name] then
         update_recipes(force)
     end
 
-    return global.force_available_recipe_cache[force.name][recipe_name] or allowed_for_all[recipe_name]
+    return storage.force_available_recipe_cache[force.name][recipe_name] or allowed_for_all[recipe_name]
 end
 
 -- Prevent exploits of players using higher league items via tricks like suiciding own town
@@ -123,7 +129,7 @@ end
 
 -- Prevent exploits of players using higher league buildings via tricks like suiciding own town
 local function process_building_limit(actor, event)
-    local entity = event.created_entity
+    local entity = event.entity
     if not entity.valid then return end
 
     if not is_recipe_available(actor.force, entity.name)
