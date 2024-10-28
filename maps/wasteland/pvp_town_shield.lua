@@ -45,7 +45,7 @@ local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
 
-        rendering.set_text(town_center.shield_text, town_center.pvp_shield_mgmt.shield_info)
+        rendering.get_object_by_id(town_center.shield_text).text = town_center.pvp_shield_mgmt.shield_info
 
         -- Update enemy nearby display
         local town_control_range = Public.get_town_control_range(town_center)
@@ -68,8 +68,8 @@ local function update_pvp_shields_display()
             town_center.enemies_warning_status = nil
         end
         info_enemies = info_enemies .. " (" .. string.format('%.0f',  town_control_range) .. " tiles)"
-        rendering.set_text(town_center.enemies_text, info_enemies)
-        rendering.set_color(town_center.enemies_text, color)
+        rendering.get_object_by_id(town_center.enemies_text).text  = info_enemies
+        rendering.get_object_by_id(town_center.enemies_text).color = color
     end
 end
 

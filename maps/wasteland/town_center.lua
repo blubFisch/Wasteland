@@ -303,7 +303,7 @@ end
 function Public.update_town_name(force)
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[force.name]
-    rendering.set_text(town_center.town_caption, town_center.town_name)
+    rendering.get_object_by_id(town_center.town_caption, town_center.town_name)
 end
 
 function Public.set_market_health(entity, final_damage_amount)
@@ -318,7 +318,7 @@ function Public.set_market_health(entity, final_damage_amount)
     end
     local m = town_center.health / town_center.max_health
     entity.health = 150 * m
-    rendering.set_text(town_center.health_text, 'HP: ' .. town_center.health .. ' / ' .. town_center.max_health)
+    rendering.get_object_by_id(town_center.health_text).text = 'HP: ' .. town_center.health .. ' / ' .. town_center.max_health
 end
 
 function Public.update_coin_balance(force)
@@ -326,7 +326,7 @@ function Public.update_coin_balance(force)
     local town_center = this.town_centers[force.name]
     local coin_balance = town_center.coin_balance
     if town_center.prev_coin_balance ~= coin_balance then
-        rendering.set_text(town_center.coins_text, 'Coins: ' .. coin_balance)
+        rendering.get_object_by_id(town_center.coins_text).text = 'Coins: ' .. coin_balance
         town_center.prev_coin_balance = coin_balance
     end
 end

@@ -194,7 +194,7 @@ local function random_color(cmd)
     local crayon = Public.get_random_color()
 
     town_center.color = crayon.color
-    rendering.set_color(town_center.town_caption, town_center.color)
+    rendering.get_object_by_id(town_center.town_caption).color = town_center.color
     for _, p in pairs(force.players) do
         if p.index == player.index then
             player.print('Your town color is now ' .. crayon.name, crayon.color)

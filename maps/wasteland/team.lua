@@ -110,7 +110,7 @@ local function set_town_color(event)
         return
     end
     town_center.color = {player.color.r, player.color.g, player.color.b}
-    rendering.set_color(town_center.town_caption, town_center.color)
+    rendering.get_object_by_id(town_center.town_caption).color = town_center.color
     for _, p in pairs(force.players) do
         Public.set_player_color(p)
     end

@@ -20,7 +20,7 @@ local function add_force(id, force_name)
         end
     end
     forces[#forces + 1] = force_name
-    rendering.set_forces(id, forces)
+    rendering.get_object_by_id(id).forces = forces
 end
 
 local function update_forces(id)
@@ -31,7 +31,7 @@ local function update_forces(id)
             new_forces[#new_forces + 1] = force.name
         end
     end
-    rendering.set_forces(id, new_forces)
+    rendering.get_object_by_id(id).forces = new_forces
 end
 
 local function on_chunk_charted(event)
