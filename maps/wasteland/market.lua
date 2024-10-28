@@ -686,7 +686,7 @@ local function on_tick(event)
             if is_update_balance_tick then
                 local coin_balance = town_center.coin_balance
                 if town_center.prev_coin_balance ~= coin_balance then
-                    rendering.get_object_by_id(town_center.coins_text).text = 'Coins: ' .. coin_balance
+                    town_center.coins_text.text = 'Coins: ' .. coin_balance
                     town_center.prev_coin_balance = coin_balance
                 end
             end

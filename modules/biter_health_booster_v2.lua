@@ -237,10 +237,10 @@ local function create_boss_healthbar(entity, size)
 end
 
 local function set_boss_healthbar(health, max_health, healthbar_id)
+    local rendered = rendering.get_object_by_id(healthbar_id)
     local m = health / max_health
-    local x_scale = rendering.get_y_scale(healthbar_id) * 15
-    rendering.get_object_by_id(healthbar_id).x_scale = x_scale * m
-    rendering.get_object_by_id(healthbar_id).color = {floor(255 - 255 * m), floor(200 * m), 0}
+    rendered.x_scale = rendered.y_scale * 15 * m
+    rendered.color = {floor(255 - 255 * m), floor(200 * m), 0}
 end
 
 local function extra_projectiles(cause, target)

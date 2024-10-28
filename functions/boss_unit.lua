@@ -16,9 +16,8 @@
 end ]]
 local function set_healthbar(boss_unit)
     local m = boss_unit.health / boss_unit.max_health
-    local x_scale = rendering.get_y_scale(boss_unit.healthbar_id) * 15
     local rendered = rendering.get_object_by_id(boss_unit.healthbar_id)
-    rendered.x_scale = x_scale * m
+    rendered.x_scale = rendered.y_scale * 15 * m
     rendered.color = {math.floor(255 - 255 * m), math.floor(200 * m), 0}
 end
 

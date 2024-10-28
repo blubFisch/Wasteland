@@ -12,26 +12,26 @@ function Public.reset()
     end
 end
 
-local function add_force(id, force_name)
-    local forces = rendering.get_forces(id)
+local function add_force(rendered, force_name)
+    local forces = rendered.forces
     for _, force in ipairs(forces) do
         if force.name == force_name or force == force_name then
             return
         end
     end
     forces[#forces + 1] = force_name
-    rendering.get_object_by_id(id).forces = forces
+    rendered.forces = forces
 end
 
-local function update_forces(id)
-    local forces = rendering.get_forces(id)
+local function update_forces(rendered)
+    local forces = rendered.forces
     local new_forces = {}
     for _, force in ipairs(forces) do
         if force ~= nil and force.valid then
             new_forces[#new_forces + 1] = force.name
         end
     end
-    rendering.get_object_by_id(id).forces = new_forces
+    rendered.forces = new_forces
 end
 
 local function on_chunk_charted(event)
