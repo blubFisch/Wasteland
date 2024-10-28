@@ -631,7 +631,6 @@ function Public.create_town_force(player)
 
     -- research
     set_default_tech(force)
-    force.research_queue_enabled = true
     set_initial_combat_bot_slots(force)
 
     CombatBalance.init_player_weapon_damage(force)
