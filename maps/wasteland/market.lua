@@ -305,7 +305,7 @@ local function max_stack_size(entity)
     end
 
     local entity_name = entity.name
-    if (entity_name == 'fast-inserter' or entity_name == 'stack-inserter') then
+    if (entity_name == 'fast-inserter' or entity_name == 'bulk-inserter') then
         local capacity = entity.force.bulk_inserter_capacity_bonus
         return 1 + capacity
     else
@@ -591,7 +591,7 @@ end
 
 local _allowed_market_output_inserters = {
     ['fast-inserter'] = true,
-    ['stack-inserter'] = true
+    ['bulk-inserter'] = true
 }
 local function handle_market_output(town_center, market, entity, offers)
     if entity.type == "loader" then
@@ -648,7 +648,7 @@ local _market_entities_targets = {
     'fast-inserter',
     'fast-inserter',
     'fast-inserter',
-    'stack-inserter',
+    'bulk-inserter',
     'loader',
     'fast-loader',
     'express-loader'

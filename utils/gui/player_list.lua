@@ -299,7 +299,7 @@ local function get_rank(player)
         'item/power-armor',
         'item/logistic-robot',
         'item/laser-turret',
-        'item/stack-inserter',
+        'item/bulk-inserter',
         'item/destroyer-capsule',
         'item/power-armor-mk2',
         'item/flamethrower-turret',
