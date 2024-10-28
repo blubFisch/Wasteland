@@ -111,27 +111,27 @@ local function set_offers(town_center)
     -- special offers
     local special_offers = {}
     if town_center.max_health < market_max_hp then
-        special_offers[1] = {{{'coin', town_center.max_health * 1}}, 'Upgrade Town Center Health'}
+        special_offers[1] = {{{name = 'coin', count = town_center.max_health * 1}}, 'Upgrade Town Center Health'}
     else
         special_offers[1] = {{}, 'Maximum Health upgrades reached!'}
     end
     if force.character_inventory_slots_bonus + 5 <= 50 then
-        special_offers[2] = {{{'coin', (force.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
+        special_offers[2] = {{{name = 'coin', count = (force.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
     else
         special_offers[2] = {{}, 'Maximum Backpack upgrades reached!'}
     end
     if town_center.upgrades.mining_prod + 1 <= 7 then
-        special_offers[3] = {{{'coin', (town_center.upgrades.mining_prod + 1) ^ 2 * 400}}, 'Upgrade Mining Productivity +10% (Drills, Pumps, Scrap)'}
+        special_offers[3] = {{{name = 'coin', count = (town_center.upgrades.mining_prod + 1) ^ 2 * 400}}, 'Upgrade Mining Productivity +10% (Drills, Pumps, Scrap)'}
     else
         special_offers[3] = {{}, 'Maximum Productivity upgrades reached!'}
     end
     if town_center.upgrades.mining_speed + 1 <= 6 then
-        special_offers[4] = {{{'coin', (town_center.upgrades.mining_speed + 1) * 250}}, 'Upgrade Mining Speed +10%'}
+        special_offers[4] = {{{name = 'coin', count = (town_center.upgrades.mining_speed + 1) * 250}}, 'Upgrade Mining Speed +10%'}
     else
         special_offers[4] = {{}, 'Maximum Mining Speed upgrades reached!'}
     end
     if town_center.upgrades.crafting_speed + 1 <= 10 then
-        special_offers[5] = {{{'coin', (town_center.upgrades.crafting_speed + 1) * 400}}, 'Upgrade Crafting Speed +10%'}
+        special_offers[5] = {{{name = 'coin', count = (town_center.upgrades.crafting_speed + 1) * 400}}, 'Upgrade Crafting Speed +10%'}
     else
         special_offers[5] = {{}, 'Maximum Crafting Speed upgrades reached!'}
     end
@@ -143,42 +143,42 @@ local function set_offers(town_center)
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})
     end
 
-    table_insert(market_items, {price = {{'coin', 25}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
-    table_insert(market_items, {price = {{'raw-fish', 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
+    table_insert(market_items, {price = {{name = 'coin', count = 25}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
+    table_insert(market_items, {price = {{name = 'raw-fish', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
 
-    table_insert(market_items, {price = {{'coin', 6}}, offer = {type = 'give-item', item = 'wood', count = 1}})
-    table_insert(market_items, {price = {{'wood', 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
+    table_insert(market_items, {price = {{name = 'coin', count = 6}}, offer = {type = 'give-item', item = 'wood', count = 1}})
+    table_insert(market_items, {price = {{name = 'wood', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'iron-ore', count = 4}})
-    table_insert(market_items, {price = {{'iron-ore', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'iron-ore', count = 4}})
+    table_insert(market_items, {price = {{name = 'iron-ore', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'copper-ore', count = 4}})
-    table_insert(market_items, {price = {{'copper-ore', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'copper-ore', count = 4}})
+    table_insert(market_items, {price = {{name = 'copper-ore', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'stone', count = 4}})
-    table_insert(market_items, {price = {{'stone', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'stone', count = 4}})
+    table_insert(market_items, {price = {{name = 'stone', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'coal', count = 4}})
-    table_insert(market_items, {price = {{'coal', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'coal', count = 4}})
+    table_insert(market_items, {price = {{name = 'coal', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 6}}, offer = {type = 'give-item', item = 'uranium-ore', count = 1}})
-    table_insert(market_items, {price = {{'uranium-ore', 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 6}}, offer = {type = 'give-item', item = 'uranium-ore', count = 1}})
+    table_insert(market_items, {price = {{name = 'uranium-ore', count = 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     -- composition of crude-oil-barrel = 1 barrel + 50 crude oil = 5 iron ore + 5 coal ore (liquefaction)
-    table_insert(market_items, {price = {{'coin', 4}}, offer = {type = 'give-item', item = 'crude-oil-barrel', count = 1}})
-    table_insert(market_items, {price = {{'crude-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 4}}, offer = {type = 'give-item', item = 'crude-oil-barrel', count = 1}})
+    table_insert(market_items, {price = {{name = 'crude-oil-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 200}}, offer = {type = 'give-item', item = 'laser-turret', count = 1}})
-    table_insert(market_items, {price = {{'coin', 300}}, offer = {type = 'give-item', item = 'loader', count = 1}})
-    table_insert(market_items, {price = {{'coin', 600}}, offer = {type = 'give-item', item = 'fast-loader', count = 1}})
-    table_insert(market_items, {price = {{'coin', 900}}, offer = {type = 'give-item', item = 'express-loader', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 200}}, offer = {type = 'give-item', item = 'laser-turret', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 300}}, offer = {type = 'give-item', item = 'loader', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 600}}, offer = {type = 'give-item', item = 'fast-loader', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 900}}, offer = {type = 'give-item', item = 'express-loader', count = 1}})
 
-    table_insert(market_items, {price = {{'copper-cable', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-gear-wheel', 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-stick', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
+    table_insert(market_items, {price = {{name = 'copper-cable', count = 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'iron-gear-wheel', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'iron-stick', count = 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'barrel', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
 
-    table_insert(market_items, {price = {{'linked-chest', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'linked-chest', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     for _, item in pairs(market_items) do
         market.add_market_item(item)
