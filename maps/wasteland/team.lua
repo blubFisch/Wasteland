@@ -548,9 +548,9 @@ local function disable_high_military_research(force)
     force.technologies['laser-shooting-speed-5'].enabled = false
     force.technologies['laser-shooting-speed-6'].enabled = false
     force.technologies['laser-shooting-speed-7'].enabled = false
-    force.technologies['energy-weapons-damage-5'].enabled = false
-    force.technologies['energy-weapons-damage-6'].enabled = false
-    force.technologies['energy-weapons-damage-7'].enabled = false
+    force.technologies['laser-weapons-damage-5'].enabled = false
+    force.technologies['laser-weapons-damage-6'].enabled = false
+    force.technologies['laser-weapons-damage-7'].enabled = false
 
     force.technologies['refined-flammables-6'].enabled = false
     force.technologies['refined-flammables-7'].enabled = false
