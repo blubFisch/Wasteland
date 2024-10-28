@@ -305,7 +305,7 @@ local function max_stack_size(entity)
     end
 
     local entity_name = entity.name
-    if (entity_name == 'stack-inserter' or entity_name == 'stack-filter-inserter') then
+    if (entity_name == 'fast-inserter' or entity_name == 'stack-inserter') then
         local capacity = entity.force.bulk_inserter_capacity_bonus
         return 1 + capacity
     else
@@ -591,7 +591,7 @@ end
 
 local _allowed_market_output_inserters = {
     ['filter-inserter'] = true,
-    ['stack-filter-inserter'] = true
+    ['stack-inserter'] = true
 }
 local function handle_market_output(town_center, market, entity, offers)
     if entity.type == "loader" then
@@ -647,8 +647,8 @@ local _market_entities_targets = {
     'long-handed-inserter',
     'fast-inserter',
     'filter-inserter',
+    'fast-inserter',
     'stack-inserter',
-    'stack-filter-inserter',
     'loader',
     'fast-loader',
     'express-loader'
@@ -686,7 +686,7 @@ local function on_tick(event)
             if is_update_balance_tick then
                 local coin_balance = town_center.coin_balance
                 if town_center.prev_coin_balance ~= coin_balance then
-                    rendering.set_text(town_center.coins_text, 'Coins: ' .. coin_balance)
+                    rendering.get_object_by_id(town_center.coins_text).text = 'Coins: ' .. coin_balance
                     town_center.prev_coin_balance = coin_balance
                 end
             end

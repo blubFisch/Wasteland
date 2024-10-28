@@ -41,7 +41,6 @@ local allowed_entities_neutral = {
     ['loader'] = true,
     ['long-handed-inserter'] = true,
     ['raw-fish'] = true,
-    ['stack-filter-inserter'] = true,
     ['stack-inserter'] = true,
     ['steel-chest'] = true,
     ['wooden-chest'] = true,
