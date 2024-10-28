@@ -560,8 +560,6 @@ local function disable_high_military_research(force)
 
     force.technologies['follower-robot-count-4'].enabled = false
     force.technologies['follower-robot-count-5'].enabled = false
-    force.technologies['follower-robot-count-6'].enabled = false
-    force.technologies['follower-robot-count-7'].enabled = false
 
     force.technologies['weapon-shooting-speed-6'].enabled = false
     force.technologies['physical-projectile-damage-6'].enabled = false
