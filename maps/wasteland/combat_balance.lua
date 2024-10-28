@@ -98,7 +98,7 @@ local function research_finished(event)
 
     p_force.recipes["slowdown-capsule"].enabled = false -- Note: Disabled because the effect is too strong & can't modify it
 
-    for _, e in ipairs(r.effects) do
+    for _, e in ipairs(r.prototype.effects) do
         local t = e.type
 
         if t == 'ammo-damage' then
