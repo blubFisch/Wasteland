@@ -281,7 +281,6 @@ local function get_rank(player)
         'item/assembling-machine-2',
         'item/fast-inserter',
         'item/radar',
-        'item/filter-inserter',
         'item/defender-capsule',
         'item/pumpjack',
         'item/chemical-plant',

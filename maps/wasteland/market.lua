@@ -590,7 +590,7 @@ local function handle_market_input(town_center, market, entity, offers)
 end
 
 local _allowed_market_output_inserters = {
-    ['filter-inserter'] = true,
+    ['fast-inserter'] = true,
     ['stack-inserter'] = true
 }
 local function handle_market_output(town_center, market, entity, offers)
@@ -646,7 +646,7 @@ local _market_entities_targets = {
     'inserter',
     'long-handed-inserter',
     'fast-inserter',
-    'filter-inserter',
+    'fast-inserter',
     'fast-inserter',
     'stack-inserter',
     'loader',

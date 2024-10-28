@@ -35,7 +35,6 @@ local allowed_entities_neutral = {
     ['express-loader'] = true,
     ['fast-inserter'] = true,
     ['fast-loader'] = true,
-    ['filter-inserter'] = true,
     ['inserter'] = true,
     ['iron-chest'] = true,
     ['loader'] = true,
