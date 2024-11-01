@@ -216,9 +216,9 @@ local function update_pvp_shields()
             elseif high_league_no_shield then
                 shield_info = shield_info .. ', No shield (League 4)'
             elseif not shields_researched then
-                shield_info = shield_info .. ', Shields not researched'
+                shield_info = shield_info .. ', Shield not researched'
             else
-                shield_info = shield_info .. ', Shields ready'
+                shield_info = shield_info .. ', Shield standby'
             end
         end
         town_center.pvp_shield_mgmt.shield_info = shield_info
