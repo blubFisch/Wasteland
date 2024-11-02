@@ -3,6 +3,7 @@
 local Event = require 'utils.event'
 local SpamProtection = require 'utils.spam_protection'
 local bonus_factor = 5
+local Utils = require 'maps.wasteland.utils'
 
 local function draw_charging_gui()
     for _, player in pairs(game.connected_players) do
@@ -39,12 +40,7 @@ local function discharge_accumulators(surface, position, force, energy_needs)
 end
 
 local function info_floaty(player, text, color)
-    player.surface.create_entity({
-        name = 'flying-text',
-        position = player.position,
-        text = text,
-        color = color
-    })
+    Utils.flying_text(nil, player.surface, player.position, text, color)
 end
 
 local function charge(player)
@@ -58,12 +54,12 @@ local function charge(player)
     end
     local armor = armor_inventory[1]
     if not armor.valid_for_read then
-        info_floaty(player,"No armor", {r = 255, g = 0, b = 0})
+        info_floaty(player, "No armor", {r = 255, g = 0, b = 0})
         return
     end
     local grid = armor.grid
     if not grid or not grid.valid then
-        info_floaty(player,"Your armor has no grid", {r = 255, g = 0, b = 0})
+        info_floaty(player, "Your armor has no grid", {r = 255, g = 0, b = 0})
         return
     end
     local armor_can_store_energy = false
@@ -94,11 +90,11 @@ local function charge(player)
 
     -- The above situations can happen for multiple equipment pieces, but we display only the most useful info
     if armor_was_charged then
-        info_floaty(player,"Batteries charged", {r = 100, g = 100, b = 255})
+        info_floaty(player, "Batteries charged", {r = 100, g = 100, b = 255})
     elseif not armor_can_store_energy then
         info_floaty(player, "Your armor can't store energy", {r = 255, g = 0, b = 0})
     elseif not_enough_energy_nearby then
-        info_floaty(player,"Not enough energy in nearby accumulators", {r = 255, g = 0, b = 0})
+        info_floaty(player, "Not enough energy in nearby accumulators", {r = 255, g = 0, b = 0})
     elseif armor_can_store_energy and not armor_was_charged then
         info_floaty(player, "Is fully charged", {r = 50, g = 255, b = 50})
     end

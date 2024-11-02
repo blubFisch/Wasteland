@@ -12,28 +12,6 @@ local module_name = Gui.uid_name()
 
 local Public = {}
 
-local this = {
-    gui_config = {
-        spaghett = {
-            undo = {}
-        },
-        poll_trusted = false
-    }
-}
-
-Global.register(
-    this,
-    function(tbl)
-        this = tbl
-    end
-)
-
-local spaghett_entity_blacklist = {
-    ['requester-chest'] = true,
-    ['buffer-chest'] = true,
-    ['active-provider-chest'] = true
-}
-
 local function get_actor(event, prefix, msg, admins_only)
     local player = game.get_player(event.player_index)
     if not player or not player.valid then
@@ -43,62 +21,6 @@ local function get_actor(event, prefix, msg, admins_only)
         Utils.print_admins(msg, player.name)
     else
         Utils.action_warning(prefix, player.name .. ' ' .. msg)
-    end
-end
-
-local function spaghett_deny_building(event)
-    local spaghett = this.gui_config.spaghett
-    if not spaghett.enabled then
-        return
-    end
-    local entity = event.entity
-    if not entity.valid then
-        return
-    end
-    if not spaghett_entity_blacklist[event.entity.name] then
-        return
-    end
-
-    if event.player_index then
-        game.get_player(event.player_index).insert({name = entity.name, count = 1})
-    else
-        local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
-        inventory.insert({name = entity.name, count = 1})
-    end
-
-    event.entity.surface.create_entity(
-        {
-            name = 'flying-text',
-            position = entity.position,
-            text = 'Spaghett Mode Active!',
-            color = {r = 0.98, g = 0.66, b = 0.22}
-        }
-    )
-
-    entity.destroy()
-end
-
-local function spaghett()
-    local spaghetti = this.gui_config.spaghett
-    if spaghetti.noop then
-        return
-    end
-    if spaghetti.enabled then
-        for _, f in pairs(game.forces) do
-            if f.technologies['logistic-system'].researched then
-                spaghetti.undo[f.index] = true
-            end
-            f.technologies['logistic-system'].enabled = false
-            f.technologies['logistic-system'].researched = false
-        end
-    else
-        for _, f in pairs(game.forces) do
-            f.technologies['logistic-system'].enabled = true
-            if spaghetti.undo[f.index] then
-                f.technologies['logistic-system'].researched = true
-                spaghetti.undo[f.index] = nil
-            end
-        end
     end
 end
 
@@ -188,16 +110,6 @@ local functions = {
             game.permissions.get_group('Default').set_allows_action(defines.input_action.import_blueprint_string, false)
             get_actor(event, '[Blueprints]', 'has disabled blueprints!')
         end
-    end,
-    ['spaghett_toggle'] = function(event)
-        if event.element.switch_state == 'left' then
-            this.gui_config.spaghett.enabled = true
-            get_actor(event, '[Spaghett]', 'has enabled spaghett mode!')
-        else
-            this.gui_config.spaghett.enabled = nil
-            get_actor(event, '[Spaghett]', 'has disabled spaghett mode!')
-        end
-        spaghett()
     end,
     ['bb_team_balancing_toggle'] = function(event)
         if event.element.switch_state == 'left' then
@@ -554,10 +466,6 @@ local function build_config_gui(data)
         scroll_pane.add({type = 'line'})
 
         switch_state = 'right'
-        if this.gui_config.spaghett.enabled then
-            switch_state = 'left'
-        end
-        add_switch(scroll_pane, switch_state, 'spaghett_toggle', {'gui.spaghett_mode'}, {'gui-description.spaghett_mode'})
 
         if poll then
             scroll_pane.add({type = 'line'})
@@ -755,18 +663,6 @@ local function on_gui_switch_state_changed(event)
     end
 end
 
-local function on_force_created()
-    spaghett()
-end
-
-local function on_built_entity(event)
-    spaghett_deny_building(event)
-end
-
-local function on_robot_built_entity(event)
-    spaghett_deny_building(event)
-end
-
 Gui.add_tab_to_gui({name = module_name, caption = 'Config', id = build_config_gui_token, admin = false})
 
 Gui.on_click(
@@ -778,9 +674,6 @@ Gui.on_click(
 )
 
 Event.add(defines.events.on_gui_switch_state_changed, on_gui_switch_state_changed)
-Event.add(defines.events.on_force_created, on_force_created)
-Event.add(defines.events.on_built_entity, on_built_entity)
-Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
 
 function Public.get(key)
     if key then

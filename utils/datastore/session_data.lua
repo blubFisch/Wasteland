@@ -1,7 +1,6 @@
 local Global = require 'utils.global'
 local Core = require 'utils.core'
 local Color = require 'utils.color_presets'
-local Game = require 'utils.game'
 local Token = require 'utils.token'
 local Task = require 'utils.task'
 local Server = require 'utils.server'
@@ -247,6 +246,14 @@ function Public.exists(player_name)
     return session[player_name] ~= nil
 end
 
+function player_print(str)
+    if game.player then
+        game.player.print(str)
+    else
+        print(str)
+    end
+end
+
 --- Prints a list of all players in the player_session table.
 function Public.print_sessions()
     local result = {}
@@ -256,7 +263,7 @@ function Public.print_sessions()
     end
 
     result = concat(result, ', ')
-    Game.player_print(result)
+    player_print(result)
 end
 
 --- Returns the table of session

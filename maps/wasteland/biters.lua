@@ -12,6 +12,8 @@ local Event = require 'utils.event'
 local Global = require 'utils.global'
 local BiterHealthBooster = require 'modules.biter_health_booster_v2'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local Utils = require 'maps.wasteland.utils'
+
 
 local tick_schedule = {}
 Global.register(
@@ -318,12 +320,7 @@ local function biter_chatter()
                         "I hate towns, they smell bad. But I like you."
                     }
                     local message = messages[math.random(#messages)]
-                    surface.create_entity({
-                        name = "flying-text",
-                        position = biters[1].position, -- Only show one message per player to limit spam
-                        text = message,
-                        color = {r=1, g=0.5, b=0.25}
-                    })
+                    Utils.flying_text(nil, surface, biters[1].position, message, {r=1, g=0.5, b=0.25})
                     storage.last_chatter_time[player.index] = current_tick
                 end
             end

@@ -1,5 +1,4 @@
 -- Dependencies
-local Game = require 'utils.game'
 local Color = require 'utils.color_presets'
 local Server = require 'utils.server'
 

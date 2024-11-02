@@ -280,8 +280,7 @@ local function process_built_entities(event)
             if allowed_entities_neutral[name] and not (PvPShield.protected_by_shields(surface, position, force, 0)
                     or Public.near_another_town(force_name, position, surface, 10, 0)) then
                 entity.force = game.forces['neutral']   -- Place as neutral to make sure they can interact with everything
-                surface.create_entity({name = 'flying-text', position = position,
-                                       text = "Neutral", color = {r = 0, g = 1, b = 0}})
+                Utils.flying_text(nil, surface, position, "Neutral", {r = 0, g = 1, b = 0})
             else
                 -- Prevent building
                 entity.destroy()
@@ -302,11 +301,9 @@ local function process_built_entities(event)
         and not allowed_entities_keep_force[name] then
         if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then
             entity.force = game.forces['neutral']
-            surface.create_entity({name = 'flying-text', position = position,
-                                   text = "Neutral (setting)", color = {r = 0, g = 1, b = 0}})
+            Utils.flying_text(nil, surface, position, "Neutral (setting)", {r = 0, g = 1, b = 0})
         else
-            surface.create_entity({name = 'flying-text', position = position,
-                                   text = "Can't build neutral (Setting)", color = {r = 0, g = 1, b = 1}})
+            Utils.flying_text(nil, surface, position, "Can't build neutral (Setting)", {r = 0, g = 1, b = 1})
         end
     end
 

@@ -6,6 +6,7 @@ local SpamProtection = require 'utils.spam_protection'
 local Event = require 'utils.event'
 local BottomFrame = require 'utils.gui.bottom_frame'
 local Gui = require 'utils.gui'
+local Utils = require 'maps.wasteland.utils'
 local floor = math.floor
 local print_color = {r = 120, g = 255, b = 0}
 
@@ -35,16 +36,16 @@ local function create_floaty_text(surface, position, name, count)
     else
         this.floating_text_y_offsets[position.x .. '_' .. position.y] = 0
     end
-    surface.create_entity(
+
+    Utils.flying_text(
+        nil,
+        surface,
         {
-            name = 'flying-text',
-            position = {
-                position.x,
-                position.y + this.floating_text_y_offsets[position.x .. '_' .. position.y]
-            },
-            text = {'', '-', count, ' ', prototypes.item[name].localised_name},
-            color = {r = 255, g = 255, b = 255}
-        }
+            position.x,
+            position.y + this.floating_text_y_offsets[position.x .. '_' .. position.y]
+        },
+        {'', '-', count, ' ', prototypes.item[name].localised_name},
+        {r = 255, g = 255, b = 255}
     )
 end
 

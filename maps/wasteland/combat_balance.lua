@@ -251,24 +251,15 @@ function Public.on_entity_damaged(event)
                     and not non_bulldozable_entities[entity.type]
                     and entity.force ~= game.forces.enemy
             then
-                entity.surface.create_entity({
-                    name = 'flying-text',
-                    position = position,
-                    text = 'Bulldozed!',
-                    color = {r = 0.8, g = 0.7, b = 0.0}
-                })
+                Utils.flying_text(nil, entity.surface, position, 'Bulldozed!', {r = 0.8, g = 0.7, b = 0.0})
                 entity.health = 0
                 inv.remove({name = grenade_name, count = 1})
                 return
             end
         else
             if Utils.rate_limit_check("bulldoze", event_cause, 60) then
-                entity.surface.create_entity({
-                    name = 'flying-text',
-                    position = position,
-                    text = 'Need ' .. min_grenades_inv .. ' grenades in inventory to bulldoze!',
-                    color = {r = 1.0, g = 1.0, b = 0.0}
-                })
+                Utils.flying_text(player, entity.surface, position,
+                    'Need ' .. min_grenades_inv .. ' grenades in inventory to bulldoze!', {r = 1.0, g = 1.0, b = 0.0})
             end
         end
     end
@@ -309,12 +300,8 @@ function Public.on_entity_damaged(event)
             local last_shown = ScenarioTable.get().last_damage_multiplier_shown[cause_force.index]
             if (not last_shown or game.tick - last_shown > 60 * 60) and event_cause
                     and entity.force ~= game.forces.neutral and entity.force ~= game.forces.enemy then
-                entity.surface.create_entity({
-                    name = 'flying-text',
-                    position = event_cause.position,
-                    text = 'Damage: '.. format_dmg_modifier(force_modifier),
-                    color = {r =1, g = 1, b = 1}
-                })
+                Utils.flying_text(nil, entity.surface, event_cause.position,
+                    'Damage: ' .. format_dmg_modifier(force_modifier), {r =1, g = 1, b = 1})
                 ScenarioTable.get().last_damage_multiplier_shown[cause_force.index] = game.tick
             end
         else
@@ -355,15 +342,15 @@ local function on_player_used_capsule(event)
         return
     end
     local player = game.players[event.player_index]
+    
+    -- Balance effect of fish
     if player.character.health < 250 then
-        player.character.health = player.character.health - 40  -- Reduce effect of fish
+        player.character.health = player.character.health - 40
     end
-    player.surface.create_entity({  -- Visualise this for other players
-        name = 'flying-text',
-        position = player.position,
-        text = '-1 [img=item/' .. 'raw-fish' .. ']',
-        color = {r = 0.98, g = 0.66, b = 0.22}
-    })
+    
+    -- Visualise healing for other players 
+    Utils.flying_text(nil, player.surface,player.position,
+        '-1 [img=item/' .. 'raw-fish' .. ']', {r = 0.98, g = 0.66, b = 0.22})
 end
 
 local Event = require 'utils.event'

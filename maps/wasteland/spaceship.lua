@@ -3,6 +3,8 @@ local table_insert = table.insert
 local ScenarioTable = require 'maps.wasteland.table'
 local Event = require 'utils.event'
 local TeamBasics = require 'maps.wasteland.team_basics'
+local Utils = require 'maps.wasteland.utils'
+
 local Public = {}
 
 local function position_tostring(position)
@@ -92,14 +94,8 @@ local upgrade_functions = {
             this.spawn_point[player.index] = {x = position.x, y = position.y}
             surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
         else
-            surface.create_entity(
-                {
-                    name = 'flying-text',
-                    position = position,
-                    text = 'Could not find open space for spawnpoint!',
-                    color = {r = 0.77, g = 0.0, b = 0.0}
-                }
-            )
+            Utils.flying_text(nil, surface, position,
+                'Could not find open space for spawn point!', {r = 0.77, g = 0.0, b = 0.0})
         end
         return false
     end

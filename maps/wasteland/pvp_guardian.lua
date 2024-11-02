@@ -1,5 +1,6 @@
 local TeamBasics = require 'maps.wasteland.team_basics'
 local Event = require 'utils.event'
+local Utils = require 'maps.wasteland.utils'
 
 storage.tracked_vehicles = storage.tracked_vehicles or {}
 
@@ -17,15 +18,8 @@ local function try_shoot_vehicle(turret, vehicle)
             and turret.status ~= defines.entity_status.disabled_by_script
             and vehicle.get_driver() == nil
             and vehicle.get_passenger() == nil then
-        game.surfaces.nauvis.create_entity(
-                {
-                    name = 'flying-text',
-                    position = vehicle.position,
-                    text = "Turret damages vehicle",
-                    color = {r = 1, g = 0, b = 0}
-                }
-        )
         vehicle.damage(500, turret.force)
+        Utils.flying_text(nil, vehicle.surface, vehicle.position, "Turret damages vehicle", {r = 1, g = 0, b = 0})
     end
 end
 

@@ -217,9 +217,8 @@ local function refresh_offers(event)
     else
         if player.opened ~= nil then
             player.opened = nil
-            player.surface.create_entity(
+            player.create_local_flying_text(
                 {
-                    name = 'flying-text',
                     position = {market.position.x - 1.75, market.position.y},
                     text = 'Sorry, we are closed.',
                     color = {r = 1, g = 0.68, b = 0.26}

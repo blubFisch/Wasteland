@@ -15,7 +15,6 @@ Minor changes by ~~~Gerkiz~~~
 local Event = require 'utils.event'
 local Where = require 'utils.commands.where'
 local Session = require 'utils.datastore.session_data'
-local Jailed = require 'utils.datastore.jail_data'
 local Supporters = require 'utils.datastore.supporters'
 local Gui = require 'utils.gui'
 local Global = require 'utils.global'
@@ -407,7 +406,6 @@ local function player_list_show(data)
     frame.clear()
     frame.style.padding = 8
     local play_table = Session.get_trusted_table()
-    local jailed = Jailed.get_jailed_table()
 
     -- Header management
     local t
@@ -626,9 +624,6 @@ local function player_list_show(data)
         if game.players[player_list[i].name].admin then
             trusted = '[color=red][A][/color]' .. trusted
             tooltip = 'This player is an admin of this server.' .. tooltip
-        elseif jailed[player_list[i].name] then
-            trusted = '[color=orange][J][/color]' .. trusted
-            tooltip = 'This player is currently jailed.' .. minimap .. tooltip
         elseif play_table[player_list[i].name] then
             trusted = '[color=green][T][/color]' .. trusted
             tooltip = 'This player is trusted.' .. minimap .. tooltip

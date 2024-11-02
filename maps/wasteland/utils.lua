@@ -42,14 +42,35 @@ function Public.rate_limit_check(type, force, rate_limit_ticks)
     end
 end
 
+---Create Flying text for the player, or for all players on that surface if no player specified
+---@param player LuaPlayer|nil
+---@param surface LuaSurface
+---@param position MapPosition
+---@param text string|table
+---@param color Color|table
+function Public.flying_text(player, surface, position, text, color)
+    if not player then
+        for _, p in pairs(game.connected_players) do
+            if p.surface == surface then
+                p.create_local_flying_text({
+                    text = text,
+                    position = position,
+                    color = color
+                })
+            end
+        end
+    else
+        player.create_local_flying_text({
+            text = text,
+            position = position,
+            color = color
+        })
+    end
+end
+
 function Public.build_error_notification(force_or_player, surface, position, msg, player_sound)
     if not force_or_player or Public.rate_limit_check("build", force_or_player, 30) then
-        surface.create_entity({
-            name = 'flying-text',
-            position = position,
-            text = msg,
-            color = {r = 0.77, g = 0.0, b = 0.0}
-        })
+        Public.flying_text(nil, surface, position, msg, {r = 0.77, g = 0.0, b = 0.0})
     end
     if player_sound then
         player_sound.play_sound({path = 'utility/cannot_build', position = player_sound.position, volume_modifier = 0.75})

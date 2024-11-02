@@ -57,12 +57,8 @@ local function process_building_limit(actor, event)
         town_center.laser_turrets = turret_count + 1
 
         if laser_count_is_limited then
-            surface.create_entity({
-                name = 'flying-text',
-                position = entity.position,
-                text = 'Using ' .. town_center.laser_turrets .. '/' .. starter_laser_slots .. ' laser slots',
-                color = {r = 1.0, g = 1.0, b = 1.0}
-            })
+            Utils.flying_text(nil, surface, entity.position, 
+                'Using ' .. town_center.laser_turrets .. '/' .. starter_laser_slots .. ' laser slots', {r = 1.0, g = 1.0, b = 1.0})
         end
     elseif entity.name == 'lab' then
         table.insert(storage.tracked_labs, entity)
@@ -72,14 +68,7 @@ local function process_building_limit(actor, event)
                                                                        {entity.position.x + 4, entity.position.y + 4}},
                                                                name = 'beacon'})
         if #nearby_beacons > 0 then
-            surface.create_entity(
-                    {
-                        name = 'flying-text',
-                        position = entity.position,
-                        text = "Beacons can't affect labs!",
-                        color = {r = 0.77, g = 0.0, b = 0.0}
-                    }
-            )
+            Utils.flying_text(nil, surface, entity.position, "Beacons can't affect labs!", {r = 0.77, g = 0.0, b = 0.0})
             actor.insert({name = 'lab', count = 1})
             entity.destroy()
             return
@@ -88,14 +77,7 @@ local function process_building_limit(actor, event)
         local slots_max = 10
         local labs = town_center.labs or 0
         if labs >= slots_max then
-            surface.create_entity(
-                    {
-                        name = 'flying-text',
-                        position = entity.position,
-                        text = "You can't have more than 8 labs!",
-                        color = {r = 0.77, g = 0.0, b = 0.0}
-                    }
-            )
+            Utils.flying_text(nil, surface, entity.position, "You can't have more than 8 labs!", {r = 0.77, g = 0.0, b = 0.0})
             actor.insert({name = 'lab', count = 1})
             entity.destroy()
             return
@@ -104,26 +86,15 @@ local function process_building_limit(actor, event)
         local event_key = script.register_on_object_destroyed(entity)
         this.labs_destroy_events[event_key] = force.index
 
-        surface.create_entity({
-            name = 'flying-text',
-            position = entity.position,
-            text = 'Using ' .. town_center.labs .. '/' .. slots_max .. ' lab slots',
-            color = {r = 1.0, g = 1.0, b = 1.0}
-        })
+        Utils.flying_text(nil, surface, entity.position,
+            'Using ' .. town_center.labs .. '/' .. slots_max .. ' lab slots', {r = 1.0, g = 1.0, b = 1.0})
     elseif entity.name == 'beacon' then
         -- Prevent researching extremely fast from stockpiled science
         local nearby_entities = surface.find_entities_filtered({area = {{entity.position.x - 4, entity.position.y - 4},
                                                                         {entity.position.x + 4, entity.position.y + 4}},
                                                                 name = 'lab'})
         if #nearby_entities > 0 then
-            surface.create_entity(
-                    {
-                        name = 'flying-text',
-                        position = entity.position,
-                        text = "Beacons can't affect labs!",
-                        color = {r = 0.77, g = 0.0, b = 0.0}
-                    }
-            )
+            Utils.flying_text(nil, surface, position, "Beacons can't affect labs!", {r = 0.77, g = 0.0, b = 0.0})
             actor.insert({name = 'beacon', count = 1})
             entity.destroy()
         end
@@ -148,14 +119,7 @@ local function labs_cant_have_speed_modules()
                     if inventory[ii].valid_for_read then
                         if string.find(inventory[ii].name,"speed") then
                             inventory[ii].count = 0
-                            lab.surface.create_entity(
-                                {
-                                    name = 'flying-text',
-                                    position = lab.position,
-                                    text = "Labs can't have speed modules!",
-                                    color = {r = 0.77, g = 0.0, b = 0.0}
-                                }
-                            )
+                            Utils.flying_text(nil, lab.surface, lab.position, "Labs can't have speed modules!", {r = 0.77, g = 0.0, b = 0.0})
                         end
                     end
                 end

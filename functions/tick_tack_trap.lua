@@ -3,6 +3,7 @@
 
 local Event = require 'utils.event'
 local Global = require 'utils.global'
+local Utils = require 'maps.wasteland.utils'
 
 local traps = {}
 
@@ -37,14 +38,7 @@ local function create_flying_text(surface, position, text)
     if not surface.valid then
         return
     end
-    surface.create_entity(
-        {
-            name = 'flying-text',
-            position = position,
-            text = text,
-            color = {r = 0.75, g = 0.75, b = 0.75}
-        }
-    )
+    Utils.flying_text(nil, surface, position, text, {r = 0.75, g = 0.75, b = 0.75})
     if text == '...' then
         return
     end
@@ -58,14 +52,7 @@ local function create_kaboom(surface, position, name)
     local target = position
     local speed = 0.5
     if name == 'defender-capsule' or name == 'destroyer-capsule' or name == 'distractor-capsule' then
-        surface.create_entity(
-            {
-                name = 'flying-text',
-                position = position,
-                text = '(((Sentries Engaging Target)))',
-                color = {r = 0.8, g = 0.0, b = 0.0}
-            }
-        )
+        Utils.flying_text(nil, surface, position, '(((Sentries Engaging Target)))', {r = 0.8, g = 0.0, b = 0.0})
         local nearest_player_unit = surface.find_nearest_enemy({position = position, max_distance = 128, force = 'enemy'})
         if nearest_player_unit then
             target = nearest_player_unit.position

@@ -395,12 +395,8 @@ local function found_town(event)
 
     if Evolution.get_evolution(position, true) >= 0.2 then
         if this.town_evo_warned[player.index] == nil or this.town_evo_warned[player.index] < game.tick - 60 * 10 then
-            surface.create_entity({
-                name = 'flying-text',
-                position = position,
-                text = 'Evolution is high on this position. Are you sure?',
-                color = {r = 0.77, g = 0.0, b = 0.0}
-            })
+            Utils.flying_text(nil, surface, position,
+                'Evolution is high on this position. Are you sure?', {r = 0.77, g = 0.0, b = 0.0})
             player.print("Hint: Towns nearby increase evolution. Check the evolution number at the top of the screen.", Utils.scenario_color)
 
             this.town_evo_warned[player.index] = game.tick

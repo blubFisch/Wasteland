@@ -2,6 +2,7 @@
 local table_insert = table.insert
 
 local Scrap = require 'maps.wasteland.scrap'
+local Utils = require 'maps.wasteland.utils'
 
 -- loot chances and amounts for scrap entities
 
@@ -166,14 +167,8 @@ local function on_player_mined_entity(event)
         entity.surface.spill_item_stack(__spill_item_stack_param)
     end
 
-    entity.surface.create_entity(
-        {
-            name = 'flying-text',
-            position = position,
-            text = '+' .. amount .. ' [img=item/' .. scrap .. ']',
-            color = {r = 0.98, g = 0.66, b = 0.22}
-        }
-    )
+    Utils.flying_text(nil, entity.surface, position,
+        '+' .. amount .. ' [img=item/' .. scrap .. ']', {r = 0.98, g = 0.66, b = 0.22})
 end
 
 local Event = require 'utils.event'

@@ -1,5 +1,4 @@
 local Event = require 'utils.event'
-local Jailed = require 'utils.datastore.jail_data'
 local Gui = require 'utils.gui'
 local SpamProtection = require 'utils.spam_protection'
 local Token = require 'utils.token'
@@ -13,20 +12,6 @@ local function admin_only_message(str)
             player.print('Admins-only-message: ' .. str, {r = 0.88, g = 0.88, b = 0.88})
         end
     end
-end
-
-local function jail(player, source_player)
-    if player.name == source_player.name then
-        return player.print("You can't select yourself!", {r = 1, g = 0.5, b = 0.1})
-    end
-    Jailed.try_ul_data(player.name, true, source_player.name, 'Jailed by script!')
-end
-
-local function free(player, source_player)
-    if player.name == source_player.name then
-        return player.print("You can't select yourself!", {r = 1, g = 0.5, b = 0.1})
-    end
-    Jailed.try_ul_data(player.name, false, source_player.name)
 end
 
 local bring_player_messages = {
