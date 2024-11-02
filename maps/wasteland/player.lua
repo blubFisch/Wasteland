@@ -14,8 +14,8 @@ local GameMode = require 'maps.wasteland.game_mode'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local Utils = require 'maps.wasteland.utils'
 
-local map_pos_frame_id = 'towny_map_position'
-local evo_frame_id = 'towny_evo_display'
+local map_pos_frame_id = 'wasteland_map_position'
+local evo_frame_id = 'wasteland_evo_display'
 
 local spawn_kill_time = 60 * 30
 
@@ -169,7 +169,7 @@ local function on_player_joined_game(event)
     Team.set_player_color(player)
     if player.online_time == 0 then
         Info.toggle_button(player)
-        Info.show(player)
+        Info.show_intro(player)
         ScoreBoard.add_score_button(player)
         Tutorial.register_for_tutorial(player)
         ResearchBalance.add_balance_ui(player)

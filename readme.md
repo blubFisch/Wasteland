@@ -10,4 +10,5 @@ Check on our [Discord](http://wasteland-discord.fun/)
 
 # Credits
 
-Thanks COMFY team for the original idea and implementation
+- Thanks COMFY team for the original idea and implementation
+- Thanks ZwerOxotnik for so many improvements and additions to Wasteland

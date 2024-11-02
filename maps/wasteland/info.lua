@@ -110,11 +110,11 @@ function Public.add_last_winner_button(player)
     Public.update_last_winner_name(player)
 end
 
-function Public.show(player, info_type)
-    if player.gui.center['towny_map_intro_frame'] then
-        player.gui.center['towny_map_intro_frame'].destroy()
+function Public.show_intro(player, info_type)
+    if player.gui.center['wasteland_map_intro_frame'] then
+        player.gui.center['wasteland_map_intro_frame'].destroy()
     end
-    local frame = player.gui.center.add {type = 'frame', name = 'towny_map_intro_frame'}
+    local frame = player.gui.center.add {type = 'frame', name = 'wasteland_map_intro_frame'}
     frame = frame.add {type = 'frame', direction = 'vertical'}
 
     local cap = info
@@ -125,6 +125,24 @@ function Public.show(player, info_type)
     l2.style.single_line = false
     l2.style.font = 'heading-2'
     l2.style.font_color = {r = 0.8, g = 0.7, b = 0.99}
+
+
+    local beta_warning = player.gui.screen.add({type = 'label', name = 'beta_warning'})
+    beta_warning.style.font = 'heading-1'
+    beta_warning.style.minimal_width = 85
+    beta_warning.style.minimal_height = 30
+    beta_warning.style.maximal_height = 30
+    beta_warning.style.padding = 1
+    beta_warning.style.margin = 0
+    beta_warning.style.font_color = {r=255, g=0, b=0}
+    beta_warning.tooltip = "Go to wasteland-discord.fun"
+    beta_warning.caption = "Factorio 2.0 Beta Testing - Report all bugs to Wasteland discord"
+    local resolution = player.display_resolution
+    local scale = player.display_scale
+    beta_warning.location = {
+        x = 700 * scale,
+        y = 100 * scale
+    }
 end
 
 function Public.close(event)
@@ -139,7 +157,7 @@ function Public.close(event)
         if not parent then
             return
         end
-        if parent.name == 'towny_map_intro_frame' then
+        if parent.name == 'wasteland_map_intro_frame' then
             parent.destroy()
             return
         end
@@ -156,8 +174,8 @@ function Public.toggle(event)
     end
     if event.element.name == 'wl_map_intro_button' then
         local player = game.players[event.player_index]
-        if player.gui.center['towny_map_intro_frame'] then
-            player.gui.center['towny_map_intro_frame'].destroy()
+        if player.gui.center['wasteland_map_intro_frame'] then
+            player.gui.center['wasteland_map_intro_frame'].destroy()
         else
             Public.show(player, 'adv')
         end
