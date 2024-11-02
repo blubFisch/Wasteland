@@ -7,6 +7,7 @@ local PvPShield = require 'maps.wasteland.pvp_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local MapLayout = require 'maps.wasteland.map_layout'
 local Utils = require 'maps.wasteland.utils'
+local BottomFrame = require 'utils.gui.bottom_frame'
 
 local town_zoning_entity_types = {"ammo-turret", "electric-turret", "fluid-turret"}
 local default_protected_radius = 30
@@ -296,8 +297,8 @@ local function process_built_entities(event)
     end
 
     -- Feature to build neutral = all players can access + robots will ignore
-    local players_prefs = ScenarioTable.get().players[player_index]
-    if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
+    local player_data = BottomFrame.get_player_data(player)
+    if entity.force ~= game.forces['neutral'] and player_data and player_data.neutral_building
         and not allowed_entities_keep_force[name] then
         if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then
             entity.force = game.forces['neutral']
