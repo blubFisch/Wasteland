@@ -338,14 +338,14 @@ local function found_town(event)
         return
     end
 
-    if entity.name ~= 'linked-chest' then
+    if entity.name ~= 'infinity-pipe' then
         return
     end
 
     if event.robot then
         entity.destroy()
         local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
-        inventory.insert({name = 'linked-chest', count = 1})
+        inventory.insert({name = 'infinity-pipe', count = 1})
         return
     end
 
@@ -371,7 +371,7 @@ local function found_town(event)
 
     -- is player mayor of town that still exists?
     if TeamBasics.is_town_force(player.force) then
-        player.insert({name = 'linked-chest', count = 1})
+        player.insert({name = 'infinity-pipe', count = 1})
         return
     end
 
@@ -380,7 +380,7 @@ local function found_town(event)
         if game.tick < this.cooldowns_town_placement[player.index] then
             Utils.build_error_notification(player, surface, position, 'Town founding is on cooldown for '
                     .. math.ceil((this.cooldowns_town_placement[player.index] - game.tick) / 3600) .. ' minutes.', player)
-            player.insert({name = 'linked-chest', count = 1})
+            player.insert({name = 'infinity-pipe', count = 1})
             return
         end
     end
@@ -388,7 +388,7 @@ local function found_town(event)
     -- is it a valid location to place a town?
     local is_valid, reason = is_valid_location(player.force.name, surface, position)
     if not is_valid then
-        player.insert({name = 'linked-chest', count = 1})
+        player.insert({name = 'infinity-pipe', count = 1})
         Utils.build_error_notification(player, surface, position, reason .. " Type /good-spot in chat to get a nearby good location", player)
         return
     end
@@ -401,7 +401,7 @@ local function found_town(event)
 
             this.town_evo_warned[player.index] = game.tick
 
-            player.insert({name = 'linked-chest', count = 1})
+            player.insert({name = 'infinity-pipe', count = 1})
             return
         end
     end

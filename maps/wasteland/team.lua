@@ -171,7 +171,7 @@ function Public.set_player_starter_inventory(player)
     player.clear_items_inside()
     player.insert({name = 'raw-fish', count = 3})
     if not TeamBasics.is_town_force(player.force) then
-        player.insert {name = 'linked-chest', count = '1'}
+        player.insert {name = 'infinity-pipe', count = '1'}
     end
 end
 

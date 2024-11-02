@@ -19,7 +19,7 @@ local function tutorials_tick()
 
             if tut.show_after_tick and game.tick > tut.show_after_tick then
                 this.tutorials[player.name].step = 1
-                player.set_goal_description("Found a town by building your white chest\nor keep roaming as a lawless outlander"
+                player.set_goal_description("Found a town by building the pipe in your inventory\nor keep roaming as a lawless outlander"
                     .. "\n\nOr use /skip-tutorial as chat command")
                 tut.show_after_tick = nil
             end

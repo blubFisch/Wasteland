@@ -236,7 +236,7 @@ local function process_built_entities(event)
     if entity == nil or not entity.valid then
         return
     end
-    if entity.name == 'linked-chest' then
+    if entity.name == 'infinity-pipe' then
         return  -- let town_center logic handle it
     end
 
