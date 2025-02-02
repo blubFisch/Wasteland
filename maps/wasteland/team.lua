@@ -587,6 +587,13 @@ local function set_default_tech(force)
     end
     force.technologies['gun-turret'].researched = true
     force.technologies['stone-wall'].researched = true
+    force.technologies['electronics'].researched = true
+    force.technologies['steam-power'].researched = true
+    force.technologies['radar'].researched = true
+    force.technologies['electric-mining-drill'].researched = true
+    force.technologies['oil-processing'].researched = true
+    force.technologies['uranium-processing'].researched = true
+    force.technologies['automation-science-pack'].researched = true
 end
 
 local function setup_outlander_permissions()
