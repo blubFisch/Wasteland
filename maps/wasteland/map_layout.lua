@@ -406,6 +406,7 @@ local function on_chunk_generated(event)
                 position = {x = left_top_x + x, y = left_top_y + y}
                 local distance_to_uranium_patch_center = math_sqrt((position.x - uranium_patch_location.x)^2 + (position.y - uranium_patch_location.y)^2)
                 if distance_to_uranium_patch_center <= uranium_patch_radius then
+                    noise = get_noise('wasteland', position, seed)
                     surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
                     surface.create_entity({name = 'uranium-ore', position = position, amount = uranium_amount})
                 end
@@ -426,7 +427,6 @@ local function on_chunk_generated(event)
                 position = { x = left_top_x + x + offset_x, y = left_top_y + y + offset_y}
                 local distance_to_center = math_abs(math_sqrt(x^2 + y^2))
                 if distance_to_center < max_radius then
-                    noise = get_noise('wasteland', position, seed)
                     local ore_type = ores[math_random(1, 4)]
                     if surface.can_place_entity({name = ore_type, position = position}) then
                         surface.create_entity({name = ore_type, position = position, amount = amount})
