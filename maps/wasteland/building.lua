@@ -310,10 +310,14 @@ local function process_built_entities(event)
 
     -- Prevent power poles of different forces from connecting to each other
     if entity.type == 'electric-pole' then
-        for _, other_pole in pairs(entity.neighbours["copper"]) do
-            if other_pole.force ~= force then
-                entity.disconnect_neighbour(other_pole)
-                Utils.build_error_notification(player or force, surface, position, "Can't connect to other town", player)
+        local connector = entity.get_wire_connector(defines.wire_type.copper)
+        if connector then
+            for _, connection in pairs(connector.connections) do
+                local other_pole = connection.target.owner
+                if other_pole and other_pole.valid and other_pole.force ~= force then
+                    connector.disconnect_wire(other_pole)
+                    Utils.build_error_notification(player or force, surface, position, "Can't connect to other town", player)
+                end
             end
         end
     end
