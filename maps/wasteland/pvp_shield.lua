@@ -70,8 +70,8 @@ local function control_buildings_inside(surface, box, active)
                 visualise_entity_deactivated(e)
             else
                 local entity_label = this.entity_labels[e.unit_number]
-                if entity_label and rendering.is_valid(entity_label) then
-                    rendering.destroy(entity_label)
+                if entity_label then
+                    entity_label.destroy()
                     this.entity_labels[e.unit_number] = nil
                 end
             end
