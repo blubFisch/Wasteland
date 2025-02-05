@@ -186,11 +186,11 @@ local function draw_town_spawn(player_name)
     -- create walls and gates
     for _, vector in pairs(gate_vectors_horizontal) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        surface.create_entity({name = 'gate', position = p, force = player_name, direction = 2})
+        surface.create_entity({name = 'gate', position = p, direction = defines.direction.east, force = player_name})
     end
     for _, vector in pairs(gate_vectors_vertical) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        surface.create_entity({name = 'gate', position = p, force = player_name, direction = 0})
+        surface.create_entity({name = 'gate', position = p, direction = defines.direction.north, force = player_name})
     end
     for _, vector in pairs(town_wall_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
