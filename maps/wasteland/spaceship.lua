@@ -121,18 +121,18 @@ local function set_offers(market, player)
     local special_offers = {}
     if not TeamBasics.is_town_force(player.force) then
         if player.character.character_inventory_slots_bonus + 5 <= 50 then
-            special_offers[1] = {{{'coin', (player.character.character_inventory_slots_bonus / 5 + 1) * 50}}, 'Upgrade Backpack +5 Slot'}
+            special_offers[1] = {{{name = 'coin', count = (player.character.character_inventory_slots_bonus / 5 + 1) * 50}}, 'Upgrade Backpack +5 Slot'}
         else
             special_offers[1] = {{}, 'Maximum Backpack upgrades reached!'}
         end
         if player.character.character_mining_speed_modifier + 0.1 <= 0.6 then
-            special_offers[2] = {{{'coin', (player.character.character_mining_speed_modifier * 10 + 1) * 100}}, 'Upgrade Mining Speed +10%'}
+            special_offers[2] = {{{name = 'coin', count = (player.character.character_mining_speed_modifier * 10 + 1) * 100}}, 'Upgrade Mining Speed +10%'}
         else
             special_offers[2] = {{}, 'Maximum Mining Speed upgrades reached!'}
         end
 
         if player.character.character_crafting_speed_modifier + 0.1 <= 1 then
-            special_offers[3] = {{{'coin', (player.character.character_crafting_speed_modifier * 10 + 1) * 100}}, 'Upgrade Crafting Speed +10%'}
+            special_offers[3] = {{{name = 'coin', count = (player.character.character_crafting_speed_modifier * 10 + 1) * 100}}, 'Upgrade Crafting Speed +10%'}
         else
             special_offers[3] = {{}, 'Maximum Crafting Speed upgrades reached!'}
         end
@@ -143,39 +143,39 @@ local function set_offers(market, player)
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})
     end
 
-    table_insert(market_items, {price = {{'coin', 25}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
-    table_insert(market_items, {price = {{'coin', 10}}, offer = {type = 'give-item', item = 'grenade', count = 5}})
-    table_insert(market_items, {price = {{'coin', 40}}, offer = {type = 'give-item', item = 'piercing-rounds-magazine', count = 5}})
-    table_insert(market_items, {price = {{'coin', 100}}, offer = {type = 'give-item', item = 'heavy-armor', count = 1}})
-    table_insert(market_items, {price = {{'coin', 500}}, offer = {type = 'give-item', item = 'modular-armor', count = 1}})
-    table_insert(market_items, {price = {{'coin', 50}}, offer = {type = 'give-item', item = 'solar-panel-equipment', count = 1}})
-    table_insert(market_items, {price = {{'coin', 100}}, offer = {type = 'give-item', item = 'battery-equipment', count = 1}})
-    table_insert(market_items, {price = {{'coin', 400}}, offer = {type = 'give-item', item = 'personal-roboport-equipment', count = 1}})
-    table_insert(market_items, {price = {{'coin', 10}}, offer = {type = 'give-item', item = 'night-vision-equipment', count = 1}})
-    table_insert(market_items, {price = {{'coin', 50}}, offer = {type = 'give-item', item = 'construction-robot', count = 1}})
-    table_insert(market_items, {price = {{'coin', 800}}, offer = {type = 'give-item', item = 'car', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 25}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 40}}, offer = {type = 'give-item', item = 'piercing-rounds-magazine', count = 5}})
+    table_insert(market_items, {price = {{name = 'coin', count = 10}}, offer = {type = 'give-item', item = 'grenade', count = 5}})
+    table_insert(market_items, {price = {{name = 'coin', count = 100}}, offer = {type = 'give-item', item = 'heavy-armor', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 500}}, offer = {type = 'give-item', item = 'modular-armor', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 50}}, offer = {type = 'give-item', item = 'solar-panel-equipment', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 100}}, offer = {type = 'give-item', item = 'battery-equipment', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 400}}, offer = {type = 'give-item', item = 'personal-roboport-equipment', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 10}}, offer = {type = 'give-item', item = 'night-vision-equipment', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 50}}, offer = {type = 'give-item', item = 'construction-robot', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 800}}, offer = {type = 'give-item', item = 'car', count = 1}})
 
-    table_insert(market_items, {price = {{'raw-fish', 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
-    table_insert(market_items, {price = {{'wood', 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
-    table_insert(market_items, {price = {{'copper-cable', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'copper-plate', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-stick', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-gear-wheel', 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-plate', 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'steel-plate', 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
-    table_insert(market_items, {price = {{'crude-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'heavy-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'light-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'lubricant-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'petroleum-gas-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'sulfuric-acid-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'water-barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
-    table_insert(market_items, {price = {{'electronic-circuit', 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'plastic-bar', 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'battery', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'pipe', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'pipe-to-ground', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'raw-fish', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
+    table_insert(market_items, {price = {{name = 'wood', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
+    table_insert(market_items, {price = {{name = 'copper-cable', count = 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'copper-plate', count = 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'iron-stick', count = 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'iron-gear-wheel', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'iron-plate', count = 7}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'steel-plate', count = 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'barrel', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
+    table_insert(market_items, {price = {{name = 'crude-oil-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'heavy-oil-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'light-oil-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'lubricant-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'petroleum-gas-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'sulfuric-acid-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'water-barrel', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
+    table_insert(market_items, {price = {{name = 'electronic-circuit', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'plastic-bar', count = 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'battery', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'pipe', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'pipe-to-ground', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     for _, item in pairs(market_items) do
         market.add_market_item(item)
