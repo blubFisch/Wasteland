@@ -227,70 +227,127 @@ local function on_player_changed_position(event)
 end
 
 function Public.entity_is_protected(entity, cause_force)
-    if not (cause_force and cause_force.valid) then
-        return true
-    end
+    -- if not (cause_force and cause_force.valid) then
+    --     return true
+    -- end
+
+    local entity_surface = entity.surface
+    local pos = entity.position
+    local x = pos.x
+    local y = pos.y
 
     local this = ScenarioTable.get_table()
-    for _, shield in pairs(this.pvp_shields) do
-        if entity.surface == shield.surface and CommonFunctions.point_in_bounding_box(entity.position, shield.box) then
-            if (entity.force == shield.force or entity.force.name == "neutral") and cause_force.name ~= "enemy" then
-                if not is_allowed_in_shield(shield, cause_force) then
-                    return true
+    if cause_force.index == 3 then -- is neutral
+        for _, shield in pairs(this.pvp_shields) do
+
+            if entity_surface == shield.surface then
+                local box = shield.box
+                local left_top = box.left_top
+                local right_bottom = box.right_bottom
+                if left_top.x <= x and right_bottom.x >= x and left_top.y <= y and right_bottom.y >= y then
+                    local shield_force = shield.force
+                    if not (shield_force == cause_force or shield_force.get_friend(cause_force) or shield_force.get_cease_fire(cause_force)) then
+                        return true
+                    end
+                end
+            end
+        end
+    else
+        local enttiy_force = entity.force
+        for _, shield in pairs(this.pvp_shields) do
+            if entity_surface == shield.surface then
+                local box = shield.box
+                local left_top = box.left_top
+                local right_bottom = box.right_bottom
+                if left_top.x <= x and right_bottom.x >= x and left_top.y <= y and right_bottom.y >= y then
+                    local shield_force = shield.force
+                    if enttiy_force == shield_force
+                        and not (shield_force == cause_force or shield_force.get_friend(cause_force) or shield_force.get_cease_fire(cause_force))
+                    then
+                        return true
+                    end
                 end
             end
         end
     end
+
     return false
 end
 
-function Public.protect_if_needed(event)
-    local entity = event.entity
-    if not entity.valid then
-        return false
-    end
-
-    if Public.entity_is_protected(entity, event.force) then
-        -- Undo all damage
-        entity.health = entity.health + event.final_damage_amount
-        return true
-    else
-        return false
-    end
-end
-
-local shield_disallowed_vehicles = {'tank', 'car'}
+local _unit_filter = {type = "unit", area = nil, force = "enemy"}
 local function scan_protect_shield_area()
     -- Handle edge case damage situations
 
     local this = ScenarioTable.get_table()
+    local all_pvp_vehicles = this.all_pvp_vehicles or {}
     local limit_idx = 0
-    local update_limit = 10
+    local vehicle_update_limit = 10
+    local unit_update_limit = 60
     for _, shield in pairs(this.pvp_shields) do
-        if game.tick % update_limit == limit_idx % update_limit then  -- Keep runtime low
+        if game.tick % vehicle_update_limit == limit_idx % vehicle_update_limit then  -- Keep runtime low
 
             -- Protect against rolling tanks where player hops out before impact - this cannot be handled with damage event
             local tank_box = enlarge_bounding_box(shield.box, 3)
-            for _, e in pairs(shield.surface.find_entities_filtered({name = shield_disallowed_vehicles, area = tank_box })) do
-                if not is_allowed_in_shield(shield, e.force) then
-                    e.speed = 0
+            local tank_box_left_top_x = tank_box.left_top.x
+            local tank_box_left_top_y = tank_box.left_top.y
+            local tank_box_right_bottom_x = tank_box.right_bottom.x
+            local tank_box_right_bottom_y = tank_box.right_bottom.y
+            local i = 0
+            while true do
+                i = i + 1
+                local e = all_pvp_vehicles[i] -- LuaEntity
+                if e then
+                    if e.valid then
+                        local p = e.position
+                        local e_force = e.force
+                        if (p.x > tank_box_left_top_x and p.y > tank_box_left_top_y
+                            and p.x < tank_box_right_bottom_x and p.y < tank_box_right_bottom_y)
+                            and not (shield.force == e_force or shield.force.get_friend(e_force) or shield.force.get_cease_fire(e_force))
+                        then
+                            e.speed = 0
+                        end
+                    else
+                        table.remove(all_pvp_vehicles, i)
+                        i = i - 1
+                    end
+                else
+                    break
                 end
             end
+        end
 
+        if game.tick % unit_update_limit == limit_idx % unit_update_limit then
             -- Remove nearby biters
-            local biters_box = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
-            for _, e in pairs(shield.surface.find_entities_filtered({ type = "unit", area = biters_box, force = "enemy"})) do
+            _unit_filter.area = enlarge_bounding_box(shield.box, 17) -- catch spitters in their range
+            for _, e in pairs(shield.surface.find_entities_filtered(_unit_filter)) do
                 e.die()
             end
         end
+
         limit_idx = limit_idx + 1
     end
 end
 
+local _ALL_PVP_VEHICLES_TYPES = {
+    car = true,
+    tank = true,
+}
 local function on_built_entity(event)
     local entity = event.entity
 
-    if not entity.valid or not table.array_contains(shield_inactive_types, entity.type) then
+    if not entity.valid then
+        return
+    end
+
+    if not table.array_contains(shield_inactive_types, entity.type) then
+        if _ALL_PVP_VEHICLES_TYPES[entity.type] then
+            -- Tracks all tanks, cars (I didn't find a variable for that)
+            -- (it could be imrpoved by separating forces)
+            local this = ScenarioTable.get_table()
+            local all_pvp_vehicles = this.all_pvp_vehicles or {}
+            all_pvp_vehicles[#all_pvp_vehicles+1] = entity
+            this.all_pvp_vehicles = all_pvp_vehicles
+        end
         return
     end
 

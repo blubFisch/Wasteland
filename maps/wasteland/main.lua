@@ -82,6 +82,7 @@ local function run_tick_actions(event)
     tick_actions[seconds]()
 end
 
+local is_entity_protected = PvPShield.entity_is_protected
 -- Central damage routing to avoid overlaps and races
 local function on_entity_damaged(event)
     local entity = event.entity
@@ -89,10 +90,14 @@ local function on_entity_damaged(event)
         return
     end
 
-    if not PvPShield.protect_if_needed(event) then
+    local force = event.force
+    if not (force and force.valid) or (force.index ~= 2 and is_entity_protected(entity, force)) then  -- enemy's force index is 2
         CombatBalance.on_entity_damaged(event)
         Team.on_entity_damaged(event)
         Pollution.on_entity_damaged(event)
+    else
+        -- Undo all damage
+        entity.health = entity.health + event.final_damage_amount
     end
 end
 
