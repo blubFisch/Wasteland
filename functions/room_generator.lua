@@ -50,7 +50,7 @@ end
 local function scan_area_empty(surface, search_area)
     local tiles = surface.find_tiles_filtered({area = search_area})
     for _, tile in pairs(tiles) do
-        if not tile.collides_with('resource-layer') then
+        if not tile.collides_with('resource') then
             return false
         end
     end
@@ -61,7 +61,7 @@ local function scan_strip_empty(surface, position, vector, length)
     for d = 0, length, 1 do
         local p = {position.x + vector[1] * d, position.y + vector[2] * d}
         local tile = surface.get_tile(p)
-        if not tile.collides_with('resource-layer') then
+        if not tile.collides_with('resource') then
             return false
         end
     end
@@ -243,7 +243,7 @@ local function expand_path_tiles_width(surface, room)
     local expansion_vectors = {}
     for _, v in pairs(vectors) do
         local tile = surface.get_tile({position.x + v[1], position.y + v[2]})
-        if not tile.collides_with('resource-layer') then
+        if not tile.collides_with('resource') then
             entrance_tile = tile
             exit_tile = surface.get_tile({path_tiles[#path_tiles].position.x + v[1] * -1, path_tiles[#path_tiles].position.y + v[2] * -1})
             if v[1] == 0 then
@@ -261,7 +261,7 @@ local function expand_path_tiles_width(surface, room)
     local ent_tile_pos = entrance_tile.position
     for k, v in pairs(expansion_vectors) do
         local tile = surface.get_tile({ent_tile_pos.x + v[1], ent_tile_pos.y + v[2]})
-        if tile.collides_with('resource-layer') then
+        if tile.collides_with('resource') then
             table_remove(expansion_vectors, k)
         end
     end
@@ -269,11 +269,11 @@ local function expand_path_tiles_width(surface, room)
         return
     end
 
-    if not exit_tile.collides_with('resource-layer') then
+    if not exit_tile.collides_with('resource') then
         local exit_tile_pos = exit_tile.position
         for k, v in pairs(expansion_vectors) do
             local tile = surface.get_tile({exit_tile_pos.x + v[1], exit_tile_pos.y + v[2]})
-            if tile.collides_with('resource-layer') then
+            if tile.collides_with('resource') then
                 table_remove(expansion_vectors, k)
             end
         end
@@ -292,7 +292,7 @@ local function expand_path_tiles_width(surface, room)
         end
         for _, path_tile in pairs(path_tiles) do
             local tile = surface.get_tile({path_tile.position.x + v[1], path_tile.position.y + v[2]})
-            if tile.collides_with('resource-layer') then
+            if tile.collides_with('resource') then
                 table_insert(tiles, tile)
             end
         end
@@ -316,7 +316,7 @@ local function is_bridge_valid(surface, vector, room)
         for d = -5, 5, 1 do
             local p = {tile.position.x + scan_vector[1] * d, tile.position.y + scan_vector[2] * d}
             tile = surface.get_tile(p)
-            if not tile.collides_with('resource-layer') then
+            if not tile.collides_with('resource') then
                 return
             end
         end
@@ -344,7 +344,7 @@ local function build_bridge(surface, position)
         for d = 1, a, 1 do
             local p = {position.x + v[1] * d, position.y + v[2] * d}
             local tile = surface.get_tile(p)
-            if not tile.collides_with('resource-layer') then
+            if not tile.collides_with('resource') then
                 break
             end
             table_insert(room.path_tiles, tile)
@@ -399,7 +399,7 @@ function Public.draw_random_room(surface, position, shape)
     for _, tile in pairs(room.room_border_tiles) do
         surface.set_tiles({{name = 'dirt-7', position = tile.position}}, true)
         if math_random(1, 2) == 1 then
-            surface.create_entity({name = 'rock-big', position = tile.position})
+            surface.create_entity({name = 'big-rock', position = tile.position})
         end
     end
 

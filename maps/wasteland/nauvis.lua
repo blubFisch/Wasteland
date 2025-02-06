@@ -44,9 +44,9 @@ function Public.initialize()
     mgs.autoplace_settings = {
         entity = {
             settings = {
-                ['rock-huge'] = {frequency = 2, size = 1, richness = 1},
-                ['rock-big'] = {frequency = 2, size = 1, richness = 1},
-                ['sand-rock-big'] = {frequency = 2, size = 1, richness = 1}
+                ['huge-rock'] = {frequency = 2, size = 1, richness = 1},
+                ['big-rock'] = {frequency = 2, size = 1, richness = 1},
+                ['big-sand-rock'] = {frequency = 2, size = 1, richness = 1}
             }
         },
         decorative = {
@@ -141,7 +141,7 @@ function Public.initialize()
     surface.always_day = false
     surface.freeze_daytime = false
     surface.clear(true)
-    surface.regenerate_entity({'rock-huge', 'rock-big', 'sand-rock-big'})
+    surface.regenerate_entity({'huge-rock', 'big-rock', 'big-sand-rock'})
     surface.regenerate_decorative()
 end
 

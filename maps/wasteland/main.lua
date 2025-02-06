@@ -53,7 +53,6 @@ local function on_init()
 
     game.enemy_has_vision_on_land_mines = false
     game.draw_resource_selection = true
-    game.disable_tutorial_triggers()
 
     MapDefaults.initialize()
     Limbo.initialize()

@@ -1,12 +1,12 @@
 local TeamBasics = require 'maps.wasteland.team_basics'
 local Event = require 'utils.event'
 
-global.tracked_vehicles = global.tracked_vehicles or {}
+storage.tracked_vehicles = storage.tracked_vehicles or {}
 
 local function on_entity_placed(event)
-    local entity = event.created_entity or event.entity
+    local entity = event.entity or event.entity
     if entity and entity.valid and entity.type == 'car' then
-        table.insert(global.tracked_vehicles, entity)
+        table.insert(storage.tracked_vehicles, entity)
     end
 end
 
@@ -32,8 +32,8 @@ end
 -- Prevent players from using tanks to block construction bots
 local function turrets_shoot_empty_vehicles()
     local surface = game.surfaces.nauvis
-    for i = #global.tracked_vehicles, 1, -1 do
-        local vehicle = global.tracked_vehicles[i]
+    for i = #storage.tracked_vehicles, 1, -1 do
+        local vehicle = storage.tracked_vehicles[i]
         if vehicle.valid then
             for _, turret in pairs(surface.find_entities_filtered({ type = 'electric-turret', position=vehicle.position, radius=24})) do
                 if turret.valid then
@@ -48,7 +48,7 @@ local function turrets_shoot_empty_vehicles()
                 end
             end
         else
-            table.remove(global.tracked_vehicles, i)
+            table.remove(storage.tracked_vehicles, i)
         end
     end
 end

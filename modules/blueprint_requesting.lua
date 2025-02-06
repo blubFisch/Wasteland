@@ -17,7 +17,7 @@ local function on_gui_closed(event)
     if this[player_index] and this[player_index].disabled then return end -- player disabled usage of this module in config tab for his actions
     local entity = event.entity
     if not entity or not entity.valid then return end
-    if entity.name == 'logistic-chest-requester' or entity.name == 'logistic-chest-buffer' then
+    if entity.name == 'requester-chest' or entity.name == 'buffer-chest' then
         if not this[player_index] or not this[player_index].notified then
             local player = game.get_player(player_index)
             player.print({'modules.blueprint_requesting_notify'}, {r= 0.88, g = 0.66, b = 0.02})

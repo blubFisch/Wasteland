@@ -15,13 +15,13 @@ function Public.set(var)
 end
 
 function Public.get_handler()
-    local handler = global.tick_handler
+    local handler = storage.tick_handler
 
     if not handler then
-        global.tick_handler = {
+        storage.tick_handler = {
             index = game.tick
         }
-        handler = global.tick_handler
+        handler = storage.tick_handler
     end
     return handler
 end
@@ -41,7 +41,7 @@ function Public.timer(tick, id, data)
         return
     end
 
-    local handler = global.tick_handler
+    local handler = storage.tick_handler
     if not handler then
         handler = Public.get_handler()
     end
@@ -70,7 +70,7 @@ end
 
 local function on_tick()
     local tick = game.tick
-    local handler = global.tick_handler
+    local handler = storage.tick_handler
 
     if not handler then
         handler = Public.get_handler()

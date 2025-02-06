@@ -86,7 +86,7 @@ function Profiler.Start(excludeCalledMs)
         return
     end
 
-    local create_profiler = game.create_profiler
+    local create_profiler = helpers.create_profiler
 
     Profiler.IsRunning = true
 

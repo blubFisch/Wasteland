@@ -98,7 +98,7 @@ local function research_finished(event)
 
     p_force.recipes["slowdown-capsule"].enabled = false -- Note: Disabled because the effect is too strong & can't modify it
 
-    for _, e in ipairs(r.effects) do
+    for _, e in ipairs(r.prototype.effects) do
         local t = e.type
 
         if t == 'ammo-damage' then
@@ -301,12 +301,12 @@ function Public.on_entity_damaged(event)
     if not event_cause or force_damage_modifier_excluded[event_cause.name] then
         force_modifier = 1
     else
-        local town_center = global.tokens.maps_wasteland_table.town_centers[cause_force.name]
+        local town_center = ScenarioTable.get().town_centers[cause_force.name]
         if town_center then
             force_modifier = town_center.combat_balance.current_modifier
 
             -- UX
-            local last_shown = global.tokens.maps_wasteland_table.last_damage_multiplier_shown[cause_force.index]
+            local last_shown = ScenarioTable.get().last_damage_multiplier_shown[cause_force.index]
             if (not last_shown or game.tick - last_shown > 60 * 60) and event_cause
                     and entity.force ~= game.forces.neutral and entity.force ~= game.forces.enemy then
                 entity.surface.create_entity({
@@ -315,7 +315,7 @@ function Public.on_entity_damaged(event)
                     text = 'Damage: '.. format_dmg_modifier(force_modifier),
                     color = {r =1, g = 1, b = 1}
                 })
-                global.tokens.maps_wasteland_table.last_damage_multiplier_shown[cause_force.index] = game.tick
+                ScenarioTable.get().last_damage_multiplier_shown[cause_force.index] = game.tick
             end
         else
             force_modifier = 1

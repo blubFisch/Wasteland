@@ -35,14 +35,12 @@ local allowed_entities_neutral = {
     ['express-loader'] = true,
     ['fast-inserter'] = true,
     ['fast-loader'] = true,
-    ['filter-inserter'] = true,
     ['inserter'] = true,
     ['iron-chest'] = true,
     ['loader'] = true,
     ['long-handed-inserter'] = true,
     ['raw-fish'] = true,
-    ['stack-filter-inserter'] = true,
-    ['stack-inserter'] = true,
+    ['bulk-inserter'] = true,
     ['steel-chest'] = true,
     ['wooden-chest'] = true,
     ['transport-belt'] = true,
@@ -182,7 +180,7 @@ end
 
 local function prevent_entity_in_restricted_zone(event)
     local player_index = event.player_index or nil
-    local entity = event.created_entity
+    local entity = event.entity
     if entity == nil or not entity.valid then
         return
     end
@@ -233,7 +231,7 @@ end
 
 local function process_built_entities(event)
     local player_index = event.player_index or nil
-    local entity = event.created_entity
+    local entity = event.entity
     if entity == nil or not entity.valid then
         return
     end
@@ -299,7 +297,7 @@ local function process_built_entities(event)
     end
 
     -- Feature to build neutral = all players can access + robots will ignore
-    local players_prefs = global.tokens.utils_gui_bottom_frame.players[player_index]
+    local players_prefs = ScenarioTable.get().players[player_index]
     if entity.force ~= game.forces['neutral'] and players_prefs and players_prefs.neutral_building
         and not allowed_entities_keep_force[name] then
         if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then
@@ -421,9 +419,9 @@ end
 
 local disabled_for_outlander_deconstruction = {
     ['fish'] = true,
-    ['rock-huge'] = true,
-    ['rock-big'] = true,
-    ['sand-rock-big'] = true,
+    ['huge-rock'] = true,
+    ['big-rock'] = true,
+    ['big-sand-rock'] = true,
     ['cliff'] = true
 }
 

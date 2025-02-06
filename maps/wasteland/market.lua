@@ -1,6 +1,8 @@
 local table_insert = table.insert
 local table_remove = table.remove
 
+
+local ScenarioTable = require 'maps.wasteland.table'
 local TownCenter = require 'maps.wasteland.town_center'
 local Spaceship = require 'maps.wasteland.spaceship'
 local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
@@ -76,7 +78,7 @@ local upgrade_functions = {
     end,
     -- Set Spawn Point
     [6] = function(town_center, player)
-        local this = global.tokens.maps_wasteland_table
+        local this = ScenarioTable.get()
         local market = town_center.market
         local force = market.force
         local surface = market.surface
@@ -109,27 +111,27 @@ local function set_offers(town_center)
     -- special offers
     local special_offers = {}
     if town_center.max_health < market_max_hp then
-        special_offers[1] = {{{'coin', town_center.max_health * 1}}, 'Upgrade Town Center Health'}
+        special_offers[1] = {{{name = 'coin', count = town_center.max_health * 1}}, 'Upgrade Town Center Health'}
     else
         special_offers[1] = {{}, 'Maximum Health upgrades reached!'}
     end
     if force.character_inventory_slots_bonus + 5 <= 50 then
-        special_offers[2] = {{{'coin', (force.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
+        special_offers[2] = {{{name = 'coin', count = (force.character_inventory_slots_bonus / 5 + 1) * 100}}, 'Upgrade Backpack +5 Slot'}
     else
         special_offers[2] = {{}, 'Maximum Backpack upgrades reached!'}
     end
     if town_center.upgrades.mining_prod + 1 <= 7 then
-        special_offers[3] = {{{'coin', (town_center.upgrades.mining_prod + 1) ^ 2 * 400}}, 'Upgrade Mining Productivity +10% (Drills, Pumps, Scrap)'}
+        special_offers[3] = {{{name = 'coin', count = (town_center.upgrades.mining_prod + 1) ^ 2 * 400}}, 'Upgrade Mining Productivity +10% (Drills, Pumps, Scrap)'}
     else
         special_offers[3] = {{}, 'Maximum Productivity upgrades reached!'}
     end
     if town_center.upgrades.mining_speed + 1 <= 6 then
-        special_offers[4] = {{{'coin', (town_center.upgrades.mining_speed + 1) * 250}}, 'Upgrade Mining Speed +10%'}
+        special_offers[4] = {{{name = 'coin', count = (town_center.upgrades.mining_speed + 1) * 250}}, 'Upgrade Mining Speed +10%'}
     else
         special_offers[4] = {{}, 'Maximum Mining Speed upgrades reached!'}
     end
     if town_center.upgrades.crafting_speed + 1 <= 10 then
-        special_offers[5] = {{{'coin', (town_center.upgrades.crafting_speed + 1) * 400}}, 'Upgrade Crafting Speed +10%'}
+        special_offers[5] = {{{name = 'coin', count = (town_center.upgrades.crafting_speed + 1) * 400}}, 'Upgrade Crafting Speed +10%'}
     else
         special_offers[5] = {{}, 'Maximum Crafting Speed upgrades reached!'}
     end
@@ -141,42 +143,42 @@ local function set_offers(town_center)
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})
     end
 
-    table_insert(market_items, {price = {{'coin', 25}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
-    table_insert(market_items, {price = {{'raw-fish', 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
+    table_insert(market_items, {price = {{name = 'coin', count = 25}}, offer = {type = 'give-item', item = 'raw-fish', count = 1}})
+    table_insert(market_items, {price = {{name = 'raw-fish', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
 
-    table_insert(market_items, {price = {{'coin', 6}}, offer = {type = 'give-item', item = 'wood', count = 1}})
-    table_insert(market_items, {price = {{'wood', 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
+    table_insert(market_items, {price = {{name = 'coin', count = 6}}, offer = {type = 'give-item', item = 'wood', count = 1}})
+    table_insert(market_items, {price = {{name = 'wood', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'iron-ore', count = 4}})
-    table_insert(market_items, {price = {{'iron-ore', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'iron-ore', count = 4}})
+    table_insert(market_items, {price = {{name = 'iron-ore', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'copper-ore', count = 4}})
-    table_insert(market_items, {price = {{'copper-ore', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'copper-ore', count = 4}})
+    table_insert(market_items, {price = {{name = 'copper-ore', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'stone', count = 4}})
-    table_insert(market_items, {price = {{'stone', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'stone', count = 4}})
+    table_insert(market_items, {price = {{name = 'stone', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 1}}, offer = {type = 'give-item', item = 'coal', count = 4}})
-    table_insert(market_items, {price = {{'coal', 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 1}}, offer = {type = 'give-item', item = 'coal', count = 4}})
+    table_insert(market_items, {price = {{name = 'coal', count = 8}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 6}}, offer = {type = 'give-item', item = 'uranium-ore', count = 1}})
-    table_insert(market_items, {price = {{'uranium-ore', 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 6}}, offer = {type = 'give-item', item = 'uranium-ore', count = 1}})
+    table_insert(market_items, {price = {{name = 'uranium-ore', count = 2}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     -- composition of crude-oil-barrel = 1 barrel + 50 crude oil = 5 iron ore + 5 coal ore (liquefaction)
-    table_insert(market_items, {price = {{'coin', 4}}, offer = {type = 'give-item', item = 'crude-oil-barrel', count = 1}})
-    table_insert(market_items, {price = {{'crude-oil-barrel', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 4}}, offer = {type = 'give-item', item = 'crude-oil-barrel', count = 1}})
+    table_insert(market_items, {price = {{name = 'crude-oil-barrel', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
-    table_insert(market_items, {price = {{'coin', 200}}, offer = {type = 'give-item', item = 'laser-turret', count = 1}})
-    table_insert(market_items, {price = {{'coin', 300}}, offer = {type = 'give-item', item = 'loader', count = 1}})
-    table_insert(market_items, {price = {{'coin', 600}}, offer = {type = 'give-item', item = 'fast-loader', count = 1}})
-    table_insert(market_items, {price = {{'coin', 900}}, offer = {type = 'give-item', item = 'express-loader', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 200}}, offer = {type = 'give-item', item = 'laser-turret', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 300}}, offer = {type = 'give-item', item = 'loader', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 600}}, offer = {type = 'give-item', item = 'fast-loader', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 900}}, offer = {type = 'give-item', item = 'express-loader', count = 1}})
 
-    table_insert(market_items, {price = {{'copper-cable', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-gear-wheel', 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'iron-stick', 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
-    table_insert(market_items, {price = {{'empty-barrel', 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
+    table_insert(market_items, {price = {{name = 'copper-cable', count = 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'iron-gear-wheel', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'iron-stick', count = 12}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'barrel', count = 3}}, offer = {type = 'give-item', item = 'coin', count = 2}})
 
-    table_insert(market_items, {price = {{'linked-chest', 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
+    table_insert(market_items, {price = {{name = 'linked-chest', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 1}})
 
     for _, item in pairs(market_items) do
         market.add_market_item(item)
@@ -193,7 +195,7 @@ local function set_offers(town_center)
 end
 
 local function refresh_offers(event)
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local player = game.get_player(event.player_index)
     local market = event.entity or event.market
     if not market then
@@ -228,7 +230,7 @@ local function refresh_offers(event)
 end
 
 local function offer_purchased(event)
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local player = game.get_player(event.player_index)
     local market = event.market
     local offer_index = event.offer_index
@@ -303,8 +305,8 @@ local function max_stack_size(entity)
     end
 
     local entity_name = entity.name
-    if (entity_name == 'stack-inserter' or entity_name == 'stack-filter-inserter') then
-        local capacity = entity.force.stack_inserter_capacity_bonus
+    if (entity_name == 'fast-inserter' or entity_name == 'bulk-inserter') then
+        local capacity = entity.force.bulk_inserter_capacity_bonus
         return 1 + capacity
     else
         local bonus = entity.force.inserter_stack_size_bonus
@@ -588,8 +590,8 @@ local function handle_market_input(town_center, market, entity, offers)
 end
 
 local _allowed_market_output_inserters = {
-    ['filter-inserter'] = true,
-    ['stack-filter-inserter'] = true
+    ['fast-inserter'] = true,
+    ['bulk-inserter'] = true
 }
 local function handle_market_output(town_center, market, entity, offers)
     if entity.type == "loader" then
@@ -644,9 +646,9 @@ local _market_entities_targets = {
     'inserter',
     'long-handed-inserter',
     'fast-inserter',
-    'filter-inserter',
-    'stack-inserter',
-    'stack-filter-inserter',
+    'fast-inserter',
+    'fast-inserter',
+    'bulk-inserter',
     'loader',
     'fast-loader',
     'express-loader'
@@ -667,7 +669,7 @@ local long_market_filter = {
     name = _long_market_entities_targets, force = nil
 }
 local function on_tick(event)
-    local data = global.tokens.maps_wasteland_table
+    local data = ScenarioTable.get()
     if not data.town_centers then
         return
     end
@@ -684,7 +686,7 @@ local function on_tick(event)
             if is_update_balance_tick then
                 local coin_balance = town_center.coin_balance
                 if town_center.prev_coin_balance ~= coin_balance then
-                    rendering.set_text(town_center.coins_text, 'Coins: ' .. coin_balance)
+                    town_center.coins_text.text = 'Coins: ' .. coin_balance
                     town_center.prev_coin_balance = coin_balance
                 end
             end

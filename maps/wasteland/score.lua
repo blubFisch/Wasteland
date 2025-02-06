@@ -6,12 +6,12 @@ local Event = require 'utils.event'
 local Utils = require 'maps.wasteland.utils'
 
 local age_score_factors = { 10.0, 2.4, 1.2 }
-local age_score_factor = age_score_factors[global.game_mode]
+local age_score_factor = age_score_factors[storage.game_mode]
 local research_evo_score_factors = { 150, 65, 65 }
-local research_evo_score_factor = research_evo_score_factors[global.game_mode]
+local research_evo_score_factor = research_evo_score_factors[storage.game_mode]
 
 local l4_score_only_offline_settings = { false, true, true }
-local l4_score_only_offline = l4_score_only_offline_settings[global.game_mode]
+local l4_score_only_offline = l4_score_only_offline_settings[storage.game_mode]
 Public.l4_score_only_offline = l4_score_only_offline
 
 local score_to_win = 100
@@ -155,10 +155,10 @@ local function update_score()
 
             game.print(town_with_player_names .. " has won the game!", Utils.scenario_color)
 
-            global.last_winner_name = town_with_player_names
+            storage.last_winner_name = town_with_player_names
             log("WINNER_STORE=\"" .. town_with_player_names .. "\"")
-            if global.auto_reset_enabled then
-                global.game_end_sequence_start = game.tick + 600
+            if storage.auto_reset_enabled then
+                storage.game_end_sequence_start = game.tick + 600
             else
                 game.print("Automatic map restart is disabled, please wait for an admin to start a new game", Utils.scenario_color)
             end

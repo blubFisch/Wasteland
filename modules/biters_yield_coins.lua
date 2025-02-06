@@ -33,20 +33,20 @@ local function get_coin_count(entity)
     if not coin_count then
         return
     end
-    if not global.biter_health_boost_units then
+    if not storage.biter_health_boost_units then
         return coin_count
     end
     local unit_number = entity.unit_number
     if not unit_number then
         return coin_count
     end
-    if not global.biter_health_boost_units[unit_number] then
+    if not storage.biter_health_boost_units[unit_number] then
         return coin_count
     end
-    if not global.biter_health_boost_units[unit_number][3] then
+    if not storage.biter_health_boost_units[unit_number][3] then
         return coin_count
     end
-    local m = 1 / global.biter_health_boost_units[unit_number][2]
+    local m = 1 / storage.biter_health_boost_units[unit_number][2]
     coin_count = math_floor(coin_count * m)
     if coin_count < 1 then
         return 1
@@ -54,12 +54,18 @@ local function get_coin_count(entity)
     return coin_count
 end
 
+
+local __coin_stack = {name = "coin", count = 1}
+local __spill_item_stack_param = {
+    position = nil, stack = __coin_stack,
+    enable_looted = true, allow_belts = true
+}
 local function on_entity_died(event)
     local entity = event.entity
     if not entity.valid then
         return
     end
-    if entity.force.index ~= 2 then
+    if entity.force.index ~= 2 then -- 2 is enemy
         return
     end
 
@@ -68,40 +74,44 @@ local function on_entity_died(event)
         return
     end
 
-    local players_to_reward = {}
     local cause = event.cause
 
-    if cause and cause.valid then
-        --game.print("XDB " .. cause.type .. " " .. cause.name)
-        if cause.type == 'combat-robot' then
-            local owner = cause.combat_robot_owner
-            if owner then
-                insert(players_to_reward, owner.player)
-            end
-        elseif cause.name == 'character' then
-            insert(players_to_reward, cause)
-        elseif cause.type == 'car' then
-            local driver = cause.get_driver()
-            local passenger = cause.get_passenger()
-            if driver then
-                insert(players_to_reward, driver.player)
-            end
-            if passenger then
-                insert(players_to_reward, passenger.player)
-            end
-        elseif cause.type == 'locomotive' then
-            local train_passengers = cause.train.passengers
-            if train_passengers then
-                for _, passenger in pairs(train_passengers) do
-                    insert(players_to_reward, passenger)
-                end
-            end
-        elseif entities_that_earn_coins[cause.name] then
-            event.entity.surface.spill_item_stack(cause.position, {name = 'coin', count = coin_count}, true)
+    if not (cause and cause.valid) then return end
+
+    local players_to_reward = {}
+    --game.print("XDB " .. cause.type .. " " .. cause.name)
+    if cause.type == 'combat-robot' then
+        local owner = cause.combat_robot_owner
+        if owner then
+            insert(players_to_reward, owner.player)
         end
-        for _, player in pairs(players_to_reward) do
-            player.insert({name = 'coin', count = coin_count})
+    elseif cause.name == 'character' then
+        insert(players_to_reward, cause)
+    elseif cause.type == 'car' then
+        local driver = cause.get_driver()
+        local passenger = cause.get_passenger()
+        if driver then
+            insert(players_to_reward, driver.player)
         end
+        if passenger then
+            insert(players_to_reward, passenger.player)
+        end
+    elseif cause.type == 'locomotive' then
+        local train_passengers = cause.train.passengers
+        if train_passengers then
+            for _, passenger in pairs(train_passengers) do
+                insert(players_to_reward, passenger)
+            end
+        end
+    elseif entities_that_earn_coins[cause.name] then
+        __spill_item_stack_param.position = cause.position
+        __coin_stack.count = coin_count
+        event.entity.surface.spill_item_stack(__spill_item_stack_param)
+    end
+
+    for _, player in pairs(players_to_reward) do
+        __coin_stack.count = coin_count
+        player.insert(__coin_stack)
     end
 end
 

@@ -45,7 +45,7 @@ local function update_pvp_shields_display()
     local this = ScenarioTable.get_table()
     for _, town_center in pairs(this.town_centers) do
 
-        rendering.set_text(town_center.shield_text, town_center.pvp_shield_mgmt.shield_info)
+        town_center.shield_text.text = town_center.pvp_shield_mgmt.shield_info
 
         -- Update enemy nearby display
         local town_control_range = Public.get_town_control_range(town_center)
@@ -68,8 +68,8 @@ local function update_pvp_shields_display()
             town_center.enemies_warning_status = nil
         end
         info_enemies = info_enemies .. " (" .. string.format('%.0f',  town_control_range) .. " tiles)"
-        rendering.set_text(town_center.enemies_text, info_enemies)
-        rendering.set_color(town_center.enemies_text, color)
+        town_center.enemies_text.text  = info_enemies
+        town_center.enemies_text.color = color
     end
 end
 
@@ -261,7 +261,7 @@ end
 function Public.draw_shield_floor_markers(surface, position)
     for _, vector in pairs(shield_vectors) do
         local p = {position.x + vector[1], position.y + vector[2]}
-        if not surface.get_tile(p).collides_with("water-tile") then
+        if not surface.get_tile(p).collides_with("water_tile") then
             surface.set_tiles({{name = 'blue-refined-concrete', position = p}}, true)
         end
     end
@@ -283,7 +283,7 @@ end
 
 function Public.request_afk_shield(town_center, player)
     local market = town_center.market
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local force = market.force
     local surface = market.surface
     local town_control_range = Public.get_town_control_range(town_center)
@@ -316,7 +316,7 @@ function Public.request_afk_shield(town_center, player)
 end
 
 local function update_afk_shields()
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
 
     for _, town_center in pairs(this.town_centers) do
         local force = town_center.market.force

@@ -12,7 +12,7 @@ local Info = require 'maps.wasteland.info'
 local Utils = require 'maps.wasteland.utils'
 
 local function init_reset_sequence()
-    global.game_end_sequence_start = game.tick + 1
+    storage.game_end_sequence_start = game.tick + 1
 end
 Public.init_reset_sequence = init_reset_sequence
 
@@ -48,18 +48,18 @@ local function reset_map_part_3()
 end
 
 local function on_tick()
-    if global.game_end_sequence_start then
+    if storage.game_end_sequence_start then
         local tick = game.tick
-        if tick == global.game_end_sequence_start then
+        if tick == storage.game_end_sequence_start then
             Alert.alert_all_players(60, 'The world is about to reset!', Color.white, 'warning-white', 1.0)
-        elseif tick == global.game_end_sequence_start + 60 * 60 then
+        elseif tick == storage.game_end_sequence_start + 60 * 60 then
             game.print("The world will now reset. This can cause the game to hang for a while....", Utils.scenario_color)
             Team.reset_all_forces()
-        elseif tick == global.game_end_sequence_start + 60 * 60 + 1 then
+        elseif tick == storage.game_end_sequence_start + 60 * 60 + 1 then
             reset_map_part_1()
-        elseif tick == global.game_end_sequence_start + 60 * 60 + 31 then
+        elseif tick == storage.game_end_sequence_start + 60 * 60 + 31 then
             reset_map_part_2()
-        elseif tick == global.game_end_sequence_start + 60 * 60 + 61 then
+        elseif tick == storage.game_end_sequence_start + 60 * 60 + 61 then
             reset_map_part_3()
         end
     end

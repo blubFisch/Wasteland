@@ -6,6 +6,7 @@ local math_sqrt = math.sqrt
 
 local Public = {}
 
+local ScenarioTable = require 'maps.wasteland.table'
 local get_noise = require 'utils.get_noise'
 local Scrap = require 'maps.wasteland.scrap'
 local Spaceship = require 'maps.wasteland.spaceship'
@@ -17,7 +18,7 @@ Public.central_oil_radius_inner = 20
 Public.central_oil_radius_outer = 25
 
 local league_sizes_by_game_mode = {101, 141, 141}
-Public.league_balance_shield_size =  league_sizes_by_game_mode[global.game_mode]
+Public.league_balance_shield_size =  league_sizes_by_game_mode[storage.game_mode]
 Public.higher_league_activation_range = Public.league_balance_shield_size + 50
 Public.min_distance_between_towns = Public.higher_league_activation_range + 2 + 50    -- plus some buffer for players moving for activations
 
@@ -32,7 +33,7 @@ end
 function Public.reveal_strategic_resources(force)
     -- We do this to even the battle field with players who just check out the map in SP
 
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local surface = game.surfaces.nauvis
     force.chart(surface, {{-1, -1}, {1, 1}})
     force.chart(surface, {this.uranium_patch_location, this.uranium_patch_location})
@@ -45,7 +46,7 @@ local function gen_uranium_location()
 end
 
 local function init()
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     this.uranium_patch_location = gen_uranium_location()
 end
 Public.init = init
@@ -65,15 +66,15 @@ local scrap_entities_index = table.size(scrap_entities)
 
 local scrap_containers = {
     -- containers
-    {name = 'big-ship-wreck-1', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-1', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-1', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-2', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-2', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-2', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-3', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-3', size = 3}, -- these are not mineable normally
-    {name = 'big-ship-wreck-3', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-1', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-1', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-1', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-2', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-2', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-2', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-3', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-3', size = 3}, -- these are not mineable normally
+    {name = 'crash-site-spaceship-wreck-small-3', size = 3}, -- these are not mineable normally
     {name = 'crash-site-chest-1', size = 8}, -- these do not have mining animation
     {name = 'crash-site-chest-2', size = 8}, -- these do not have mining animation
     {name = 'crash-site-spaceship-wreck-medium-1', size = 1}, -- these do not have mining animation
@@ -114,7 +115,7 @@ local container_loot_chance = {
     {name = 'distractor-capsule', chance = 2},
     {name = 'electric-engine-unit', chance = 2},
     {name = 'electronic-circuit', chance = 150},
-    {name = 'empty-barrel', chance = 10},
+    {name = 'barrel', chance = 10},
     {name = 'engine-unit', chance = 5},
     {name = 'explosive-cannon-shell', chance = 2},
     --{name = "explosive-rocket", chance = 3},
@@ -163,7 +164,7 @@ local container_loot_amounts = {
     ['distractor-capsule'] = 0.3,
     ['electric-engine-unit'] = 2,
     ['electronic-circuit'] = 8,
-    ['empty-barrel'] = 3,
+    ['barrel'] = 3,
     ['engine-unit'] = 2,
     ['explosive-cannon-shell'] = 2,
     --["explosive-rocket"] = 2,
@@ -279,7 +280,7 @@ local function landfill_under(entity)
     for _, v in pairs(vectors) do
         local position = {entity.position.x + v[1], entity.position.y + v[2]}
         local tile = surface.get_tile(position)
-        if tile.name ~= "blue-refined-concrete" and not tile.collides_with('resource-layer') then
+        if tile.name ~= "blue-refined-concrete" and not tile.collides_with('resource') then
             surface.set_tiles({{name = 'landfill', position = position}}, true)
         end
     end
@@ -311,7 +312,7 @@ local function on_chunk_generated(event)
     if (surface.name ~= 'nauvis') then
         return
     end
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     local seed = surface.map_gen_settings.seed
     local left_top_x = event.area.left_top.x
     local left_top_y = event.area.left_top.y
@@ -357,7 +358,7 @@ local function on_chunk_generated(event)
             position = {x = left_top_x + x, y = left_top_y + y}
             if math.sqrt(position.x^2 + position.y^2) > Public.central_oil_radius_outer + 10 then
                 if math_random(1, 3) > 1 then
-                    if not surface.get_tile(position).collides_with('resource-layer') then
+                    if not surface.get_tile(position).collides_with('resource') then
                         noise = get_noise('wasteland', position, seed)
                         if is_scrap_area(noise) then
                             surface.set_tiles({{name = 'dirt-' .. math_floor(math_abs(noise) * 6) % 6 + 2, position = position}}, true)
@@ -447,7 +448,7 @@ end
 local function on_chunk_charted(event)
     local force = event.force
     local surface = game.surfaces[event.surface_index]
-    local this = global.tokens.maps_wasteland_table
+    local this = ScenarioTable.get()
     if force.valid then
         local position = event.position
         if position.x == 0 and position.y == 0 then

@@ -179,7 +179,7 @@ commands.add_command(
             return
         end
         local surface = game.players[1].surface
-        game.write_file('layout.lua', '', false)
+        helpers.write_file('layout.lua', '', false)
 
         local area = {
             left_top = {x = 0, y = 0},
@@ -201,13 +201,13 @@ commands.add_command(
             str = str .. e.force.name
             str = str .. '"},'
             if e.name ~= 'character' then
-                game.write_file('layout.lua', str .. '\n', true)
+                helpers.write_file('layout.lua', str .. '\n', true)
             end
         end
 
-        game.write_file('layout.lua', '\n', true)
-        game.write_file('layout.lua', '\n', true)
-        game.write_file('layout.lua', 'Tiles: \n', true)
+        helpers.write_file('layout.lua', '\n', true)
+        helpers.write_file('layout.lua', '\n', true)
+        helpers.write_file('layout.lua', 'Tiles: \n', true)
 
         for _, t in pairs(tiles) do
             local str = '{position = {x = ' .. t.position.x
@@ -216,7 +216,7 @@ commands.add_command(
             str = str .. '}, name = "'
             str = str .. t.name
             str = str .. '"},'
-            game.write_file('layout.lua', str .. '\n', true)
+            helpers.write_file('layout.lua', str .. '\n', true)
             player.print('Dumped layout as file: layout.lua', Color.success)
         end
         this.dump_layout = false
@@ -273,7 +273,7 @@ commands.add_command(
                     p_armor.put({name = 'battery-mk2-equipment'})
                     p_armor.put({name = 'battery-mk2-equipment'})
                 end
-                local item = game.item_prototypes
+                local item = prototypes.item
                 local i = 0
                 for _k, _v in pairs(item) do
                     i = i + 1
@@ -440,7 +440,7 @@ function Public.insert_all_items(player)
                     p_armor.put({name = 'battery-mk2-equipment'})
                     p_armor.put({name = 'battery-mk2-equipment'})
                 end
-                local item = game.item_prototypes
+                local item = prototypes.item
                 local i = 0
                 for _k, _v in pairs(item) do
                     i = i + 1

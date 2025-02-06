@@ -5,7 +5,7 @@ local table_insert = table.insert
 Public.scenario_color = { r = 255, g = 255, b = 0 }
 Public.scenario_color_warning = { r = 255, g = 0, b = 0 }
 
-global.rate_limits = global.rate_limits or {}
+storage.rate_limits = storage.rate_limits or {}
 
 
 function Public.make_border_vectors(radius, center_gap)
@@ -29,13 +29,13 @@ end
 
 function Public.rate_limit_check(type, force, rate_limit_ticks)
     local force_name = force.name
-    if not global.rate_limits[type] then
-        global.rate_limits[type] = {}
+    if not storage.rate_limits[type] then
+        storage.rate_limits[type] = {}
     end
-    local force_limit = global.rate_limits[type][force_name]
+    local force_limit = storage.rate_limits[type][force_name]
 
     if not force_limit or game.tick - force_limit > rate_limit_ticks then
-        global.rate_limits[type][force_name] = game.tick
+        storage.rate_limits[type][force_name] = game.tick
         return true
     else
         return false

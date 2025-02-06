@@ -351,10 +351,10 @@ local function create_admin_panel(data)
     table.insert(player_names, 'Select Player')
 
     local selected_index = #player_names
-    if global.admin_panel_selected_player_index then
-        if global.admin_panel_selected_player_index[player.name] then
-            if player_names[global.admin_panel_selected_player_index[player.name]] then
-                selected_index = global.admin_panel_selected_player_index[player.name]
+    if storage.admin_panel_selected_player_index then
+        if storage.admin_panel_selected_player_index[player.name] then
+            if player_names[storage.admin_panel_selected_player_index[player.name]] then
+                selected_index = storage.admin_panel_selected_player_index[player.name]
             end
         end
     end
@@ -483,9 +483,9 @@ local function create_admin_panel(data)
     bottomLine2.style.font_color = {r = 0.98, g = 0.66, b = 0.22}
 
     local selected_index_2 = 1
-    if global.admin_panel_selected_history_index then
-        if global.admin_panel_selected_history_index[player.name] then
-            selected_index_2 = global.admin_panel_selected_history_index[player.name]
+    if storage.admin_panel_selected_history_index then
+        if storage.admin_panel_selected_history_index[player.name] then
+            selected_index_2 = storage.admin_panel_selected_history_index[player.name]
         end
     end
 
@@ -668,10 +668,10 @@ local function on_gui_selection_state_changed(event)
     local name = event.element.name
 
     if name == 'admin_history_select' then
-        if not global.admin_panel_selected_history_index then
-            global.admin_panel_selected_history_index = {}
+        if not storage.admin_panel_selected_history_index then
+            storage.admin_panel_selected_history_index = {}
         end
-        global.admin_panel_selected_history_index[player.name] = event.element.selected_index
+        storage.admin_panel_selected_history_index[player.name] = event.element.selected_index
 
         local frame = Gui.get_player_active_frame(player)
         if not frame then
@@ -689,10 +689,10 @@ local function on_gui_selection_state_changed(event)
         create_admin_panel(data)
     end
     if name == 'admin_player_select' then
-        if not global.admin_panel_selected_player_index then
-            global.admin_panel_selected_player_index = {}
+        if not storage.admin_panel_selected_player_index then
+            storage.admin_panel_selected_player_index = {}
         end
-        global.admin_panel_selected_player_index[player.name] = event.element.selected_index
+        storage.admin_panel_selected_player_index[player.name] = event.element.selected_index
 
         local frame = Gui.get_player_active_frame(player)
         if not frame then

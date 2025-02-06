@@ -1,4 +1,4 @@
-global.chat_modes = {}
+storage.chat_modes = {}
 
 local CHAT_MODES = {GLOBAL = 1, TEAM = 2, ALLIANCE = 3}
 local BUTTON_PROPERTIES = {
@@ -8,7 +8,7 @@ local BUTTON_PROPERTIES = {
 }
 
 local function setChatMode(player, mode)
-    global.chat_modes[player.index] = mode
+    storage.chat_modes[player.index] = mode
 
     local button = player.gui.screen['global_chat_toggle']
     local properties = BUTTON_PROPERTIES[mode]
@@ -21,7 +21,7 @@ local function toggle(player)
     local button = player.gui.screen['global_chat_toggle']
     if not button then return end
 
-    local current_mode = global.chat_modes[player.index] or CHAT_MODES.GLOBAL
+    local current_mode = storage.chat_modes[player.index] or CHAT_MODES.GLOBAL
 
     if current_mode == CHAT_MODES.GLOBAL then
         setChatMode(player, CHAT_MODES.TEAM)
@@ -98,7 +98,7 @@ local function on_console_chat(event)
     local button = sender.gui.screen['global_chat_toggle']
     if not button then return end
 
-    local currentMode = global.chat_modes[sender.index] or CHAT_MODES.GLOBAL
+    local currentMode = storage.chat_modes[sender.index] or CHAT_MODES.GLOBAL
     local prefix_color = BUTTON_PROPERTIES[currentMode][3]
     local color_string = string.format("#%02X%02X%02X", prefix_color.r*255, prefix_color.g*255, prefix_color.b*255)
     local mode_prefixes = { [CHAT_MODES.GLOBAL] = 'Global', [CHAT_MODES.TEAM] = 'Team', [CHAT_MODES.ALLIANCE] = 'Alliance' }

@@ -99,7 +99,7 @@ if _DEBUG then
             end
 
             value = dump(value)
-            game.write_file('dump.lua', value, false)
+            helpers.write_file('dump.lua', value, false)
         end
     )
 end

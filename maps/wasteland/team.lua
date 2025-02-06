@@ -110,7 +110,7 @@ local function set_town_color(event)
         return
     end
     town_center.color = {player.color.r, player.color.g, player.color.b}
-    rendering.set_color(town_center.town_caption, town_center.color)
+    town_center.town_caption.color = town_center.color
     for _, p in pairs(force.players) do
         Public.set_player_color(p)
     end
@@ -486,24 +486,24 @@ local function set_full_blueprint_functions(permission_group, enabled)
 end
 
 function Public.enable_artillery(force, permission_group)
-    permission_group.set_allows_action(defines.input_action.use_artillery_remote, true)
+    -- permission_group.set_allows_action(defines.input_action.use_artillery_remote, true) -- TODO: recheck and fix!
     force.technologies['artillery'].enabled = true
     force.technologies['artillery-shell-range-1'].enabled = true
     force.technologies['artillery-shell-speed-1'].enabled = true
     force.recipes['artillery-turret'].enabled = false
     force.recipes['artillery-wagon'].enabled = false
-    force.recipes['artillery-targeting-remote'].enabled = false
+    -- force.recipes['artillery-targeting-remote'].enabled = false -- TODO: recheck and fix!
     force.recipes['artillery-shell'].enabled = false
 end
 
 local function disable_artillery(force, permission_group)
-    permission_group.set_allows_action(defines.input_action.use_artillery_remote, false)
+    -- permission_group.set_allows_action(defines.input_action.use_artillery_remote, false) -- TODO: recheck and fix!
     force.technologies['artillery'].enabled = false
     force.technologies['artillery-shell-range-1'].enabled = false
     force.technologies['artillery-shell-speed-1'].enabled = false
     force.recipes['artillery-turret'].enabled = false
     force.recipes['artillery-wagon'].enabled = false
-    force.recipes['artillery-targeting-remote'].enabled = false
+    -- force.recipes['artillery-targeting-remote'].enabled = false -- TODO: recheck and fix!
     force.recipes['artillery-shell'].enabled = false
 end
 
@@ -511,7 +511,7 @@ local function disable_spidertron(force, permission_group)
     permission_group.set_allows_action(defines.input_action.send_spidertron, false)
     force.technologies['spidertron'].enabled = false
     force.recipes['spidertron'].enabled = false
-    force.recipes['spidertron-remote'].enabled = false
+    -- force.recipes['rts-tool'].enabled = false -- TODO: recheck and fix
 end
 
 local function disable_rockets(force)
@@ -548,9 +548,9 @@ local function disable_high_military_research(force)
     force.technologies['laser-shooting-speed-5'].enabled = false
     force.technologies['laser-shooting-speed-6'].enabled = false
     force.technologies['laser-shooting-speed-7'].enabled = false
-    force.technologies['energy-weapons-damage-5'].enabled = false
-    force.technologies['energy-weapons-damage-6'].enabled = false
-    force.technologies['energy-weapons-damage-7'].enabled = false
+    force.technologies['laser-weapons-damage-5'].enabled = false
+    force.technologies['laser-weapons-damage-6'].enabled = false
+    force.technologies['laser-weapons-damage-7'].enabled = false
 
     force.technologies['refined-flammables-6'].enabled = false
     force.technologies['refined-flammables-7'].enabled = false
@@ -560,8 +560,6 @@ local function disable_high_military_research(force)
 
     force.technologies['follower-robot-count-4'].enabled = false
     force.technologies['follower-robot-count-5'].enabled = false
-    force.technologies['follower-robot-count-6'].enabled = false
-    force.technologies['follower-robot-count-7'].enabled = false
 
     force.technologies['weapon-shooting-speed-6'].enabled = false
     force.technologies['physical-projectile-damage-6'].enabled = false
@@ -576,7 +574,7 @@ local function disable_achievements(permission_group)
 end
 
 local function disable_tips_and_tricks(permission_group)
-    permission_group.set_allows_action(defines.input_action.open_tips_and_tricks_gui, false)
+    -- permission_group.set_allows_action(defines.input_action.open_tips_and_tricks_gui, false) -- TODO: recheck and fix
 end
 
 local function set_initial_combat_bot_slots(force)
@@ -633,7 +631,6 @@ function Public.create_town_force(player)
 
     -- research
     set_default_tech(force)
-    force.research_queue_enabled = true
     set_initial_combat_bot_slots(force)
 
     CombatBalance.init_player_weapon_damage(force)
@@ -669,7 +666,7 @@ local function create_outlander_force(player)
 end
 
 local function setup_enemy_force()
-    game.forces.enemy.evolution_factor = 1
+    game.forces.enemy.set_evolution_factor(1)
 end
 
 function Public.player_joined(player)
@@ -693,7 +690,7 @@ function Public.player_joined(player)
 
     local this = ScenarioTable.get_table()
     if this.winner then
-        if global.auto_reset_enabled then
+        if storage.auto_reset_enabled then
             player.print("This game has ended and will reset shortly", Utils.scenario_color)
         else
             player.print("This game has ended, please wait for an admin to start a new game", Utils.scenario_color)

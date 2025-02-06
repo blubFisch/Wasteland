@@ -6,9 +6,9 @@ local utils_table = require 'utils.table'
 local ScenarioTable = require 'maps.wasteland.table'
 
 local valid_entities = {
-    ['rock-big'] = true,
-    ['rock-huge'] = true,
-    ['sand-rock-big'] = true
+    ['big-rock'] = true,
+    ['huge-rock'] = true,
+    ['big-sand-rock'] = true
 }
 
 local size_raffle = {
@@ -143,7 +143,7 @@ local function spawn_ore_vein(surface, position, actor_is_player, actor)
     end
     local ore = this.rocks_yield_ore_veins.raffle[math_random(1, #this.rocks_yield_ore_veins.raffle)]
     local icon
-    if game.entity_prototypes[ore] then
+    if prototypes.entity[ore] then
         icon = '[img=entity/' .. ore .. ']'
     else
         icon = ' '

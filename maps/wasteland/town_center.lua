@@ -30,7 +30,7 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 local town_radius = 22
 
 local starter_ore_amounts = { 0.25, 0.5, 1.0 }
-local starter_ore_amount = 1200 * starter_ore_amounts[global.game_mode]
+local starter_ore_amount = 1200 * starter_ore_amounts[storage.game_mode]
 
 local colors = {}
 local c1 = 250
@@ -303,7 +303,7 @@ end
 function Public.update_town_name(force)
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[force.name]
-    rendering.set_text(town_center.town_caption, town_center.town_name)
+    town_center.town_caption.text = town_center.town_name
 end
 
 function Public.set_market_health(entity, final_damage_amount)
@@ -318,7 +318,7 @@ function Public.set_market_health(entity, final_damage_amount)
     end
     local m = town_center.health / town_center.max_health
     entity.health = 150 * m
-    rendering.set_text(town_center.health_text, 'HP: ' .. town_center.health .. ' / ' .. town_center.max_health)
+    town_center.health_text.text = 'HP: ' .. town_center.health .. ' / ' .. town_center.max_health
 end
 
 function Public.update_coin_balance(force)
@@ -326,13 +326,13 @@ function Public.update_coin_balance(force)
     local town_center = this.town_centers[force.name]
     local coin_balance = town_center.coin_balance
     if town_center.prev_coin_balance ~= coin_balance then
-        rendering.set_text(town_center.coins_text, 'Coins: ' .. coin_balance)
+        town_center.coins_text.text = 'Coins: ' .. coin_balance
         town_center.prev_coin_balance = coin_balance
     end
 end
 
 local function found_town(event)
-    local entity = event.created_entity
+    local entity = event.entity
     -- is a valid entity placed?
     if entity == nil or not entity.valid then
         return

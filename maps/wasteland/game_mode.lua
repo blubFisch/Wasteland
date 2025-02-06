@@ -13,7 +13,7 @@ function Public.add_mode_button(player)
     end
     local button = player.gui.top.add {
         type = 'sprite-button',
-        caption = 'Game Mode: ' .. Public.mode_names[global.game_mode],
+        caption = 'Game Mode: ' .. Public.mode_names[storage.game_mode],
         name = button_id
     }
     button.tooltip = "Changes game duration, PvP shield sizes, available research, research cost and research score"
@@ -55,7 +55,7 @@ local function disable_techs(force, starting_from_list, inputs_to_disable)
 end
 
 function Public.disable_game_mode_techs(force)
-    if global.game_mode == 1 then
+    if storage.game_mode == 1 then
         disable_techs(force, {'production-science-pack', 'utility-science-pack'}, {
             ["production-science-pack"] = true,
             ["utility-science-pack"] = true,

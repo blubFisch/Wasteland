@@ -42,7 +42,7 @@ local function create_floaty_text(surface, position, name, count)
                 position.x,
                 position.y + this.floating_text_y_offsets[position.x .. '_' .. position.y]
             },
-            text = {'', '-', count, ' ', game.item_prototypes[name].localised_name},
+            text = {'', '-', count, ' ', prototypes.item[name].localised_name},
             color = {r = 255, g = 255, b = 255}
         }
     )
@@ -393,10 +393,10 @@ local function insert_item_into_chest(stack, chests, filtered_chests, name, floa
         end
     end
 
-    local item_prototypes = game.item_prototypes
+    local item_prototypes = prototypes.item
 
     --Attempt to store in chests with same item subgroup.
-    local item_subgroup = game.item_prototypes[name].subgroup.name
+    local item_subgroup = prototypes.item[name].subgroup.name
     if item_subgroup then
         for chestnr, chest in pairs(filtered_chests.chest) do
             if container[chest.type] then
@@ -621,8 +621,8 @@ local function create_gui_button(player)
 end
 
 local function do_whitelist()
-    local resources = game.entity_prototypes
-    local items = game.item_prototypes
+    local resources = prototypes.entity
+    local items = prototypes.item
     this.whitelist = {}
     for k, _ in pairs(resources) do
         if resources[k] and resources[k].type == 'resource' and resources[k].mineable_properties then

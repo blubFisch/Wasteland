@@ -5,7 +5,7 @@ local TeamBasics = require 'maps.wasteland.team_basics'
 local Utils = require 'maps.wasteland.utils'
 
 
-global.tracked_labs = global.tracked_labs or {}
+storage.tracked_labs = storage.tracked_labs or {}
 
 local function undo_build(entity, player_index, actor, event_robot, force, surface, message)
     local position = entity.position
@@ -25,7 +25,7 @@ local function undo_build(entity, player_index, actor, event_robot, force, surfa
 end
 
 local function process_building_limit(actor, event)
-    local entity = event.created_entity
+    local entity = event.entity
     if not entity.valid then return end
 
     local force = actor.force
@@ -52,7 +52,7 @@ local function process_building_limit(actor, event)
             return
         end
 
-        local event_key = script.register_on_entity_destroyed(entity)
+        local event_key = script.register_on_object_destroyed(entity)
         this.laser_turrets_destroy_events[event_key] = force.index
         town_center.laser_turrets = turret_count + 1
 
@@ -65,7 +65,7 @@ local function process_building_limit(actor, event)
             })
         end
     elseif entity.name == 'lab' then
-        table.insert(global.tracked_labs, entity)
+        table.insert(storage.tracked_labs, entity)
 
         -- Prevent researching extremely fast from stockpiled science
         local nearby_beacons = surface.find_entities_filtered({area = {{entity.position.x - 4, entity.position.y - 4},
@@ -101,7 +101,7 @@ local function process_building_limit(actor, event)
             return
         end
         town_center.labs = labs + 1
-        local event_key = script.register_on_entity_destroyed(entity)
+        local event_key = script.register_on_object_destroyed(entity)
         this.labs_destroy_events[event_key] = force.index
 
         surface.create_entity({
@@ -139,8 +139,8 @@ local function on_robot_built_entity(event)
 end
 
 local function labs_cant_have_speed_modules()
-    for i = #global.tracked_labs, 1, -1 do
-        local lab = global.tracked_labs[i]
+    for i = #storage.tracked_labs, 1, -1 do
+        local lab = storage.tracked_labs[i]
         if lab.valid then
             local inventory = lab.get_module_inventory()
             if not inventory.is_empty() then
@@ -161,12 +161,12 @@ local function labs_cant_have_speed_modules()
                 end
             end
         else
-            table.remove(global.tracked_labs, i)
+            table.remove(storage.tracked_labs, i)
         end
     end
 end
 
-local function on_entity_destroyed(event)
+local function on_object_destroyed(event)
     local key = event.registration_number
     local this = ScenarioTable.get_table()
     if this.laser_turrets_destroy_events[key] then
@@ -194,5 +194,5 @@ end
 local Event = require 'utils.event'
 Event.add(defines.events.on_built_entity, on_player_built_entity)
 Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
-Event.add(defines.events.on_entity_destroyed, on_entity_destroyed)
+Event.add(defines.events.on_object_destroyed, on_object_destroyed)
 Event.on_nth_tick(18, labs_cant_have_speed_modules)

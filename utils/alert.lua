@@ -123,6 +123,12 @@ local function alert_to(player, duration, sound, volume)
     return container
 end
 
+local __set_controller_param = {
+    type = defines.controllers.remote,
+    start_zoom = 0.5,
+    position = nil,
+    surface = nil
+}
 local function zoom_to_pos(event)
     local is_spamming = SpamProtection.is_spamming(event.player, nil, 'Alert Zoom to Pos')
     if is_spamming then
@@ -132,7 +138,9 @@ local function zoom_to_pos(event)
     local element = event.element
     local position = Gui.get_data(element)
 
-    player.zoom_to_world(position, 0.5)
+    __set_controller_param.position = position
+    __set_controller_param.surface  = player.surface
+    player.set_controller(__set_controller_param)
 end
 
 local close_alert = Public.close_alert
