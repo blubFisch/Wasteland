@@ -255,7 +255,7 @@ local function redraw_poll_viewer_content(data)
         local label = grid.add {type = 'label', caption = a.text}
         label.style.single_line = false
         label.style.minimal_height = 24
-        label.style.font = 'heading-3'
+        label.style.font = 'heading-2'
         label.style.font_color = {r = 0.95, g = 0.95, b = 0.95}
         label.style.left_padding = 4
         label.style.right_padding = 4

@@ -669,7 +669,7 @@ local function player_list_show(data)
         }
         name_label.style.minimal_width = column_widths['name_label']
         name_label.style.maximal_width = column_widths['name_label']
-        name_label.style.font = 'heading-3'
+        name_label.style.font = 'heading-2'
 
         -- RPG level
         if this.rpg_enabled then
@@ -682,7 +682,7 @@ local function player_list_show(data)
             }
             rpg_level_label.style.minimal_width = column_widths['rpg_level_label']
             rpg_level_label.style.maximal_width = column_widths['rpg_level_label']
-            rpg_level_label.style.font = 'heading-3'
+            rpg_level_label.style.font = 'heading-2'
         end
 
         -- Total time
@@ -694,7 +694,7 @@ local function player_list_show(data)
         }
         total_label.style.minimal_width = column_widths['total_label']
         total_label.style.maximal_width = column_widths['total_label']
-        total_label.style.font = 'heading-3'
+        total_label.style.font = 'heading-2'
 
         -- Current time
         local current_label =
@@ -705,7 +705,7 @@ local function player_list_show(data)
         }
         current_label.style.minimal_width = column_widths['current_label']
         current_label.style.maximal_width = column_widths['current_label']
-        current_label.style.font = 'heading-3'
+        current_label.style.font = 'heading-2'
 
         -- Poke
         local poke_flow = player_list_panel_table.add {type = 'flow', name = 'button_flow_' .. i, direction = 'horizontal'}

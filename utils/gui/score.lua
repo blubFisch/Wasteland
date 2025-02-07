@@ -132,7 +132,7 @@ local function add_global_stats(frame, player)
     l.style.minimal_width = 140
 
     local rocketsLaunched_label = t.add {type = 'label', caption = format_number(player.force.rockets_launched, true)}
-    rocketsLaunched_label.style.font = 'heading-3'
+    rocketsLaunched_label.style.font = 'heading-2'
     rocketsLaunched_label.style.font_color = {r = 0.9, g = 0.9, b = 0.9}
     rocketsLaunched_label.style.minimal_width = 123
 
@@ -142,7 +142,7 @@ local function add_global_stats(frame, player)
     bugs_dead_label.style.minimal_width = 100
 
     local killcount_label = t.add {type = 'label', caption = format_number(tonumber(get_total_biter_killcount(player.force)), true)}
-    killcount_label.style.font = 'heading-3'
+    killcount_label.style.font = 'heading-2'
     killcount_label.style.font_color = {r = 0.9, g = 0.9, b = 0.9}
     killcount_label.style.minimal_width = 145
 end
@@ -243,7 +243,7 @@ local function show_score(data)
                 caption = column.caption,
                 color = column.color or default_color
             }
-            label.style.font = 'heading-3'
+            label.style.font = 'heading-2'
             label.style.minimal_width = 150
             label.style.maximal_width = 150
             label.style.horizontal_align = 'center'

@@ -187,7 +187,7 @@ function Public.add_main_frame_with_toolbar(player, align, set_frame_name, set_s
             name = close_main_frame_name,
             style = 'frame_action_button',
             mouse_button_filter = {'left'},
-            sprite = 'utility/close_white',
+            sprite = 'utility/close',
             hovered_sprite = 'utility/close_black',
             clicked_sprite = 'utility/close_black',
             tooltip = 'Close',

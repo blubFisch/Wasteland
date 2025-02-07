@@ -322,7 +322,7 @@ local function add_switch(element, switch_state, name, description_main, descrip
     desc_label.style.padding = 2
     desc_label.style.left_padding = 10
     desc_label.style.single_line = false
-    desc_label.style.font = 'heading-3'
+    desc_label.style.font = 'heading-2'
     desc_label.style.font_color = {0.85, 0.85, 0.85}
 
     return switch

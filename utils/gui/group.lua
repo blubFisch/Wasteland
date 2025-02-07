@@ -81,7 +81,7 @@ local function build_group_gui(data)
             l.style.bottom_padding = 16
             l.style.minimal_width = group_name_width
             l.style.maximal_width = group_name_width
-            l.style.font = 'heading-3'
+            l.style.font = 'heading-2'
             l.style.horizontal_align = 'center'
             local color
             if game.players[group.founder] and game.players[group.founder].color then
@@ -99,7 +99,7 @@ local function build_group_gui(data)
             l.style.maximal_width = description_width
             l.style.font_color = {r = 0.90, g = 0.90, b = 0.90}
             l.style.single_line = false
-            l.style.font = 'heading-3'
+            l.style.font = 'heading-2'
             l.style.horizontal_align = 'center'
 
             local tt = t.add({type = 'table', column_count = 2})
@@ -119,7 +119,7 @@ local function build_group_gui(data)
                     l.style.font_color = color
                     l.style.maximal_width = members_width * 2 - 60
                     l.style.single_line = false
-                    l.style.font = 'heading-3'
+                    l.style.font = 'heading-2'
                     l.style.horizontal_align = 'center'
                 end
             end
