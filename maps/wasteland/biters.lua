@@ -289,8 +289,8 @@ local function biter_chatter()
     for _, player in pairs(game.connected_players) do
         if TeamBasics.is_outlander_force(player.force) and game.forces.enemy.get_cease_fire(player.force) and player.character then
             if not storage.last_chatter_time[player.index] or current_tick - storage.last_chatter_time[player.index] >= 600 then
-                local position = player.position
-                local surface = player.surface
+                local position = player.physical_position
+                local surface = player.physical_surface
                 local biters = surface.find_entities_filtered({
                     type = "unit",
                     area = {{position.x - 10, position.y - 10}, {position.x + 10, position.y + 10}},

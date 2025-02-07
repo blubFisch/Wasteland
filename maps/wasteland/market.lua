@@ -22,7 +22,7 @@ local upgrade_functions = {
         town_center.health = town_center.health + town_center.max_health
         town_center.max_health = town_center.max_health * 2
         TownCenter.set_market_health(market, 0)
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/achievement_unlocked', position = town_center.market.position, volume_modifier = 1})
         return true
     end,
     -- Upgrade Backpack
@@ -34,7 +34,7 @@ local upgrade_functions = {
             return false
         end
         force.character_inventory_slots_bonus = force.character_inventory_slots_bonus + 5
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/achievement_unlocked', position = town_center.market.position, volume_modifier = 1})
         return true
     end,
     -- Upgrade Mining Productivity
@@ -47,7 +47,7 @@ local upgrade_functions = {
         end
         town_center.upgrades.mining_prod = town_center.upgrades.mining_prod + 1
         force.mining_drill_productivity_bonus = force.mining_drill_productivity_bonus + 0.1
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/achievement_unlocked', position = town_center.market.position, volume_modifier = 1})
         return true
     end,
     -- Upgrade Pickaxe Speed
@@ -60,7 +60,7 @@ local upgrade_functions = {
         end
         town_center.upgrades.mining_speed = town_center.upgrades.mining_speed + 1
         force.manual_mining_speed_modifier = force.manual_mining_speed_modifier + 0.1
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/achievement_unlocked', position = town_center.market.position, volume_modifier = 1})
         return true
     end,
     -- Upgrade Crafting Speed
@@ -73,7 +73,7 @@ local upgrade_functions = {
         end
         town_center.upgrades.crafting_speed = town_center.upgrades.crafting_speed + 1
         force.manual_crafting_speed_modifier = force.manual_crafting_speed_modifier + 0.1
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/achievement_unlocked', position = town_center.market.position, volume_modifier = 1})
         return true
     end,
     -- Set Spawn Point
@@ -84,7 +84,7 @@ local upgrade_functions = {
         local surface = market.surface
         local spawn_point = force.get_spawn_position(surface)
         this.spawn_point[player.index] = spawn_point
-        surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/scenario_message', position = town_center.market.position, volume_modifier = 1})
         return false
     end,
     -- Pause-mode PvP Shield

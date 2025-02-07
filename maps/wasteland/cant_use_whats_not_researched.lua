@@ -66,7 +66,7 @@ local function force_unequip_armor(player, armor_inventory, armor)
     }
     -- First drop on floor to prevent a condition where full inventory together with inv size change
     --   leads to the armor being equippable again
-    local floor_stack = player.surface.spill_item_stack(spill_item_stack_param)[1]
+    local floor_stack = player.physical_surface.spill_item_stack(spill_item_stack_param)[1]
     armor_inventory.remove(armor_stack)
     local player_inventory = player.get_main_inventory()
     if player_inventory.insert(floor_stack.stack) == 1 then

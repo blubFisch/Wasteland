@@ -186,30 +186,31 @@ function Public.protected_by_shields(surface, position, force, distance)
 end
 
 function Public.push_enemies_out(player)
+    if not player.character then
+        return
+    end
+
     local this = ScenarioTable.get_table()
     for _, shield in pairs(this.pvp_shields) do
-        if not is_allowed_in_shield(shield, player.force) or player.surface ~= shield.surface then
-            if CommonFunctions.point_in_bounding_box(player.position, shield.box) then
-                if player.character then
-                    -- Push player away from center
-                    local center_diff = { x = player.position.x - shield.center.x, y = player.position.y - shield.center.y}
-                    center_diff.x = center_diff.x / vector_norm(center_diff)
-                    center_diff.y = center_diff.y / vector_norm(center_diff)
-                    player.teleport({ player.position.x + center_diff.x, player.position.y + center_diff.y}, player.surface)
+        if not is_allowed_in_shield(shield, player.force) or player.physical_surface ~= shield.surface then
+            local pp = player.physical_position
+            if CommonFunctions.point_in_bounding_box(p, shield.box) then
+                -- Push player away from center
+                local center_diff = { x = pp.x - shield.center.x, y = pp.y - shield.center.y}
+                center_diff.x = center_diff.x / vector_norm(center_diff)
+                center_diff.y = center_diff.y / vector_norm(center_diff)
+                player.teleport({ pp.x + center_diff.x, pp.y + center_diff.y}, player.physical_surface)
 
-                    -- Kick players out of vehicles if needed
-                    if player.character and player.character.driving then
-                        player.character.driving = false
-                    end
+                -- Kick players out of vehicles if needed
+                if player.character.driving then
+                    player.character.driving = false
+                end
 
-                    -- Punish player
-                    if player.character then
-                        player.character.health = player.character.health - 25
-                        player.character.surface.create_entity({name = 'water-splash', position = player.position})
-                        if player.character.health <= 0 then
-                            player.character.die('enemy')
-                        end
-                    end
+                -- Punish player
+                player.character.health = player.character.health - 25
+                player.character.surface.create_entity({name = 'water-splash', position = pp})
+                if player.character.health <= 0 then
+                    player.character.die('enemy')
                 end
             end
         end
@@ -218,11 +219,6 @@ end
 
 local function on_player_changed_position(event)
     local player = game.get_player(event.player_index)
-    local surface = player.surface
-    if not surface or not surface.valid then
-        return
-    end
-
     Public.push_enemies_out(player)
 end
 

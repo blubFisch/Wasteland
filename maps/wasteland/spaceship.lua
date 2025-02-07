@@ -33,7 +33,7 @@ local upgrade_functions = {
     -- Upgrade Backpack
     [1] = function(player)
         local this = ScenarioTable.get_table()
-        local surface = player.surface
+        local surface = player.physical_surface
         if player.character.character_inventory_slots_bonus + 5 > 50 then
             return false
         end
@@ -45,13 +45,13 @@ local upgrade_functions = {
             this.buffs[player.index].character_inventory_slots_bonus = 0
         end
         this.buffs[player.index].character_inventory_slots_bonus = player.character.character_inventory_slots_bonus
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/achievement_unlocked', position = player.physical_position, volume_modifier = 1})
         return true
     end,
     -- Upgrade Pickaxe Speed
     [2] = function(player)
         local this = ScenarioTable.get_table()
-        local surface = player.surface
+        local surface = player.physical_surface
         if player.character.character_mining_speed_modifier + 0.1 > 0.6 then
             return false
         end
@@ -63,13 +63,13 @@ local upgrade_functions = {
             this.buffs[player.index].character_mining_speed_modifier = 0
         end
         this.buffs[player.index].character_mining_speed_modifier = player.character.character_mining_speed_modifier
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        surface.play_sound({path = 'utility/achievement_unlocked', position = player.physical_position, volume_modifier = 1})
         return true
     end,
     -- Upgrade Crafting Speed
     [3] = function(player)
         local this = ScenarioTable.get_table()
-        local surface = player.surface
+        local surface = player.physical_surface
         if player.character.character_crafting_speed_modifier + 0.1 > 1 then
             return false
         end
@@ -80,19 +80,19 @@ local upgrade_functions = {
         if not this.buffs[player.index].character_crafting_speed_modifier then
             this.buffs[player.index].character_crafting_speed_modifier = 0
         end
-        this.buffs[player.index].character_crafting_speed_modifier = player.character.character_crafting_speed_modifier
-        surface.play_sound({path = 'utility/achievement_unlocked', position = player.position, volume_modifier = 1})
+        this.buffs[player.index].character_crafting_speed_modifier = player.physical_character_crafting_speed_modifier
+        surface.play_sound({path = 'utility/achievement_unlocked', position = player.physical_position, volume_modifier = 1})
         return true
     end,
     -- Set Spawn Point
     [4] = function(player)
         local this = ScenarioTable.get_table()
-        local surface = player.surface
-        local position = player.position
+        local surface = player.physical_surface
+        local position = player.physical_position
         position = surface.find_non_colliding_position('character', position, 0, 0.25)
         if position ~= nil and player ~= nil then
             this.spawn_point[player.index] = {x = position.x, y = position.y}
-            surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
+            surface.play_sound({path = 'utility/scenario_message', position = player.physical_position, volume_modifier = 1})
         else
             Utils.flying_text(nil, surface, position,
                 'Could not find open space for spawn point!', {r = 0.77, g = 0.0, b = 0.0})

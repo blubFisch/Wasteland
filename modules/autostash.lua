@@ -150,7 +150,8 @@ local function get_nearby_chests(player, a, furnace, wagon)
     local r_square = r * r
     local chests, inventories = {}, {}
     local size_of_chests = 0
-    local area = {{player.position.x - r, player.position.y - r}, {player.position.x + r, player.position.y + r}}
+    local pcp = player.physical_position
+    local area = {{pcp.x - r, pcp.y - r}, {pcp.x + r, pcp.y + r}}
 
     area = a or area
 
@@ -168,16 +169,16 @@ local function get_nearby_chests(player, a, furnace, wagon)
         inventory_type = defines.inventory.cargo_wagon
     end
 
-    for _, e in pairs(player.surface.find_entities_filtered({type = container_type, area = area, force = player.force})) do
-        if ((player.position.x - e.position.x) ^ 2 + (player.position.y - e.position.y) ^ 2) <= r_square then
+    for _, e in pairs(player.physical_surface.find_entities_filtered({type = container_type, area = area, force = player.force})) do
+        if ((pcp.x - e.position.x) ^ 2 + (pcp.y - e.position.y) ^ 2) <= r_square then
             i = i + 1
             containers[i] = e
         end
     end
     if #containers <= 0 then
         if is_mod_loaded('Krastorio2') then
-            for _, e in pairs(player.surface.find_entities_filtered({type = 'assembling-machine', area = area, force = player.force})) do
-                if ((player.position.x - e.position.x) ^ 2 + (player.position.y - e.position.y) ^ 2) <= r_square then
+            for _, e in pairs(player.physical_surface.find_entities_filtered({type = 'assembling-machine', area = area, force = player.force})) do
+                if ((pcp.x - e.position.x) ^ 2 + (pcp.y - e.position.y) ^ 2) <= r_square then
                     i = i + 1
                     containers[i] = e
                 end
@@ -185,7 +186,7 @@ local function get_nearby_chests(player, a, furnace, wagon)
         end
     end
 
-    sort_entities_by_distance(player.position, containers)
+    sort_entities_by_distance(pcp, containers)
     for _, entity in pairs(containers) do
         size_of_chests = size_of_chests + 1
         chests[size_of_chests] = entity
@@ -463,7 +464,8 @@ local function auto_stash(player, event)
     local floaty_text_list = {}
     local chests = {chest = {}, inventory = {}}
     local r = this.small_radius
-    local area = {{player.position.x - r, player.position.y - r}, {player.position.x + r, player.position.y + r}}
+    local pcp = player.physical_position
+    local area = {{pcp.x - r, pcp.y - r}, {pcp.x + r, pcp.y + r}}
     if ctrl then
         if button == defines.mouse_button_type.right and this.insert_into_furnace then
             chests = get_nearby_chests(player, nil, true, false)

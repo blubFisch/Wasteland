@@ -28,9 +28,9 @@ local function bring_player(player, source_player)
         source_player.print('Target player is in a vehicle, teleport not available.', {r = 0.88, g = 0.88, b = 0.88})
         return
     end
-    local pos = source_player.surface.find_non_colliding_position('character', source_player.position, 50, 1)
+    local pos = source_player.physical_surface.find_non_colliding_position('character', source_player.physical_position, 50, 1)
     if pos then
-        player.teleport(pos, source_player.surface)
+        player.teleport(pos, source_player.physical_surface)
         game.print(player.name .. ' has been teleported to ' .. source_player.name .. '. ' .. bring_player_messages[math.random(1, #bring_player_messages)], {r = 0.98, g = 0.66, b = 0.22})
     end
 end
@@ -43,9 +43,9 @@ local function go_to_player(player, source_player)
     if player.name == source_player.name then
         return player.print("You can't select yourself!", {r = 1, g = 0.5, b = 0.1})
     end
-    local pos = player.surface.find_non_colliding_position('character', player.position, 50, 1)
+    local pos = player.physical_surface.find_non_colliding_position('character', player.physical_position, 50, 1)
     if pos then
-        source_player.teleport(pos, player.surface)
+        source_player.teleport(pos, player.physical_surface)
         game.print(source_player.name .. ' is visiting ' .. player.name .. '. ' .. go_to_player_messages[math.random(1, #go_to_player_messages)], {r = 0.98, g = 0.66, b = 0.22})
     end
 end
@@ -59,7 +59,7 @@ local function spank(player, source_player)
             player.character.damage(1, 'player')
         end
         player.character.health = player.character.health - 5
-        player.surface.create_entity({name = 'water-splash', position = player.position})
+        player.physical_surface.create_entity({name = 'water-splash', position = player.physical_position})
         game.print(source_player.name .. ' spanked ' .. player.name, {r = 0.98, g = 0.66, b = 0.22})
     end
 end
@@ -77,7 +77,7 @@ local function damage(player, source_player)
             player.character.damage(1, 'player')
         end
         player.character.health = player.character.health - 125
-        player.surface.create_entity({name = 'big-explosion', position = player.position})
+        player.physical_surface.create_entity({name = 'big-explosion', position = player.physical_position})
         game.print(player.name .. damage_messages[math.random(1, #damage_messages)] .. source_player.name, {r = 0.98, g = 0.66, b = 0.22})
     end
 end

@@ -139,7 +139,7 @@ local function zoom_to_pos(event)
     local position = Gui.get_data(element)
 
     __set_controller_param.position = position
-    __set_controller_param.surface  = player.surface
+    __set_controller_param.surface  = player.physical_surface
     player.set_controller(__set_controller_param)
 end
 
@@ -257,7 +257,7 @@ function Public.alert_all_players_location(player, message, color, duration)
                 style = 'slot_button'
             }
 
-            Gui.set_data(sprite, player.position)
+            Gui.set_data(sprite, player.physical_position)
 
             local label =
                 container.add {

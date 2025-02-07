@@ -292,7 +292,7 @@ local function ally_town(player, item)
         return
     end
     local position = item.position
-    local surface = player.surface
+    local surface = player.physical_surface
     local area = {{position.x - item_drop_radius, position.y - item_drop_radius}, {position.x + item_drop_radius, position.y + item_drop_radius}}
     local requesting_force = player.force
     local target = false
@@ -323,7 +323,7 @@ local function set_cease_fire(player, entity)
         return
     end
     local position = entity.position
-    local surface = player.surface
+    local surface = player.physical_surface
     local area = {{position.x - item_drop_radius, position.y - item_drop_radius}, {position.x + item_drop_radius, position.y + item_drop_radius}}
     local requesting_force = player.force
     local target = false
@@ -367,7 +367,7 @@ local function declare_war(player, item)
     end
     local this = ScenarioTable.get_table()
     local position = item.position
-    local surface = player.surface
+    local surface = player.physical_surface
     local area = {{position.x - item_drop_radius, position.y - item_drop_radius}, {position.x + item_drop_radius, position.y + item_drop_radius}}
 
     local requesting_force = player.force
@@ -690,7 +690,7 @@ function Public.player_joined(player)
         player.force = create_outlander_force(player)
     end
 
-    if player.surface.name == "limbo" then
+    if player.physical_surface.name == "limbo" then
         log("XDB: emergency spawn for " .. player.name)
         player.teleport({0, 0}, game.surfaces['nauvis'])
     end

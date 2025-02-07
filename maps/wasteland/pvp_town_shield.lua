@@ -29,10 +29,11 @@ end
 
 function Public.enemy_players_nearby(position, surface, force, max_distance, min_league)
     for _, player in pairs(game.connected_players) do
-        if player.surface == surface then
-            local distance = math_floor(math_sqrt((player.position.x - position.x) ^ 2 + (player.position.y - position.y) ^ 2))
+        if player.physical_surface == surface and player.character then
+            local pp = player.physical_position
+            local distance = math_floor(math_sqrt((pp.x - position.x) ^ 2 + (pp.y - position.y) ^ 2))
             if distance < max_distance and not TeamBasics.is_friendly_towards(player.force, force) then
-                if (not min_league or Score.get_player_league(player) > min_league) and (player.character or player.driving) then
+                if not min_league or Score.get_player_league(player) > min_league then
                     return true
                 end
             end
@@ -272,7 +273,7 @@ local function all_players_near_center(town_center)
     local force = market.force
 
     for _, player in pairs(force.connected_players) do
-        local pp = player.position
+        local pp = player.physical_position
         local mp = market.position
         if math.sqrt((pp.x - mp.x) ^ 2 +  (pp.y - mp.y) ^ 2) > 10 then
             return false
@@ -298,7 +299,7 @@ function Public.request_afk_shield(town_center, player)
                     if shield then
                         PvPShield.remove_shield(shield)
                     end
-                    surface.play_sound({path = 'utility/scenario_message', position = player.position, volume_modifier = 1})
+                    surface.play_sound({path = 'utility/scenario_message', position = player.physical_position, volume_modifier = 1})
                     force.print("You have enabled AFK mode. Move away from the town center to end it.", Utils.scenario_color)
                     update_pvp_shields()
                 else

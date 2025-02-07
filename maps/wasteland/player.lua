@@ -123,13 +123,13 @@ end
 local function update_player_position_displays()
     for _, player in pairs(game.connected_players) do
         player.gui.top[map_pos_frame_id].caption = "Position: "
-                .. string.format('%.0f, %.0f', player.position.x,  player.position.y)
+                .. string.format('%.0f, %.0f', player.physical_position.x,  player.physical_position.y)
     end
 end
 
 local function update_player_evo_displays()
     for _, player in pairs(game.connected_players) do
-        local e = Evolution.get_evolution(player.position, true)
+        local e = Evolution.get_evolution(player.physical_position, true)
         local color
         if e < 0.2 then
             color = {r = 0, g = 255, b = 0}
@@ -150,14 +150,14 @@ local function hint_treasure()
             if player.online_time % (30 * 60 * 60) < 60 then
                 player.create_local_flying_text(
                     {
-                        position = player.position,
+                        position = player.physical_position,
                         text = 'You hear rumors about a huge treasure at the center of the map',
                         color = {r = 0.4, g = 0.6, b = 0.8},
                         time_to_live = 160
                     }
                 )
             end
-            if math.sqrt(player.position.x ^ 2 + player.position.y ^ 2) < 150 then
+            if math.sqrt(player.physical_position.x ^ 2 + player.physical_position.y ^ 2) < 150 then
                 this.treasure_hint[player.index] = false
             end
         end
@@ -195,7 +195,7 @@ end
 local function on_player_respawned(event)
     local this = ScenarioTable.get()
     local player = game.players[event.player_index]
-    local surface = player.surface
+    local surface = player.physical_surface
 
     Team.set_player_starter_inventory(player)
 

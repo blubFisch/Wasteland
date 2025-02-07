@@ -150,7 +150,7 @@ commands.add_command(
                 return
             end
 
-            Public.set_new_spawn_point(player, player.surface)
+            Public.set_new_spawn_point(player, player.physical_surface)
             player.print("New spawn is set up and will be used when you die", Utils.scenario_color)
         end
 )

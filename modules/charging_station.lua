@@ -40,7 +40,7 @@ local function discharge_accumulators(surface, position, force, energy_needs)
 end
 
 local function info_floaty(player, text, color)
-    Utils.flying_text(nil, player.surface, player.position, text, color)
+    Utils.flying_text(nil, player.physical_surface, player.physical_position, text, color)
 end
 
 local function charge(player)
@@ -73,7 +73,7 @@ local function charge(player)
                 armor_can_store_energy = true
             end
             if energy_needs > 0 then
-                local energy_transfer = discharge_accumulators(player.surface, player.position, player.force, energy_needs)
+                local energy_transfer = discharge_accumulators(player.physical_surface, player.physical_position, player.force, energy_needs)
                 if energy_transfer > 0 then
                     if piece.energy + energy_transfer >= piece.max_energy then
                         piece.energy = piece.max_energy

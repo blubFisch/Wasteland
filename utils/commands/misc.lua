@@ -340,72 +340,6 @@ commands.add_command(
     end
 )
 
-local function clear_corpses(cmd)
-    local player
-    local trusted = Session.get_trusted_table()
-    local param
-    if cmd and cmd.player then
-        player = cmd.player
-        param = 50
-    elseif cmd then
-        player = game.player
-        param = tonumber(cmd.parameter)
-    end
-
-    if not player or not player.valid then
-        return
-    end
-    local p = player.print
-    if not trusted[player.name] then
-        if not player.admin then
-            p('[ERROR] Only admins and trusted weebs are allowed to run this command!', Color.fail)
-            return
-        end
-    end
-    if param == nil then
-        player.print('[ERROR] Must specify radius!', Color.fail)
-        return
-    end
-    if param < 0 then
-        player.print('[ERROR] Value is too low.', Color.fail)
-        return
-    end
-    if param > 500 then
-        player.print('[ERROR] Value is too big.', Color.fail)
-        return
-    end
-    local pos = player.position
-
-    local i = 0
-
-    local radius = {{x = (pos.x + -param), y = (pos.y + -param)}, {x = (pos.x + param), y = (pos.y + param)}}
-
-    for _, entity in pairs(player.surface.find_entities_filtered {area = radius, type = 'corpse'}) do
-        if entity.corpse_expires then
-            entity.destroy()
-            i = i + 1
-        end
-    end
-    local corpse = 'corpse'
-
-    if i > 1 then
-        corpse = 'corpses'
-    end
-    if i == 0 then
-        player.print('[color=blue][Cleaner][/color] No corpses to clear!', Color.warning)
-    else
-        player.print('[color=blue][Cleaner][/color] Cleared ' .. i .. ' ' .. corpse .. '!', Color.success)
-    end
-end
-
-commands.add_command(
-    'clear-corpses',
-    'Clears all the biter corpses..',
-    function(cmd)
-        clear_corpses(cmd)
-    end
-)
-
 local on_player_joined_game = function(player)
     if this.creative_enabled then
         if not this.players[player.index] then
@@ -503,7 +437,5 @@ Event.add(
         on_player_joined_game(player)
     end
 )
-
-Public.clear_corpses = clear_corpses
 
 return Public

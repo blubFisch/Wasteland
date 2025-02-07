@@ -349,7 +349,7 @@ local function on_player_used_capsule(event)
     end
     
     -- Visualise healing for other players 
-    Utils.flying_text(nil, player.surface,player.position,
+    Utils.flying_text(nil, player.physical_surface, player.physical_position,
         '-1 [img=item/' .. 'raw-fish' .. ']', {r = 0.98, g = 0.66, b = 0.22})
 end
 

@@ -727,7 +727,7 @@ commands.add_command(
             end
 
             log("USAGE_ANALYTICS: player " .. player.name .. " used good-spot")
-            local pos = find_good_town_build_position(player.position, player.force, player.surface)
+            local pos = find_good_town_build_position(player.physical_position, player.force, player.physical_surface)
             if pos then
                 player.print("A good position for a town is here: [gps=" .. pos.x .. "," .. pos.y .. "]", Utils.scenario_color)
             else
