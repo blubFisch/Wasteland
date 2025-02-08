@@ -103,7 +103,7 @@ function Public.add_last_winner_button(player)
     Public.update_last_winner_name(player)
 end
 
-function Public.show_intro(player, info_type)
+function Public.show(player, info_type)
     if player.gui.center['wasteland_map_intro_frame'] then
         player.gui.center['wasteland_map_intro_frame'].destroy()
     end
@@ -170,7 +170,7 @@ function Public.toggle(event)
         if player.gui.center['wasteland_map_intro_frame'] then
             player.gui.center['wasteland_map_intro_frame'].destroy()
         else
-            Public.show_intro(player, 'adv')
+            Public.show(player, 'adv')
         end
     end
 end

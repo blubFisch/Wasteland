@@ -169,7 +169,7 @@ local function on_player_joined_game(event)
     Team.set_player_color(player)
     if player.online_time == 0 then
         Info.toggle_button(player)
-        Info.show_intro(player)
+        Info.show(player)
         ScoreBoard.add_score_button(player)
         Tutorial.register_for_tutorial(player)
         ResearchBalance.add_balance_ui(player)
