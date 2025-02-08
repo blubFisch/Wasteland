@@ -60,7 +60,6 @@ local info_adv =
 - It's possible to automate trading with the town center! How cool is that?!! Try it out.
     Tip: use filter inserters to get coins out of the market or to buy items
 - Fishes procreate near towns. The more fishes, the quicker they multiply. Automated fish farm, anyone?
-    Accidentally overfished? No problem, you can drop them back in
 - Use /rename-town NEWNAME (chat command) to rename your town
 - If you get stuck or trapped, use the /suicide chat command to respawn. Use /new-spawn to set up a new spawn point
 - It is not possible to build near other towns turrets, town centers or PvP shields
@@ -171,7 +170,7 @@ function Public.toggle(event)
         if player.gui.center['wasteland_map_intro_frame'] then
             player.gui.center['wasteland_map_intro_frame'].destroy()
         else
-            Public.show(player, 'adv')
+            Public.show_intro(player, 'adv')
         end
     end
 end
