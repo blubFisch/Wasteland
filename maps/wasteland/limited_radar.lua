@@ -2,16 +2,6 @@ local Public = {}
 
 local ScenarioTable = require 'maps.wasteland.table'
 
-function Public.reset()
-    local this = ScenarioTable.get_table()
-    if this.testing_mode then
-        return
-    end
-    for _, force in pairs(game.forces) do
-        force.clear_chart('nauvis')
-    end
-end
-
 local function add_force(rendered, force_name)
     local forces = rendered.forces
     for _, force in ipairs(forces) do
