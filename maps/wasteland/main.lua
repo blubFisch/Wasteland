@@ -61,12 +61,10 @@ local function on_init()
 end
 
 local tick_actions = {
-    [60 * 0] = Radar.reset,
     [60 * 5] = Team.update_town_chart_tags,
     [60 * 10] = Team.set_all_player_colors,
     [60 * 15] = Fish.reproduce,
     [60 * 25] = Biters.unit_groups_start_moving,
-    [60 * 30] = Radar.reset,
     [60 * 45] = Biters.validate_swarms,
     [60 * 50] = Biters.swarm,
     [60 * 55] = Pollution.market_scent
