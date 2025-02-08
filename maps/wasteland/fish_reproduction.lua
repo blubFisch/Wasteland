@@ -19,6 +19,24 @@ function Public.reproduce()
         local position = town_center.market.position
         local fishes = surface.find_entities_filtered({name = 'fish', position = position, radius = 27})
 
+        -- if overfished, slowly recover
+        if #fishes < 5 and math_random(1, 5) == 1 then
+            local water_tiles = {}
+
+            for _, tile in pairs(surface.find_tiles_filtered{name = {"water", "water-shallow"}, position = position, radius = 27}) do
+                table.insert(water_tiles, tile.position)
+            end
+
+            if #water_tiles > 0 then
+                pos = water_tiles[math.random(#water_tiles)]
+                -- spawn only where there's enough water around - otherwise they can end up stuck on half-land
+                if surface.count_tiles_filtered{position = pos, radius = 1, name = {"water", "water-shallow"}} >= 4 then
+                    surface.create_entity({name = 'water-splash', position = pos})
+                    surface.create_entity({name = 'fish', position = pos})
+                end
+            end
+        end
+
         if #fishes == 0 or #fishes >= 100 then
             goto continue
         end
