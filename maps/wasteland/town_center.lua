@@ -110,8 +110,8 @@ end
 
 local additional_resource_vectors = {}
 additional_resource_vectors[1] = {}
-for x = 7, 14, 1 do
-    for y = -3, 3, 1 do
+for x = 5, 9, 1 do
+    for y = -2, 2, 1 do
         table_insert(additional_resource_vectors[1], {x, y})
     end
 end
@@ -232,7 +232,7 @@ local function draw_town_spawn(player_name)
         local y = position.y + vector[2]
         local p = {x = x, y = y}
         if surface.get_tile(p).name ~= 'out-of-map' then
-            surface.set_tiles({{name = 'water-shallow', position = p}})
+            surface.set_tiles({{name = 'water', position = p}}) -- use water and not water-shallow because shallow can't be landfilled
         end
     end
 
