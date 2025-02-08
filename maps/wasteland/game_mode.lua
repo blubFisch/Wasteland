@@ -16,7 +16,7 @@ function Public.add_mode_button(player)
         caption = 'Game Mode: ' .. Public.mode_names[storage.game_mode],
         name = button_id
     }
-    button.tooltip = "Changes game duration, PvP shield sizes, available research, research cost and research score"
+    button.tooltip = "The Game Mode controls game duration, PvP shield sizes, available research, research cost and research score"
     button.style.font_color = {r = 1, g = 1, b = 1}
     button.style.minimal_height = 38
     button.style.minimal_width = 180
