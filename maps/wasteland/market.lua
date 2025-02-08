@@ -246,7 +246,7 @@ local function offer_purchased(event)
         if count > 1 then
             local offers = market.get_market_items()
             if offers[offer_index].price ~= nil then
-                local price = offers[offer_index].price[1].amount
+                local price = offers[offer_index].price[1].count
                 player.insert({name = 'coin', count = price * (count - 1)})
             end
         end
@@ -255,7 +255,7 @@ local function offer_purchased(event)
         local offers = market.get_market_items()
         local prices = offers[offer_index].price
         if prices ~= nil then
-            local price = prices[1].amount
+            local price = prices[1].count
             player.insert({name = 'coin', count = price * (count)})
         end
     end
@@ -317,7 +317,10 @@ local function get_inserter_filter(entity)
     -- return the first filter
     local filter_mode = entity.inserter_filter_mode
     if filter_mode == 'whitelist' then
-        return entity.get_filter(1)
+        local filter = entity.get_filter(1)
+        if filter then
+            return filter.name
+        end
     end
     return nil
 end
@@ -379,6 +382,8 @@ local function trade_scrap_for_coin(town_center, trade, stack)
     local item = stack.name
     local amount = stack.count
     local input_buffer = town_center.input_buffer
+    -- log("trade_scrap_for_coin " .. item .. " " .. amount)
+
     -- buffer the input in an item buffer that can be sold for coin
     local input_amount = input_buffer[item]
     if input_amount == nil then
@@ -388,7 +393,7 @@ local function trade_scrap_for_coin(town_center, trade, stack)
     end
     --log("input_buffer[" .. item .. "] = " .. input_buffer[item])
 
-    local price = trade.price[1].amount
+    local price = trade.price[1].count
     local count = trade.offer.count
     local coin_balance = town_center.coin_balance
     while input_amount >= price do
@@ -404,7 +409,7 @@ end
 local function trade_coin_for_items(town_center, trade)
     local item = trade.offer.item
     local count = trade.offer.count
-    local price = trade.price[1].amount
+    local price = trade.price[1].count
     local output_buffer = town_center.output_buffer
     if output_buffer[item] == nil then
         output_buffer[item] = 0
@@ -588,11 +593,9 @@ local function handle_market_input(town_center, market, entity, offers)
     end
 end
 
-local _allowed_market_output_inserters = {
-    ['fast-inserter'] = true,
-    ['bulk-inserter'] = true
-}
 local function handle_market_output(town_center, market, entity, offers)
+    --log("handle_market_output " .. entity.name)
+
     if entity.type == "loader" then
         -- handle loader output
         local max_index = entity.get_max_transport_line_index()
@@ -601,7 +604,7 @@ local function handle_market_output(town_center, market, entity, offers)
                 handle_loader_output(town_center, entity, index, offers)
             end
         end
-    elseif _allowed_market_output_inserters[entity.name] then
+    else
         -- handle inserter output
         if entity.drop_target ~= nil then
             -- if the pickup position is inside the market
@@ -669,10 +672,6 @@ local long_market_filter = {
 }
 local function on_tick(event)
     local data = ScenarioTable.get()
-    if not data.town_centers then
-        return
-    end
-
     local is_update_balance_tick = event.tick % 30 == 0
     local is_find_entities_near_market_tick = event.tick % 60 == 0
 

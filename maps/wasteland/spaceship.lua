@@ -215,7 +215,7 @@ local function offer_purchased(event)
         if count > 1 then
             local offers = market.get_market_items()
             if offers[offer_index].price ~= nil then
-                local price = offers[offer_index].price[1].amount
+                local price = offers[offer_index].price[1].count
                 player.insert({name = 'coin', count = price * (count - 1)})
             end
         end
@@ -223,7 +223,7 @@ local function offer_purchased(event)
         -- reimburse purchase
         local offers = market.get_market_items()
         if offers[offer_index].price ~= nil then
-            local price = offers[offer_index].price[1].amount
+            local price = offers[offer_index].price[1].count
             player.insert({name = 'coin', count = price * (count)})
         end
     end
