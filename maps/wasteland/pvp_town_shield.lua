@@ -74,7 +74,7 @@ local function update_pvp_shields_display()
     end
 end
 
-Public.time_to_unlock_shield_ticks = 5 * 60 * 60
+Public.time_to_unlock_shield_ticks = 1 * 60 * 60
 local function town_shields_researched(town_center)
     return town_center.survival_time_ticks > Public.time_to_unlock_shield_ticks
 end
