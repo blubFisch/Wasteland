@@ -849,7 +849,7 @@ local function kill_force(killed_force, cause_force, cause_entity)
             end
         end
     end
-    local r = 30
+    local r = 31
     for _, e in pairs(surface.find_entities_filtered({area = {{position.x - r, position.y - r}, {position.x + r, position.y + r}}, force = 'neutral', type = 'resource'})) do
         if e.name ~= 'crude-oil' then
             e.destroy()

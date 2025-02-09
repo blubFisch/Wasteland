@@ -270,16 +270,14 @@ local function move_away_biteys(surface, area)
     end
 end
 
-local vectors = {{0, 0}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}}
-
-local function landfill_under(entity)
-    -- landfill the area under the entity
+local tile_fill_vectors = {{0, 0}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}}
+local function tile_fill_under(entity)
     local surface = entity.surface
-    for _, v in pairs(vectors) do
+    for _, v in pairs(tile_fill_vectors) do
         local position = {entity.position.x + v[1], entity.position.y + v[2]}
         local tile = surface.get_tile(position)
         if tile.name ~= "blue-refined-concrete" and not tile.collides_with('resource') then
-            surface.set_tiles({{name = 'landfill', position = position}}, true)
+            surface.set_tiles({{name = 'dirt-7', position = position}}, true)
         end
     end
 end
@@ -290,7 +288,7 @@ local function on_player_mined_entity(event)
         return
     end
     if Scrap.is_scrap(entity) then
-        landfill_under(entity)
+        tile_fill_under(entity)
     end
 end
 
@@ -300,7 +298,7 @@ local function on_entity_died(event)
         return
     end
     if Scrap.is_scrap(entity) then
-        landfill_under(entity)
+        tile_fill_under(entity)
     end
 end
 

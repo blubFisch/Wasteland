@@ -257,7 +257,7 @@ end
 
 function Public.remove_shield_floor_markers(surface, position)
     for _, e in pairs(surface.find_tiles_filtered({area = get_shield_max_area(position), name = 'blue-refined-concrete'})) do
-        surface.set_tiles({{name = 'landfill', position = e.position}}, true)
+        surface.set_tiles({{name = 'dirt-7', position = e.position}}, true)
     end
 end
 
