@@ -141,16 +141,10 @@ end
 --}
 
 local starter_supplies = {
-    {name = 'raw-fish', count = 20},
-    {name = 'grenade', count = 5},
-    {name = 'stone', count = 100},
-    {name = 'land-mine', count = 4},
-    {name = 'wood', count = 100},
-    {name = 'iron-plate', count = 200},
-    {name = 'shotgun', count = 1},
-    {name = 'shotgun-shell', count = 8},
-    {name = 'firearm-magazine', count = 20},
-    {name = 'gun-turret', count = 4}
+    {{name = 'raw-fish', count = 20}},
+    {{name = 'stone', count = 100}, {name = 'wood', count = 100}, {name = 'iron-plate', count = 200}},
+    {{name = 'shotgun', count = 1}, {name = 'shotgun-shell', count = 8}},
+    {{name = 'gun-turret', count = 4}, {name = 'firearm-magazine', count = 100}, {name = 'land-mine', count = 20}},
 }
 
 local function count_nearby_ore(surface, position, ore_name)
@@ -208,21 +202,6 @@ local function draw_town_spawn(player_name)
     table_shuffle(ores_out)
     draw_ore_patches(surface, position, ores_out, resource_vectors_out)
 
-    -- starter chests
-    for _, item_stack in pairs(starter_supplies) do
-        local m1 = -8 + math_random(0, 16)
-        local m2 = -8 + math_random(0, 16)
-        local p = {position.x + m1, position.y + m2}
-        p = surface.find_non_colliding_position('iron-chest', p, 64, 1)
-        if p then
-            local e = surface.create_entity({name = 'iron-chest', position = p, force = player_name})
-            local inventory = e.get_inventory(defines.inventory.chest)
-            inventory.insert(item_stack)
-        else
-            log("ERROR: could not find starter chest position")
-        end
-    end
-
     local vector_indexes = {1, 2, 3, 4}
     table_shuffle(vector_indexes)
 
@@ -245,6 +224,23 @@ local function draw_town_spawn(player_name)
             if surface.can_place_entity({name = 'fish', position = p}) then
                 surface.create_entity({name = 'fish', position = p})
             end
+        end
+    end
+
+    -- starter chests
+    for _, item_stacks in pairs(starter_supplies) do
+        local m1 = -8 + math_random(0, 16)
+        local m2 = -8 + math_random(0, 16)
+        local p = {position.x + m1, position.y + m2}
+        p = surface.find_non_colliding_position('iron-chest', p, 64, 1, true)
+        if p then
+            local e = surface.create_entity({name = 'iron-chest', position = p, force = player_name})
+            local inventory = e.get_inventory(defines.inventory.chest)
+            for _, stack in pairs(item_stacks) do
+                inventory.insert(stack)
+            end
+        else
+            log("ERROR: could not find starter chest position")
         end
     end
 end
