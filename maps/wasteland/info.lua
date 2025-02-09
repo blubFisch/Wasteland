@@ -5,7 +5,6 @@ local changelog =
  - Factorio 2.0 compatibility
     - Radar reset bug
     - Market inserter bug
-    - New towns will be able to get league/offline shield after exactly 5 minutes
     - Shields now always unlock after a town is 5 minutes old
     ]]
 
