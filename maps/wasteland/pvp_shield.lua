@@ -193,7 +193,7 @@ function Public.push_enemies_out(player)
     for _, shield in pairs(this.pvp_shields) do
         if not is_allowed_in_shield(shield, player.force) or player.physical_surface ~= shield.surface then
             local pp = player.physical_position
-            if CommonFunctions.point_in_bounding_box(p, shield.box) then
+            if CommonFunctions.point_in_bounding_box(pp, shield.box) then
                 -- Push player away from center
                 local center_diff = { x = pp.x - shield.center.x, y = pp.y - shield.center.y}
                 center_diff.x = center_diff.x / vector_norm(center_diff)

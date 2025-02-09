@@ -103,8 +103,8 @@ local function get_random_close_spawner(surface, market, radius)
         table_shuffle(units)
         while units[1] do
             local unit = units[1]
-            if unit.spawner then
-                return unit.spawner
+            if unit.commandable and unit.commandable.spawner then
+                return unit.commandable.spawner
             end
             table_remove(units, 1)
         end

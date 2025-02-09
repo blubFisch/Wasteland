@@ -72,7 +72,7 @@ local function update_modifiers()
         if math.abs(town_center.research_balance.current_modifier / town_center.research_balance.previous_modifier - 1) > 0.2 then
             town_center.market.force.print("Your research cost is now "
                     .. Public.format_town_modifier(town_center.research_balance.current_modifier)
-                    .. " (previously " .. Public.format_town_modifier(town_center.research_balance.previous_modifier) .. ")", Utils.scenario_color)
+                    .. " (previously " .. Public.format_town_modifier(town_center.research_balance.previous_modifier) .. "). It depends on how much research other towns have compared to yours and other factors.", Utils.scenario_color)
             town_center.research_balance.previous_modifier = town_center.research_balance.current_modifier
         end
     end
