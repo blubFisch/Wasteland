@@ -80,7 +80,7 @@ local upgrade_functions = {
         if not this.buffs[player.index].character_crafting_speed_modifier then
             this.buffs[player.index].character_crafting_speed_modifier = 0
         end
-        this.buffs[player.index].character_crafting_speed_modifier = player.physical_character_crafting_speed_modifier
+        this.buffs[player.index].character_crafting_speed_modifier = player.character_crafting_speed_modifier
         surface.play_sound({path = 'utility/achievement_unlocked', position = player.physical_position, volume_modifier = 1})
         return true
     end,

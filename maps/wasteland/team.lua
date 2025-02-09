@@ -673,7 +673,7 @@ local function create_outlander_force(player)
 end
 
 local function setup_enemy_force()
-    game.forces.enemy.set_evolution_factor(1)
+    game.forces.enemy.set_evolution_factor(0.5) -- controls strength of nests
 end
 
 function Public.player_joined(player)
