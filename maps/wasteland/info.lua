@@ -2,7 +2,12 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Feb 2025 updates[/font]
- - Factorio 2.0 compatibility]]
+ - Factorio 2.0 compatibility
+    - Radar reset bug
+    - Market inserter bug
+    - New towns will be able to get league/offline shield after exactly 5 minutes
+    - Shields now always unlock after a town is 5 minutes old
+    ]]
 
 local info =
     [[[font=heading-1]Welcome to the Wasteland![/font]
@@ -36,18 +41,17 @@ local info_adv =
 
 [font=heading-1]Leagues and PvP Shields[/font]
 - PVP Shields protect player's towns while offline and balance players who join later
-- PvP shields prevent players and biters from entering, building and damaging
-- League shield protects your town from players of a higher league and cover the outer blue tile square of your town
+- They prevent players and biters from entering, building and damaging within the blue tile square of your town
+- PvP League shields protect your town from players of a higher league
 - League scores: L1: 15 score or tank. L2: 35 score. L3: 60 score
     - To see how town scores are calculated, hover the mouse over a town's score in the leaderboard
 - In League 4, towns don't get score for being online. Players must be offline for 2h for the score to resume (including allied players)
 - Offline PvP shields deploy automatically once all players of a town leave the game
-    - The size is marked by the blue square around towns
     - This only gets deployed if there are no enemies in your town's range - it is only safe to log out if your town market shows "No enemies"
-    - This shield is available before League 4
+    - This shield is not available in League 4
     - Shields also stop all production buildings, labs, roboports, turrets and others (enable AFK mode to test it)
-    - If no players are in a town for more than 24h (ingame time), the town is "Abandoned" and loses its PvP protection
-- Your town has a AFK PvP shield that you can use to safely take a quick break - deploy it from the market
+- If no players are in a town for more than 24h (ingame time), the town is "Abandoned" and loses its PvP protection
+- Your town also has an AFK PvP shield that you can use to safely take a quick break - deploy it from the market
 
 [font=heading-1]Advanced tips and tricks[/font]
 - To join our discord, open wasteland-discord.fun in your web browser

@@ -74,8 +74,9 @@ local function update_pvp_shields_display()
     end
 end
 
-local function town_shields_researched(force)
-    return force.technologies["automation"].researched
+Public.time_to_unlock_shield_ticks = 5 * 60 * 60
+local function town_shields_researched(town_center)
+    return town_center.survival_time_ticks > Public.time_to_unlock_shield_ticks
 end
 
 local function update_pvp_shields()
@@ -87,7 +88,7 @@ local function update_pvp_shields()
         local market = town_center.market
         local force = market.force
         local shield = this.pvp_shields[force.name]
-        local shields_researched = town_shields_researched(force)
+        local shields_researched = town_shields_researched(town_center)
         local town_league = Score.get_town_league(town_center)
         local town_offline_or_afk = #force.connected_players == 0 or town_center.marked_afk
         local abandoned = false
@@ -152,10 +153,10 @@ local function update_pvp_shields()
 
             -- Show hint
             if not town_center.pvp_shield_mgmt.displayed_offline_hint and shields_researched then
-                force.print("Your town is now advanced enough to deploy PvP shields."
+                force.print("Your town is now old enough to deploy PvP shields."
                         .. " Once all of your town members leave, your town will be protected from enemy players"
                         .. " for up to " .. PvPShield.format_lifetime_str(offline_shield_max_duration_ticks) .. "."
-                        .. " However, biters will always be able to attack your town! See Help for more details.", Utils.scenario_color)
+                        .. " See Help for more details.", Utils.scenario_color)
                 town_center.pvp_shield_mgmt.displayed_offline_hint = true
             end
         end
@@ -178,7 +179,7 @@ local function update_pvp_shields()
             else
                 if town_center.last_higher_league_nearby_hint == nil or game.tick - town_center.last_higher_league_nearby_hint > 60 * 60 then
                     force.print("There are enemy players of a higher league, " ..
-                            "but your town can't deploy a shield without automation research", Utils.scenario_color_warning)
+                            "but your town is not old enough to deploy a PvP shield", Utils.scenario_color_warning)
                     town_center.last_higher_league_nearby_hint = game.tick
                 end
             end
@@ -217,7 +218,8 @@ local function update_pvp_shields()
             elseif high_league_no_shield then
                 shield_info = shield_info .. ', No shield (League 4)'
             elseif not shields_researched then
-                shield_info = shield_info .. ', Shield not researched'
+                local unlock_time_str = PvPShield.format_lifetime_str(Public.time_to_unlock_shield_ticks - town_center.survival_time_ticks)
+                shield_info = shield_info .. ', Shield unlock in ' .. unlock_time_str
             else
                 shield_info = shield_info .. ', Shield standby'
             end
@@ -291,7 +293,7 @@ function Public.request_afk_shield(town_center, player)
 
     if all_players_near_center(town_center) then
         if not Public.enemy_players_near_town(town_center, town_control_range) then
-            if town_shields_researched(force) then
+            if town_shields_researched(town_center) then
                 if surface.count_entities_filtered({ area = get_shield_max_area(market.position),
                                                      type = "unit", force = game.forces.enemy, limit=1}) == 0 then
                     town_center.marked_afk = true
@@ -306,7 +308,7 @@ function Public.request_afk_shield(town_center, player)
                     player.print("Biters are within the town range, can't enter AFK mode", Utils.scenario_color_warning)
                 end
             else
-                player.print("You need to research automation to enable shields", Utils.scenario_color_warning)
+                player.print("Your town is not old enough to deploy a PvP shield", Utils.scenario_color_warning)
             end
         else
             player.print("Enemy players are too close, can't enter AFK mode", Utils.scenario_color_warning)

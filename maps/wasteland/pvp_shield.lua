@@ -50,8 +50,7 @@ local function visualise_entity_deactivated(entity)
     local entity_label = rendering.draw_text{
         text = "Inactive",
         surface = entity.surface,
-        target = entity,
-        target_offset = {0, -1},
+        target = {entity = entity, offset = {0, -1}},
         color = {r = 1, g = 0.0, b = 0.0},
         alignment = "center",
         scale = 1.0

@@ -448,13 +448,11 @@ local function found_town(event)
     town_center.town_rest.previous_modifier = 0
     town_center.town_rest.mining_prod_bonus = 0
 
-    town_center.town_caption =
-        rendering.draw_text {
+    town_center.town_caption = rendering.draw_text {
         text = town_center.town_name,
         surface = surface,
         forces = {force_name},
-        target = town_center.market,
-        target_offset = {0, -4.25},
+        target = {entity = town_center.market, offset = {0, -3.25}},
         color = town_center.color,
         scale = 1.30,
         font = 'default-game',
@@ -462,13 +460,11 @@ local function found_town(event)
         scale_with_zoom = false
     }
 
-    town_center.health_text =
-        rendering.draw_text {
+    town_center.health_text = rendering.draw_text {
         text = 'HP: ' .. town_center.health .. ' / ' .. town_center.max_health,
         surface = surface,
         forces = {force_name},
-        target = town_center.market,
-        target_offset = {0, -3.25},
+        target = {entity = town_center.market, offset = {0, -2.25}},
         color = {200, 200, 200},
         scale = 1.00,
         font = 'default-game',
@@ -476,13 +472,23 @@ local function found_town(event)
         scale_with_zoom = false
     }
 
-    town_center.coins_text =
-        rendering.draw_text {
+    town_center.coins_text = rendering.draw_text {
         text = 'Coins: ' .. town_center.coin_balance,
         surface = surface,
         forces = {force_name},
-        target = town_center.market,
-        target_offset = {0, -2.75},
+        target = {entity = town_center.market, offset = {0, -1.75}},
+        color = {200, 200, 200},
+        scale = 1.00,
+        font = 'default-game',
+        alignment = 'center',
+        scale_with_zoom = false
+    }
+
+    town_center.shield_text = rendering.draw_text {
+        text = '',
+        surface = surface,
+        forces = {force_name},
+        target = {entity = town_center.market, offset = {0, -1.25}},
         color = {200, 200, 200},
         scale = 1.00,
         font = 'default-game',
@@ -494,22 +500,8 @@ local function found_town(event)
         text = '',
         surface = surface,
         forces = {force_name},
-        target = town_center.market,
-        target_offset = {0, -2.25},
+        target = {entity = town_center.market, offset = {0, -0.75}},
         color = {0, 0, 0},
-        scale = 1.00,
-        font = 'default-game',
-        alignment = 'center',
-        scale_with_zoom = false
-    }
-
-    town_center.shield_text = rendering.draw_text {
-        text = '',
-        surface = surface,
-        forces = {force_name},
-        target = town_center.market,
-        target_offset = {0, -1.5},
-        color = {200, 200, 200},
         scale = 1.00,
         font = 'default-game',
         alignment = 'center',
