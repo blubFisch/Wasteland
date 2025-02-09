@@ -210,8 +210,14 @@ local function draw_town_spawn(player_name)
         local x = position.x + vector[1]
         local y = position.y + vector[2]
         local p = {x = x, y = y}
+
+        -- Find and move any player characters in the area
+        for _, entity in pairs(surface.find_entities_filtered{area = {{p.x - 0.5, p.y - 0.5}, {p.x + 0.5, p.y + 0.5}}, type = "character"}) do
+            entity.teleport({x = p.x, y = p.y + 2})
+        end
+
         if surface.get_tile(p).name ~= 'out-of-map' then
-            surface.set_tiles({{name = 'water', position = p}}) -- use water and not water-shallow because shallow can't be landfilled
+            surface.set_tiles({{name = 'water', position = p}}) -- use water instead of water-shallow because shallow can't be landfilled
         end
     end
 
@@ -229,8 +235,8 @@ local function draw_town_spawn(player_name)
 
     -- starter chests
     for _, item_stacks in pairs(starter_supplies) do
-        local m1 = -8 + math_random(0, 16)
-        local m2 = -8 + math_random(0, 16)
+        local m1 = -5 + math_random(0, 10)
+        local m2 = -5 + math_random(0, 10)
         local p = {position.x + m1, position.y + m2}
         p = surface.find_non_colliding_position('iron-chest', p, 64, 1, true)
         if p then
