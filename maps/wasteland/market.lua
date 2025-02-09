@@ -87,9 +87,9 @@ local upgrade_functions = {
         surface.play_sound({path = 'utility/scenario_message', position = town_center.market.position, volume_modifier = 1})
         return false
     end,
-    -- Pause-mode PvP Shield
+    -- AFK PvP Shield
     [7] = function(town_center, player)
-        PvPTownShield.request_afk_shield(town_center, player)
+        PvPTownShield.toggle_afk_shield(town_center, player)
         return false
     end
 }
@@ -137,7 +137,7 @@ local function set_offers(town_center)
     end
     local spawn_point = 'Set Spawn Point'
     special_offers[6] = {{}, spawn_point}
-    special_offers[7] = {{}, 'AFK Mode (PvP Shield, No boss attacks, No market pollution)'}
+    special_offers[7] = {{}, 'Toggle AFK mode (PvP Shield, No boss attacks, No market pollution)'}
 
     for _, v in pairs(special_offers) do
         table_insert(market_items, {price = v[1], offer = {type = 'nothing', effect_description = v[2]}})

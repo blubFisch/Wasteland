@@ -284,37 +284,51 @@ local function all_players_near_center(town_center)
     return true
 end
 
-function Public.request_afk_shield(town_center, player)
+local function remove_afk_shield(force)
+    local this = ScenarioTable.get_table()
+    local shield = this.pvp_shields[force.name]
+    if shield then
+        PvPShield.remove_shield(shield)
+    end
+end
+
+function Public.toggle_afk_shield(town_center, player)
     local market = town_center.market
     local this = ScenarioTable.get()
     local force = market.force
     local surface = market.surface
     local town_control_range = Public.get_town_control_range(town_center)
 
-    if all_players_near_center(town_center) then
-        if not Public.enemy_players_near_town(town_center, town_control_range) then
-            if town_shields_researched(town_center) then
-                if surface.count_entities_filtered({ area = get_shield_max_area(market.position),
-                                                     type = "unit", force = game.forces.enemy, limit=1}) == 0 then
-                    town_center.marked_afk = true
-                    local shield = this.pvp_shields[force.name]
-                    if shield then
-                        PvPShield.remove_shield(shield)
+    if not town_center.marked_afk then
+        if all_players_near_center(town_center) then
+            if not Public.enemy_players_near_town(town_center, town_control_range) then
+                if town_shields_researched(town_center) then
+                    if surface.count_entities_filtered({ area = get_shield_max_area(market.position),
+                                                         type = "unit", force = game.forces.enemy, limit=1}) == 0 then
+                        town_center.marked_afk = true
+                        local shield = this.pvp_shields[force.name]
+                        if shield then
+                            PvPShield.remove_shield(shield)
+                        end
+                        surface.play_sound({path = 'utility/scenario_message', position = player.physical_position, volume_modifier = 1})
+                        force.print("You have enabled AFK mode. Move away from the town center to end it.", Utils.scenario_color)
+                        update_pvp_shields()
+                    else
+                        player.print("Biters are within the town range, can't enter AFK mode", Utils.scenario_color_warning)
                     end
-                    surface.play_sound({path = 'utility/scenario_message', position = player.physical_position, volume_modifier = 1})
-                    force.print("You have enabled AFK mode. Move away from the town center to end it.", Utils.scenario_color)
-                    update_pvp_shields()
                 else
-                    player.print("Biters are within the town range, can't enter AFK mode", Utils.scenario_color_warning)
+                    player.print("Your town is not old enough to deploy a PvP shield", Utils.scenario_color_warning)
                 end
             else
-                player.print("Your town is not old enough to deploy a PvP shield", Utils.scenario_color_warning)
+                player.print("Enemy players are too close, can't enter AFK mode", Utils.scenario_color_warning)
             end
         else
-            player.print("Enemy players are too close, can't enter AFK mode", Utils.scenario_color_warning)
+            player.print("To activate AFK mode, all players need to gather near the town center", Utils.scenario_color_warning)
         end
     else
-        player.print("To activate AFK mode, all players need to gather near the town center", Utils.scenario_color_warning)
+        town_center.marked_afk = false
+        remove_afk_shield(force)
+        force.print("AFK mode ended", Utils.scenario_color_warning)
     end
 end
 
@@ -327,11 +341,8 @@ local function update_afk_shields()
             local players_online = #force.connected_players > 0
             if players_online and not all_players_near_center(town_center) then
                 town_center.marked_afk = false
+                remove_afk_shield(force)
                 force.print("AFK mode has ended because players moved", Utils.scenario_color)
-                local shield = this.pvp_shields[force.name]
-                if shield then
-                    PvPShield.remove_shield(shield)
-                end
             elseif not players_online then
                 town_center.marked_afk = false
             end
