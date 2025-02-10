@@ -273,7 +273,7 @@ function Public.on_entity_damaged(event)
                 vehicle_modifier = 2
             elseif damage_type_name == "physical" and event.original_damage_amount > 80 then
                 -- Boost tank vs tank shell battles. Note: This involves guessing shell type based on damage
-                vehicle_modifier = vehicle_modifier * 2.1   -- Tweaked to 3 hits w/o upgrades, 2 hits with max upgrades (regular shells)
+                vehicle_modifier = vehicle_modifier * 0.4   -- Tweaked to 3 hits w/o upgrades, 2 (and a bit) hits with max upgrades (regular shells)
             else
                 vehicle_modifier = 0.3
             end
