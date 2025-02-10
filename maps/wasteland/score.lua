@@ -97,11 +97,23 @@ function Public.get_player_league(player)
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[player.force.name]
 
-    local league
+    local league = 1
+
+    -- Special items that bump you up a league for balancing
     if player.character and player.character.vehicle and player.character.vehicle.name == "tank" then
         league = 2
     else
-        league = 1
+        local armor_inventory = player.get_inventory(defines.inventory.character_armor)
+        if armor_inventory and not armor_inventory.is_empty() then
+            local armor_stack = armor_inventory[1]
+            if armor_stack.valid_for_read then
+                local armor_name = armor_stack.name
+                -- Check for modular armor or heavy armor
+                if armor_name == "heavy-armor" or armor_name == "modular-armor" or armor_name == "power-armor" or armor_name == "power-armor-mk2" then
+                    league = 2
+                end
+            end
+        end
     end
 
     if town_center then
