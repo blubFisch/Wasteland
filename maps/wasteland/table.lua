@@ -19,6 +19,8 @@ function Public.reset_table()
     this.town_centers = {}
     this.cooldowns_town_placement = {}
     this.last_respawn = {}
+    this.next_respawn_time_update = {}
+    this.respawn_time = {}
     this.last_death = {}
     this.strikes = {}
     this.score_gui_frame = {}

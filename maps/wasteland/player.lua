@@ -18,6 +18,9 @@ local map_pos_frame_id = 'wasteland_map_position'
 local evo_frame_id = 'wasteland_evo_display'
 
 local spawn_kill_time = 60 * 30
+local minimum_respawn_time = 30 * 60
+local reckless_death_increment = 30 * 60
+local reckless_death_limit = 5 * 3600
 
 function Public.initialize(player)
     player.teleport({0, 0}, game.surfaces['limbo'])
@@ -39,6 +42,7 @@ function Public.spawn_initially(player)
 
     this.strikes[player.name] = 0
     this.cooldowns_town_placement[player.index] = 0
+    this.respawn_time[player.name] = minimum_respawn_time
 end
 
 function Public.load_buffs(player)
@@ -226,12 +230,27 @@ local function on_player_died(event)
         this.strikes[player.name] = 0
     end
 
-    local reckless_death_limit_mins = 3   -- Discourage reckless gameplay like suicide-running tanks into other players bases
-    if this.last_respawn[player.name] and game.tick - this.last_respawn[player.name] < reckless_death_limit_mins * 3600 then
-        player.print("You have already died within the last " .. reckless_death_limit_mins .. " minutes -> Higher spawn time", Utils.scenario_color)
-        player.ticks_to_respawn = 3 * 60 * 60
-    else
-        player.ticks_to_respawn = 30 * 60
+    -- Discourage reckless gameplay like suicide-running tanks into other players bases
+    if this.last_respawn[player.name] and game.tick - this.last_respawn[player.name] < reckless_death_limit then
+        player.print("You have already died within the last " .. reckless_death_limit / 3600 .. " minutes -> Higher spawn time", Utils.scenario_color)
+        this.respawn_time[player.name] = this.respawn_time[player.name] + reckless_death_increment
+        this.next_respawn_time_update[player.index] = game.tick + reckless_death_limit
+    end
+    player.ticks_to_respawn = this.respawn_time[player.name]
+end
+
+local function update_respawn_times()
+    local this = ScenarioTable.get()
+    for _, player in pairs(game.connected_players) do
+        if this.next_respawn_time_update[player.index] and game.tick > this.next_respawn_time_update[player.index] then
+            if this.respawn_time[player.name] > minimum_respawn_time then
+                this.respawn_time[player.name] = math.min(this.respawn_time[player.name] - reckless_death_increment, minimum_respawn_time)
+                this.next_respawn_time_update[player.index] = game.tick + reckless_death_limit
+                player.print("Your respawn time has been lowered to " .. this.respawn_time[player.name] / 60 .. " sec")
+            else
+                this.next_respawn_time_update[player.index] = nil
+            end
+        end
     end
 end
 
@@ -253,6 +272,7 @@ Event.on_nth_tick(60, update_player_position_displays)
 Event.on_nth_tick(60, update_player_evo_displays)
 Event.on_nth_tick(60, hint_treasure)
 Event.on_nth_tick(60 * stats_update_frequency_secs, update_players_stats)
+Event.on_nth_tick(121, update_respawn_times)
 
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
 Event.add(defines.events.on_player_respawned, on_player_respawned)
