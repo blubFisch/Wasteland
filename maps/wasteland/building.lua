@@ -74,21 +74,16 @@ local ignore_neutral_build_feature = {
     ["electric-pole"] = true
 }
 
-local function refund_item(event, item_name)
-    if item_name == 'blueprint' then
-        return
-    end
-
+local function refund_item(event)
     if event.player_index ~= nil then
-        game.players[event.player_index].insert({name = item_name, count = 1})
-        return
-    end
-
-    -- return item to robot, but don't replace ghost (otherwise might loop)
-    if event.robot ~= nil then
+        if event.consumed_items.valid then
+            for _, stack in pairs(event.consumed_items.get_contents()) do
+                game.players[event.player_index].insert(stack)
+            end
+        end
+    elseif event.robot ~= nil then
         local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
-        inventory.insert({name = item_name, count = 1})
-        return
+        inventory.insert(event.stack)
     end
 end
 
@@ -194,7 +189,7 @@ local function prevent_entity_in_restricted_zone(event)
         entity.destroy()
         local item = event.item
         if name ~= 'entity-ghost' and name ~= 'tile-ghost' and item ~= nil then
-            refund_item(event, item.name)
+            refund_item(event)
         end
     end
     if error == true then
@@ -219,7 +214,7 @@ local function prevent_landfill_in_restricted_zone(event)
         if Public.is_out_of_map(surface, position) then
             fail = true
             surface.set_tiles({{name = old_tile.name, position = position}}, true)
-            refund_item(event, event.item.name)
+            refund_item(event)
         end
     end
     if fail == true then
@@ -287,9 +282,7 @@ local function process_built_entities(event)
                 entity.destroy()
                 Utils.build_error_notification(player or force, surface, position, "Can't build near " .. REASON_TEXTS[reason], player)
                 if name ~= 'entity-ghost' then
-                    if event.stack.valid_for_read then
-                        refund_item(event, event.stack.name)
-                    end
+                    refund_item(event)
                 end
                 return
             end
@@ -375,7 +368,7 @@ local function prevent_tiles_near_towns(event)
         if Public.near_another_town(force_name, position, surface, 32) then
             fail = true
             surface.set_tiles({{name = old_tile.name, position = position}}, true)
-            refund_item(event, event.item.name)
+            refund_item(event)
         end
     end
     if fail == true then
