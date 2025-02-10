@@ -44,6 +44,8 @@ function Public.reset_table()
     this.next_high_score_announcement = 0
     this.laser_turrets_destroy_events = {}
     this.turret_warmup = {}
+    this.player_online_time_sec = 0
+    this.player_online_max = 0
 end
 
 function Public.get_table()

@@ -235,9 +235,24 @@ local function on_player_died(event)
     end
 end
 
+local stats_update_frequency_secs = 60
+local function update_players_stats()
+    local this = ScenarioTable.get()
+    local current_online_players = #game.connected_players
+    if current_online_players > this.player_online_max then
+        this.player_online_max = current_online_players
+    end
+    if game.tick ~= 0 then
+        this.player_online_time_sec = this.player_online_time_sec + current_online_players * 60
+        log("Players stats: cur " .. current_online_players .. " max " .. this.player_online_max ..
+            " avg ".. (this.player_online_time_sec / (game.tick / stats_update_frequency_secs)))
+    end
+end
+
 Event.on_nth_tick(60, update_player_position_displays)
 Event.on_nth_tick(60, update_player_evo_displays)
 Event.on_nth_tick(60, hint_treasure)
+Event.on_nth_tick(60 * stats_update_frequency_secs, update_players_stats)
 
 Event.add(defines.events.on_player_joined_game, on_player_joined_game)
 Event.add(defines.events.on_player_respawned, on_player_respawned)

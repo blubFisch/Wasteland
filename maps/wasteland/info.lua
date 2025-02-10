@@ -7,6 +7,7 @@ local changelog =
     - Roboports don't get deactivated by shields anymore - due to 2.0 restriction (will try to fix later)
     - Tweak tank vs tank dmg
     - Outlanders can craft repair packs again
+    [font=heading-2]Older updates[/font]
     - Radar reset bug
     - Market inserter bug
     - Shields now always unlock after a town is 5 minutes old
