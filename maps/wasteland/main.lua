@@ -1,4 +1,3 @@
-require 'modules.flashlight_toggle_button'
 require 'modules.chat_channel_toggle'
 require 'modules.biters_yield_coins'
 require 'maps.wasteland.game_settings'

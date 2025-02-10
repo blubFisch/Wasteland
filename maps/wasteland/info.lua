@@ -7,11 +7,11 @@ local changelog =
     - Roboports don't get deactivated by shields anymore - due to 2.0 restriction (will try to fix later)
     - Tweak tank vs tank dmg
     - Outlanders can craft repair packs again
-    [font=heading-2]Older updates[/font]
+ [font=heading-2]Older updates[/font]
     - Radar reset bug
     - Market inserter bug
     - Shields now always unlock after a town is 5 minutes old
-    ]]
+]]
 
 local info =
     [[[font=heading-1]Welcome to the Wasteland![/font]
@@ -127,23 +127,25 @@ function Public.show(player, info_type)
     l2.style.font = 'heading-2'
     l2.style.font_color = {r = 0.8, g = 0.7, b = 0.99}
 
-
-    local beta_warning = player.gui.screen.add({type = 'label', name = 'beta_warning'})
-    beta_warning.style.font = 'heading-1'
-    beta_warning.style.minimal_width = 85
-    beta_warning.style.minimal_height = 30
-    beta_warning.style.maximal_height = 30
-    beta_warning.style.padding = 1
-    beta_warning.style.margin = 0
-    beta_warning.style.font_color = {r=255, g=0, b=0}
-    beta_warning.tooltip = "Go to wasteland-discord.fun"
-    beta_warning.caption = "Factorio 2.0 Beta Testing - Report all bugs to Wasteland discord"
-    local resolution = player.display_resolution
-    local scale = player.display_scale
-    beta_warning.location = {
-        x = 700 * scale,
-        y = 100 * scale
-    }
+    -- Temporary warning for 2.0 beta
+    if not info_type == 'adv' then
+        local beta_warning = player.gui.screen.add({type = 'label', name = 'beta_warning'})
+        beta_warning.style.font = 'heading-1'
+        beta_warning.style.minimal_width = 85
+        beta_warning.style.minimal_height = 30
+        beta_warning.style.maximal_height = 30
+        beta_warning.style.padding = 1
+        beta_warning.style.margin = 0
+        beta_warning.style.font_color = {r=255, g=0, b=0}
+        beta_warning.tooltip = "Go to wasteland-discord.fun"
+        beta_warning.caption = "Factorio 2.0 Beta Testing - Report all bugs to Wasteland discord"
+        local resolution = player.display_resolution
+        local scale = player.display_scale
+        beta_warning.location = {
+            x = 700 * scale,
+            y = 100 * scale
+        }
+    end
 end
 
 function Public.close(event)

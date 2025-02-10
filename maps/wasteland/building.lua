@@ -297,14 +297,16 @@ local function process_built_entities(event)
     end
 
     -- Feature to build neutral = all players can access + robots will ignore
-    local player_data = BottomFrame.get_player_data(player)
-    if entity.force ~= game.forces['neutral'] and player_data and player_data.neutral_building
-        and not allowed_entities_keep_force[name] then
-        if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then
-            entity.force = game.forces['neutral']
-            Utils.flying_text(nil, surface, position, "Neutral (setting)", {r = 0, g = 1, b = 0})
-        else
-            Utils.flying_text(nil, surface, position, "Can't build neutral (Setting)", {r = 0, g = 1, b = 1})
+    if player then
+        local player_data = BottomFrame.get_player_data(player)
+        if entity.force ~= game.forces['neutral'] and player_data and player_data.neutral_building
+            and not allowed_entities_keep_force[name] then
+            if not ignore_neutral_build_feature[entity.type] and not table.array_contains(town_zoning_entity_types, entity.type) then
+                entity.force = game.forces['neutral']
+                Utils.flying_text(nil, surface, position, "Neutral (setting)", {r = 0, g = 1, b = 0})
+            else
+                Utils.flying_text(nil, surface, position, "Can't build neutral (Setting)", {r = 0, g = 1, b = 1})
+            end
         end
     end
 

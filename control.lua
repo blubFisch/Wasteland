@@ -29,7 +29,6 @@ require 'utils.gui.admin'
 require 'utils.gui.group'
 require 'utils.gui.score'
 require 'utils.gui.config'
-require 'utils.gui.poll'
 
 require 'maps.wasteland.main'
 
