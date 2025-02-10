@@ -4,6 +4,7 @@ local changelog =
     [[[font=heading-2]Feb 2025 updates[/font]
     - Players having heavy/mod-armor are now automatically in L2
     - Turrets need time to warm up after building
+    - Roboports don't get deactivated by shields anymore - due to 2.0 restriction (will try to fix later)
     - Tweak tank vs tank dmg
     - Outlanders can craft repair packs again
     - Radar reset bug

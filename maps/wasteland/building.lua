@@ -468,12 +468,14 @@ local function update_turret_warmups()
     for unit_number, data in pairs(this.turret_warmup) do
         if current_tick >= data.until_tick then
             local entity = data.entity
-            if not this.building_under_shield[entity.unit_number] then
-                if entity and entity.valid then
+            if entity and entity.valid then
+                if not this.building_under_shield[entity.unit_number] then
                     entity.active = true
                 end
             end
-            data.label.destroy()
+            if data.label and data.label.valid then
+                data.label.destroy()
+            end
             this.turret_warmup[unit_number] = nil
         end
     end
