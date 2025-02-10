@@ -2,8 +2,8 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Feb 2025 updates[/font]
- - Factorio 2.0 compatibility
     - Players having heavy/mod-armor are now automatically in L2
+    - Turrets need time to warm up after building
     - Tweak tank vs tank dmg
     - Outlanders can craft repair packs again
     - Radar reset bug

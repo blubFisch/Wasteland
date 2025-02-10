@@ -50,12 +50,12 @@ local function visualise_entity_deactivated(entity)
     local entity_label = rendering.draw_text{
         text = "Inactive",
         surface = entity.surface,
-        target = {entity = entity, offset = {0, -1}},
+        target = {entity = entity, offset = {0, 0}},
         color = {r = 1, g = 0.0, b = 0.0},
         alignment = "center",
         scale = 1.0
     }
-    this.entity_labels[entity.unit_number] = entity_label
+    this.building_under_shield[entity.unit_number] = entity_label
 end
 
 local shield_inactive_types = { 'assembling-machine', 'furnace', 'lab', 'roboport', 'mining-drill',
@@ -68,10 +68,10 @@ local function control_buildings_inside(surface, box, active)
             if not active then
                 visualise_entity_deactivated(e)
             else
-                local entity_label = this.entity_labels[e.unit_number]
+                local entity_label = this.building_under_shield[e.unit_number]
                 if entity_label then
                     entity_label.destroy()
-                    this.entity_labels[e.unit_number] = nil
+                    this.building_under_shield[e.unit_number] = nil
                 end
             end
         end

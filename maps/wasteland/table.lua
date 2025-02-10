@@ -39,10 +39,11 @@ function Public.reset_table()
     this.treasure_hint = {}
     this.labs_destroy_events = {}
     this.uranium_patch_location = nil
-    this.entity_labels = {}
+    this.building_under_shield = {}
     this.last_damage_multiplier_shown = {}
     this.next_high_score_announcement = 0
     this.laser_turrets_destroy_events = {}
+    this.turret_warmup = {}
 end
 
 function Public.get_table()

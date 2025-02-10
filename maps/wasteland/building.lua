@@ -321,6 +321,23 @@ local function process_built_entities(event)
             end
         end
     end
+
+    -- Turret warmup
+    if entity.type == "ammo-turret" or entity.type == "electric-turret" or entity.type == "fluid-turret" then
+        local this = ScenarioTable.get_table()
+        if not this.building_under_shield[entity.unit_number] then
+            entity.active = false
+            local label = rendering.draw_text{
+                text = "Warming up..",
+                surface = entity.surface,
+                target = {entity = entity, offset = {0, 0}},
+                color = {r = 1, g = 1, b = 0.0},
+                alignment = "center",
+                scale = 1.0
+            }
+            this.turret_warmup[entity.unit_number] = {entity = entity, label = label, until_tick = game.tick + 600}
+        end
+    end
 end
 
 local function prevent_tiles_near_towns(event)
@@ -445,6 +462,22 @@ local function on_marked_for_deconstruction(event)
     end
 end
 
+local function update_turret_warmups()
+    local this = ScenarioTable.get_table()
+    local current_tick = game.tick
+    for unit_number, data in pairs(this.turret_warmup) do
+        if current_tick >= data.until_tick then
+            local entity = data.entity
+            if not this.building_under_shield[entity.unit_number] then
+                if entity and entity.valid then
+                    entity.active = true
+                end
+            end
+            data.label.destroy()
+            this.turret_warmup[unit_number] = nil
+        end
+    end
+end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_pre_build, on_pre_build)
@@ -453,5 +486,6 @@ Event.add(defines.events.on_player_built_tile, on_player_built_tile)
 Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
 Event.add(defines.events.on_robot_built_tile, on_robot_built_tile)
 Event.add(defines.events.on_marked_for_deconstruction, on_marked_for_deconstruction)
+Event.on_nth_tick(33, update_turret_warmups)
 
 return Public
