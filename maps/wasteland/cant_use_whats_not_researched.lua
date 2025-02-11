@@ -159,7 +159,19 @@ local function on_entity_settings_pasted(event)
     end
 end
 
-local function on_player_driving_changed_state(event)
+-- Need this as there's no event when player enters a remote vehicle (Factorio 2.0.34)
+local function check_all_driving_states(even)
+    for _, player in pairs(game.connected_players) do
+        if player.valid and player.vehicle and not is_recipe_available(player.force, player.vehicle.name) then
+            error_floaty(player.vehicle.surface, player.vehicle.position)
+            player.vehicle.speed = 0
+            player.driving = false
+            game.print("Technology not available!")
+        end
+    end
+end
+
+local function on_player_controller_or_driving_changed(event)
     local player = game.get_player(event.player_index)
     local this = ScenarioTable.get_table()
     if this.testing_mode then
@@ -181,4 +193,5 @@ Event.add(defines.events.on_robot_built_entity, on_robot_built_entity)
 Event.add(defines.events.on_player_armor_inventory_changed, on_player_armor_inventory_changed)
 Event.add(defines.events.on_player_placed_equipment, on_player_placed_equipment)
 Event.add(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
-Event.add(defines.events.on_player_driving_changed_state, on_player_driving_changed_state)
+Event.add(defines.events.on_player_driving_changed_state, on_player_controller_or_driving_changed)
+Event.on_nth_tick(37, check_all_driving_states)
