@@ -330,7 +330,7 @@ function Public.on_entity_damaged(event)
     end
 
     -- Handle the engine limitation that we can't know the applied damage if the originally resulting damage would be 0
-    if would_be_killed and entity.health < entity.prototype.max_health * 0.05 then
+    if would_be_killed and entity.health < entity.max_health * 0.05 then
         entity.health = 0
     end
 

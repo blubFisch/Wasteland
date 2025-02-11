@@ -337,7 +337,7 @@ local function on_entity_damaged(event)
     --Set entity health relative to health pool
     local max_health = health_pool[3].max_health
     local m = health_pool[1] / max_health
-    local final_health = round(biter.prototype.max_health * m)
+    local final_health = round(biter.max_health * m)
     biter.health = final_health
 
     --Proceed to kill entity if health is 0
@@ -440,7 +440,7 @@ function Public.add_unit(unit, health_multiplier)
     if not health_multiplier then
         health_multiplier = this.biter_health_boost
     end
-    local health = floor(unit.prototype.max_health * health_multiplier)
+    local health = floor(unit.max_health * health_multiplier)
     local xp_modifier = round(1 / health_multiplier, 5)
     this.biter_health_boost_units[unit.unit_number] = {
         health,
@@ -463,7 +463,7 @@ function Public.add_boss_unit(unit, health_multiplier, health_bar_size)
         health_bar_size = 0.5
     end
     local xp_modifier = round(1 / health_multiplier, 5)
-    local health = floor(unit.prototype.max_health * health_multiplier)
+    local health = floor(unit.max_health * health_multiplier)
     this.biter_health_boost_units[unit.unit_number] = {
         health,
         xp_modifier,
