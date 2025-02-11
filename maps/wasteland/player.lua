@@ -22,24 +22,23 @@ local minimum_respawn_time = 30 * 60
 local reckless_death_increment = 30 * 60
 local reckless_death_limit = 5 * 3600
 
-function Public.initialize(player)
-    player.teleport({0, 0}, game.surfaces['limbo'])
+function Public.spawn_initially(player)
+    local this = ScenarioTable.get()
+    local surface = game.surfaces['nauvis']
+    if not player.character and player.controller_type == defines.controllers.god then
+        player.create_character()
+    end
     Team.set_player_to_outlander(player)
     Team.set_player_starter_inventory(player)
-    local this = ScenarioTable.get()
     if (this.testing_mode) then
         player.cheat_mode = true
         player.insert {name = 'coin', count = '9900'}
     end
-end
 
-function Public.spawn_initially(player)
-    local this = ScenarioTable.get()
-    local surface = game.surfaces['nauvis']
+    -- Spawn
     local spawn_point = Spawn.set_new_spawn_point(player, surface)
-    local new_pos = surface.find_non_colliding_position('character', spawn_point, 50, 0.5)
-    player.teleport(new_pos or spawn_point, surface)
-
+    local new_pos = surface.find_non_colliding_position('character', spawn_point, 0, 0.5)
+    player.teleport(new_pos, surface)
     this.strikes[player.name] = 0
     this.cooldowns_town_placement[player.index] = 0
     this.respawn_time[player.name] = minimum_respawn_time
@@ -182,12 +181,9 @@ local function on_player_joined_game(event)
         init_evo_frame(player)
         GameMode.add_mode_button(player)
         Info.add_last_winner_button(player)
-
-        Public.initialize(player)
         Public.spawn_initially(player)
     else
-        if player.force == game.forces.neutral then -- Existing player joins after map reset
-            Public.initialize(player)
+        if player.force == game.forces.player then -- Existing player joins after map reset
             Public.spawn_initially(player)
         end
     end
@@ -211,8 +207,8 @@ local function on_player_respawned(event)
 
     -- reset cooldown
     this.last_respawn[player.name] = game.tick
-    local new_pos = surface.find_non_colliding_position('character', spawn_point, 50, 0.5)
-    player.teleport(new_pos or spawn_point, surface)
+    local new_pos = surface.find_non_colliding_position('character', spawn_point, 0, 0.5)
+    player.teleport(new_pos, surface)
 
     Public.load_buffs(player)
 end

@@ -16,58 +16,67 @@ local function init_reset_sequence()
 end
 Public.init_reset_sequence = init_reset_sequence
 
--- Reset is split into parts for performance
 local function reset_map_part_1()
-    game.print("Reset Stage 1..")
-    ScenarioTable.reset_table()
-    MapLayout.init()
-    game.reset_time_played()
-    game.reset_game_state()
     for _, player in pairs(game.players) do
-        player.teleport({0, 0}, game.surfaces['limbo'])
+        if player.ticks_to_respawn then
+            player.ticks_to_respawn = 10 * 60
+        end
     end
-    Nauvis.clear()
-    game.print("Reset Stage 1 finished")
+    Team.reset_all_forces()
 end
 
 local function reset_map_part_2()
     game.print("Reset Stage 2..")
-    Nauvis.initialize(true)
+    ScenarioTable.reset_table()
+    MapLayout.init()
+    game.reset_time_played()
+    game.reset_game_state()
+    Nauvis.clear()
     game.print("Reset Stage 2 finished")
 end
 
 local function reset_map_part_3()
     game.print("Reset Stage 3..")
+    Nauvis.initialize(true)
+    game.print("Reset Stage 3 finished")
+end
+
+local function reset_map_part_4()
+    game.print("Reset Stage 4..")
     Team.initialize()
     for _, player in pairs(game.players) do
         if player.connected then
-            Player.initialize(player)
             Player.spawn_initially(player)
         else
-            player.force = game.forces.neutral  -- Mark them to be reinitialised on join
+            player.force = game.forces.player  -- Mark them to be reinitialised on join
         end
         Team.set_player_color(player)
         Player.load_buffs(player)
         Info.update_last_winner_name(player)
     end
     Alert.alert_all_players(10, 'The world has been reset!', Color.white, 'restart_required', 1.0)
-    game.print("Reset Stage 3 finished")
+    game.print("Reset Stage 4 finished")
+    game.print("The world has been reset!")
 end
 
+-- Reset is split into parts for performance
+local warning_duration_sec = 60 * 5 / 30
 local function on_tick()
     if storage.game_end_sequence_start then
         local tick = game.tick
         if tick == storage.game_end_sequence_start then
-            Alert.alert_all_players(60, 'The world is about to reset!', Color.white, 'warning-white', 1.0)
-        elseif tick == storage.game_end_sequence_start + 60 * 60 then
+            Alert.alert_all_players(warning_duration_sec, 'The world is about to reset!', Color.white, 'warning-white', 1.0)
+            game.print("The world will now reset in " .. warning_duration_sec .. " seconds")
+        elseif tick == storage.game_end_sequence_start + warning_duration_sec * 60 then
             game.print("The world will now reset. This can cause the game to hang for a while....", Utils.scenario_color)
-            Team.reset_all_forces()
-        elseif tick == storage.game_end_sequence_start + 60 * 60 + 1 then
             reset_map_part_1()
-        elseif tick == storage.game_end_sequence_start + 60 * 60 + 1 + 2 * 60 then
+        elseif tick == storage.game_end_sequence_start + warning_duration_sec * 60 + 10 then
             reset_map_part_2()
-        elseif tick == storage.game_end_sequence_start + 60 * 60 + 1 + 4 * 60 then
+        elseif tick == storage.game_end_sequence_start + warning_duration_sec * 60 + 10 + 2 * 60 then
             reset_map_part_3()
+        elseif tick == storage.game_end_sequence_start + warning_duration_sec * 60 + 10 + 4 * 60 then
+            reset_map_part_4()
+            storage.game_end_sequence_start = nil
         end
     end
 end

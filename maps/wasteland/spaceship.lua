@@ -89,7 +89,7 @@ local upgrade_functions = {
         local this = ScenarioTable.get_table()
         local surface = player.physical_surface
         local position = player.physical_position
-        position = surface.find_non_colliding_position('character', position, 0, 0.25)
+        position = surface.find_non_colliding_position('character', position, 0, 0.5)
         if position ~= nil and player ~= nil then
             this.spawn_point[player.index] = {x = position.x, y = position.y}
             surface.play_sound({path = 'utility/scenario_message', position = player.physical_position, volume_modifier = 1})

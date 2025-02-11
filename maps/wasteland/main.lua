@@ -34,7 +34,6 @@ local Pollution = require 'maps.wasteland.pollution'
 local Fish = require 'maps.wasteland.fish_reproduction'
 local Team = require 'maps.wasteland.team'
 local Radar = require 'maps.wasteland.limited_radar'
-local Limbo = require 'maps.wasteland.limbo'
 local PvPShield = require 'maps.wasteland.pvp_shield'
 local Gui = require 'utils.gui'
 local Color = require 'utils.color_presets'
@@ -54,7 +53,6 @@ local function on_init()
     game.draw_resource_selection = true
 
     MapDefaults.initialize()
-    Limbo.initialize()
     Nauvis.initialize()
     Team.initialize()
 end

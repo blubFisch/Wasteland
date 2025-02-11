@@ -28,7 +28,6 @@ end
 
 function Public.initialize()
     local surface = game.surfaces['nauvis']
-    surface.clear(true)
 
     local mgs = surface.map_gen_settings
     mgs.default_enable_all_autoplace_controls = true -- don't mess with this!

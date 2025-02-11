@@ -170,7 +170,7 @@ local function update_score()
             storage.last_winner_name = town_with_player_names
             log("WINNER_STORE=\"" .. town_with_player_names .. "\"")
             if storage.auto_reset_enabled then
-                storage.game_end_sequence_start = game.tick + 600
+                storage.game_end_sequence_start = game.tick + 1
             else
                 game.print("Automatic map restart is disabled, please wait for an admin to start a new game", Utils.scenario_color)
             end
