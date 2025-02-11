@@ -18,6 +18,7 @@ Public.init_reset_sequence = init_reset_sequence
 
 -- Reset is split into parts for performance
 local function reset_map_part_1()
+    game.print("Reset Stage 1..")
     ScenarioTable.reset_table()
     MapLayout.init()
     game.reset_time_played()
@@ -25,13 +26,18 @@ local function reset_map_part_1()
     for _, player in pairs(game.players) do
         player.teleport({0, 0}, game.surfaces['limbo'])
     end
+    Nauvis.clear()
+    game.print("Reset Stage 1 finished")
 end
 
 local function reset_map_part_2()
-    Nauvis.initialize()
+    game.print("Reset Stage 2..")
+    Nauvis.initialize(true)
+    game.print("Reset Stage 2 finished")
 end
 
 local function reset_map_part_3()
+    game.print("Reset Stage 3..")
     Team.initialize()
     for _, player in pairs(game.players) do
         if player.connected then
@@ -45,6 +51,7 @@ local function reset_map_part_3()
         Info.update_last_winner_name(player)
     end
     Alert.alert_all_players(10, 'The world has been reset!', Color.white, 'restart_required', 1.0)
+    game.print("Reset Stage 3 finished")
 end
 
 local function on_tick()
@@ -57,9 +64,9 @@ local function on_tick()
             Team.reset_all_forces()
         elseif tick == storage.game_end_sequence_start + 60 * 60 + 1 then
             reset_map_part_1()
-        elseif tick == storage.game_end_sequence_start + 60 * 60 + 31 then
+        elseif tick == storage.game_end_sequence_start + 60 * 60 + 1 + 2 * 60 then
             reset_map_part_2()
-        elseif tick == storage.game_end_sequence_start + 60 * 60 + 61 then
+        elseif tick == storage.game_end_sequence_start + 60 * 60 + 1 + 4 * 60 then
             reset_map_part_3()
         end
     end

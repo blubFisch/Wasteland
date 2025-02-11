@@ -264,7 +264,7 @@ local function update_players_stats()
     if game.tick ~= 0 then
         this.player_online_time_sec = this.player_online_time_sec + current_online_players * 60
         log("Players stats: cur " .. current_online_players .. " max " .. this.player_online_max ..
-            " avg ".. tonumber(string.format("%.1f", this.player_online_time_sec / (game.tick / stats_update_frequency_secs))))
+            " avg ".. tonumber(string.format("%.1f", this.player_online_time_sec / ((game.tick - this.round_start_tick) / stats_update_frequency_secs))))
     end
 end
 

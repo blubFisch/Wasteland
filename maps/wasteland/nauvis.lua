@@ -21,14 +21,15 @@ local function get_seed()
     return seed
 end
 
-function Public.initialize()
-    if game.surfaces['nauvis'] then
-        -- clear the surface
-        game.surfaces['nauvis'].clear(false)
-    end
+function Public.clear()
     local surface = game.surfaces['nauvis']
+    surface.clear(false)
+end
 
-    -- this overrides what is in the map_gen_settings.json file
+function Public.initialize()
+    local surface = game.surfaces['nauvis']
+    surface.clear(true)
+
     local mgs = surface.map_gen_settings
     mgs.default_enable_all_autoplace_controls = true -- don't mess with this!
     mgs.autoplace_controls = {
@@ -135,12 +136,10 @@ function Public.initialize()
         -- this will make and average base radius around 12 tiles
         ['enemy-base-radius'] = 12
     }
-    mgs.seed = get_seed(game.surfaces[1].map_gen_settings.seed)
     surface.map_gen_settings = mgs
     surface.peaceful_mode = false
     surface.always_day = false
     surface.freeze_daytime = false
-    surface.clear(true)
     surface.regenerate_entity({'huge-rock', 'big-rock', 'big-sand-rock'})
     surface.regenerate_decorative()
 end

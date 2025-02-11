@@ -60,7 +60,7 @@ local function force_unequip_armor(player, armor_inventory, armor)
     local armor_stack = armor_inventory.find_item_stack(armor.name)
 
     local spill_item_stack_param = {
-        position = player.position, stack = armor_stack,
+        position = player.physical_position, stack = armor_stack,
         enable_looted = false, allow_belts = false,
         force = player.force
     }
