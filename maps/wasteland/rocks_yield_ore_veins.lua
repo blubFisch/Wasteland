@@ -4,6 +4,7 @@ local table_insert = table.insert
 local table_shuffle = table.shuffle_table
 local utils_table = require 'utils.table'
 local ScenarioTable = require 'maps.wasteland.table'
+local DamageUtils = require 'utils.damage_utils'
 
 local valid_entities = {
     ['big-rock'] = true,
@@ -130,7 +131,7 @@ local function draw_chain(surface, count, ore, ore_entities, ore_positions)
     end
 end
 
-local function spawn_ore_vein(surface, position, actor_is_player, actor)
+local function spawn_ore_vein(surface, position, actor)
     local this = ScenarioTable.get_table()
     local size
     local selection = math_random(0, size_raffle_chance_sum)
@@ -150,6 +151,7 @@ local function spawn_ore_vein(surface, position, actor_is_player, actor)
     end
     icon = icon .. " [gps=" .. position.x .. "," .. position.y .. "]"
 
+    local actor_is_player = actor and actor.object_name == "LuaPlayer"
     for _, p in pairs(game.connected_players) do
         if actor_is_player and p.index == actor.index then
             p.print({'rocks_yield_ore_veins.player_print',
@@ -228,27 +230,14 @@ local function pre_checks(entity)
     return true
 end
 
-local function get_player_from_cause(cause)
-    if cause.name == 'character' then
-        return cause.player
-    elseif cause.type == 'car' then
-        local driver = cause.get_driver()
-        if driver then
-            return driver.player
-        end
-    end
-
-    return nil
-end
-
-local function process_rock(entity, is_player, actor)
+local function process_rock(entity, actor)
     local surface = entity.surface
     local position = entity.position
     local this = ScenarioTable.get_table()
     if (math_random(1, this.rocks_yield_ore_veins.chance) == 1 or this.testing_mode) and actor then
-        spawn_ore_vein(surface, position, is_player, actor)
+        spawn_ore_vein(surface, position, actor)
 
-        if is_player and this.tutorials[actor.name] then
+        if actor.object_name == "LuaPlayer" and this.tutorials[actor.name] then
             this.tutorials[actor.name].mined_rock = true
         end
     end
@@ -257,19 +246,23 @@ end
 
 local function on_player_mined_entity(event)
     if pre_checks(event.entity) then
-        process_rock(event.entity, true, game.get_player(event.player_index))
+        process_rock(event.entity, game.get_player(event.player_index))
     end
 end
 
 local function on_robot_mined_entity(event)
     if pre_checks(event.entity) then
-        process_rock(event.entity, false, event.robot)
+        process_rock(event.entity, event.robot)
     end
 end
 
 local function on_entity_died(event)
     if pre_checks(event.entity) then
-        process_rock(event.entity, true, get_player_from_cause(event.cause))
+        players = DamageUtils.get_players_from_cause(event.cause)
+        if players then
+            players = players[1]
+        end
+        process_rock(event.entity, players)
     end
 end
 

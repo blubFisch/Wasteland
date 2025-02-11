@@ -1,8 +1,8 @@
 -- biters yield coins -- by mewmew
 
 local Event = require 'utils.event'
-local insert = table.insert
 local math_floor = math.floor
+local DamageUtils = require 'utils.damage_utils'
 
 local coin_yield = {
     ['behemoth-biter'] = 5,
@@ -73,45 +73,19 @@ local function on_entity_died(event)
     if not coin_count then
         return
     end
+    __coin_stack.count = coin_count
 
     local cause = event.cause
-
     if not (cause and cause.valid) then return end
 
-    local players_to_reward = {}
-    --game.print("XDB " .. cause.type .. " " .. cause.name)
-    if cause.type == 'combat-robot' then
-        local owner = cause.combat_robot_owner
-        if owner then
-            insert(players_to_reward, owner.player)
-        end
-    elseif cause.name == 'character' then
-        insert(players_to_reward, cause)
-    elseif cause.type == 'car' then
-        local driver = cause.get_driver()
-        local passenger = cause.get_passenger()
-        if driver then
-            insert(players_to_reward, driver.player)
-        end
-        if passenger then
-            insert(players_to_reward, passenger.player)
-        end
-    elseif cause.type == 'locomotive' then
-        local train_passengers = cause.train.passengers
-        if train_passengers then
-            for _, passenger in pairs(train_passengers) do
-                insert(players_to_reward, passenger)
-            end
-        end
-    elseif entities_that_earn_coins[cause.name] then
+    if entities_that_earn_coins[cause.name] then
         __spill_item_stack_param.position = cause.position
-        __coin_stack.count = coin_count
         event.entity.surface.spill_item_stack(__spill_item_stack_param)
-    end
-
-    for _, player in pairs(players_to_reward) do
-        __coin_stack.count = coin_count
-        player.insert(__coin_stack)
+    else
+        local players_to_reward = DamageUtils.get_players_from_cause(event.cause)
+        for _, player in pairs(players_to_reward) do
+            player.insert(__coin_stack)
+        end
     end
 end
 

@@ -25,8 +25,6 @@ require 'modules.limited_crafting_queue'
 require 'utils.gui'
 require 'utils.gui.player_list'
 require 'utils.gui.admin'
-require 'utils.gui.group'
-require 'utils.gui.score'
 require 'utils.gui.config'
 
 require 'maps.wasteland.main'

@@ -511,7 +511,7 @@ local function found_town(event)
     }
 
     -- Clear enemies around spawn
-    for _, e in pairs(surface.find_entities_filtered({force = 'enemy', type = {'unit-spawner', 'unit', 'turret', 'gun-turret'},
+    for _, e in pairs(surface.find_entities_filtered({force = 'enemy', type = {'unit-spawner', 'unit', 'ammo-turret'},
                                                       position = position, radius = town_radius * 5})) do
         e.destroy()
     end
