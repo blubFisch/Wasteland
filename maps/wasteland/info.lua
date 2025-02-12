@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Feb 2025 updates[/font]
+    - Many small bugfixes
     - Players having heavy/mod-armor are now automatically in L2
     - Turrets need time to warm up after building
     - Roboports don't get deactivated by shields anymore - due to 2.0 restriction (will try to fix later)

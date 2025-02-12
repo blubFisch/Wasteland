@@ -261,7 +261,7 @@ local function update_players_stats()
     if this_round_age > stats_update_frequency_secs then
         this.player_online_time_sec = this.player_online_time_sec + current_online_players * 60
         log("Players stats: cur " .. current_online_players .. " max " .. this.player_online_max ..
-            " avg ".. tonumber(string.format("%.1f", this.player_online_time_sec / (this_round_age / stats_update_frequency_secs))))
+            " avg ".. tonumber(string.format("%.2f", this.player_online_time_sec / (this_round_age / stats_update_frequency_secs))))
     end
 end
 

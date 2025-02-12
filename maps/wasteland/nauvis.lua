@@ -14,11 +14,9 @@ function Public.nuke(position)
     surface.create_entity({name = 'atomic-rocket', position = position, target = position, speed = 0.5})
 end
 
-local function get_seed()
+local function create_seed(salt)
     local max = 4294967296
-    local salt = game.surfaces[1].map_gen_settings.seed
-    local seed = math_abs(salt + math_random(1, max)) % max + 1
-    return seed
+    return math_abs(salt + math_random(1, max)) % max + 1
 end
 
 function Public.clear()
@@ -135,6 +133,7 @@ function Public.initialize()
         -- this will make and average base radius around 12 tiles
         ['enemy-base-radius'] = 12
     }
+    mgs.seed = create_seed(game.surfaces[1].map_gen_settings.seed)
     surface.map_gen_settings = mgs
     surface.peaceful_mode = false
     surface.always_day = false

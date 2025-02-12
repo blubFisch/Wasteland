@@ -55,7 +55,7 @@ local function create_kaboom(surface, position, name)
         Utils.flying_text(nil, surface, position, '(((Sentries Engaging Target)))', {r = 0.8, g = 0.0, b = 0.0})
         local nearest_player_unit = surface.find_nearest_enemy({position = position, max_distance = 128, force = 'enemy'})
         if nearest_player_unit then
-            target = nearest_player_unit.physical_position
+            target = nearest_player_unit.position
         end
         speed = 0.001
     end
