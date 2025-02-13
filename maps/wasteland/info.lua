@@ -2,6 +2,7 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Feb 2025 updates[/font]
+    - Can buy tanks in scrap markets again, however using them will bring you to league 2
     - Many small bugfixes
     - Players having heavy/mod-armor are now automatically in L2
     - Turrets need time to warm up after building

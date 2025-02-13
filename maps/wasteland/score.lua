@@ -97,11 +97,13 @@ function Public.get_player_league(player)
     local this = ScenarioTable.get_table()
     local town_center = this.town_centers[player.force.name]
 
-    local league = 1
+    local items_league = 1
+    local league_bump_reason
 
     -- Special items that bump you up a league for balancing
     if player.character and player.character.vehicle and player.character.vehicle.name == "tank" then
-        league = 2
+        items_league = 2
+        league_bump_reason = "you are driving a tank"
     else
         local armor_inventory = player.get_inventory(defines.inventory.character_armor)
         if armor_inventory and not armor_inventory.is_empty() then
@@ -110,18 +112,24 @@ function Public.get_player_league(player)
                 local armor_name = armor_stack.name
                 -- Check for modular armor or heavy armor
                 if armor_name == "heavy-armor" or armor_name == "modular-armor" or armor_name == "power-armor" or armor_name == "power-armor-mk2" then
-                    league = 2
+                    items_league = 2
+                    league_bump_reason = "you are wearing a high-end armor"
                 end
             end
         end
     end
 
+    local town_league = 1
     if town_center then
-        local town_league = Public.get_town_league(town_center)
-        league = math_max(town_league, league)
+        town_league = Public.get_town_league(town_center)
+    end
+    local final_league = math_max(town_league, items_league)
+
+    if items_league > town_league and this.previous_leagues[player.index] ~= final_league then
+        player.print("You are in a higher league because " .. league_bump_reason)
     end
 
-    return league
+    return final_league
 end
 
 local score_update_loop_interval = 60

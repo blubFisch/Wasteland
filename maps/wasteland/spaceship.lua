@@ -154,6 +154,7 @@ local function set_offers(market, player)
     table_insert(market_items, {price = {{name = 'coin', count = 10}}, offer = {type = 'give-item', item = 'night-vision-equipment', count = 1}})
     table_insert(market_items, {price = {{name = 'coin', count = 50}}, offer = {type = 'give-item', item = 'construction-robot', count = 1}})
     table_insert(market_items, {price = {{name = 'coin', count = 800}}, offer = {type = 'give-item', item = 'car', count = 1}})
+    table_insert(market_items, {price = {{name = 'coin', count = 8000}}, offer = {type = 'give-item', item = 'tank', count = 1}})
 
     table_insert(market_items, {price = {{name = 'raw-fish', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 15}})
     table_insert(market_items, {price = {{name = 'wood', count = 1}}, offer = {type = 'give-item', item = 'coin', count = 3}})

@@ -27,6 +27,7 @@ local allowed_for_all = {
 
     -- Spaceship market items
     ['car'] = true,
+    ['tank'] = true,
     ['heavy-armor'] = true,
     ['modular-armor'] = true,
     ['solar-panel-equipment'] = true,

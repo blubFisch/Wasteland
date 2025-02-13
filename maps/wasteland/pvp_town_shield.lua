@@ -22,24 +22,34 @@ function Public.get_town_control_range(town_center)
             MapLayout.min_distance_between_towns - MapLayout.league_balance_shield_size / 2 - 5)  -- don't overlap with other towns
 end
 
-function Public.enemy_players_near_town(town_center, max_distance, min_league)
+function Public.enemy_players_near_town(town_center, max_distance, min_league, return_list)
     local market = town_center.market
-    return Public.enemy_players_nearby(market.position, market.surface, market.force, max_distance, min_league)
+    return Public.enemy_players_nearby(market.position, market.surface, market.force, max_distance, min_league, return_list)
 end
 
-function Public.enemy_players_nearby(position, surface, force, max_distance, min_league)
+function Public.enemy_players_nearby(position, surface, force, max_distance, min_league, return_list)
+    local player_list = {}
     for _, player in pairs(game.connected_players) do
         if player.physical_surface == surface and player.character then
             local pp = player.physical_position
             local distance = math_floor(math_sqrt((pp.x - position.x) ^ 2 + (pp.y - position.y) ^ 2))
             if distance < max_distance and not TeamBasics.is_friendly_towards(player.force, force) then
                 if not min_league or Score.get_player_league(player) > min_league then
-                    return true
+                    if return_list then
+                        player_list[#player_list + 1] = player
+                    else
+                        return true
+                    end
                 end
             end
         end
     end
-    return false
+
+    if not return_list or #player_list==0 then
+        return false
+    else
+        return player_list
+    end
 end
 
 local function update_pvp_shields_display()
@@ -94,7 +104,7 @@ local function update_pvp_shields()
         local abandoned = false
         local high_league_no_shield = town_league >= 4
 
-        local higher_league_nearby = Public.enemy_players_near_town(town_center, league_shield_activation_range, town_league)
+        local higher_league_nearby = Public.enemy_players_near_town(town_center, league_shield_activation_range, town_league, true)
         if higher_league_nearby then
             town_center.last_higher_league_nearby = game.tick
         end
@@ -167,6 +177,9 @@ local function update_pvp_shields()
                 -- If we have any type of shield ongoing, swap it for a league shield
                 if not shield or (shield and shield.shield_type ~= PvPShield.SHIELD_TYPE.LEAGUE_BALANCE) then
                     force.print("Your town deploys a Balancing PvP Shield because there are players of a higher league nearby", Utils.scenario_color)
+                    for _, player in pairs(higher_league_nearby) do
+                        player.print("A nearby town deploys a PvP Shield because you are in a higher league")
+                    end
                     if not shield then
                         PvPShield.add_shield(market.surface, market.force, market.position,
                                 MapLayout.league_balance_shield_size, nil, 13 * 60, PvPShield.SHIELD_TYPE.LEAGUE_BALANCE)
