@@ -601,6 +601,20 @@ local function setup_outlander_permissions()
     game.permissions.create_group('outlander')
 end
 
+local afk_allowed_actions = {
+    [defines.input_action.start_walking] = true,
+    [defines.input_action.open_gui] = true,
+    [defines.input_action.market_offer] = true
+}
+local function create_afk_group()
+    group = game.permissions.create_group("AFK")
+    for action_name, _ in pairs(defines.input_action) do
+        if not afk_allowed_actions[defines.input_action[action_name]] then
+            group.set_allows_action(defines.input_action[action_name], false)
+        end
+    end
+end
+
 local function assign_outlander_permissions(force)
     local permission_group = game.permissions.get_group('outlander')
     reset_permissions(permission_group)
@@ -674,7 +688,7 @@ local function create_outlander_force(player)
 end
 
 local function setup_enemy_force()
-    game.forces.enemy.set_evolution_factor(0.5) -- controls strength of nests
+    game.forces.enemy.set_evolution_factor(0.3) -- controls strength of nests
 end
 
 function Public.player_joined(player)
@@ -953,6 +967,7 @@ end
 
 function Public.initialize()
     setup_outlander_permissions()
+    create_afk_group()
     setup_enemy_force()
 end
 

@@ -22,12 +22,12 @@ local function reset_map_part_1()
             player.ticks_to_respawn = 10 * 60
         end
     end
-    Team.reset_all_forces()
+    ScenarioTable.reset_table()
+    Team.reset_all_forces() -- Merge can take time (a tick?)
 end
 
 local function reset_map_part_2()
     game.print("Reset Stage 2..")
-    ScenarioTable.reset_table()
     MapLayout.init()
     Nauvis.clear()
     game.print("Reset Stage 2 finished")
@@ -41,7 +41,6 @@ end
 
 local function reset_map_part_4()
     game.print("Reset Stage 4..")
-    Team.initialize()
     for _, player in pairs(game.players) do
         if player.connected then
             Player.spawn_initially(player)

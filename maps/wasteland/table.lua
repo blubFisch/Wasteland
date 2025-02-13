@@ -49,6 +49,7 @@ function Public.reset_table()
     this.player_online_time_sec = 0
     this.player_online_max = 0
     this.round_start_tick = game.tick
+    this.afk_players = {}
 end
 
 function Public.get_table()

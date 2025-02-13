@@ -104,6 +104,10 @@ local function update_pvp_shields()
         local abandoned = false
         local high_league_no_shield = town_league >= 4
 
+        if town_center.marked_afk and #force.connected_players == 0 then
+            set_afk_state(town_center, false)
+        end
+
         local higher_league_nearby = Public.enemy_players_near_town(town_center, league_shield_activation_range, town_league, true)
         if higher_league_nearby then
             town_center.last_higher_league_nearby = game.tick
@@ -305,6 +309,54 @@ local function remove_afk_shield(force)
     end
 end
 
+function lock_player(player)
+    if not player or not player.valid then return end
+
+    local this = ScenarioTable.get()
+    this.afk_players[player.index] = {
+        previous_permission_group = player.permission_group,
+        previous_crafting_speed_modifier = player.character_crafting_speed_modifier
+    }
+
+    player.character_crafting_speed_modifier = -1   -- Pause existing crafting
+
+    this.afk_players[player.index].label = rendering.draw_text{
+        text = "AFK",
+        surface = player.physical_surface,
+        target = player.character,
+        target_offset = {0, -1.5},
+        color = {r = 1, g = 1, b = 0},
+        scale = 1.5,
+        alignment = "center"
+    }
+
+    game.permissions.get_group("AFK").add_player(player)
+end
+
+function unlock_player(player)
+    if not player or not player.valid then return end
+    local this = ScenarioTable.get()
+
+    local stored = this.afk_players[player.index]
+    player.character_crafting_speed_modifier = stored.previous_crafting_speed_modifier
+    player.permission_group = stored.previous_permission_group
+
+    stored.label.destroy()
+    this.afk_players[player.index] = nil
+end
+
+local function set_afk_state(town_center, state)
+    town_center.marked_afk = state
+
+    for _, player in pairs(town_center.market.force.players) do
+        if state then
+            lock_player(player)
+        else
+            unlock_player(player)
+        end
+    end
+end
+
 function Public.toggle_afk_shield(town_center, player)
     local market = town_center.market
     local this = ScenarioTable.get()
@@ -318,7 +370,7 @@ function Public.toggle_afk_shield(town_center, player)
                 if town_shields_researched(town_center) then
                     if surface.count_entities_filtered({ area = get_shield_max_area(market.position),
                                                          type = "unit", force = game.forces.enemy, limit=1}) == 0 then
-                        town_center.marked_afk = true
+                        set_afk_state(town_center, true)
                         local shield = this.pvp_shields[force.name]
                         if shield then
                             PvPShield.remove_shield(shield)
@@ -339,27 +391,23 @@ function Public.toggle_afk_shield(town_center, player)
             player.print("To activate AFK mode, all players need to gather near the town center", Utils.scenario_color_warning)
         end
     else
-        town_center.marked_afk = false
+        set_afk_state(town_center, false)
         remove_afk_shield(force)
         force.print("AFK mode ended", Utils.scenario_color_warning)
     end
 end
 
-local function update_afk_shields()
+local function on_player_changed_position(event)
     local this = ScenarioTable.get()
+    local player = game.get_player(event.player_index)
+    if this.afk_players[event.player_index] then
+        local this = ScenarioTable.get()
+        local force = player.force
+        local town_center = this.town_centers[force.name]
 
-    for _, town_center in pairs(this.town_centers) do
-        local force = town_center.market.force
-        if town_center.marked_afk then
-            local players_online = #force.connected_players > 0
-            if players_online and not all_players_near_center(town_center) then
-                town_center.marked_afk = false
-                remove_afk_shield(force)
-                force.print("AFK mode has ended because players moved", Utils.scenario_color)
-            elseif not players_online then
-                town_center.marked_afk = false
-            end
-        end
+        set_afk_state(town_center, false)
+        remove_afk_shield(force)
+        force.print("AFK mode has ended because players moved", Utils.scenario_color)
     end
 end
 
@@ -371,10 +419,10 @@ function Public.init_town()
     update_pvp_shields()
 end
 
+Event.add(defines.events.on_player_changed_position, on_player_changed_position)
 Event.on_nth_tick(31, update_pvp_shields_display)
 Event.on_nth_tick(31, update_pvp_shields)
 Event.on_nth_tick(31, update_leagues)
-Event.on_nth_tick(13, update_afk_shields)
 Event.add(defines.events.on_player_left_game, on_player_left_game)
 
 return Public
