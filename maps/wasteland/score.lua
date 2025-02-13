@@ -158,8 +158,8 @@ local function update_score()
 
         if not shield and (not l4_score_only_offline or Public.get_town_league(town_center) < 4
                 or game.tick - town_center.scoring_last_online > l4_offline_min_period_ticks) then    -- discourage going online quickly to check town
-            if not l4_score_only_offline or Public.get_town_league(town_center) == 4 or -- limit time score below L4 to avoid storing time in lower leagues
-                    Public.survival_score(town_center) < max_survival_time_score_lower_leagues then
+             -- limit time score below L4 to avoid players staying in lower leagues to accumulate score for a short L4
+            if Public.survival_score(town_center) < max_survival_time_score_lower_leagues or Public.get_town_league(town_center) == 4 then
                 town_center.survival_time_ticks = town_center.survival_time_ticks + score_update_loop_interval
             end
         end

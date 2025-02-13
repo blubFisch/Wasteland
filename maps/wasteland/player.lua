@@ -183,7 +183,7 @@ local function on_player_joined_game(event)
         Info.add_last_winner_button(player)
         Public.spawn_initially(player)
     else
-        if player.force == game.forces.player then -- Existing player joins after map reset
+        if player.force == game.forces.player and player.last_online < game.round_start_tick then -- Existing player joins after map reset
             Public.spawn_initially(player)
         end
     end
