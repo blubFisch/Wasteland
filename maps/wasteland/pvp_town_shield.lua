@@ -89,6 +89,18 @@ local function town_shields_researched(town_center)
     return town_center.survival_time_ticks > Public.time_to_unlock_shield_ticks
 end
 
+local function set_afk_state(town_center, state)
+    town_center.marked_afk = state
+
+    for _, player in pairs(town_center.market.force.players) do
+        if state then
+            lock_player(player)
+        else
+            unlock_player(player)
+        end
+    end
+end
+
 local function update_pvp_shields()
     local this = ScenarioTable.get_table()
     local offline_shield_max_duration_ticks = 24 * 60 * 60 * 60
@@ -343,18 +355,6 @@ function unlock_player(player)
 
     stored.label.destroy()
     this.afk_players[player.index] = nil
-end
-
-local function set_afk_state(town_center, state)
-    town_center.marked_afk = state
-
-    for _, player in pairs(town_center.market.force.players) do
-        if state then
-            lock_player(player)
-        else
-            unlock_player(player)
-        end
-    end
 end
 
 function Public.toggle_afk_shield(town_center, player)

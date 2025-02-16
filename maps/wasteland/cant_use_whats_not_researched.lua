@@ -40,8 +40,10 @@ local allowed_for_all = {
     ['land-mine'] = true,
 
     -- Rails items and entities are different, so just skip them
-    ['curved-rail'] = true,
     ['straight-rail'] = true,
+    ['curved-rail-a'] = true,
+    ['curved-rail-b'] = true,
+    ['half-diagonal-rail'] = true,
 
     -- Town market items
     ['loader'] = true,

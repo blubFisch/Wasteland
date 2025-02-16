@@ -89,7 +89,6 @@ function Public.set_player_color(player)
     if not TeamBasics.is_town_force(player.force) then
         player.color = outlander_color
         player.chat_color = outlander_chat_color
-        return
     else
         local town_center = this.town_centers[player.force.name]
         player.color = town_center.color
@@ -697,7 +696,7 @@ function Public.player_joined(player)
         return
     end
 
-    if player.force.name == 'player' then
+    if player.force == game.forces.player then
         if player.online_time > 0 then
             player.print("Welcome back, outlander! You've left the server for some time, " ..
                 "so your buildings have become neutral and your map and diplomacy has reset", Utils.scenario_color)

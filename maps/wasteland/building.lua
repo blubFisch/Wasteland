@@ -54,7 +54,9 @@ local allowed_entities_neutral = {
     ['fast-splitter'] = true,
     ['express-splitter'] = true,
     ['straight-rail'] = true,
-    ['curved-rail'] = true,
+    ['curved-rail-a'] = true,
+    ['curved-rail-b'] = true,
+    ['half-diagonal-rail'] = true,
     ['rail-signal'] = true,
     ['rail-chain-signal'] = true
 }

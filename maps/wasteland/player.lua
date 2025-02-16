@@ -169,7 +169,6 @@ end
 
 local function on_player_joined_game(event)
     local player = game.players[event.player_index]
-    Team.set_player_color(player)
     if player.online_time == 0 then
         Info.toggle_button(player)
         Info.show(player)
@@ -183,10 +182,12 @@ local function on_player_joined_game(event)
         Info.add_last_winner_button(player)
         Public.spawn_initially(player)
     else
-        if player.force == game.forces.player and player.last_online < game.round_start_tick then -- Existing player joins after map reset
+        local this = ScenarioTable.get()
+        if player.force == game.forces.player and player.last_online >= this.round_start_tick then -- Existing outlander joins after leaving for some time
             Public.spawn_initially(player)
         end
     end
+    Team.set_player_color(player)
     Team.player_joined(player)
     Public.load_buffs(player)
     Public.requests(player)
