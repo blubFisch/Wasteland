@@ -35,7 +35,7 @@ end
 
 local function reset_map_part_3()
     game.print("Reset Stage 3..")
-    Nauvis.initialize(true)
+    Nauvis.initialize()
     game.print("Reset Stage 3 finished")
 end
 

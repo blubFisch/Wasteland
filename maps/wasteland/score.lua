@@ -19,7 +19,7 @@ Public.score_to_win = score_to_win
 
 local max_research_score = 60
 local max_survival_time_score = 80
-local max_survival_time_score_lower_leagues = 30
+local max_survival_time_score_lower_leagues = 40
 local l4_offline_min_period_hours = 2
 local l4_offline_min_period_ticks = l4_offline_min_period_hours * 60 * 60 * 60
 
