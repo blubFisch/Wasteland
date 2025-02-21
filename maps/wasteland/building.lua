@@ -335,6 +335,21 @@ local function process_built_entities(event)
             this.turret_warmup[entity.unit_number] = {entity = entity, label = label, until_tick = game.tick + 600}
         end
     end
+
+    if TeamBasics.is_outlander_force(player.force) then
+        local this = ScenarioTable.get_table()
+        local bh = this.learning_hints.outlander_buildings
+        if not bh[player.index] then bh[player.index] = 0 end
+        if bh[player.index] < 3 then
+            bh[player.index] = bh[player.index] + 1
+            player.create_local_flying_text({
+               position = event.entity.position,
+               text = "Buildings by outlanders are common property after you leave. Create a town to own permanently.",
+               color = {r = 1, g = 1, b = 0},
+               time_to_live = 260
+           })
+        end
+    end
 end
 
 local function prevent_tiles_near_towns(event)
