@@ -54,12 +54,12 @@ local function charge(player)
     end
     local armor = armor_inventory[1]
     if not armor.valid_for_read then
-        info_floaty(player, "No armor", {r = 255, g = 0, b = 0})
+        info_floaty(player, "No armor to charge", {r = 255, g = 0, b = 0})
         return
     end
     local grid = armor.grid
     if not grid or not grid.valid then
-        info_floaty(player, "Your armor has no grid", {r = 255, g = 0, b = 0})
+        info_floaty(player, "Your armor has no grid to charge", {r = 255, g = 0, b = 0})
         return
     end
     local armor_can_store_energy = false
