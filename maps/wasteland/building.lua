@@ -78,10 +78,12 @@ local ignore_neutral_build_feature = {
 
 local function refund_item(event)
     if event.player_index ~= nil then
-        if event.consumed_items.valid then
+        if event.consumed_items and event.consumed_items.valid then
             for _, stack in pairs(event.consumed_items.get_contents()) do
                 game.players[event.player_index].insert(stack)
             end
+        elseif event.item then
+            game.players[event.player_index].insert({name = event.item.name, count = 1})
         end
     elseif event.robot ~= nil then
         local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
@@ -130,7 +132,7 @@ function Public.near_another_town(my_force_name, position, surface, radius, radi
     -- Nearby town centers
     for _, town_center in pairs(this.town_centers) do
         local market_force_name = town_center.market.force.name
-        if my_force_name ~= market_force_name then
+        if surface == town_center.market.surface and my_force_name ~= market_force_name then
             local in_area, distance = Public.in_area(position, town_center.market.position, radius_center)
             if in_area then
                 return true, NEAR_TOWN_CENTER, distance
@@ -382,12 +384,13 @@ local function prevent_tiles_near_towns(event)
     for _, t in pairs(event.tiles) do
         local old_tile = t.old_tile
         position = t.position
-        if Public.near_another_town(force_name, position, surface, 32) then
+        if Public.near_another_town(force_name, position, surface, default_protected_radius, default_protected_radius + base_town_protected_size) then
             fail = true
             surface.set_tiles({{name = old_tile.name, position = position}}, true)
             refund_item(event)
         end
     end
+
     if fail == true then
         local player
         if player_index ~= nil then player = game.players[player_index] end
