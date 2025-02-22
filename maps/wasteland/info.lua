@@ -2,23 +2,24 @@ local Public = {}
 
 local changelog =
     [[[font=heading-2]Feb 2025 updates[/font]
+    - Towns are marked on map once they enter League 2 (to balance veterans who know anyways vs newbies)
     - Fix building landfill close to enemy towns (it's now same as other buildings)
     - Can buy tanks in scrap markets again, however using them will bring you to league 2
+ [font=heading-2]Older updates[/font]
     - Many small bugfixes
     - Players having heavy/mod-armor are now automatically in L2
     - Turrets need time to warm up after building
     - Roboports don't get deactivated by shields anymore - due to 2.0 restriction (will try to fix later)
     - Tweak tank vs tank dmg
     - Outlanders can craft repair packs again
- [font=heading-2]Older updates[/font]
-    - Radar reset bug
-    - Market inserter bug
+    - Radar reset bug fixed
+    - Market inserter bug fixed
     - Shields now always unlock after a town is 5 minutes old
 ]]
 
 local info =
     [[[font=heading-1]Welcome to the Wasteland![/font]
-Can you build a town that survives against biters and other players?
+Can you build a town that survives other players?
 
 
 ]] .. changelog

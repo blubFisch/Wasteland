@@ -14,6 +14,7 @@ local PvPTownShield = require 'maps.wasteland.pvp_town_shield'
 local TeamBasics = require 'maps.wasteland.team_basics'
 local MapLayout = require 'maps.wasteland.map_layout'
 local GameMode = require 'maps.wasteland.game_mode'
+local Score = require 'maps.wasteland.score'
 
 local outlander_color = {150, 150, 150}
 local outlander_chat_color = {170, 170, 170}
@@ -421,19 +422,18 @@ local function delete_chart_tag_for_all_forces(market)
     end
 end
 
-function Public.add_chart_tag(town_center)
-    if not town_center then
-        log('town_center nil or not valid!')
-        return
-    end
+function Public.update_chart_tag(town_center, for_force)
     local market = town_center.market
-    local force = market.force
     local position = market.position
-    local tags = force.find_chart_tags(market.surface, {{position.x - 0.1, position.y - 0.1}, {position.x + 0.1, position.y + 0.1}})
+    local tags = for_force.find_chart_tags(market.surface, {{position.x - 0.1, position.y - 0.1}, {position.x + 0.1, position.y + 0.1}})
     if tags[1] then
-        return
+        if tags[1].text == town_center.town_name then
+            return
+        else
+            tags[1].destroy()
+        end
     end
-    force.add_chart_tag(market.surface, {icon = {type = 'virtual', name = 'signal-dot'}, position = position, text = town_center.town_name})
+    for_force.add_chart_tag(market.surface, {icon = {type = 'virtual', name = 'signal-dot'}, position = position, text = town_center.town_name})
 end
 
 function Public.update_town_chart_tags()
@@ -441,9 +441,15 @@ function Public.update_town_chart_tags()
     local forces = game.forces
     for _, town_center in pairs(this.town_centers) do
         local market = town_center.market
-        for _, force in pairs(forces) do
-            if force.is_chunk_visible(market.surface, town_center.chunk_position) then
-                Public.add_chart_tag(town_center)
+        local town_league_uncover = Score.get_town_league(town_center) >= 2
+        if town_league_uncover and not town_center.uncovered_for_all then
+            town_center.uncovered_for_all = true
+            game.print(town_center.town_name .. " was marked on the map as they entered League 2")
+        end
+
+        for _, for_force in pairs(forces) do
+            if for_force.is_chunk_visible(market.surface, town_center.chunk_position) or town_league_uncover then
+                Public.update_chart_tag(town_center, for_force, town_league_uncover)
             end
         end
     end

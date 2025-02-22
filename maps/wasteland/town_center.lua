@@ -524,7 +524,7 @@ local function found_town(event)
     force.set_spawn_position(pos, surface)
 
     Team.add_player_to_town(player, town_center)
-    Team.add_chart_tag(town_center)
+    Team.update_chart_tag(town_center, force)
 
     PvPTownShield.init_town(town_center)
 
