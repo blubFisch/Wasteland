@@ -523,6 +523,7 @@ local function found_town(event)
     --log("setting spawn point = {" .. spawn_point.x .. "," .. spawn_point.y .. "}")
     force.set_spawn_position(pos, surface)
 
+    force.copy_chart(player.force, surface, surface)
     Team.add_player_to_town(player, town_center)
     Team.update_chart_tag(town_center, force)
 
