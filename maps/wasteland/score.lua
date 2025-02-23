@@ -101,19 +101,21 @@ function Public.get_player_league(player)
     local league_bump_reason
 
     -- Special items that bump you up a league for balancing
-    if player.character and player.character.vehicle and player.character.vehicle.name == "tank" then
-        items_league = 2
-        league_bump_reason = "you are driving a tank"
-    else
-        local armor_inventory = player.get_inventory(defines.inventory.character_armor)
-        if armor_inventory and not armor_inventory.is_empty() then
-            local armor_stack = armor_inventory[1]
-            if armor_stack.valid_for_read then
-                local armor_name = armor_stack.name
-                -- Check for modular armor or heavy armor
-                if armor_name == "heavy-armor" or armor_name == "modular-armor" or armor_name == "power-armor" or armor_name == "power-armor-mk2" then
-                    items_league = 2
-                    league_bump_reason = "you are wearing a high-end armor"
+    if player.character then
+        if player.character.vehicle and player.character.vehicle.name == "tank" then
+            items_league = 2
+            league_bump_reason = "you are driving a tank"
+        else
+            local armor_inventory = player.character.get_inventory(defines.inventory.character_armor)
+            if armor_inventory and not armor_inventory.is_empty() then
+                local armor_stack = armor_inventory[1]
+                if armor_stack.valid_for_read then
+                    local armor_name = armor_stack.name
+                    -- Check for modular armor or heavy armor
+                    if armor_name == "heavy-armor" or armor_name == "modular-armor" or armor_name == "power-armor" or armor_name == "power-armor-mk2" then
+                        items_league = 2
+                        league_bump_reason = "you are wearing a high-end armor"
+                    end
                 end
             end
         end

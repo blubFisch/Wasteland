@@ -426,14 +426,15 @@ function Public.update_chart_tag(town_center, for_force)
     local market = town_center.market
     local position = market.position
     local tags = for_force.find_chart_tags(market.surface, {{position.x - 0.1, position.y - 0.1}, {position.x + 0.1, position.y + 0.1}})
+    local target_text = town_center.town_name .. " (L" .. Score.get_town_league(town_center) .. ")"
     if tags[1] then
-        if tags[1].text == town_center.town_name then
+        if tags[1].text == target_text then
             return
         else
             tags[1].destroy()
         end
     end
-    for_force.add_chart_tag(market.surface, {icon = {type = 'virtual', name = 'signal-dot'}, position = position, text = town_center.town_name})
+    for_force.add_chart_tag(market.surface, {icon = {type = 'virtual', name = 'signal-dot'}, position = position, text = target_text})
 end
 
 function Public.update_town_chart_tags()
