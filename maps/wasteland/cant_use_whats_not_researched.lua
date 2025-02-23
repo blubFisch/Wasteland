@@ -44,6 +44,8 @@ local allowed_for_all = {
     ['curved-rail-a'] = true,
     ['curved-rail-b'] = true,
     ['half-diagonal-rail'] = true,
+    ['legacy-curved-rail'] = true,
+    ['legacy-straight-rail'] = true,
 
     -- Town market items
     ['loader'] = true,

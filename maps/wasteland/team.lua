@@ -444,7 +444,7 @@ function Public.update_town_chart_tags()
         local town_league_uncover = Score.get_town_league(town_center) >= 2
         if town_league_uncover and not town_center.uncovered_for_all then
             town_center.uncovered_for_all = true
-            game.print(town_center.town_name .. " was marked on the map as they entered League 2")
+            game.print(town_center.town_name .. " was marked on the map as it entered League 2")
         end
 
         for _, for_force in pairs(forces) do
@@ -609,7 +609,20 @@ end
 local afk_allowed_actions = {
     [defines.input_action.start_walking] = true,
     [defines.input_action.open_gui] = true,
-    [defines.input_action.market_offer] = true
+    [defines.input_action.market_offer] = true,
+    [defines.input_action.write_to_console] = true,
+    [defines.input_action.gui_checked_state_changed] = true,
+    [defines.input_action.gui_click] = true,
+    [defines.input_action.gui_confirmed] = true,
+    [defines.input_action.gui_elem_changed] = true,
+    [defines.input_action.gui_hover] = true,
+    [defines.input_action.gui_leave] = true,
+    [defines.input_action.gui_location_changed] = true,
+    [defines.input_action.gui_selected_tab_changed] = true,
+    [defines.input_action.gui_selection_state_changed] = true,
+    [defines.input_action.gui_switch_state_changed] = true,
+    [defines.input_action.gui_text_changed] = true,
+    [defines.input_action.gui_value_changed] = true
 }
 local function create_afk_group()
     group = game.permissions.create_group("AFK")

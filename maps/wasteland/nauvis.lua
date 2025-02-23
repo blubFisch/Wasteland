@@ -143,7 +143,7 @@ function Public.initialize()
     surface.regenerate_decorative()
 end
 
-local never_clear_around_types = { 'container', 'logistic-container', 'storage-tank', 'straight-rail', 'curved-rail-a', 'curved-rail-b', 'half-diagonal-rail'}
+local never_clear_around_types = { 'container', 'logistic-container', 'storage-tank', 'straight-rail', 'curved-rail-a', 'curved-rail-b', 'half-diagonal-rail', 'legacy-curved-rail', 'legacy-straight-rail'}
 
 function Public.clear_old_chunks()
     --game.print("XDB clear_old_chunks")
