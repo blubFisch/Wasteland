@@ -183,7 +183,7 @@ local function on_player_joined_game(event)
         Public.spawn_initially(player)
     else
         local this = ScenarioTable.get()
-        if player.force == game.forces.player and player.last_online >= this.round_start_tick then -- Existing outlander joins after leaving for some time
+        if player.force == game.forces.player and player.last_online < this.round_start_tick then -- Existing player joins after new round
             Public.spawn_initially(player)
         end
     end
