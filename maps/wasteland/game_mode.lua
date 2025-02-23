@@ -2,9 +2,14 @@ local Public = {}
 
 local button_id = "wl_game_mode"
 Public.mode_names = {
-    "Short War",          -- Target: 6 hours game
-    "Survival",     -- Target: 2 days game
-    "Long Survival" -- Target: 5 days game
+    "Short War",
+    "Survival",
+    "Long Survival"
+}
+Public.mode_duration_hints = {
+    "6 hours",
+    "2 days",
+    "5 days"
 }
 
 function Public.add_mode_button(player)

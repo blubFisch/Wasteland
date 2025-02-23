@@ -1,3 +1,5 @@
+local GameMode = require 'maps.wasteland.game_mode'
+
 local Public = {}
 
 local changelog =
@@ -7,13 +9,8 @@ local changelog =
     - Can buy tanks in scrap markets again, however using them will bring you to league 2
  [font=heading-2]Older updates[/font]
     - Many small bugfixes
-    - Players having heavy/mod-armor are now automatically in L2
-    - Turrets need time to warm up after building
+    - Players wearing heavy/mod-armor are now automatically in L2
     - Roboports don't get deactivated by shields anymore - due to 2.0 restriction (will try to fix later)
-    - Tweak tank vs tank dmg
-    - Outlanders can craft repair packs again
-    - Radar reset bug fixed
-    - Market inserter bug fixed
     - Shields now always unlock after a town is 5 minutes old
 ]]
 
@@ -22,7 +19,9 @@ local info =
 Can you build a town that survives other players?
 
 
-]] .. changelog
+]] .. "Current game mode: [color=red]" .. GameMode.mode_names[storage.game_mode]
+.. "[/color] (" .. GameMode.mode_duration_hints[storage.game_mode] .. " typically)\n\n"
+.. changelog
 
 local info_adv =
     changelog ..

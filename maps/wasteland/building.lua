@@ -338,7 +338,7 @@ local function process_built_entities(event)
         end
     end
 
-    if TeamBasics.is_outlander_force(player.force) then
+    if player and TeamBasics.is_outlander_force(player.force) then
         local this = ScenarioTable.get_table()
         local bh = this.learning_hints.outlander_buildings
         if not bh[player.index] then bh[player.index] = 0 end
