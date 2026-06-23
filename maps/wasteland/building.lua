@@ -73,6 +73,7 @@ local allowed_entities_keep_force = {
 local ignore_neutral_build_feature = {
     ["entity-ghost"] = true,
     ["roboport"] = true,
+    ["lab"] = true,
     ["electric-pole"] = true
 }
 
